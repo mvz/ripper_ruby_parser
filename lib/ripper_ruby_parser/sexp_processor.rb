@@ -64,7 +64,9 @@ module RipperRubyParser
 
     def process_bodystmt exp
       _, body, _, _, _ = exp.shift 5
-      body = body.map { |sub_exp| process(sub_exp) }
+      body = body.
+        map { |sub_exp| process(sub_exp) }.
+        reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
       s(:scope, *body)
     end
 

@@ -94,6 +94,12 @@ describe RipperRubyParser::SexpProcessor do
         result = processor.process sexp
         result.must_equal s(:scope, s(:foo_p), s(:bar_p))
       end
+
+      it "removes nested :void_stmt sexps" do
+        sexp = s(:bodystmt, s(s(:void_stmt), s(:foo), s(:bar)), nil, nil, nil)
+        result = processor.process sexp
+        result.must_equal s(:scope, s(:foo_p), s(:bar_p))
+      end
     end
   end
 
