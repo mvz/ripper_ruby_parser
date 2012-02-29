@@ -16,5 +16,11 @@ describe RipperRubyParser::SexpProcessor do
       result = processor.process sexp
       result.must_equal s(:foo)
     end
+
+    it "transforms a simple :string_literal to :str" do
+      sexp = s(:string_literal, s(:string_content, s(:@tstring_content, "foo")))
+      result = processor.process sexp
+      result.must_equal s(:str, "foo")
+    end
   end
 end

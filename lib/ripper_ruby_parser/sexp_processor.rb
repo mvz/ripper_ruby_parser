@@ -21,5 +21,15 @@ module RipperRubyParser
       content = exp.shift
       content
     end
+
+    def process_string_literal exp
+      exp.shift
+      content = exp.shift
+      assert_type content, :string_content
+      inner = content[1]
+      assert_type inner, :@tstring_content
+      string = inner[1]
+      s(:str, string)
+    end
   end
 end
