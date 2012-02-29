@@ -79,6 +79,14 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:module, :Foo, s(:foo_p))
       end
     end
+
+    describe "for a :bodystmt sexp" do
+      it "creates a :scope sexp" do
+        sexp = s(:bodystmt, s(s(:foo), s(:bar)), nil, nil, nil)
+        result = processor.process sexp
+        result.must_equal s(:scope, s(:foo_p), s(:bar_p))
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do

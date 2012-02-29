@@ -56,6 +56,12 @@ module RipperRubyParser
       s(:module, const, process(body))
     end
 
+    def process_bodystmt exp
+      _, body, _, _, _ = exp.shift 5
+      body = body.map { |sub_exp| process(sub_exp) }
+      s(:scope, *body)
+    end
+
     def identifier_node_to_symbol exp
       assert_type exp, :@ident
       _, ident, _ = exp.shift 3
