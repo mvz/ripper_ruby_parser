@@ -206,6 +206,18 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:call, s(:bar_p), :==, s(:arglist, s(:foo_p)))
       end
     end
+
+    describe "for a :method_add_block sexp" do
+      it "creates an :iter sexp" do
+        sexp = s(:method_add_block,
+                 s(:call, s(:foo), :".", s(:@ident, "baz", s(1, 2))),
+                 s(:brace_block, nil, s(s(:bar))))
+        result = processor.process sexp
+        result.must_equal s(:iter,
+                            s(:call, s(:foo_p), :baz, s(:arglist)), nil,
+                            s(:bar_p))
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do

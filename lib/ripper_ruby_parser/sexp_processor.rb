@@ -96,6 +96,23 @@ module RipperRubyParser
       s(:args, *argsyms)
     end
 
+    def process_method_add_block exp
+      _, call, block = exp.shift 3
+      block = process(block)
+      stmt = block[2].first
+      s(:iter, process(call), nil, stmt)
+    end
+
+    def process_call exp
+      _, reciever, _, method = exp.shift 4
+      s(:call, process(reciever), identifier_node_to_symbol(method), s(:arglist))
+    end
+
+    def process_brace_block exp
+      _, _, stmts = exp.shift 3
+      s(:brace_block, nil, s(process(stmts.first)))
+    end
+
     def process_bodystmt exp
       _, body, _, _, _ = exp.shift 5
       body = body.
