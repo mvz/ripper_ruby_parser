@@ -1,9 +1,14 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 class TestProcessor < RipperRubyParser::SexpProcessor
-  def process_must_be_processed exp
+  def process_foo exp
     exp.shift
-    s(:has_been_processed)
+    s(:foo_p)
+  end
+
+  def process_bar exp
+    exp.shift
+    s(:bar_p)
   end
 end
 
@@ -27,13 +32,13 @@ describe RipperRubyParser::SexpProcessor do
       it "strips off the outer :program node" do
         sexp = s(:program, s(s(:foo)))
         result = processor.process sexp
-        result.must_equal s(:foo)
+        result.must_equal s(:foo_p)
       end
 
       it "transforms a multi-statement :program into a :block sexp" do
         sexp = s(:program, s(s(:foo), s(:bar)))
         result = processor.process sexp
-        result.must_equal s(:block, s(:foo), s(:bar))
+        result.must_equal s(:block, s(:foo_p), s(:bar_p))
       end
     end
 
@@ -49,33 +54,21 @@ describe RipperRubyParser::SexpProcessor do
       it "transforms a one-argument sexp to an :arglist" do
         sexp = s(:args_add_block, s(s(:foo)), false)
         result = processor.process sexp
-        result.must_equal s(:arglist, s(:foo))
+        result.must_equal s(:arglist, s(:foo_p))
       end
 
       it "transforms a multi-argument sexp to an :arglist" do
         sexp = s(:args_add_block, s(s(:foo), s(:bar)), false)
         result = processor.process sexp
-        result.must_equal s(:arglist, s(:foo), s(:bar))
-      end
-
-      it "processes nested sexps" do
-        sexp = s(:args_add_block, s(s(:must_be_processed)), false)
-        result = processor.process sexp
-        result.must_equal s(:arglist, s(:has_been_processed))
+        result.must_equal s(:arglist, s(:foo_p), s(:bar_p))
       end
     end
 
     describe "for a :command sexp" do
       it "transforms a sexp to a :call" do
-        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:dummy_content))
+        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:foo))
         result = processor.process sexp
-        result.must_equal s(:call, nil, :foo, s(:dummy_content))
-      end
-
-      it "processes nested sexps" do
-        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:must_be_processed))
-        result = processor.process sexp
-        result.must_equal s(:call, nil, :foo, s(:has_been_processed))
+        result.must_equal s(:call, nil, :foo, s(:foo_p))
       end
     end
 
@@ -83,14 +76,7 @@ describe RipperRubyParser::SexpProcessor do
       it "transforms a nested constant reference to a symbol" do
         sexp = s(:module, s(:const_ref, s(:@const, "Foo", s(1, 13))), s(:foo))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo, s(:foo))
-      end
-
-      it "processes nested sexps" do
-        sexp = s(:module, s(:const_ref, s(:@const, "Foo", s(1, 13))),
-                 s(:must_be_processed))
-        result = processor.process sexp
-        result.must_equal s(:module, :Foo, s(:has_been_processed))
+        result.must_equal s(:module, :Foo, s(:foo_p))
       end
     end
   end
