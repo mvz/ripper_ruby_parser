@@ -46,4 +46,12 @@ describe RipperRubyParser::SexpProcessor do
       result.must_equal s(:arglist, s(:str, "foo"))
     end
   end
+
+  describe "#identifier_node_to_symbol" do
+    it "processes an identifier sexp to a bare symbol" do
+      sexp = s(:@ident, "foo", s(1, 0))
+      result = processor.identifier_node_to_symbol sexp
+      result.must_equal :foo
+    end
+  end
 end

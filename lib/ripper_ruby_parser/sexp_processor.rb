@@ -40,6 +40,15 @@ module RipperRubyParser
       s(:arglist, *args)
     end
 
+    def identifier_node_to_symbol exp
+      assert_type exp, :@ident
+      type = exp.shift
+      ident = exp.shift
+      exp.shift
+
+      ident.to_sym
+    end
+
     private
 
     def fix_empty_type exp
