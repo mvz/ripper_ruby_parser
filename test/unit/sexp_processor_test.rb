@@ -22,6 +22,12 @@ describe RipperRubyParser::SexpProcessor do
         result = processor.process sexp
         result.must_equal s(:foo)
       end
+
+      it "transforms a multi-statement :program into a :block sexp" do
+        sexp = s(:program, s(s(:foo), s(:bar)))
+        result = processor.process sexp
+        result.must_equal s(:block, s(:foo), s(:bar))
+      end
     end
 
     describe "for a :string_literal sexp" do

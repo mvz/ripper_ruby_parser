@@ -13,7 +13,12 @@ module RipperRubyParser
     def process_program exp
       _, content = exp.shift 2
 
-      process(content.first)
+      if content.length == 1
+        process(content.first)
+      else
+        statements = content.map { |sub_exp| process(sub_exp) }
+        s(:block, *statements)
+      end
     end
 
     def process_string_literal exp
