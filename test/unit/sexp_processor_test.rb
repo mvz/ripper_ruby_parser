@@ -39,5 +39,11 @@ describe RipperRubyParser::SexpProcessor do
       result = processor.process sexp
       result.must_equal s(:arglist, s(:foo), s(:bar))
     end
+
+    it "processes sexps inside :args_add_block" do
+      sexp = s(:args_add_block, s(s(:string_literal, s(:string_content, s(:@tstring_content, "foo")))), false)
+      result = processor.process sexp
+      result.must_equal s(:arglist, s(:str, "foo"))
+    end
   end
 end

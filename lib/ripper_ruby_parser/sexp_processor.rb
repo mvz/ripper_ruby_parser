@@ -35,7 +35,9 @@ module RipperRubyParser
       assert_type content, :__empty
       content.shift
 
-      s(:arglist, *content)
+      args = content.map { |sub_exp| process(sub_exp) }
+
+      s(:arglist, *args)
     end
 
     private
