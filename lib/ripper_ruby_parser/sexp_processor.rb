@@ -113,6 +113,11 @@ module RipperRubyParser
       end
     end
 
+    def process_binary exp
+      _, left, op, right = exp.shift 4
+      s(:call, process(left), op, s(:arglist, process(right)))
+    end
+
     def process_at_int exp
       _, val, _ = exp.shift 3
       s(:lit, val.to_i)

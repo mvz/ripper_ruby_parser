@@ -198,6 +198,14 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:lasgn, :a, s(:lit, 1))
       end
     end
+
+    describe "for a :binary sexp" do
+      it "creates a :call sexp with an :arglist" do
+        sexp = s(:binary, s(:bar), :==, s(:foo))
+        result = processor.process sexp
+        result.must_equal s(:call, s(:bar_p), :==, s(:arglist, s(:foo_p)))
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do
