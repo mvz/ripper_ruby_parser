@@ -69,7 +69,11 @@ module RipperRubyParser
       body = body.
         map { |sub_exp| process(sub_exp) }.
         reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
-      s(:scope, *body)
+      if body.length > 1
+        s(:scope, s(:block, *body))
+      else
+        s(:scope, *body)
+      end
     end
 
     def process_var_ref exp
