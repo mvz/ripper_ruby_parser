@@ -3,9 +3,7 @@ require 'sexp_processor'
 module RipperRubyParser
   class SexpProcessor < ::SexpProcessor
     def process exp
-      unless exp.sexp_type.is_a? Symbol
-        exp.unshift :__empty
-      end
+      fix_empty_type exp
 
       super exp
     end
@@ -13,13 +11,9 @@ module RipperRubyParser
     def process_program exp
       exp.shift
       content = exp.shift
-      process(content)
-    end
-
-    def process___empty exp
-      exp.shift
-      content = exp.shift
-      content
+      fix_empty_type content
+      assert_type content, :__empty
+      process(content[1])
     end
 
     def process_string_literal exp
@@ -30,6 +24,14 @@ module RipperRubyParser
       assert_type inner, :@tstring_content
       string = inner[1]
       s(:str, string)
+    end
+
+    private
+
+    def fix_empty_type exp
+      unless exp.sexp_type.is_a? Symbol
+        exp.unshift :__empty
+      end
     end
   end
 end
