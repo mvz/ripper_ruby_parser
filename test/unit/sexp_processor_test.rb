@@ -72,6 +72,14 @@ describe RipperRubyParser::SexpProcessor do
       end
     end
 
+    describe "for a :var_ref sexp" do
+      it "transforms the sexp to a :lvar sexp" do
+        sexp = s(:var_ref, s(:@ident, "bar", s(1, 4)))
+        result = processor.process sexp
+        result.must_equal s(:lvar, :bar)
+      end
+    end
+
     describe "for a :module sexp" do
       it "does not create a nested :block sexp for an empty definition" do
         sexp = s(:module,

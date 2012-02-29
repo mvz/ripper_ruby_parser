@@ -100,7 +100,7 @@ module RipperRubyParser
       if contents.sexp_type == :@const
         s(:const, const_node_to_symbol(contents))
       else
-        s(:var_ref, contents)
+        s(:lvar, identifier_node_to_symbol(contents))
       end
     end
 
