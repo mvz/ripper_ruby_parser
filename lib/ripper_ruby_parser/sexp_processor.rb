@@ -54,20 +54,20 @@ module RipperRubyParser
     def process_module exp
       _, const_ref, body = exp.shift 3
       const = const_node_to_symbol const_ref[1]
-      s(:module, const, class_body(body))
+      s(:module, const, class_or_module_body(body))
     end
 
     def process_class exp
       _, const_ref, parent, body = exp.shift 4
       const = const_node_to_symbol const_ref[1]
       parent = process(parent)
-      s(:class, const, parent, class_body(body))
+      s(:class, const, parent, class_or_module_body(body))
     end
 
     def process_def exp
       _, ident, params, body = exp.shift 4
       ident = identifier_node_to_symbol ident
-      s(:defn, ident, process(params), definition_body(body))
+      s(:defn, ident, process(params), method_body(body))
     end
 
     def process_params exp
@@ -106,7 +106,7 @@ module RipperRubyParser
       ident.to_sym
     end
 
-    def definition_body exp
+    def method_body exp
       scope = process exp
       block = scope[1]
       if block.length == 1
@@ -115,7 +115,7 @@ module RipperRubyParser
       scope
     end
 
-    def class_body exp
+    def class_or_module_body exp
       scope = process exp
       block = scope[1]
       block.shift
