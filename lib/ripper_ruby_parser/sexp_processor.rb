@@ -26,6 +26,17 @@ module RipperRubyParser
       s(:str, string)
     end
 
+    def process_args_add_block exp
+      exp.shift
+      content = exp.shift
+      exp.shift
+
+      fix_empty_type content
+      assert_type content, :__empty
+
+      s(:arglist, content[1])
+    end
+
     private
 
     def fix_empty_type exp

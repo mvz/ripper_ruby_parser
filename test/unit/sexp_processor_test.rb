@@ -29,8 +29,9 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     it "transforms an :args_add_block to an :arglist" do
-      skip
-      sexp = s(:args_add_block, s(s(:string_literal, s(:string_content, s(:@tstring_content, "Hello World", s(1, 6))))), false)
+      sexp = s(:args_add_block, s(s(:foo)), false)
+      result = processor.process sexp
+      result.must_equal s(:arglist, s(:foo))
     end
   end
 end
