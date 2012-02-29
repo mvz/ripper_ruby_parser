@@ -167,7 +167,7 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe "for a :def sexp" do
-      it "transforms a sexp for a basic function definition" do
+      it "transforms the sexp for a basic function definition" do
         sexp = s(:def,
                  s(:@ident, "foo", s(1, 4)),
                  s(:params, nil, nil, nil, nil, nil),
@@ -176,6 +176,16 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:defn,
                             :foo, s(:args), s(:scope, s(:block, s(:nil))))
 
+      end
+    end
+
+    describe "for a :params sexp" do
+      describe "with a normal argument" do
+        it "uses the bare argument names" do
+          sexp =  s(:params, s(s(:@ident, "bar", s(1, 8))), nil, nil, nil, nil)
+          result = processor.process sexp
+          result.must_equal s(:args, :bar)
+        end
       end
     end
 

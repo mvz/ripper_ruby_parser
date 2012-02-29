@@ -91,8 +91,9 @@ module RipperRubyParser
     end
 
     def process_params exp
-      exp.shift 6
-      s(:args)
+      _, normal, *_ = exp.shift 6
+      argsyms = [*normal].map {|id| identifier_node_to_symbol id}
+      s(:args, *argsyms)
     end
 
     def process_bodystmt exp
