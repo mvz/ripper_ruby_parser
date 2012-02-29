@@ -49,7 +49,7 @@ module RipperRubyParser
 
     def identifier_node_to_symbol exp
       assert_type exp, :@ident
-      type = exp.shift
+      exp.shift
       ident = exp.shift
       exp.shift
 
