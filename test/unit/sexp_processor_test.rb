@@ -86,6 +86,15 @@ describe RipperRubyParser::SexpProcessor do
         result = processor.process sexp
         result.must_equal s(:class, :Foo, nil, s(:foo_p))
       end
+
+      it "passes on the given ancestor" do
+        sexp = s(:class,
+                 s(:const_ref, s(:@const, "Foo", s(1, 13))),
+                 s(:var_ref, s(:@const, "Bar", s(1, 12))),
+                 s(:foo))
+        result = processor.process sexp
+        result.must_equal s(:class, :Foo, s(:const, :Bar), s(:foo_p))
+      end
     end
 
     describe "for a :bodystmt sexp" do

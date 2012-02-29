@@ -5,6 +5,7 @@ module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
   class SexpProcessor < ::SexpProcessor
     def process exp
+      return nil if exp.nil?
       exp.fix_empty_type
 
       super
@@ -57,9 +58,10 @@ module RipperRubyParser
     end
 
     def process_class exp
-      _, const_ref, _, body = exp.shift 4
+      _, const_ref, parent, body = exp.shift 4
       const = const_node_to_symbol const_ref[1]
-      s(:class, const, nil, process(body))
+      parent = process(parent)
+      s(:class, const, parent, process(body))
     end
 
     def process_bodystmt exp
@@ -68,6 +70,15 @@ module RipperRubyParser
         map { |sub_exp| process(sub_exp) }.
         reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
       s(:scope, *body)
+    end
+
+    def process_var_ref exp
+      _, contents = exp.shift 2
+      if contents.sexp_type == :@const
+        s(:const, const_node_to_symbol(contents))
+      else
+        s(:var_ref, contents)
+      end
     end
 
     def identifier_node_to_symbol exp
