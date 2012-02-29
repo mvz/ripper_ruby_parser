@@ -85,6 +85,13 @@ describe RipperRubyParser::SexpProcessor do
         result = processor.process sexp
         result.must_equal s(:module, :Foo, s(:foo))
       end
+
+      it "processes nested sexps" do
+        sexp = s(:module, s(:const_ref, s(:@const, "Foo", s(1, 13))),
+                 s(:must_be_processed))
+        result = processor.process sexp
+        result.must_equal s(:module, :Foo, s(:has_been_processed))
+      end
     end
   end
 

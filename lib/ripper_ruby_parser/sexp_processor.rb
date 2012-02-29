@@ -53,7 +53,7 @@ module RipperRubyParser
     def process_module exp
       _, const_ref, body = exp.shift 3
       const = const_node_to_symbol const_ref[1]
-      s(:module, const, body)
+      s(:module, const, process(body))
     end
 
     def identifier_node_to_symbol exp
