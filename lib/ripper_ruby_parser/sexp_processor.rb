@@ -59,7 +59,7 @@ module RipperRubyParser
     def process_class exp
       _, const_ref, _, body = exp.shift 4
       const = const_node_to_symbol const_ref[1]
-      s(:class, const, process(body))
+      s(:class, const, nil, process(body))
     end
 
     def process_bodystmt exp

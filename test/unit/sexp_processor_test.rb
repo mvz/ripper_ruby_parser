@@ -84,7 +84,7 @@ describe RipperRubyParser::SexpProcessor do
       it "transforms a nested constant reference to a symbol" do
         sexp = s(:class, s(:const_ref, s(:@const, "Foo", s(1, 13))), nil, s(:foo))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, s(:foo_p))
+        result.must_equal s(:class, :Foo, nil, s(:foo_p))
       end
     end
 
