@@ -1,8 +1,4 @@
-require 'ripper'
-require 'ripper_ruby_parser/sexp_processor'
+require 'ripper_ruby_parser/parser'
 
-class RipperRubyParser
-  def parse source
-    Sexp.from_array Ripper.sexp source
-  end
+module RipperRubyParser
 end

@@ -3,8 +3,9 @@ require 'ruby_parser'
 
 describe "Using RipperRubyParser and RubyParser" do
   let :newparser do
-    RipperRubyParser.new
+    RipperRubyParser::Parser.new
   end
+
   let :oldparser do
     RubyParser.new
   end
