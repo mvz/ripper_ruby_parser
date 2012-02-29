@@ -64,16 +64,23 @@ module RipperRubyParser
       s(:class, const, parent, process(body))
     end
 
+    def process_def exp
+      _, ident, params, body = exp.shift 4
+      ident = identifier_node_to_symbol ident
+      s(:defn, ident, process(params), definition_body(body))
+    end
+
+    def process_params exp
+      exp.shift 6
+      s(:args)
+    end
+
     def process_bodystmt exp
       _, body, _, _, _ = exp.shift 5
       body = body.
         map { |sub_exp| process(sub_exp) }.
         reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
-      if body.length > 1
-        s(:scope, s(:block, *body))
-      else
-        s(:scope, *body)
-      end
+      s(:scope, s(:block, *body))
     end
 
     def process_var_ref exp
@@ -97,6 +104,15 @@ module RipperRubyParser
       _, ident, _ = exp.shift 3
 
       ident.to_sym
+    end
+
+    def definition_body exp
+      scope = process exp
+      block = scope[1]
+      if block.length == 1
+        block.push s(:nil)
+      end
+      scope
     end
   end
 end
