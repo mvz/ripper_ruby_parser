@@ -80,6 +80,14 @@ describe RipperRubyParser::SexpProcessor do
       end
     end
 
+    describe "for a :vcall sexp" do
+      it "transforms the sexp to a :call sexp" do
+        sexp = s(:vcall, s(:@ident, "bar", s(1, 4)))
+        result = processor.process sexp
+        result.must_equal s(:call, nil, :bar, s(:arglist))
+      end
+    end
+
     describe "for a :module sexp" do
       it "does not create a nested :block sexp for an empty definition" do
         sexp = s(:module,
