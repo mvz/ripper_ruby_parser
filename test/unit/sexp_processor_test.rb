@@ -80,4 +80,12 @@ describe RipperRubyParser::SexpProcessor do
       result.must_equal :foo
     end
   end
+
+  describe "#const_node_to_symbol" do
+    it "processes a const sexp to a bare symbol" do
+      sexp = s(:@const, "Foo", s(1, 0))
+      result = processor.const_node_to_symbol sexp
+      result.must_equal :Foo
+    end
+  end
 end
