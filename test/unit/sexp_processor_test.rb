@@ -71,6 +71,14 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:call, nil, :foo, s(:arglist, s(:foo)))
       end
     end
+
+    describe "for a :module sexp" do
+      it "transforms a nested constant reference to a symbol" do
+        sexp = s(:module, s(:const_ref, s(:@const, "Foo", s(1, 13))), s(:foo))
+        result = processor.process sexp
+        result.must_equal s(:module, :Foo, s(:foo))
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do

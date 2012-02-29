@@ -50,6 +50,12 @@ module RipperRubyParser
       s(:call, nil, ident, arglist)
     end
 
+    def process_module exp
+      _, const_ref, body = exp.shift 3
+      const = const_node_to_symbol const_ref[1]
+      s(:module, const, body)
+    end
+
     def identifier_node_to_symbol exp
       assert_type exp, :@ident
       _, ident, _ = exp.shift 3
