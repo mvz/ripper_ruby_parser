@@ -61,7 +61,7 @@ module RipperRubyParser
       _, const_ref, parent, body = exp.shift 4
       const = const_node_to_symbol const_ref[1]
       parent = process(parent)
-      s(:class, const, parent, process(body))
+      s(:class, const, parent, class_body(body))
     end
 
     def process_def exp
@@ -113,6 +113,17 @@ module RipperRubyParser
         block.push s(:nil)
       end
       scope
+    end
+
+    def class_body exp
+      scope = process exp
+      block = scope[1]
+      block.shift
+      if block.length <= 1
+        s(:scope, *block)
+      else
+        s(:scope, s(:block, *block))
+      end
     end
   end
 end

@@ -81,19 +81,39 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe "for a :class sexp" do
-      it "transforms a nested constant reference to a symbol" do
-        sexp = s(:class, s(:const_ref, s(:@const, "Foo", s(1, 13))), nil, s(:foo))
+      it "does not create a nested :block sexp for an empty definition" do
+        sexp = s(:class,
+                 s(:const_ref, s(:@const, "Foo", s(1, 13))), nil,
+                 s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, nil, s(:foo_p))
+        result.must_equal s(:class, :Foo, nil, s(:scope))
+      end
+
+      it "does not create a nested :block sexp for a definition with one statement" do
+        sexp = s(:class,
+                 s(:const_ref, s(:@const, "Foo", s(1, 13))), nil,
+                 s(:bodystmt, s(s(:foo)), nil, nil, nil))
+        result = processor.process sexp
+        result.must_equal s(:class, :Foo, nil, s(:scope, s(:foo_p)))
+      end
+
+      it "creates a nested :block sexp for a definition with more than one statement" do
+        sexp = s(:class,
+                 s(:const_ref, s(:@const, "Foo", s(1, 13))), nil,
+                 s(:bodystmt, s(s(:foo), s(:bar)), nil, nil, nil))
+        result = processor.process sexp
+        result.must_equal s(:class,
+                            :Foo, nil,
+                            s(:scope, s(:block, s(:foo_p), s(:bar_p))))
       end
 
       it "passes on the given ancestor" do
         sexp = s(:class,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))),
                  s(:var_ref, s(:@const, "Bar", s(1, 12))),
-                 s(:foo))
+                 s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, s(:const, :Bar), s(:foo_p))
+        result.must_equal s(:class, :Foo, s(:const, :Bar), s(:scope))
       end
     end
 
