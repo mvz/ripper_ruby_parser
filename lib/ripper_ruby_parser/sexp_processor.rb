@@ -110,8 +110,13 @@ module RipperRubyParser
 
     def process_if exp
       _, cond, truepart, _ = exp.shift 4
-      truepart = truepart[0]
-      s(:if, process(cond), process(truepart), nil)
+      truepart = truepart.map {|stmt| process(stmt)}
+      if truepart.length == 1
+        truepart = truepart.first
+      else
+        truepart = s(:block, *truepart)
+      end
+      s(:if, process(cond), truepart, nil)
     end
 
     def process_brace_block exp

@@ -10,6 +10,11 @@ class TestProcessor < RipperRubyParser::SexpProcessor
     exp.shift
     s(:bar_p)
   end
+
+  def process_baz exp
+    exp.shift
+    s(:baz_p)
+  end
 end
 
 describe RipperRubyParser::SexpProcessor do
@@ -225,6 +230,14 @@ describe RipperRubyParser::SexpProcessor do
           sexp = s(:if, s(:foo), s(s(:bar)), nil)
           result = processor.process sexp
           result.must_equal s(:if, s(:foo_p), s(:bar_p), nil)
+        end
+      end
+
+      describe "with multiple statements in the if body" do
+        it "uses a block containing the statement sexps as the body" do
+          sexp = s(:if, s(:foo), s(s(:bar), s(:baz)), nil)
+          result = processor.process sexp
+          result.must_equal s(:if, s(:foo_p), s(:block, s(:bar_p), s(:baz_p)), nil)
         end
       end
     end
