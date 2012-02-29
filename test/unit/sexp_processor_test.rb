@@ -28,10 +28,16 @@ describe RipperRubyParser::SexpProcessor do
       result.must_equal s(:str, "foo")
     end
 
-    it "transforms an :args_add_block to an :arglist" do
+    it "transforms a one-argument :args_add_block to an :arglist" do
       sexp = s(:args_add_block, s(s(:foo)), false)
       result = processor.process sexp
       result.must_equal s(:arglist, s(:foo))
+    end
+
+    it "transforms a multi-argument :args_add_block to an :arglist" do
+      sexp = s(:args_add_block, s(s(:foo), s(:bar)), false)
+      result = processor.process sexp
+      result.must_equal s(:arglist, s(:foo), s(:bar))
     end
   end
 end

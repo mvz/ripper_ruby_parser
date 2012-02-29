@@ -33,8 +33,9 @@ module RipperRubyParser
 
       fix_empty_type content
       assert_type content, :__empty
+      content.shift
 
-      s(:arglist, content[1])
+      s(:arglist, *content)
     end
 
     private
