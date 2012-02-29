@@ -162,6 +162,16 @@ describe RipperRubyParser::SexpProcessor do
 
       end
     end
+
+    describe "for an :assign sexp" do
+      it "creates a :lasgn sexp" do
+        sexp = s(:assign,
+                 s(:var_field, s(:@ident, "a", s(1, 0))),
+                 s(:@int, "1", s(1, 4)))
+        result = processor.process sexp
+        result.must_equal s(:lasgn, :a, s(:lit, 1))
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do

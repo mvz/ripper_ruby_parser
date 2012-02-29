@@ -4,6 +4,11 @@ require 'sexp_processor'
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
   class SexpProcessor < ::SexpProcessor
+    def initialize
+      super
+      @processors[:@int] = :process_at_int
+    end
+
     def process exp
       return nil if exp.nil?
       exp.fix_empty_type
@@ -70,6 +75,13 @@ module RipperRubyParser
       s(:defn, ident, process(params), method_body(body))
     end
 
+    def process_assign exp
+      _, var_field, value = exp.shift 3
+      assert_type var_field, :var_field
+      ident = identifier_node_to_symbol var_field[1]
+      s(:lasgn, ident, process(value))
+    end
+
     def process_params exp
       exp.shift 6
       s(:args)
@@ -90,6 +102,11 @@ module RipperRubyParser
       else
         s(:var_ref, contents)
       end
+    end
+
+    def process_at_int exp
+      _, val, _ = exp.shift 3
+      s(:lit, val.to_i)
     end
 
     def identifier_node_to_symbol exp
