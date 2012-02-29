@@ -151,6 +151,11 @@ module RipperRubyParser
       end
     end
 
+    def process_const_path_ref exp
+      _, left, right = exp.shift 3
+      s(:colon2, process(left), const_node_to_symbol(right))
+    end
+
     def process_binary exp
       _, left, op, right = exp.shift 4
       s(:call, process(left), op, s(:arglist, process(right)))

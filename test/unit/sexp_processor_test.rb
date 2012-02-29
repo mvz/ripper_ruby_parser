@@ -266,6 +266,16 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:array, s(:foo_p), s(:bar_p), s(:baz_p))
       end
     end
+
+    describe "for a :const_path_ref sexp" do
+      it "returns a :colon2 sexp" do
+        sexp = s(:const_path_ref,
+                 s(:var_ref, s(:@const, "Foo", s(1, 0))),
+                 s(:@const, "Bar", s(1, 5)))
+        result = processor.process sexp
+        result.must_equal s(:colon2, s(:const, :Foo), :Bar)
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do
