@@ -45,6 +45,18 @@ describe RipperRubyParser::SexpProcessor do
       result = processor.process sexp
       result.must_equal s(:arglist, s(:str, "foo"))
     end
+
+    it "transforms a :command to a :call" do
+      sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:dummy_content))
+      result = processor.process sexp
+      result.must_equal s(:call, nil, :foo, s(:dummy_content))
+    end
+
+    it "processes sexps inside :command" do
+      sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:args_add_block, s(s(:foo)), false))
+      result = processor.process sexp
+      result.must_equal s(:call, nil, :foo, s(:arglist, s(:foo)))
+    end
   end
 
   describe "#identifier_node_to_symbol" do

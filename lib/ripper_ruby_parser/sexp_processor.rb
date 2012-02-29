@@ -40,6 +40,13 @@ module RipperRubyParser
       s(:arglist, *args)
     end
 
+    def process_command exp
+      exp.shift
+      ident = identifier_node_to_symbol exp.shift
+      arglist = process(exp.shift)
+      s(:call, nil, ident, arglist)
+    end
+
     def identifier_node_to_symbol exp
       assert_type exp, :@ident
       type = exp.shift
