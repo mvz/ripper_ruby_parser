@@ -12,10 +12,9 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     it "strips off the outer :program node" do
-      skip
       sexp = s(:program, s(s(:foo)))
       result = processor.process sexp
-      result.must_equal s(s(:foo))
+      result.must_equal s(:foo)
     end
   end
 end
