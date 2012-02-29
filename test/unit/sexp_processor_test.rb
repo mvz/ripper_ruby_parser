@@ -1,8 +1,15 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
+class TestProcessor < RipperRubyParser::SexpProcessor
+  def process_must_be_processed exp
+    exp.shift
+    s(:has_been_processed)
+  end
+end
+
 describe RipperRubyParser::SexpProcessor do
   let :processor do
-    RipperRubyParser::SexpProcessor.new
+    TestProcessor.new
   end
 
   describe "#process" do
@@ -52,9 +59,9 @@ describe RipperRubyParser::SexpProcessor do
       end
 
       it "processes nested sexps" do
-        sexp = s(:args_add_block, s(s(:string_literal, s(:string_content, s(:@tstring_content, "foo")))), false)
+        sexp = s(:args_add_block, s(s(:must_be_processed)), false)
         result = processor.process sexp
-        result.must_equal s(:arglist, s(:str, "foo"))
+        result.must_equal s(:arglist, s(:has_been_processed))
       end
     end
 
@@ -66,9 +73,9 @@ describe RipperRubyParser::SexpProcessor do
       end
 
       it "processes nested sexps" do
-        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:args_add_block, s(s(:foo)), false))
+        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:must_be_processed))
         result = processor.process sexp
-        result.must_equal s(:call, nil, :foo, s(:arglist, s(:foo)))
+        result.must_equal s(:call, nil, :foo, s(:has_been_processed))
       end
     end
 
