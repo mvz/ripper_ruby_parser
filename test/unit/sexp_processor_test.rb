@@ -241,6 +241,14 @@ describe RipperRubyParser::SexpProcessor do
         end
       end
     end
+
+    describe "for an :array sexp" do
+      it "pulls up the element sexps" do
+        sexp = s(:array, s(s(:foo), s(:bar), s(:baz)))
+        result = processor.process sexp
+        result.must_equal s(:array, s(:foo_p), s(:bar_p), s(:baz_p))
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do

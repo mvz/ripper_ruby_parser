@@ -119,6 +119,12 @@ module RipperRubyParser
       s(:if, process(cond), truepart, nil)
     end
 
+    def process_array exp
+      _, elems = exp.shift 2
+      elems = elems.map {|elm| process(elm)}
+      s(:array, *elems)
+    end
+
     def process_brace_block exp
       _, _, stmts = exp.shift 3
       s(:brace_block, nil, s(process(stmts.first)))
