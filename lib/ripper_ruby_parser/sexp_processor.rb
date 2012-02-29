@@ -99,10 +99,7 @@ module RipperRubyParser
     def process_method_add_block exp
       _, call, block = exp.shift 3
       block = process(block)
-      args = block[1]
-      unless args.nil?
-        args = s(:lasgn, block[1][1][1])
-      end
+      args = convert_block_args(block[1])
       stmt = block[2].first
       s(:iter, process(call), args, stmt)
     end
@@ -131,7 +128,7 @@ module RipperRubyParser
 
     def process_brace_block exp
       _, args, stmts = exp.shift 3
-      s(:brace_block, process(args), s(process(stmts.first)))
+      s(:block, process(args), s(process(stmts.first)))
     end
 
     def process_bodystmt exp
@@ -198,6 +195,10 @@ module RipperRubyParser
       else
         s(:scope, s(:block, *block))
       end
+    end
+
+    def convert_block_args(args)
+      args && s(:lasgn, args[1][1])
     end
   end
 end
