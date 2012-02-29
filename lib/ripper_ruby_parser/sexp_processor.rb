@@ -108,6 +108,12 @@ module RipperRubyParser
       s(:call, process(reciever), identifier_node_to_symbol(method), s(:arglist))
     end
 
+    def process_if exp
+      _, cond, truepart, _ = exp.shift 4
+      truepart = truepart[0]
+      s(:if, process(cond), process(truepart), nil)
+    end
+
     def process_brace_block exp
       _, _, stmts = exp.shift 3
       s(:brace_block, nil, s(process(stmts.first)))

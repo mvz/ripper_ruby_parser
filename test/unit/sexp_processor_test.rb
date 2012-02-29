@@ -218,6 +218,16 @@ describe RipperRubyParser::SexpProcessor do
                             s(:bar_p))
       end
     end
+
+    describe "for an :if sexp" do
+      describe "with a single statement in the if body" do
+        it "uses the statement sexp as the body" do
+          sexp = s(:if, s(:foo), s(s(:bar)), nil)
+          result = processor.process sexp
+          result.must_equal s(:if, s(:foo_p), s(:bar_p), nil)
+        end
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do
