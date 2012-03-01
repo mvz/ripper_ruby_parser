@@ -112,17 +112,6 @@ module RipperRubyParser
       s(:call, process(reciever), identifier_node_to_symbol(method), s(:arglist))
     end
 
-    def process_if exp
-      _, cond, truepart, _ = exp.shift 4
-      truepart = truepart.map {|stmt| process(stmt)}
-      if truepart.length == 1
-        truepart = truepart.first
-      else
-        truepart = s(:block, *truepart)
-      end
-      s(:if, process(cond), truepart, nil)
-    end
-
     def process_array exp
       _, elems = exp.shift 2
       elems = elems.map {|elm| process(elm)}
