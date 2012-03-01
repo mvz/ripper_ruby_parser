@@ -91,9 +91,9 @@ module RipperRubyParser
     end
 
     def process_assign exp
-      _, var_field, value = exp.shift 3
-      assert_type var_field, :var_field
-      ident = identifier_node_to_symbol var_field[1]
+      _, lvalue, value = exp.shift 3
+      lvalue = process(lvalue)
+      ident = lvalue[1]
       s(:lasgn, ident, process(value))
     end
 
@@ -136,6 +136,11 @@ module RipperRubyParser
     end
 
     def process_var_ref exp
+      _, contents = exp.shift 2
+      process(contents)
+    end
+
+    def process_var_field exp
       _, contents = exp.shift 2
       process(contents)
     end
