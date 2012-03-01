@@ -1,9 +1,10 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
+  let(:parser) { RipperRubyParser::Parser.new }
   describe "#parse" do
     it "returns an s-expression" do
-      result = RipperRubyParser::Parser.new.parse "foo"
+      result = parser.parse "foo"
       result.must_be_instance_of Sexp
     end
 
@@ -16,6 +17,16 @@ describe RipperRubyParser::Parser do
 
       result.must_equal s(:result)
       sexp_p.verify
+    end
+
+    describe "for unless" do
+      it "works in the postfix case" do
+        result = parser.parse "foo unless bar"
+        result.must_equal s(:if,
+                            s(:call, nil, :bar, s(:arglist)),
+                            nil,
+                            s(:call, nil, :foo, s(:arglist)))
+      end
     end
   end
 end

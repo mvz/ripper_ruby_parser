@@ -1,5 +1,6 @@
-require 'ripper_ruby_parser/sexp_ext'
 require 'sexp_processor'
+require 'ripper_ruby_parser/sexp_handlers'
+require 'ripper_ruby_parser/sexp_ext'
 
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
@@ -15,6 +16,8 @@ module RipperRubyParser
 
       super
     end
+
+    include SexpHandlers
 
     def process_program exp
       _, content = exp.shift 2
