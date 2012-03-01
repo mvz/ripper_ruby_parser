@@ -8,6 +8,10 @@ module RipperRubyParser
     def initialize
       super
       @processors[:@int] = :process_at_int
+      @processors[:@const] = :process_at_const
+      @processors[:@ident] = :process_at_ident
+      @processors[:@ivar] = :process_at_ivar
+      @processors[:@kw] = :process_at_kv
     end
 
     def process exp
@@ -133,16 +137,7 @@ module RipperRubyParser
 
     def process_var_ref exp
       _, contents = exp.shift 2
-      case contents.sexp_type
-      when :@const
-        s(:const, const_node_to_symbol(contents))
-      when :@ivar
-        s(:ivar, ivar_node_to_symbol(contents))
-      when :@kw
-        s(:self)
-      else
-        s(:lvar, identifier_node_to_symbol(contents))
-      end
+      process(contents)
     end
 
     def process_const_path_ref exp
@@ -158,6 +153,23 @@ module RipperRubyParser
     def process_at_int exp
       _, val, _ = exp.shift 3
       s(:lit, val.to_i)
+    end
+
+    # symbol-like sexps
+    def process_at_const exp
+      s(:const, extract_node_symbol(exp))
+    end
+
+    def process_at_ivar exp
+      s(:ivar, extract_node_symbol(exp))
+    end
+
+    def process_at_ident exp
+      s(:lvar, extract_node_symbol(exp))
+    end
+
+    def process_at_kv exp
+      s(extract_node_symbol(exp))
     end
 
     def identifier_node_to_symbol exp
