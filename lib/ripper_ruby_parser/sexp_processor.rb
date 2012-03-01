@@ -172,6 +172,8 @@ module RipperRubyParser
       s(extract_node_symbol(exp))
     end
 
+    private
+
     def identifier_node_to_symbol exp
       assert_type exp, :@ident
       _, ident, _ = exp.shift 3
