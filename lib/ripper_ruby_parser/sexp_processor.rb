@@ -149,6 +149,8 @@ module RipperRubyParser
         s(:const, const_node_to_symbol(contents))
       when :@ivar
         s(:ivar, ivar_node_to_symbol(contents))
+      when :@kw
+        s(:self)
       else
         s(:lvar, identifier_node_to_symbol(contents))
       end

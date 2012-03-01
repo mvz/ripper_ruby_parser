@@ -34,6 +34,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "@foo"
         result.must_equal s(:ivar, :@foo)
       end
+
+      it "works for self" do
+        result = parser.parse "self"
+        result.must_equal s(:self)
+      end
     end
 
   end
