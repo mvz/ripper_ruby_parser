@@ -41,5 +41,15 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for arguments" do
+      it "works for a simple case with splat" do
+        result = parser.parse "foo *bar"
+        result.must_equal s(:call,
+                            nil,
+                            :foo,
+                            s(:arglist,
+                              s(:splat, s(:call, nil, :bar, s(:arglist)))))
+      end
+    end
   end
 end

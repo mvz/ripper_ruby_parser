@@ -49,9 +49,18 @@ module RipperRubyParser
     def process_args_add_block exp
       _, content, _ = exp.shift 3
 
-      args = content.map { |sub_exp| process(sub_exp) }
+      if content.first.is_a? Symbol
+        args = process(content)
+        s(:arglist, args)
+      else
+        args = content.map { |sub_exp| process(sub_exp) }
+        s(:arglist, *args)
+      end
+    end
 
-      s(:arglist, *args)
+    def process_args_add_star exp
+      _, _, args = exp.shift 3
+      s(:splat, process(args))
     end
 
     def process_command exp
