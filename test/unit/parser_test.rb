@@ -28,5 +28,13 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo, s(:arglist)))
       end
     end
+
+    describe "for identifiers" do
+      it "works for an ivar" do
+        result = parser.parse "@foo"
+        result.must_equal s(:ivar, :@foo)
+      end
+    end
+
   end
 end

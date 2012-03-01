@@ -144,8 +144,11 @@ module RipperRubyParser
 
     def process_var_ref exp
       _, contents = exp.shift 2
-      if contents.sexp_type == :@const
+      case contents.sexp_type
+      when :@const
         s(:const, const_node_to_symbol(contents))
+      when :@ivar
+        s(:ivar, ivar_node_to_symbol(contents))
       else
         s(:lvar, identifier_node_to_symbol(contents))
       end
@@ -175,6 +178,17 @@ module RipperRubyParser
 
     def const_node_to_symbol exp
       assert_type exp, :@const
+      _, ident, _ = exp.shift 3
+
+      ident.to_sym
+    end
+
+    def ivar_node_to_symbol exp
+      assert_type exp, :@ivar
+      extract_node_symbol exp
+    end
+
+    def extract_node_symbol exp
       _, ident, _ = exp.shift 3
 
       ident.to_sym
