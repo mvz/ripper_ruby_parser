@@ -51,7 +51,7 @@ module RipperRubyParser
 
       if content.first.is_a? Symbol
         args = process(content)
-        s(:arglist, args)
+        s(:arglist, *args)
       else
         args = content.map { |sub_exp| process(sub_exp) }
         s(:arglist, *args)
@@ -59,8 +59,9 @@ module RipperRubyParser
     end
 
     def process_args_add_star exp
-      _, _, args = exp.shift 3
-      s(:splat, process(args))
+      _, args, splatarg = exp.shift 3
+      args = args.map { |sub| process(sub) }
+      s(*args, s(:splat, process(splatarg)))
     end
 
     def process_command exp

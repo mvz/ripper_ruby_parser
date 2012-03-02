@@ -50,6 +50,16 @@ describe RipperRubyParser::Parser do
                             s(:arglist,
                               s(:splat, s(:call, nil, :bar, s(:arglist)))))
       end
+
+      it "works for a multi-argument case with splat" do
+        result = parser.parse "foo bar, *baz"
+        result.must_equal s(:call,
+                            nil,
+                            :foo,
+                            s(:arglist,
+                              s(:call, nil, :bar, s(:arglist)),
+                              s(:splat, s(:call, nil, :baz, s(:arglist)))))
+      end
     end
   end
 end
