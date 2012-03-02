@@ -60,8 +60,9 @@ module RipperRubyParser
 
     def process_args_add_star exp
       _, args, splatarg = exp.shift 3
-      args = args.map { |sub| process(sub) }
-      s(*args, s(:splat, process(splatarg)))
+      items = args.map { |sub| process(sub) }
+      items << s(:splat, process(splatarg))
+      s(*items)
     end
 
     def process_command exp
