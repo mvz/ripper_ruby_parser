@@ -129,7 +129,7 @@ module RipperRubyParser
 
     def process_array exp
       _, elems = exp.shift 2
-      elems = elems.map {|elm| process(elm)}
+      elems = optionally_process_args_add_star elems
       s(:array, *elems)
     end
 
@@ -237,6 +237,14 @@ module RipperRubyParser
 
     def convert_block_args(args)
       args && s(:lasgn, args[1][1])
+    end
+
+    def optionally_process_args_add_star exp
+      if exp.first.is_a? Symbol
+        process(exp)
+      else
+        exp.map { |sub_exp| process(sub_exp) }
+      end
     end
   end
 end

@@ -61,5 +61,20 @@ describe RipperRubyParser::Parser do
                               s(:splat, s(:call, nil, :baz, s(:arglist)))))
       end
     end
+
+    describe "for arrays" do
+      it "works for a simple case with splat" do
+        result = parser.parse "[*foo]"
+        result.must_equal s(:array,
+                            s(:splat, s(:call, nil, :foo, s(:arglist))))
+      end
+
+      it "works for a multi-element case with splat" do
+        result = parser.parse "[foo, *bar]"
+        result.must_equal s(:array,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:splat, s(:call, nil, :bar, s(:arglist))))
+      end
+    end
   end
 end
