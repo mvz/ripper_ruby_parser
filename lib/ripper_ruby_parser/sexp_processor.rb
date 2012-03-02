@@ -48,14 +48,7 @@ module RipperRubyParser
 
     def process_args_add_block exp
       _, content, _ = exp.shift 3
-
-      if content.first.is_a? Symbol
-        args = process(content)
-        s(:arglist, *args)
-      else
-        args = content.map { |sub_exp| process(sub_exp) }
-        s(:arglist, *args)
-      end
+      s(:arglist, *handle_list_with_optional_splat(content))
     end
 
     def process_args_add_star exp
@@ -129,8 +122,7 @@ module RipperRubyParser
 
     def process_array exp
       _, elems = exp.shift 2
-      elems = optionally_process_args_add_star elems
-      s(:array, *elems)
+      s(:array, *handle_list_with_optional_splat(elems))
     end
 
     def process_brace_block exp
@@ -239,7 +231,7 @@ module RipperRubyParser
       args && s(:lasgn, args[1][1])
     end
 
-    def optionally_process_args_add_star exp
+    def handle_list_with_optional_splat exp
       if exp.first.is_a? Symbol
         process(exp)
       else
