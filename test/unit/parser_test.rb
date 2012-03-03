@@ -76,5 +76,15 @@ describe RipperRubyParser::Parser do
                             s(:splat, s(:call, nil, :bar, s(:arglist))))
       end
     end
+
+    describe "for method definitions" do
+      it "works with def with reciever" do
+        result = parser.parse "def foo.bar; end"
+        result.must_equal s(:defs,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :bar,
+                            s(:args), s(:scope, s(:block)))
+      end
+    end
   end
 end
