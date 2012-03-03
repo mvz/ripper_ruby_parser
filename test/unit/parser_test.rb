@@ -85,6 +85,26 @@ describe RipperRubyParser::Parser do
                             :bar,
                             s(:args), s(:scope, s(:block)))
       end
+
+      it "works with a method argument with a default value" do
+        result = parser.parse "def foo bar=nil; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :bar, s(:block, s(:lasgn, :bar, s(:nil)))),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
+      it "works with several method arguments with default values" do
+        result = parser.parse "def foo bar=1, baz=2; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args,
+                              :bar, :baz,
+                              s(:block,
+                                s(:lasgn, :bar, s(:lit, 1)),
+                                s(:lasgn, :baz, s(:lit, 2)))),
+                            s(:scope, s(:block, s(:nil))))
+      end
     end
 
     describe "for method calls with blocks" do
