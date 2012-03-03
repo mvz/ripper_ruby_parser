@@ -46,18 +46,6 @@ module RipperRubyParser
       s(:str, string)
     end
 
-    def process_args_add_block exp
-      _, content, _ = exp.shift 3
-      s(:arglist, *handle_list_with_optional_splat(content))
-    end
-
-    def process_args_add_star exp
-      _, args, splatarg = exp.shift 3
-      items = args.map { |sub| process(sub) }
-      items << s(:splat, process(splatarg))
-      s(*items)
-    end
-
     def process_command exp
       _, ident, arglist = exp.shift 3
 
@@ -218,18 +206,6 @@ module RipperRubyParser
         s(:scope, *block)
       else
         s(:scope, s(:block, *block))
-      end
-    end
-
-    def convert_block_args(args)
-      args && s(:lasgn, args[1][1])
-    end
-
-    def handle_list_with_optional_splat exp
-      if exp.first.is_a? Symbol
-        process(exp)
-      else
-        exp.map { |sub_exp| process(sub_exp) }
       end
     end
   end
