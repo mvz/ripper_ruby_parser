@@ -115,6 +115,20 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for method calls" do
+      it "works without brackets" do
+        result = parser.parse "foo bar"
+        result.must_equal s(:call, nil, :foo,
+                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+      end
+
+      it "works with brackets" do
+        result = parser.parse "foo(bar)"
+        result.must_equal s(:call, nil, :foo,
+                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+      end
+    end
+
     describe "for method calls with blocks" do
       it "works for a do block" do
         result = parser.parse "foo.bar do baz; end"

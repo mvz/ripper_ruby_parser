@@ -12,6 +12,11 @@ module RipperRubyParser
         items << s(:splat, process(splatarg))
         s(*items)
       end
+
+      def process_arg_paren exp
+        _, args = exp.shift 2
+        process(args)
+      end
     end
   end
 end
