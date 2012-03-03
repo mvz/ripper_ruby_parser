@@ -27,6 +27,14 @@ describe RipperRubyParser::Parser do
                             nil,
                             s(:call, nil, :foo, s(:arglist)))
       end
+
+      it "works in the block case" do
+        result = parser.parse "unless bar; foo; end"
+        result.must_equal s(:if,
+                            s(:call, nil, :bar, s(:arglist)),
+                            nil,
+                            s(:call, nil, :foo, s(:arglist)))
+      end
     end
 
     describe "for identifiers" do

@@ -16,6 +16,11 @@ module RipperRubyParser
         _, cond, truepart = exp.shift 3
         s(:if, process(cond), nil, process(truepart))
       end
+
+      def process_unless exp
+        _, cond, truepart, _ = exp.shift 4
+        s(:if, process(cond), nil, handle_statement_list(truepart))
+      end
     end
   end
 end

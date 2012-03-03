@@ -12,6 +12,15 @@ module RipperRubyParser
       def convert_block_args(args)
         args && s(:lasgn, args[1][1])
       end
+
+      def handle_statement_list exp
+        if exp.length == 1
+          process(exp.first)
+        else
+          statements = exp.map { |sub_exp| process(sub_exp) }
+          s(:block, *statements)
+        end
+      end
     end
   end
 end
