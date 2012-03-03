@@ -86,5 +86,18 @@ describe RipperRubyParser::Parser do
                             s(:args), s(:scope, s(:block)))
       end
     end
+
+    describe "for method calls with blocks" do
+      it "works for a do block" do
+        result = parser.parse "foo.bar do baz; end"
+        result.must_equal s(:iter,
+                            s(:call,
+                              s(:call, nil, :foo, s(:arglist)),
+                              :bar,
+                              s(:arglist)),
+                            nil,
+                            s(:call, nil, :baz, s(:arglist)))
+      end
+    end
   end
 end

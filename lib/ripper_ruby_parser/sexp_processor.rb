@@ -137,6 +137,11 @@ module RipperRubyParser
       s(:block, process(args), s(process(stmts.first)))
     end
 
+    def process_do_block exp
+      _, args, stmts = exp.shift 3
+      s(:block, process(args), s(process(stmts.first)))
+    end
+
     def process_bodystmt exp
       _, body, _, _, _ = exp.shift 5
       body = body.
