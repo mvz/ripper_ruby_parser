@@ -2,6 +2,7 @@ require 'ripper_ruby_parser/sexp_handlers/helper_methods'
 require 'ripper_ruby_parser/sexp_handlers/conditionals'
 require 'ripper_ruby_parser/sexp_handlers/blocks'
 require 'ripper_ruby_parser/sexp_handlers/arguments'
+require 'ripper_ruby_parser/sexp_handlers/methods'
 
 module RipperRubyParser
   module SexpHandlers
@@ -12,6 +13,7 @@ module RipperRubyParser
         include Conditionals
         include Blocks
         include Arguments
+        include Methods
       end
     end
   end
