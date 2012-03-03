@@ -114,14 +114,6 @@ module RipperRubyParser
       s(:args, *argsyms)
     end
 
-    def process_method_add_block exp
-      _, call, block = exp.shift 3
-      block = process(block)
-      args = convert_block_args(block[1])
-      stmt = block[2].first
-      s(:iter, process(call), args, stmt)
-    end
-
     def process_call exp
       _, reciever, _, method = exp.shift 4
       s(:call, process(reciever), identifier_node_to_symbol(method), s(:arglist))
@@ -130,16 +122,6 @@ module RipperRubyParser
     def process_array exp
       _, elems = exp.shift 2
       s(:array, *handle_list_with_optional_splat(elems))
-    end
-
-    def process_brace_block exp
-      _, args, stmts = exp.shift 3
-      s(:block, process(args), s(process(stmts.first)))
-    end
-
-    def process_do_block exp
-      _, args, stmts = exp.shift 3
-      s(:block, process(args), s(process(stmts.first)))
     end
 
     def process_bodystmt exp
