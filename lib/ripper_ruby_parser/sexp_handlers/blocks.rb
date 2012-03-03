@@ -10,11 +10,16 @@ module RipperRubyParser
       end
 
       def process_brace_block exp
-        _, args, stmts = exp.shift 3
-        s(:block, process(args), s(process(stmts.first)))
+        handle_generic_block exp
       end
 
       def process_do_block exp
+        handle_generic_block exp
+      end
+
+      private
+
+      def handle_generic_block exp
         _, args, stmts = exp.shift 3
         s(:block, process(args), s(process(stmts.first)))
       end
