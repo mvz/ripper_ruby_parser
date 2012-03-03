@@ -8,8 +8,8 @@ module RipperRubyParser
       end
 
       def process_defs exp
-        _, reciever, _, method, args, body = exp.shift 6
-        s(:defs, process(reciever),
+        _, receiver, _, method, args, body = exp.shift 6
+        s(:defs, process(receiver),
           identifier_node_to_symbol(method),
           process(args), process(body))
       end

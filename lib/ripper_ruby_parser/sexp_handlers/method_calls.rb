@@ -8,9 +8,9 @@ module RipperRubyParser
       end
 
       def process_command_call exp
-        _, reciever, _, method, arguments = exp.shift 5
+        _, receiver, _, method, arguments = exp.shift 5
         s(:call,
-          process(reciever),
+          process(receiver),
           identifier_node_to_symbol(method),
           process(arguments))
       end

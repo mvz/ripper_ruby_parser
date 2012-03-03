@@ -105,8 +105,8 @@ module RipperRubyParser
     end
 
     def process_call exp
-      _, reciever, _, method = exp.shift 4
-      s(:call, process(reciever), identifier_node_to_symbol(method), s(:arglist))
+      _, receiver, _, method = exp.shift 4
+      s(:call, process(receiver), identifier_node_to_symbol(method), s(:arglist))
     end
 
     def process_array exp
