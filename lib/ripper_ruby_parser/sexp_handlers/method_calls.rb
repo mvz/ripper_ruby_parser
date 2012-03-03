@@ -2,9 +2,22 @@ module RipperRubyParser
   module SexpHandlers
     module MethodCalls
       def process_method_add_arg exp
-        _, method, parens = exp.shift 3
-        method = process method
-        s(:call, nil, method[1][1], process(parens))
+        _, call, parens = exp.shift 3
+        call = process call
+        s(:call, call[1], call[2], process(parens))
+      end
+
+      def process_command_call exp
+        _, reciever, _, method, arguments = exp.shift 5
+        s(:call,
+          process(reciever),
+          identifier_node_to_symbol(method),
+          process(arguments))
+      end
+
+      def process_fcall exp
+        _, method = exp.shift 2
+        s(:call, nil, identifier_node_to_symbol(method), s(:arglist))
       end
     end
   end

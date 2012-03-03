@@ -116,29 +116,49 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for method calls" do
-      it "works without brackets" do
-        result = parser.parse "foo bar"
-        result.must_equal s(:call, nil, :foo,
-                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+      describe "without a reciever" do
+        it "works without brackets" do
+          result = parser.parse "foo bar"
+          result.must_equal s(:call, nil, :foo,
+                              s(:arglist, s(:call, nil, :bar, s(:arglist))))
+        end
+
+        it "works with brackets" do
+          result = parser.parse "foo(bar)"
+          result.must_equal s(:call, nil, :foo,
+                              s(:arglist, s(:call, nil, :bar, s(:arglist))))
+        end
       end
 
-      it "works with brackets" do
-        result = parser.parse "foo(bar)"
-        result.must_equal s(:call, nil, :foo,
-                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
-      end
-    end
-
-    describe "for method calls with blocks" do
-      it "works for a do block" do
-        result = parser.parse "foo.bar do baz; end"
-        result.must_equal s(:iter,
-                            s(:call,
+      describe "with a reciever" do
+        it "works without brackets" do
+          result = parser.parse "foo.bar baz"
+          result.must_equal s(:call,
                               s(:call, nil, :foo, s(:arglist)),
                               :bar,
-                              s(:arglist)),
-                            nil,
-                            s(:call, nil, :baz, s(:arglist)))
+                              s(:arglist, s(:call, nil, :baz, s(:arglist))))
+        end
+
+        it "works with brackets" do
+          result = parser.parse "foo.bar(baz)"
+          result.must_equal s(:call,
+                              s(:call, nil, :foo, s(:arglist)),
+                              :bar,
+                              s(:arglist, s(:call, nil, :baz, s(:arglist))))
+        end
+      end
+
+      describe "with blocks" do
+        it "works for a do block" do
+          result = parser.parse "foo.bar do baz; end"
+          result.must_equal s(:iter,
+                              s(:call,
+                                s(:call, nil, :foo, s(:arglist)),
+                                :bar,
+                                s(:arglist)),
+                              nil,
+                              s(:call, nil, :baz, s(:arglist)))
+        end
       end
     end
   end
