@@ -170,6 +170,19 @@ describe RipperRubyParser::Parser do
                               nil,
                               s(:call, nil, :baz, s(:arglist)))
         end
+
+        it "works for a do block with several statements" do
+          result = parser.parse "foo.bar do baz; qux; end"
+          result.must_equal s(:iter,
+                              s(:call,
+                                s(:call, nil, :foo, s(:arglist)),
+                                :bar,
+                                s(:arglist)),
+                              nil,
+                              s(:block,
+                                s(:call, nil, :baz, s(:arglist)),
+                                s(:call, nil, :qux, s(:arglist))))
+        end
       end
     end
 

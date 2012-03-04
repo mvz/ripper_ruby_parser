@@ -21,7 +21,7 @@ module RipperRubyParser
 
       def handle_generic_block exp
         _, args, stmts = exp.shift 3
-        s(:block, process(args), s(process(stmts.first)))
+        s(:block, process(args), s(handle_statement_list(stmts)))
       end
     end
   end
