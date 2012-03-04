@@ -29,6 +29,12 @@ module RipperRubyParser
         ident.to_sym
       end
 
+      def generic_add_star exp
+        _, args, splatarg = exp.shift 3
+        items = args.map { |sub| process(sub) }
+        items << s(:splat, process(splatarg))
+        s(*items)
+      end
     end
   end
 end

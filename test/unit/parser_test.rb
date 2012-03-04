@@ -201,6 +201,15 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz, s(:arglist)),
                               s(:call, nil, :qux, s(:arglist))))
       end
+
+      it "works for multiple assignment with left-hand splat" do
+        result = parser.parse "foo, *bar = baz, qux"
+        result.must_equal s(:masgn,
+                            s(:array, s(:lasgn, :foo), s(:splat, s(:lasgn, :bar))),
+                            s(:array,
+                              s(:call, nil, :baz, s(:arglist)),
+                              s(:call, nil, :qux, s(:arglist))))
+      end
     end
   end
 end
