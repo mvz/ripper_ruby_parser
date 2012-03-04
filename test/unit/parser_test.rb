@@ -173,5 +173,14 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:lit, :@foo)
       end
     end
+
+    describe "for assignment" do
+      it "works when assigning to an instance variable" do
+        result = parser.parse "@foo = bar"
+        result.must_equal s(:iasgn,
+                            :@foo,
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+    end
   end
 end
