@@ -161,5 +161,17 @@ describe RipperRubyParser::Parser do
         end
       end
     end
+
+    describe "for literals" do
+      it "works for symbols" do
+        result = parser.parse ":foo"
+        result.must_equal s(:lit, :foo)
+      end
+
+      it "works for symbols that look like instance variable names" do
+        result = parser.parse ":@foo"
+        result.must_equal s(:lit, :@foo)
+      end
+    end
   end
 end

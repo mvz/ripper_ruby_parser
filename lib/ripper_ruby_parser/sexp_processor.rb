@@ -46,6 +46,12 @@ module RipperRubyParser
       s(:str, string)
     end
 
+    def process_symbol_literal exp
+      _, symbol = exp.shift 2
+      sym = symbol[1]
+      s(:lit, extract_node_symbol(sym))
+    end
+
     def process_module exp
       _, const_ref, body = exp.shift 3
       const = const_node_to_symbol const_ref[1]
