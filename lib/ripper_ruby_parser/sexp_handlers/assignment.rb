@@ -15,7 +15,13 @@ module RipperRubyParser
           end
         end
 
-        s(:masgn, s(:array, *left), process(right))
+        right = process(right)
+
+        unless right.sexp_type == :array
+          right = s(:to_ary, right)
+        end
+
+        s(:masgn, s(:array, *left), right)
       end
 
       def process_mrhs_new_from_args exp

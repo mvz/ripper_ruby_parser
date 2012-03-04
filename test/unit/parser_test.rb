@@ -198,15 +198,17 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe "for assignment" do
+    describe "for single assignment" do
       it "works when assigning to an instance variable" do
         result = parser.parse "@foo = bar"
         result.must_equal s(:iasgn,
                             :@foo,
                             s(:call, nil, :bar, s(:arglist)))
       end
+    end
 
-      it "works for basic multiple assignment" do
+    describe "for multiple assignment" do
+      it "works the same number of items on each side" do
         result = parser.parse "foo, bar = baz, qux"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
@@ -215,7 +217,15 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :qux, s(:arglist))))
       end
 
-      it "works for multiple assignment with left-hand splat" do
+      it "works with a single item on the right-hand side" do
+        result = parser.parse "foo, bar = baz"
+        result.must_equal s(:masgn,
+                            s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                            s(:to_ary,
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works with left-hand splat" do
         result = parser.parse "foo, *bar = baz, qux"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:splat, s(:lasgn, :bar))),
