@@ -192,6 +192,15 @@ describe RipperRubyParser::Parser do
                             :@foo,
                             s(:call, nil, :bar, s(:arglist)))
       end
+
+      it "works for basic multiple assignment" do
+        result = parser.parse "foo, bar = baz, qux"
+        result.must_equal s(:masgn,
+                            s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                            s(:array,
+                              s(:call, nil, :baz, s(:arglist)),
+                              s(:call, nil, :qux, s(:arglist))))
+      end
     end
   end
 end
