@@ -21,6 +21,14 @@ module RipperRubyParser
           s(:block, *statements)
         end
       end
+
+      def identifier_node_to_symbol exp
+        assert_type exp, :@ident
+        _, ident, _ = exp.shift 3
+
+        ident.to_sym
+      end
+
     end
   end
 end

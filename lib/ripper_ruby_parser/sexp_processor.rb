@@ -46,23 +46,6 @@ module RipperRubyParser
       s(:str, string)
     end
 
-    def process_command exp
-      _, ident, arglist = exp.shift 3
-
-      ident = identifier_node_to_symbol ident
-      arglist = process arglist
-
-      s(:call, nil, ident, arglist)
-    end
-
-    def process_vcall exp
-      _, ident = exp.shift 3
-
-      ident = identifier_node_to_symbol ident
-
-      s(:call, nil, ident, s(:arglist))
-    end
-
     def process_module exp
       _, const_ref, body = exp.shift 3
       const = const_node_to_symbol const_ref[1]
@@ -102,11 +85,6 @@ module RipperRubyParser
       end
 
       s(:args, *args)
-    end
-
-    def process_call exp
-      _, receiver, _, method = exp.shift 4
-      s(:call, process(receiver), identifier_node_to_symbol(method), s(:arglist))
     end
 
     def process_array exp
@@ -165,13 +143,6 @@ module RipperRubyParser
     end
 
     private
-
-    def identifier_node_to_symbol exp
-      assert_type exp, :@ident
-      _, ident, _ = exp.shift 3
-
-      ident.to_sym
-    end
 
     def const_node_to_symbol exp
       assert_type exp, :@const
