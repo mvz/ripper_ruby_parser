@@ -276,6 +276,19 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:colon2, s(:const, :Foo), :Bar)
       end
     end
+
+    describe "for a :when sexp" do
+      it "turns nested :when clauses into a list" do
+        sexp = s(:when, s(s(:foo)), s(s(:bar)),
+                 s(:when, s(s(:foo)), s(s(:bar)),
+                   s(:when, s(s(:foo)), s(s(:bar)), nil)))
+        result = processor.process sexp
+        result.must_equal s(s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+                            s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+                            s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+                            nil)
+      end
+    end
   end
 
   describe "#identifier_node_to_symbol" do

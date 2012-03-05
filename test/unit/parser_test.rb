@@ -37,6 +37,43 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for a case block" do
+      it "works with a single when clause" do
+        result = parser.parse "case foo; when bar; baz; end"
+        result.must_equal s(:case,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:when,
+                              s(:array, s(:call, nil, :bar, s(:arglist))),
+                              s(:call, nil, :baz, s(:arglist))),
+                            nil)
+      end
+
+      it "works with multiple when clauses" do
+        result = parser.parse "case foo; when bar; baz; when qux; quux; end"
+        result.must_equal s(:case,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:when,
+                              s(:array, s(:call, nil, :bar, s(:arglist))),
+                              s(:call, nil, :baz, s(:arglist))),
+                            s(:when,
+                              s(:array, s(:call, nil, :qux, s(:arglist))),
+                              s(:call, nil, :quux, s(:arglist))),
+                            nil)
+      end
+
+      it "works with multiple statements in the when block" do
+        result = parser.parse "case foo; when bar; baz; qux; end"
+        result.must_equal s(:case,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:when,
+                              s(:array, s(:call, nil, :bar, s(:arglist))),
+                              s(:block,
+                                s(:call, nil, :baz, s(:arglist)),
+                                s(:call, nil, :qux, s(:arglist)))),
+                            nil)
+      end
+    end
+
     describe "for identifiers" do
       it "works for an ivar" do
         result = parser.parse "@foo"
