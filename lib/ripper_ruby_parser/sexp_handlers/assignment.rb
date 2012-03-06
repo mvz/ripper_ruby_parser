@@ -1,6 +1,22 @@
 module RipperRubyParser
   module SexpHandlers
     module Assignment
+      def process_assign exp
+        _, lvalue, value = exp.shift 3
+
+        lvalue = process(lvalue)
+        value = process(value)
+
+        case lvalue.sexp_type
+        when :ivar
+          s(:iasgn, lvalue[1], value)
+        when :aref_field
+          s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
+        else
+          s(:lasgn, lvalue[1], value)
+        end
+      end
+
       def process_massign exp
         _, left, right = exp.shift 3
 

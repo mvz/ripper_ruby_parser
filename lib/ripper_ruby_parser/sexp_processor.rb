@@ -65,48 +65,6 @@ module RipperRubyParser
       s(:class, const, parent, class_or_module_body(body))
     end
 
-    def process_assign exp
-      _, lvalue, value = exp.shift 3
-
-      lvalue = process(lvalue)
-      value = process(value)
-
-      case lvalue.sexp_type
-      when :ivar
-        s(:iasgn, lvalue[1], value)
-      when :aref_field
-        s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
-      else
-        s(:lasgn, lvalue[1], value)
-      end
-    end
-
-    def process_params exp
-      _, normal, defaults, *_ = exp.shift 6
-
-      args = [*normal].map do |id|
-        identifier_node_to_symbol id
-      end
-
-      assigns = [*defaults].map do |pair|
-        sym = identifier_node_to_symbol pair[0]
-        val = process pair[1]
-        s(:lasgn, sym, val)
-      end
-
-      if assigns.length > 0
-        args += assigns.map {|lasgn| lasgn[1]}
-        args << s(:block, *assigns)
-      end
-
-      s(:args, *args)
-    end
-
-    def process_array exp
-      _, elems = exp.shift 2
-      s(:array, *handle_list_with_optional_splat(elems))
-    end
-
     def process_bodystmt exp
       _, body, _, _, _ = exp.shift 5
       body = body.

@@ -17,6 +17,27 @@ module RipperRubyParser
         handle_generic_block exp
       end
 
+      def process_params exp
+        _, normal, defaults, *_ = exp.shift 6
+
+        args = [*normal].map do |id|
+          identifier_node_to_symbol id
+        end
+
+        assigns = [*defaults].map do |pair|
+          sym = identifier_node_to_symbol pair[0]
+          val = process pair[1]
+          s(:lasgn, sym, val)
+        end
+
+        if assigns.length > 0
+          args += assigns.map {|lasgn| lasgn[1]}
+          args << s(:block, *assigns)
+        end
+
+        s(:args, *args)
+      end
+
       private
 
       def handle_generic_block exp
