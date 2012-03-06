@@ -19,6 +19,16 @@ describe RipperRubyParser::Parser do
       sexp_p.verify
     end
 
+    describe "for if" do
+      it "works with an else clause" do
+        result = parser.parse "if foo; bar; else; baz; end"
+        result.must_equal s(:if,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :baz, s(:arglist)))
+      end
+    end
+
     describe "for unless" do
       it "works in the postfix case" do
         result = parser.parse "foo unless bar"

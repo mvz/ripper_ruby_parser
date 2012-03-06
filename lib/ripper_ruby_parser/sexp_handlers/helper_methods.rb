@@ -14,10 +14,13 @@ module RipperRubyParser
       end
 
       def handle_statement_list exp
-        if exp.length == 1
-          process(exp.first)
+        statements = exp.
+          map { |sub_exp| process(sub_exp) }.
+          reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
+
+        if statements.length == 1
+          statements.first
         else
-          statements = exp.map { |sub_exp| process(sub_exp) }
           s(:block, *statements)
         end
       end

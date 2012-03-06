@@ -2,14 +2,11 @@ module RipperRubyParser
   module SexpHandlers
     module Conditionals
       def process_if exp
-        _, cond, truepart, _ = exp.shift 4
-        truepart = truepart.map {|stmt| process(stmt)}
-        if truepart.length == 1
-          truepart = truepart.first
-        else
-          truepart = s(:block, *truepart)
-        end
-        s(:if, process(cond), truepart, nil)
+        _, cond, truepart, falsepart = exp.shift 4
+        s(:if,
+          process(cond),
+          handle_statement_list(truepart),
+          process(falsepart))
       end
 
       def process_unless_mod exp
@@ -34,6 +31,11 @@ module RipperRubyParser
             process(s(:array, values)),
             handle_statement_list(truepart)),
           *falsepart)
+      end
+
+      def process_else exp
+        _, body = exp.shift 2
+        handle_statement_list body
       end
     end
   end
