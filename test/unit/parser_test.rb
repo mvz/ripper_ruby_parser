@@ -101,6 +101,17 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux, s(:arglist)))),
                             nil)
       end
+
+      it "works with an else clause" do
+        result = parser.parse "case foo; when bar; baz; else; qux; end"
+        result.must_equal s(:case,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:when,
+                              s(:array, s(:call, nil, :bar, s(:arglist))),
+                              s(:call, nil, :baz, s(:arglist))),
+                            s(:call, nil, :qux, s(:arglist)))
+      end
+
     end
 
     describe "for identifiers" do

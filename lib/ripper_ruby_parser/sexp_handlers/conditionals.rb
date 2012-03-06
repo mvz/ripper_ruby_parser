@@ -33,7 +33,16 @@ module RipperRubyParser
 
       def process_when exp
         _, values, truepart, falsepart = exp.shift 4
-        falsepart = falsepart.nil? ? [nil] : process(falsepart)
+
+        if falsepart.nil?
+          falsepart = [nil]
+        else
+          falsepart = process(falsepart)
+          if falsepart.first.is_a? Symbol
+            falsepart = s(falsepart)
+          end
+        end
+
         s(s(:when,
             process(s(:array, values)),
             handle_statement_list(truepart)),
