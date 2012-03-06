@@ -242,6 +242,16 @@ describe RipperRubyParser::Parser do
                             :@foo,
                             s(:call, nil, :bar, s(:arglist)))
       end
+
+      it "works when assigning to a collection element" do
+        result = parser.parse "foo[bar] = baz"
+        result.must_equal s(:attrasgn,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :[]=,
+                            s(:arglist,
+                              s(:call, nil, :bar, s(:arglist)),
+                              s(:call, nil, :baz, s(:arglist))))
+      end
     end
 
     describe "for multiple assignment" do

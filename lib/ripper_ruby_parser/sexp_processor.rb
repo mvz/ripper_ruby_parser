@@ -69,14 +69,16 @@ module RipperRubyParser
       _, lvalue, value = exp.shift 3
 
       lvalue = process(lvalue)
+      value = process(value)
 
-      if lvalue.sexp_type == :ivar
-        sexp_type = :iasgn
+      case lvalue.sexp_type
+      when :ivar
+        s(:iasgn, lvalue[1], value)
+      when :aref_field
+        s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
       else
-        sexp_type = :lasgn
+        s(:lasgn, lvalue[1], value)
       end
-
-      s(sexp_type, lvalue[1], process(value))
     end
 
     def process_params exp
