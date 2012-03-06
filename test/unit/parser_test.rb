@@ -27,6 +27,17 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)),
                             s(:call, nil, :baz, s(:arglist)))
       end
+
+      it "works with an elsif clause" do
+        result = parser.parse "if foo; bar; elsif baz; qux; end"
+        result.must_equal s(:if,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:if,
+                              s(:call, nil, :baz, s(:arglist)),
+                              s(:call, nil, :qux, s(:arglist)),
+                              nil))
+      end
     end
 
     describe "for unless" do
