@@ -7,14 +7,7 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
 
-        case lvalue.sexp_type
-        when :ivar
-          s(:iasgn, lvalue[1], value)
-        when :aref_field
-          s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
-        else
-          s(:lasgn, lvalue[1], value)
-        end
+        create_assignment_sub_type lvalue, value
       end
 
       def process_massign exp
@@ -58,7 +51,19 @@ module RipperRubyParser
         value = process(value)
         operator = operator[1].gsub(/=/, '').to_sym
 
-        s(:lasgn, lvalue[1], s(:call, lvalue, operator, s(:arglist, value)))
+        create_assignment_sub_type lvalue,
+          s(:call, lvalue, operator, s(:arglist, value))
+      end
+
+      def create_assignment_sub_type lvalue, value
+        case lvalue.sexp_type
+        when :ivar
+          s(:iasgn, lvalue[1], value)
+        when :aref_field
+          s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
+        else
+          s(:lasgn, lvalue[1], value)
+        end
       end
     end
   end
