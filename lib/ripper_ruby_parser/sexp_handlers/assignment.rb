@@ -50,6 +50,16 @@ module RipperRubyParser
       def process_mlhs_add_star exp
         generic_add_star exp
       end
+
+      def process_opassign exp
+        _, lvalue, operator, value = exp.shift 4
+
+        lvalue = process(lvalue)
+        value = process(value)
+        operator = operator[1].gsub(/=/, '').to_sym
+
+        s(:lasgn, lvalue[1], s(:call, lvalue, operator, s(:arglist, value)))
+      end
     end
   end
 end

@@ -302,6 +302,26 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar, s(:arglist)),
                               s(:call, nil, :baz, s(:arglist))))
       end
+
+      it "works with operator shortcut +=" do
+        result = parser.parse "foo += bar"
+        result.must_equal s(:lasgn,
+                            :foo,
+                            s(:call,
+                              s(:lvar, :foo),
+                              :+,
+                              s(:arglist, s(:call, nil, :bar, s(:arglist)))))
+      end
+
+      it "works with operator shortcut -=" do
+        result = parser.parse "foo -= bar"
+        result.must_equal s(:lasgn,
+                            :foo,
+                            s(:call,
+                              s(:lvar, :foo),
+                              :-,
+                              s(:arglist, s(:call, nil, :bar, s(:arglist)))))
+      end
     end
 
     describe "for multiple assignment" do
