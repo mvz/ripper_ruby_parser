@@ -122,6 +122,16 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for collection indexing" do
+      it "works in the simple case" do
+        result = parser.parse "foo[bar]"
+        result.must_equal s(:call,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :[],
+                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+      end
+    end
+
     describe "for method definitions" do
       it "works with def with reciever" do
         result = parser.parse "def foo.bar; end"
