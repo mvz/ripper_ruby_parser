@@ -40,8 +40,12 @@ module RipperRubyParser
       assert_type content, :string_content
       inner = content[1]
 
-      assert_type inner, :@tstring_content
-      string = inner[1]
+      if inner.nil?
+        string = ""
+      else
+        assert_type inner, :@tstring_content
+        string = inner[1]
+      end
 
       s(:str, string)
     end

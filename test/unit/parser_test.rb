@@ -283,6 +283,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse ":@foo"
         result.must_equal s(:lit, :@foo)
       end
+
+      it "works for empty strings" do
+        result = parser.parse "''"
+        result.must_equal s(:str, "")
+      end
     end
 
     describe "for single assignment" do
