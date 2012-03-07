@@ -50,9 +50,16 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
         operator = operator[1].gsub(/=/, '').to_sym
+        operator_call = s(:call, lvalue, operator, s(:arglist, value))
 
-        create_assignment_sub_type lvalue,
-          s(:call, lvalue, operator, s(:arglist, value))
+        case lvalue.sexp_type
+        when :ivar
+          s(:iasgn, lvalue[1], operator_call)
+        when :aref_field
+          s(:op_asgn1, lvalue[1], s(:arglist, lvalue[2][1]), operator, value)
+        else
+          s(:lasgn, lvalue[1], operator_call)
+        end
       end
 
       def create_assignment_sub_type lvalue, value
