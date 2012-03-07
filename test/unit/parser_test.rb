@@ -178,7 +178,8 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defs,
                             s(:call, nil, :foo, s(:arglist)),
                             :bar,
-                            s(:args), s(:scope, s(:block)))
+                            s(:args),
+                            s(:scope, s(:block)))
       end
 
       it "works with a method argument with a default value" do
@@ -198,6 +199,14 @@ describe RipperRubyParser::Parser do
                               s(:block,
                                 s(:lasgn, :bar, s(:lit, 1)),
                                 s(:lasgn, :baz, s(:lit, 2)))),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
+      it "works with brackets around the parameter list" do
+        result = parser.parse "def foo(bar); end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :bar),
                             s(:scope, s(:block, s(:nil))))
       end
     end

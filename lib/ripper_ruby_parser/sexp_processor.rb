@@ -97,6 +97,11 @@ module RipperRubyParser
       s(:call, process(left), op, s(:arglist, process(right)))
     end
 
+    def process_paren exp
+      _, body = exp.shift 2
+      process(body)
+    end
+
     def process_at_int exp
       _, val, _ = exp.shift 3
       s(:lit, val.to_i)
