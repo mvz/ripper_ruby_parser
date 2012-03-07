@@ -94,7 +94,12 @@ module RipperRubyParser
 
     def process_binary exp
       _, left, op, right = exp.shift 4
-      s(:call, process(left), op, s(:arglist, process(right)))
+      case op
+      when "&&".to_sym
+        s(:and, process(left), process(right))
+      else
+        s(:call, process(left), op, s(:arglist, process(right)))
+      end
     end
 
     def process_paren exp
