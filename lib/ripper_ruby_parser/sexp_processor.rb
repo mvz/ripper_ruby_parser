@@ -116,11 +116,6 @@ module RipperRubyParser
       ident.to_sym
     end
 
-    def ivar_node_to_symbol exp
-      assert_type exp, :@ivar
-      extract_node_symbol exp
-    end
-
     def extract_node_symbol exp
       _, ident, _ = exp.shift 3
 
