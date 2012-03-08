@@ -119,7 +119,19 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz, s(:arglist))),
                             s(:call, nil, :qux, s(:arglist)))
       end
+    end
 
+    describe "for the return statement" do
+      it "works with no arguments" do
+        result = parser.parse "return"
+        result.must_equal s(:return)
+      end
+
+      it "works with one argument" do
+        result = parser.parse "return foo"
+        result.must_equal s(:return,
+                            s(:call, nil, :foo, s(:arglist)))
+      end
     end
 
     describe "for identifiers" do
