@@ -168,6 +168,11 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for arrays" do
+      it "works for an empty array" do
+        result = parser.parse "[]"
+        result.must_equal s(:array)
+      end
+
       it "works for a simple case with splat" do
         result = parser.parse "[*foo]"
         result.must_equal s(:array,

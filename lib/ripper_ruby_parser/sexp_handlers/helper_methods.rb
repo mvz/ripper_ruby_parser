@@ -2,7 +2,9 @@ module RipperRubyParser
   module SexpHandlers
     module HelperMethods
       def handle_list_with_optional_splat exp
-        if exp.first.is_a? Symbol
+        if exp.nil?
+          []
+        elsif exp.first.is_a? Symbol
           process(exp)
         else
           exp.map { |sub_exp| process(sub_exp) }
