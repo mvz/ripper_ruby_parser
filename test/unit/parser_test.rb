@@ -329,6 +329,13 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the __FILE__ keyword" do
+      it "creates a string sexp with value '(string)'" do
+        result = parser.parse "__FILE__"
+        result.must_equal s(:str, "(string)")
+      end
+    end
+
     describe "for constant references" do
       it "works when explicitely starting from the root namespace" do
         result = parser.parse "::Foo"

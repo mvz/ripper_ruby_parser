@@ -12,7 +12,7 @@ module RipperRubyParser
       @processors[:@ident] = :process_at_ident
       @processors[:@gvar] = :process_at_gvar
       @processors[:@ivar] = :process_at_ivar
-      @processors[:@kw] = :process_at_kv
+      @processors[:@kw] = :process_at_kw
     end
 
     def process exp
@@ -113,8 +113,13 @@ module RipperRubyParser
       s(:lvar, extract_node_symbol(exp))
     end
 
-    def process_at_kv exp
-      s(extract_node_symbol(exp))
+    def process_at_kw exp
+      sym = extract_node_symbol(exp)
+      if sym == :__FILE__
+        s(:str, "(string)")
+      else
+        s(sym)
+      end
     end
 
     private
