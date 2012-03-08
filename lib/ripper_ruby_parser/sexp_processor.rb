@@ -40,14 +40,18 @@ module RipperRubyParser
       assert_type content, :string_content
       inner = content[1]
 
-      if inner.nil?
-        string = ""
-      else
-        assert_type inner, :@tstring_content
-        string = inner[1]
-      end
+      string = extract_inner_string inner
 
       s(:str, string)
+    end
+
+    def process_regexp_literal exp
+      _, content, _ = exp.shift 3
+
+      inner = content[0]
+      string = extract_inner_string inner
+
+      s(:lit, Regexp.new(string))
     end
 
     def process_symbol_literal exp
@@ -166,6 +170,15 @@ module RipperRubyParser
         s(:scope, *block)
       else
         s(:scope, s(:block, *block))
+      end
+    end
+
+    def extract_inner_string exp
+      if exp.nil?
+        ""
+      else
+        assert_type exp, :@tstring_content
+        exp[1]
       end
     end
   end

@@ -297,6 +297,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "''"
         result.must_equal s(:str, "")
       end
+
+      it "works for a simple regex literal" do
+        result = parser.parse "/foo/"
+        result.must_equal s(:lit, /foo/)
+      end
     end
 
     describe "for single assignment" do
