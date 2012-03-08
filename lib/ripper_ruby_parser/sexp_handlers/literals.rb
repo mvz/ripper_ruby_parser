@@ -12,7 +12,11 @@ module RipperRubyParser
         string = extract_inner_string inner
 
         if rest.nil?
-          s(:str, string)
+          if string.is_a? String
+            s(:str, string)
+          else
+            s(:dstr, "", string)
+          end
         else
           s(:dstr, string, process(rest))
         end
@@ -40,9 +44,10 @@ module RipperRubyParser
       def extract_inner_string exp
         if exp.nil?
           ""
-        else
-          assert_type exp, :@tstring_content
+        elsif exp.sexp_type == :@tstring_content
           exp[1]
+        else
+          process(exp)
         end
       end
     end
