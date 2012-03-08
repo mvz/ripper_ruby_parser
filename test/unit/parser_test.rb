@@ -134,6 +134,22 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the until statement" do
+      it "works with do" do
+        result = parser.parse "until foo do; bar; end"
+        result.must_equal s(:until,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)), true)
+      end
+
+      it "works without do" do
+        result = parser.parse "until foo; bar; end"
+        result.must_equal s(:until,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)), true)
+      end
+    end
+
     describe "for identifiers" do
       it "works for an ivar" do
         result = parser.parse "@foo"
