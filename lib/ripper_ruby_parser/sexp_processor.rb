@@ -70,6 +70,11 @@ module RipperRubyParser
       s(:colon2, process(left), const_node_to_symbol(right))
     end
 
+    def process_top_const_ref exp
+      _, ref = exp.shift 2
+      s(:colon3, const_node_to_symbol(ref))
+    end
+
     def process_binary exp
       _, left, op, right = exp.shift 4
       case op

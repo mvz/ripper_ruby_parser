@@ -304,6 +304,13 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for constant references" do
+      it "works when explicitely starting from the root namespace" do
+        result = parser.parse "::Foo"
+        result.must_equal s(:colon3, :Foo)
+      end
+    end
+
     describe "for single assignment" do
       it "works when assigning to an instance variable" do
         result = parser.parse "@foo = bar"
