@@ -404,6 +404,13 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)))
       end
 
+      it "works when assigning to a constant" do
+        result = parser.parse "FOO = bar"
+        result.must_equal s(:cdecl,
+                            :FOO,
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
       it "works when assigning to a collection element" do
         result = parser.parse "foo[bar] = baz"
         result.must_equal s(:attrasgn,

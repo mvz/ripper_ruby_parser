@@ -68,6 +68,8 @@ module RipperRubyParser
           s(:iasgn, lvalue[1], value)
         when :aref_field
           s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
+        when :const
+          s(:cdecl, lvalue[1], value)
         else
           s(:lasgn, lvalue[1], value)
         end
