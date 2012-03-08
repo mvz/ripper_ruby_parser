@@ -9,9 +9,12 @@ module RipperRubyParser
       def process_string_content exp
         _, inner = exp.shift 2
 
-        string = extract_inner_string inner
+        string = extract_inner_string(inner)
         rest = []
-        unless string.is_a? String
+
+        if string.sexp_type == :str
+          string = string[1]
+        else
           rest << string
           string = ""
         end
@@ -37,7 +40,7 @@ module RipperRubyParser
 
         string = extract_inner_string content[0]
 
-        s(:lit, Regexp.new(string))
+        s(:lit, Regexp.new(string[1]))
       end
 
       def process_symbol_literal exp
@@ -54,13 +57,7 @@ module RipperRubyParser
       private
 
       def extract_inner_string exp
-        if exp.nil?
-          ""
-        elsif exp.sexp_type == :@tstring_content
-          exp[1]
-        else
-          process(exp)
-        end
+        process(exp) || s(:str, "")
       end
     end
   end
