@@ -475,6 +475,13 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo, s(:arglist)),
                             s(:call, nil, :bar, s(:arglist)))
       end
+
+      it "converts :|| to :or" do
+        result = parser.parse "foo || bar"
+        result.must_equal s(:or,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
     end
   end
 end
