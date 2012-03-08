@@ -12,6 +12,7 @@ module RipperRubyParser
 
       def process_arg_paren exp
         _, args = exp.shift 2
+        args = s() if args.nil?
         unless args.first.is_a? Symbol
           args.unshift :arglist
         end

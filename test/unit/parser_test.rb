@@ -244,6 +244,11 @@ describe RipperRubyParser::Parser do
           result.must_equal s(:call, nil, :foo,
                               s(:arglist, s(:call, nil, :bar, s(:arglist))))
         end
+
+        it "works with brackets around an empty parameter list" do
+          result = parser.parse "foo()"
+          result.must_equal s(:call, nil, :foo, s(:arglist))
+        end
       end
 
       describe "with a reciever" do
