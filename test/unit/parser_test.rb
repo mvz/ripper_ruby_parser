@@ -323,6 +323,14 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:str, "")
       end
 
+      it "works for basic interpolated strings" do
+        result = parser.parse '"foo#{bar}"'
+        result.must_equal s(:dstr,
+                            "foo",
+                            s(:evstr,
+                              s(:call, nil, :bar, s(:arglist))))
+      end
+
       it "works for a simple regex literal" do
         result = parser.parse "/foo/"
         result.must_equal s(:lit, /foo/)

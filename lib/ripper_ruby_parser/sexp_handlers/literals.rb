@@ -3,13 +3,24 @@ module RipperRubyParser
     module Literals
       def process_string_literal exp
         _, content = exp.shift 2
+        process(content)
+      end
 
-        assert_type content, :string_content
-        inner = content[1]
+      def process_string_content exp
+        _, inner, rest = exp.shift 3
 
         string = extract_inner_string inner
 
-        s(:str, string)
+        if rest.nil?
+          s(:str, string)
+        else
+          s(:dstr, string, process(rest))
+        end
+      end
+
+      def process_string_embexpr exp
+        _, list = exp.shift 2
+        s(:evstr, process(list.first))
       end
 
       def process_regexp_literal exp
