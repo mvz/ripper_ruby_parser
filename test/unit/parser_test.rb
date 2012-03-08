@@ -336,6 +336,13 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for variable references" do
+      it "works for global variables" do
+        result = parser.parse "$foo"
+        result.must_equal s(:gvar, :$foo)
+      end
+    end
+
     describe "for single assignment" do
       it "works when assigning to an instance variable" do
         result = parser.parse "@foo = bar"
