@@ -7,12 +7,14 @@ module RipperRubyParser
   class SexpProcessor < ::SexpProcessor
     def initialize
       super
+      # TODO: Find these automatically
       @processors[:@int] = :process_at_int
       @processors[:@const] = :process_at_const
       @processors[:@ident] = :process_at_ident
       @processors[:@gvar] = :process_at_gvar
       @processors[:@ivar] = :process_at_ivar
       @processors[:@kw] = :process_at_kw
+      @processors[:@tstring_content] = :process_at_tstring_content
     end
 
     def process exp

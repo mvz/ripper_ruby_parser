@@ -7,18 +7,23 @@ module RipperRubyParser
       end
 
       def process_string_content exp
-        _, inner, rest = exp.shift 3
+        _, inner = exp.shift 2
 
         string = extract_inner_string inner
+        rest = []
+        unless string.is_a? String
+          rest << string
+          string = ""
+        end
 
-        if rest.nil?
-          if string.is_a? String
-            s(:str, string)
-          else
-            s(:dstr, "", string)
-          end
+        until exp.empty? do
+          rest << process(exp.shift)
+        end
+
+        if rest.empty?
+          s(:str, string)
         else
-          s(:dstr, string, process(rest))
+          s(:dstr, string, *rest)
         end
       end
 
@@ -40,6 +45,13 @@ module RipperRubyParser
         sym = symbol[1]
         s(:lit, extract_node_symbol(sym))
       end
+
+      def process_at_tstring_content exp
+        _, string, _ = exp.shift 3
+        s(:str, string)
+      end
+
+      private
 
       def extract_inner_string exp
         if exp.nil?
