@@ -13,6 +13,15 @@ module RipperRubyParser
           identifier_node_to_symbol(method),
           process(args), process(body))
       end
+
+      def method_body exp
+        scope = process exp
+        block = scope[1]
+        if block.length == 1
+          block.push s(:nil)
+        end
+        scope
+      end
     end
   end
 end

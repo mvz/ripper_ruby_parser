@@ -5,6 +5,7 @@ require 'ripper_ruby_parser/sexp_handlers/arrays'
 require 'ripper_ruby_parser/sexp_handlers/assignment'
 require 'ripper_ruby_parser/sexp_handlers/blocks'
 require 'ripper_ruby_parser/sexp_handlers/conditionals'
+require 'ripper_ruby_parser/sexp_handlers/literals'
 require 'ripper_ruby_parser/sexp_handlers/method_calls'
 require 'ripper_ruby_parser/sexp_handlers/methods'
 
@@ -19,6 +20,7 @@ module RipperRubyParser
         include Assignment
         include Blocks
         include Conditionals
+        include Literals
         include MethodCalls
         include Methods
       end

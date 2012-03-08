@@ -34,32 +34,6 @@ module RipperRubyParser
       end
     end
 
-    def process_string_literal exp
-      _, content = exp.shift 2
-
-      assert_type content, :string_content
-      inner = content[1]
-
-      string = extract_inner_string inner
-
-      s(:str, string)
-    end
-
-    def process_regexp_literal exp
-      _, content, _ = exp.shift 3
-
-      inner = content[0]
-      string = extract_inner_string inner
-
-      s(:lit, Regexp.new(string))
-    end
-
-    def process_symbol_literal exp
-      _, symbol = exp.shift 2
-      sym = symbol[1]
-      s(:lit, extract_node_symbol(sym))
-    end
-
     def process_module exp
       _, const_ref, body = exp.shift 3
       const = const_node_to_symbol const_ref[1]
@@ -153,15 +127,6 @@ module RipperRubyParser
       ident.to_sym
     end
 
-    def method_body exp
-      scope = process exp
-      block = scope[1]
-      if block.length == 1
-        block.push s(:nil)
-      end
-      scope
-    end
-
     def class_or_module_body exp
       scope = process exp
       block = scope[1]
@@ -170,15 +135,6 @@ module RipperRubyParser
         s(:scope, *block)
       else
         s(:scope, s(:block, *block))
-      end
-    end
-
-    def extract_inner_string exp
-      if exp.nil?
-        ""
-      else
-        assert_type exp, :@tstring_content
-        exp[1]
       end
     end
   end
