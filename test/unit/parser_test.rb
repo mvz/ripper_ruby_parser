@@ -183,7 +183,7 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe "for arrays" do
+    describe "for array literals" do
       it "works for an empty array" do
         result = parser.parse "[]"
         result.must_equal s(:array)
@@ -200,6 +200,29 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:array,
                             s(:call, nil, :foo, s(:arglist)),
                             s(:splat, s(:call, nil, :bar, s(:arglist))))
+      end
+    end
+
+    describe "for hash literals" do
+      it "works for an empty hash" do
+        result = parser.parse "{}"
+        result.must_equal s(:hash)
+      end
+
+      it "works for a hash with one pair" do
+        result = parser.parse "{foo => bar}"
+        result.must_equal s(:hash,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
+      it "works for a hash with multiple pairs" do
+        result = parser.parse "{foo => bar, baz => qux}"
+        result.must_equal s(:hash,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :baz, s(:arglist)),
+                            s(:call, nil, :qux, s(:arglist)))
       end
     end
 
