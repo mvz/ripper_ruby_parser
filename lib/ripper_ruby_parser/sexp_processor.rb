@@ -80,21 +80,6 @@ module RipperRubyParser
       s(:colon3, const_node_to_symbol(ref))
     end
 
-    OPERATOR_MAP = {
-      "&&".to_sym => :and,
-      "||".to_sym => :or
-    }
-
-    def process_binary exp
-      _, left, op, right = exp.shift 4
-      mapped = OPERATOR_MAP[op]
-      if mapped
-        s(mapped, process(left), process(right))
-      else
-        s(:call, process(left), op, s(:arglist, process(right)))
-      end
-    end
-
     def process_paren exp
       _, body = exp.shift 2
       process(body)
