@@ -432,6 +432,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "$foo"
         result.must_equal s(:gvar, :$foo)
       end
+
+      it "works for regexp match references" do
+        result = parser.parse "$1"
+        result.must_equal s(:nth_ref, 1)
+      end
     end
 
     describe "for single assignment" do

@@ -14,6 +14,8 @@ module RipperRubyParser
       @processors[:@gvar] = :process_at_gvar
       @processors[:@ivar] = :process_at_ivar
       @processors[:@kw] = :process_at_kw
+      @processors[:@backref] = :process_at_backref
+
       @processors[:@tstring_content] = :process_at_tstring_content
     end
 
@@ -127,6 +129,11 @@ module RipperRubyParser
       else
         s(sym)
       end
+    end
+
+    def process_at_backref exp
+      _, str, _ = exp.shift 3
+      s(:nth_ref, str[1..-1].to_i)
     end
 
     private
