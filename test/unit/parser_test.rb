@@ -367,6 +367,11 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:str, "")
       end
 
+      it "works for strings with escape sequences" do
+        result = parser.parse '"\n"'
+        result.must_equal s(:str, "\n")
+      end
+
       it "works for trivial interpolated strings" do
         result = parser.parse '"#{foo}"'
         result.must_equal s(:dstr,

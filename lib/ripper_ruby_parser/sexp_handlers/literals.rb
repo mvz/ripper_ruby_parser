@@ -51,13 +51,19 @@ module RipperRubyParser
 
       def process_at_tstring_content exp
         _, string, _ = exp.shift 3
-        s(:str, string)
+        s(:str, unescape(string))
       end
 
       private
 
       def extract_inner_string exp
         process(exp) || s(:str, "")
+      end
+
+      def unescape string
+        string.gsub /(\\.)/ do
+          eval "\"#{$1}\""
+        end
       end
     end
   end
