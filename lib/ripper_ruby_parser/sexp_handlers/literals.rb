@@ -19,6 +19,8 @@ module RipperRubyParser
           string = ""
         end
 
+        string = unescape(string)
+
         until exp.empty? do
           rest << process(exp.shift)
         end
@@ -51,7 +53,7 @@ module RipperRubyParser
 
       def process_at_tstring_content exp
         _, string, _ = exp.shift 3
-        s(:str, unescape(string))
+        s(:str, string)
       end
 
       private

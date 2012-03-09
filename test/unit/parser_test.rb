@@ -401,6 +401,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "/foo/"
         result.must_equal s(:lit, /foo/)
       end
+
+      it "works for regex literals with escaped right bracket" do
+        result = parser.parse '/\)/'
+        result.must_equal s(:lit, /\)/)
+      end
     end
 
     describe "for the __FILE__ keyword" do
