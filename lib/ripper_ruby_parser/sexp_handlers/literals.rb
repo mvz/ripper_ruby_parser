@@ -51,6 +51,13 @@ module RipperRubyParser
         s(:lit, extract_node_symbol(sym))
       end
 
+      def process_dyna_symbol exp
+        _, list = exp.shift 2
+
+        string = process list[0]
+        s(:lit, string[1].to_sym)
+      end
+
       def process_at_tstring_content exp
         _, string, _ = exp.shift 3
         s(:str, string)

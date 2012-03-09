@@ -406,6 +406,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse '/\)/'
         result.must_equal s(:lit, /\)/)
       end
+
+      it "works for symbols created by prefixing a simple string with :" do
+        result = parser.parse ':"foo"'
+        result.must_equal s(:lit, :foo)
+      end
     end
 
     describe "for the __FILE__ keyword" do
