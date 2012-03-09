@@ -17,8 +17,11 @@ describe "Using RipperRubyParser and RubyParser" do
       end
 
       it "gives the same result" do
+        # Clone string because ruby_parser destroys it when there's a heredoc
+        # inside.
+        copy = program.clone
         original = oldparser.parse program
-        imitation = newparser.parse program
+        imitation = newparser.parse copy
 
         imitation.must_equal original
       end
