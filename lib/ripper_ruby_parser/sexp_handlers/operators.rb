@@ -19,13 +19,22 @@ module RipperRubyParser
       def process_unary exp
         _, _, arg = exp.shift 3
         arg = process(arg)
-        case arg.sexp_type
-        when :lit
+        if is_literal? arg
           s(:lit, -arg[1])
         else
           s(:call, arg, :-@, s(:arglist))
         end
       end
+
+      def process_dot2 exp
+        _, left, right = exp.shift 3
+        left = process(left)
+        right = process(right)
+        if is_literal?(left) && is_literal?(right)
+          s(:lit, Range.new(left[1], right[1]))
+        else
+          s(:dot2, left, right)
+        end
       end
     end
   end

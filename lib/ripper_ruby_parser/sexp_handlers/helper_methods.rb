@@ -40,6 +40,10 @@ module RipperRubyParser
         items << s(:splat, process(splatarg))
         s(*items)
       end
+
+      def is_literal? exp
+        exp.sexp_type == :lit
+      end
     end
   end
 end
