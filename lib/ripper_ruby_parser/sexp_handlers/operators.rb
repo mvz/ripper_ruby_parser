@@ -19,7 +19,13 @@ module RipperRubyParser
       def process_unary exp
         _, _, arg = exp.shift 3
         arg = process(arg)
-        s(:lit, -arg[1])
+        case arg.sexp_type
+        when :lit
+          s(:lit, -arg[1])
+        else
+          s(:call, arg, :-@, s(:arglist))
+        end
+      end
       end
     end
   end

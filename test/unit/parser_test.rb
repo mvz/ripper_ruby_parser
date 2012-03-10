@@ -553,6 +553,14 @@ describe RipperRubyParser::Parser do
         result = parser.parse "-1"
         result.must_equal s(:lit, -1)
       end
+
+      it "handles unary minus with a non-literal" do
+        result = parser.parse "-foo"
+        result.must_equal s(:call,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :-@,
+                            s(:arglist))
+      end
     end
   end
 end
