@@ -387,6 +387,11 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:str, "/\\)/")
       end
 
+      it "works for a string containing escaped quotes" do
+        result = parser.parse "\"\\\"\""
+        result.must_equal s(:str, "\"")
+      end
+
       it "works for trivial interpolated strings" do
         result = parser.parse '"#{foo}"'
         result.must_equal s(:dstr,
@@ -410,6 +415,14 @@ describe RipperRubyParser::Parser do
                             s(:evstr, s(:call, nil, :bar, s(:arglist))),
                             s(:str, "baz"),
                             s(:evstr, s(:call, nil, :qux, s(:arglist))))
+      end
+
+      it "works for strings with interpolations followed by escape sequences" do
+        result = parser.parse '"#{foo}\\n"'
+        result.must_equal  s(:dstr,
+                             "",
+                             s(:evstr, s(:call, nil, :foo, s(:arglist))),
+                             s(:str, "\n"))
       end
 
       it "works for a simple regex literal" do
