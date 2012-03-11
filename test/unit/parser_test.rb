@@ -368,8 +368,23 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for strings with escape sequences" do
-        result = parser.parse '"\n"'
+        result = parser.parse "\"\\n\""
         result.must_equal s(:str, "\n")
+      end
+
+      it "works for strings with escaped backslashes" do
+        result = parser.parse "\"\\\\n\""
+        result.must_equal s(:str, "\\n")
+      end
+
+      it "works for a double-quoted string representing a regex literal with escaped right bracket" do
+        result = parser.parse "\"/\\)/\""
+        result.must_equal s(:str, "/\\)/")
+      end
+
+      it "works for a single-quoted string representing a regex literal with escaped right bracket" do
+        result = parser.parse "'/\\)/'"
+        result.must_equal s(:str, "/\\)/")
       end
 
       it "works for trivial interpolated strings" do
