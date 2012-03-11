@@ -431,8 +431,13 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for regex literals with escaped right bracket" do
-        result = parser.parse '/\)/'
+        result = parser.parse '/\\)/'
         result.must_equal s(:lit, /\)/)
+      end
+
+      it "works for regex literals with escape sequences" do
+        result = parser.parse '/\\)\\n\\\\/'
+        result.must_equal s(:lit, /\)\n\\/)
       end
 
       it "works for symbols created by prefixing a simple string with :" do
