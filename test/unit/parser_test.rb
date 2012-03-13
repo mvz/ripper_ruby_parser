@@ -532,6 +532,13 @@ describe RipperRubyParser::Parser do
                             :bar=,
                             s(:arglist, s(:call, nil, :baz, s(:arglist))))
       end
+
+      it "works when assigning to a class variable" do
+        result = parser.parse "@@foo = bar"
+        result.must_equal s(:cvdecl,
+                            :@@foo,
+                            s(:call, nil, :bar, s(:arglist)))
+      end
     end
 
     describe "for operator assignment" do
