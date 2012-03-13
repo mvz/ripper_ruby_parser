@@ -11,6 +11,7 @@ module RipperRubyParser
       @processors[:@int] = :process_at_int
       @processors[:@const] = :process_at_const
       @processors[:@ident] = :process_at_ident
+      @processors[:@cvar] = :process_at_cvar
       @processors[:@gvar] = :process_at_gvar
       @processors[:@ivar] = :process_at_ivar
       @processors[:@kw] = :process_at_kw
@@ -100,6 +101,10 @@ module RipperRubyParser
     # symbol-like sexps
     def process_at_const exp
       s(:const, extract_node_symbol(exp))
+    end
+
+    def process_at_cvar exp
+      s(:cvar, extract_node_symbol(exp))
     end
 
     def process_at_gvar exp

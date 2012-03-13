@@ -493,6 +493,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "$1"
         result.must_equal s(:nth_ref, 1)
       end
+
+      it "works for class variables" do
+        result = parser.parse "@@foo"
+        result.must_equal s(:cvar, :@@foo)
+      end
     end
 
     describe "for single assignment" do
