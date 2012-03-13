@@ -649,6 +649,14 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo, s(:arglist)),
                             s(:call, nil, :bar, s(:arglist)))
       end
+
+      it "handles the ternary operator" do
+        result = parser.parse "foo ? bar : baz"
+        result.must_equal s(:if,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :baz, s(:arglist)))
+      end
     end
 
     # Note: differences in the handling of comments are not caught by Sexp's implementation of equality.

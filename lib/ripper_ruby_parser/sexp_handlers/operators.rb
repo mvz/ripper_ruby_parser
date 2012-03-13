@@ -36,6 +36,11 @@ module RipperRubyParser
           s(:dot2, left, right)
         end
       end
+
+      def process_ifop exp
+        _, cond, truepart, falsepart = exp.shift 4
+        s(:if, process(cond), process(truepart), process(falsepart))
+      end
     end
   end
 end
