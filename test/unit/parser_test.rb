@@ -448,9 +448,16 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:lit, /\)\n\\/)
       end
 
-      it "works for symbols created by prefixing a simple string with :" do
+      it "works for simple dsyms" do
         result = parser.parse ':"foo"'
         result.must_equal s(:lit, :foo)
+      end
+
+      it "works for dsyms with interpolations" do
+        result = parser.parse ':"foo#{bar}"'
+        result.must_equal s(:dsym,
+                            "foo",
+                            s(:evstr, s(:call, nil, :bar, s(:arglist))))
       end
     end
 

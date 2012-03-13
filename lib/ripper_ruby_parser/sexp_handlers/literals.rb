@@ -7,27 +7,9 @@ module RipperRubyParser
       end
 
       def process_string_content exp
-        _, inner = exp.shift 2
+        exp.shift
 
-        string = extract_inner_string(inner)
-        rest = []
-
-        if string.sexp_type == :str
-          string = string[1]
-        else
-          rest << string
-          string = ""
-        end
-
-        string = unescape(string)
-
-        until exp.empty? do
-          result = process(exp.shift)
-          if result.sexp_type == :str
-            result[1] = unescape(result[1])
-          end
-          rest << result
-        end
+        string, rest = extract_string_parts exp
 
         if rest.empty?
           s(:str, string)
@@ -58,8 +40,12 @@ module RipperRubyParser
       def process_dyna_symbol exp
         _, list = exp.shift 2
 
-        string = process list[0]
-        s(:lit, string[1].to_sym)
+        string, rest = extract_string_parts list
+        if rest.empty?
+          s(:lit, string.to_sym)
+        else
+          s(:dsym, string, *rest)
+        end
       end
 
       def process_at_tstring_content exp
@@ -71,6 +57,32 @@ module RipperRubyParser
 
       def extract_inner_string exp
         process(exp) || s(:str, "")
+      end
+
+      def extract_string_parts exp
+        inner = exp.shift
+
+        string = extract_inner_string(inner)
+        rest = []
+
+        if string.sexp_type == :str
+          string = string[1]
+        else
+          rest << string
+          string = ""
+        end
+
+        string = unescape(string)
+
+        until exp.empty? do
+          result = process(exp.shift)
+          if result.sexp_type == :str
+            result[1] = unescape(result[1])
+          end
+          rest << result
+        end
+
+        return string, rest
       end
 
       def unescape string
