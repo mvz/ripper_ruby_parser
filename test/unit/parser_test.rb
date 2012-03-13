@@ -619,5 +619,16 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)))
       end
     end
+
+    # Note: differences in the handling of comments are not caught by Sexp's implementation of equality.
+    describe "for comments" do
+      it "handles method comments" do
+        result = parser.parse "# Foo\ndef foo; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args), s(:scope, s(:block, s(:nil))))
+        result.comments.must_equal "# Foo\n"
+      end
+    end
   end
 end

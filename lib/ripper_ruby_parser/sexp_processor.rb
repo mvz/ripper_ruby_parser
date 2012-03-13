@@ -85,6 +85,13 @@ module RipperRubyParser
       process(body)
     end
 
+    def process_comment exp
+      _, comment, inner = exp.shift 3
+      sexp = process(inner)
+      sexp.comments = comment
+      sexp
+    end
+
     def process_at_int exp
       _, val, _ = exp.shift 3
       s(:lit, val.to_i)
