@@ -741,6 +741,14 @@ describe RipperRubyParser::Parser do
         defn.sexp_type.must_equal :defn
         defn.comments.must_equal "# Bar\n"
       end
+
+      it "combibes multi-line comments" do
+        result = parser.parse "# Foo\n# Bar\ndef foo; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args), s(:scope, s(:block, s(:nil))))
+        result.comments.must_equal "# Foo\n# Bar\n"
+      end
     end
   end
 end

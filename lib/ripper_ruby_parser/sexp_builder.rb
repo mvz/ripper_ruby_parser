@@ -8,7 +8,8 @@ module RipperRubyParser
     end
 
     def on_comment tok
-      @comment = tok
+      @comment ||= ""
+      @comment += tok
       super
     end
 
@@ -16,6 +17,7 @@ module RipperRubyParser
       case tok
       when "class", "def", "module"
         @comment_stack.push @comment
+        @comment = nil
       end
       super
     end
