@@ -52,5 +52,17 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
+  describe "for an example with yield from Reek" do
+    let :program do
+      'def fred() yield(3) if block_given?; end'
+    end
+
+    it "gives the same result" do
+      original = oldparser.parse program
+      imitation = newparser.parse program
+
+      imitation.must_equal original
+    end
+  end
 end
 
