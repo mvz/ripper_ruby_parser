@@ -4,7 +4,12 @@ module RipperRubyParser
       def process_method_add_arg exp
         _, call, parens = exp.shift 3
         call = process call
-        s(:call, call[1], call[2], process(parens))
+        args = if parens.empty?
+                 s(:arglist)
+               else
+                 process parens
+               end
+        s(:call, call[1], call[2], args)
       end
 
       def process_call exp

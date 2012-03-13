@@ -309,6 +309,11 @@ describe RipperRubyParser::Parser do
           result = parser.parse "foo()"
           result.must_equal s(:call, nil, :foo, s(:arglist))
         end
+
+        it "works for methods ending in a question mark" do
+          result = parser.parse "foo?"
+          result.must_equal s(:call, nil, :foo?, s(:arglist))
+        end
       end
 
       describe "with a reciever" do
