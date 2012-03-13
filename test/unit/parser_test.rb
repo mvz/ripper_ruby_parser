@@ -273,6 +273,14 @@ describe RipperRubyParser::Parser do
                             s(:args, :bar),
                             s(:scope, s(:block, s(:nil))))
       end
+
+      it "works with a simple splat" do
+        result = parser.parse "def foo *bar; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :"*bar"),
+                            s(:scope, s(:block, s(:nil))))
+      end
     end
 
     describe "for method calls" do
