@@ -671,7 +671,8 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    # Note: differences in the handling of comments are not caught by Sexp's implementation of equality.
+    # Note: differences in the handling of comments are not caught by Sexp's
+    # implementation of equality.
     describe "for comments" do
       it "handles method comments" do
         result = parser.parse "# Foo\ndef foo; end"
