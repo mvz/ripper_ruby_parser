@@ -16,8 +16,15 @@ module RipperRubyParser
 
       def process_return exp
         _, arglist = exp.shift 2
+
         arglist = process(arglist)
-        s(:return, arglist[1])
+        args = arglist[1..-1]
+
+        if args.length == 1
+          s(:return, *args)
+        else
+          s(:return, s(:array, *args))
+        end
       end
 
       def process_return0 exp

@@ -132,6 +132,14 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:return,
                             s(:call, nil, :foo, s(:arglist)))
       end
+
+      it "works with multiple arguments" do
+        result = parser.parse "return foo, bar"
+        result.must_equal s(:return,
+                            s(:array,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :bar, s(:arglist))))
+      end
     end
 
     describe "for the until statement" do
