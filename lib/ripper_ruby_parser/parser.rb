@@ -1,4 +1,4 @@
-require 'ripper'
+require 'ripper_ruby_parser/sexp_builder'
 require 'ripper_ruby_parser/sexp_processor'
 
 module RipperRubyParser
@@ -9,8 +9,9 @@ module RipperRubyParser
       @processor = processor
     end
 
-    def parse source
-      exp = Sexp.from_array(Ripper.sexp source)
+    def parse source, filename='-', lineno=1
+      parser = SexpBuilder.new(source, filename, lineno)
+      exp = Sexp.from_array(parser.parse)
       @processor.process exp
     end
   end
