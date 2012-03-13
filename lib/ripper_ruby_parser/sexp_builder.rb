@@ -11,12 +11,21 @@ module RipperRubyParser
       super
     end
 
+    def on_class *args
+      commentize(super)
+    end
+
     def on_def *args
-      result = super
+      commentize(super)
+    end
+
+    private
+
+    def commentize exp
       if @comment.nil?
-        result
+        exp
       else
-        [:comment, @comment, result]
+        [:comment, @comment, exp]
       end
     end
   end
