@@ -19,6 +19,10 @@ module RipperRubyParser
       commentize(super)
     end
 
+    def on_module *args
+      commentize(super)
+    end
+
     private
 
     def commentize exp

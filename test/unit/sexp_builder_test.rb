@@ -46,6 +46,24 @@ describe RipperRubyParser::SexpBuilder do
                            nil,
                            [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]
     end
+
+    it "produces a comment node surrounding a commented module" do
+      result = parse_with_builder "# Foo\nmodule Foo; end"
+      result.must_equal [:program,
+                         [[:comment,
+                           "# Foo\n",
+                           [:module,
+                            [:const_ref, [:@const, "Foo", [2, 7]]],
+                            [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
+    end
+
+    it "does not produce a comment node surrounding a def that has no comment" do
+      result = parse_with_builder "module Foo; end"
+      result.must_equal [:program,
+                         [[:module,
+                           [:const_ref, [:@const, "Foo", [1, 7]]],
+                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]
+    end
   end
 end
 
