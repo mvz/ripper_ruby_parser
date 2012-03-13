@@ -158,18 +158,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe "for identifiers" do
-      it "works for an ivar" do
-        result = parser.parse "@foo"
-        result.must_equal s(:ivar, :@foo)
-      end
-
-      it "works for self" do
-        result = parser.parse "self"
-        result.must_equal s(:self)
-      end
-    end
-
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"
@@ -532,6 +520,16 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for variable references" do
+      it "works for self" do
+        result = parser.parse "self"
+        result.must_equal s(:self)
+      end
+
+      it "works for instance variables" do
+        result = parser.parse "@foo"
+        result.must_equal s(:ivar, :@foo)
+      end
+
       it "works for global variables" do
         result = parser.parse "$foo"
         result.must_equal s(:gvar, :$foo)
