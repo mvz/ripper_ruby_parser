@@ -32,6 +32,17 @@ module RipperRubyParser
         s(:return)
       end
 
+      def process_yield exp
+        _, arglist = exp.shift 2
+        arglist = process arglist
+        s(:yield, *arglist[1..-1])
+      end
+
+      def process_yield0 exp
+        _ = exp.shift
+        s(:yield)
+      end
+
       def method_body exp
         scope = process exp
         block = scope[1]

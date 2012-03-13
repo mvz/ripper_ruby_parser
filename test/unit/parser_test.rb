@@ -372,6 +372,49 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for yield" do
+      it "works with no arguments and no brackets" do
+        result = parser.parse "yield"
+        result.must_equal s(:yield)
+      end
+
+      it "works with brackets but no arguments" do
+        result = parser.parse "yield()"
+        result.must_equal s(:yield)
+      end
+
+      it "works with one argument and no brackets" do
+        result = parser.parse "yield foo"
+        result.must_equal s(:yield, s(:call, nil, :foo, s(:arglist)))
+      end
+
+      it "works with one argument and brackets" do
+        result = parser.parse "yield(foo)"
+        result.must_equal s(:yield, s(:call, nil, :foo, s(:arglist)))
+      end
+
+      it "works with multiple arguments and no brackets" do
+        result = parser.parse "yield foo, bar"
+        result.must_equal s(:yield,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
+      it "works with multiple arguments and brackets" do
+        result = parser.parse "yield(foo, bar)"
+        result.must_equal s(:yield,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
+      it "works with splat" do
+        result = parser.parse "yield foo, *bar"
+        result.must_equal s(:yield,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:splat, s(:call, nil, :bar, s(:arglist))))
+      end
+    end
+
     describe "for literals" do
       it "works for symbols" do
         result = parser.parse ":foo"
