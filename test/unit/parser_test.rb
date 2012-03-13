@@ -729,6 +729,18 @@ describe RipperRubyParser::Parser do
                             s(:args), s(:scope, s(:block, s(:nil))))
         result.comments.must_equal "# Foo\n"
       end
+
+      it "matches comments to the correct entity" do
+        result = parser.parse "# Foo\nclass Foo\n# Bar\ndef bar\nend\nend"
+        result.must_equal s(:class, :Foo, nil,
+                            s(:scope,
+                              s(:defn, :bar,
+                                s(:args), s(:scope, s(:block, s(:nil))))))
+        result.comments.must_equal "# Foo\n"
+        defn = result[3][1]
+        defn.sexp_type.must_equal :defn
+        defn.comments.must_equal "# Bar\n"
+      end
     end
   end
 end

@@ -4,10 +4,19 @@ module RipperRubyParser
     def initialize *args
       super
       @comment = nil
+      @comment_stack = []
     end
 
     def on_comment tok
       @comment = tok
+      super
+    end
+
+    def on_kw tok
+      case tok
+      when "class", "def", "module"
+        @comment_stack.push @comment
+      end
       super
     end
 
@@ -26,10 +35,11 @@ module RipperRubyParser
     private
 
     def commentize exp
-      if @comment.nil?
+      comment = @comment_stack.pop
+      if comment.nil?
         exp
       else
-        [:comment, @comment, exp]
+        [:comment, comment, exp]
       end
     end
   end
