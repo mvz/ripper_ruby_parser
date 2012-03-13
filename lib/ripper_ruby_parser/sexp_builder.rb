@@ -13,7 +13,11 @@ module RipperRubyParser
 
     def on_def *args
       result = super
-      [:comment, @comment, result]
+      if @comment.nil?
+        result
+      else
+        [:comment, @comment, result]
+      end
     end
   end
 end
