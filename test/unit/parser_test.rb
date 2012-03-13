@@ -519,6 +519,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar, s(:arglist)),
                               s(:call, nil, :baz, s(:arglist))))
       end
+
+      it "works when assigning to an attribute" do
+        result = parser.parse "foo.bar = baz"
+        result.must_equal s(:attrasgn,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :bar=,
+                            s(:arglist, s(:call, nil, :baz, s(:arglist))))
+      end
     end
 
     describe "for operator assignment" do

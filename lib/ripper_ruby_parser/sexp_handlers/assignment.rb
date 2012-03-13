@@ -70,8 +70,12 @@ module RipperRubyParser
           s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
         when :const
           s(:cdecl, lvalue[1], value)
-        else
+        when :lvar
           s(:lasgn, lvalue[1], value)
+        when :field
+          s(:attrasgn, lvalue[1], :"#{lvalue[3][1]}=", s(:arglist, value))
+        else
+          s(lvalue.sexp_type, lvalue[1], value)
         end
       end
     end
