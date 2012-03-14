@@ -19,6 +19,16 @@ describe RipperRubyParser::Parser do
       sexp_p.verify
     end
 
+    describe "for a class declaration" do
+      it "works with a namespaced class name" do
+        result = parser.parse "class Foo::Bar; end"
+        result.must_equal s(:class,
+                            s(:colon2, s(:const, :Foo), :Bar),
+                            nil,
+                            s(:scope))
+      end
+    end
+
     describe "for if" do
       it "works in the postfix case" do
         result = parser.parse "foo if bar"
@@ -516,6 +526,13 @@ describe RipperRubyParser::Parser do
       it "works when explicitely starting from the root namespace" do
         result = parser.parse "::Foo"
         result.must_equal s(:colon3, :Foo)
+      end
+
+      it "works with a three-level constant lookup" do
+        result = parser.parse "Foo::Bar::Baz"
+        result.must_equal s(:colon2,
+                            s(:colon2, s(:const, :Foo), :Bar),
+                            :Baz)
       end
     end
 

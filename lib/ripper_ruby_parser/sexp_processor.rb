@@ -48,7 +48,10 @@ module RipperRubyParser
 
     def process_class exp
       _, const_ref, parent, body = exp.shift 4
-      const = const_node_to_symbol const_ref[1]
+      const = process(const_ref)
+      if const.sexp_type == :const
+        const = const[1]
+      end
       parent = process(parent)
       s(:class, const, parent, class_or_module_body(body))
     end
@@ -74,6 +77,11 @@ module RipperRubyParser
     def process_const_path_ref exp
       _, left, right = exp.shift 3
       s(:colon2, process(left), const_node_to_symbol(right))
+    end
+
+    def process_const_ref exp
+      _, ref = exp.shift 3
+      process(ref)
     end
 
     def process_top_const_ref exp
