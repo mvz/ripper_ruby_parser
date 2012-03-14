@@ -602,6 +602,13 @@ describe RipperRubyParser::Parser do
                             :@@foo,
                             s(:call, nil, :bar, s(:arglist)))
       end
+
+      it "works when assigning to a global variable" do
+        result = parser.parse "$foo = bar"
+        result.must_equal s(:gasgn,
+                            :$foo,
+                            s(:call, nil, :bar, s(:arglist)))
+      end
     end
 
     describe "for operator assignment" do
