@@ -187,6 +187,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar, s(:arglist)),
                               s(:splat, s(:call, nil, :baz, s(:arglist)))))
       end
+
+      it "works for a simple case with explicit block parameter" do
+        result = parser.parse "def foo &bar; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :"&bar"),
+                            s(:scope, s(:block, s(:nil))))
+      end
     end
 
     describe "for array literals" do
