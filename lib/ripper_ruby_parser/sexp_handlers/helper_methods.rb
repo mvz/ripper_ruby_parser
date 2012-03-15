@@ -44,16 +44,6 @@ module RipperRubyParser
       def is_literal? exp
         exp.sexp_type == :lit
       end
-
-      # FIXME: Make this superfluous by ensureing sexps with type :__empty are
-      # never returned by #process.
-      def unwrap_empty exp
-        if exp.sexp_type == :__empty
-          return exp[1]
-        else
-          exp
-        end
-      end
     end
   end
 end

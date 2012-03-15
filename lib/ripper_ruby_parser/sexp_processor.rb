@@ -95,7 +95,13 @@ module RipperRubyParser
 
     def process_paren exp
       _, body = exp.shift 2
-      process(body)
+      if body.size == 0
+        s()
+      elsif body.first.is_a? Symbol
+        process body
+      else
+        process body[0]
+      end
     end
 
     def process_comment exp
