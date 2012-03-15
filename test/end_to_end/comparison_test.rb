@@ -64,5 +64,53 @@ describe "Using RipperRubyParser and RubyParser" do
       imitation.must_equal original
     end
   end
+
+  describe "for an example with floats from Reek" do
+    let :program do
+      <<-END
+        def total_envy
+          fred = @item
+          total = 0
+          total += fred.price
+          total += fred.tax
+          total *= 1.15
+        end
+      END
+    end
+
+    it "gives the same result" do
+      original = oldparser.parse program
+      imitation = newparser.parse program
+
+      formatted(imitation).must_equal formatted(original)
+    end
+  end
+
+  describe "for a example with operators and explicit block parameter from Reek" do
+    let :program do
+      <<-END
+        def parse(arg, argv, &error)
+          if !(val = arg) and (argv.empty? or /\\A-/ =~ (val = argv[0]))
+            return nil, block, nil
+          end
+          opt = (val = parse_arg(val, &error))[1]
+          val = conv_arg(*val)
+          if opt and !arg
+            argv.shift
+          else
+            val[0] = nil
+          end
+          val
+        end
+      END
+    end
+
+    it "gives the same result" do
+      original = oldparser.parse program
+      imitation = newparser.parse program
+
+      formatted(imitation).must_equal formatted(original)
+    end
+  end
 end
 
