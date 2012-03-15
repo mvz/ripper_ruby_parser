@@ -7,7 +7,7 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
 
-        create_assignment_sub_type lvalue, value
+        create_regular_assignment_sub_type lvalue, value
       end
 
       def process_massign exp
@@ -50,19 +50,32 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
         operator = operator[1].gsub(/=/, '').to_sym
+
+        create_operator_assignment_sub_type lvalue, value, operator
+      end
+
+      def create_operator_assignment_sub_type lvalue, value, operator
         if operator == :"||"
           s(:op_asgn_or, lvalue, create_assignment_sub_type(lvalue, value))
         else
-          operator_call = s(:call, lvalue, operator, s(:arglist, value))
-
           case lvalue.sexp_type
-          when :ivar
-            s(:iasgn, lvalue[1], operator_call)
           when :aref_field
             s(:op_asgn1, lvalue[1], s(:arglist, lvalue[2][1]), operator, value)
           else
-            s(:lasgn, lvalue[1], operator_call)
+            operator_call = s(:call, lvalue, operator, s(:arglist, value))
+            create_assignment_sub_type lvalue, operator_call
           end
+        end
+      end
+
+      def create_regular_assignment_sub_type lvalue, value
+        case lvalue.sexp_type
+        when :aref_field
+          s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
+        when :field
+          s(:attrasgn, lvalue[1], :"#{lvalue[3][1]}=", s(:arglist, value))
+        else
+          create_assignment_sub_type lvalue, value
         end
       end
 
@@ -70,14 +83,10 @@ module RipperRubyParser
         case lvalue.sexp_type
         when :ivar
           s(:iasgn, lvalue[1], value)
-        when :aref_field
-          s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
         when :const
           s(:cdecl, lvalue[1], value)
         when :lvar
           s(:lasgn, lvalue[1], value)
-        when :field
-          s(:attrasgn, lvalue[1], :"#{lvalue[3][1]}=", s(:arglist, value))
         when :cvar
           s(:cvdecl, lvalue[1], value)
         when :gvar
