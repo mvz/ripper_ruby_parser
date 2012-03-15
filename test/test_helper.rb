@@ -1,5 +1,7 @@
-require 'simplecov'
-SimpleCov.start
+if ENV["SIMPLECOV"]
+  require 'simplecov'
+  SimpleCov.start
+end
 require 'minitest/spec'
 require 'minitest/autorun'
 
