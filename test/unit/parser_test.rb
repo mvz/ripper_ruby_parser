@@ -632,6 +632,14 @@ describe RipperRubyParser::Parser do
                               s(:arglist, s(:call, nil, :bar, s(:arglist)))))
       end
 
+      it "works with ||=" do
+        result = suppress_warnings { parser.parse "foo ||= bar" }
+        result.must_equal s(:op_asgn_or,
+                            s(:lvar, :foo),
+                            s(:lasgn, :foo,
+                              s(:call, nil, :bar, s(:arglist))))
+      end
+
       it "works when assigning to an instance variable" do
         result = parser.parse "@foo += bar"
         result.must_equal s(:iasgn,
