@@ -232,6 +232,13 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for number literals" do
+      it "works for floats" do
+        result = parser.parse "3.14"
+        result.must_equal s(:lit, 3.14)
+      end
+    end
+
     describe "for collection indexing" do
       it "works in the simple case" do
         result = parser.parse "foo[bar]"

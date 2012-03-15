@@ -7,8 +7,12 @@ module RipperRubyParser
   class SexpProcessor < ::SexpProcessor
     def initialize
       super
+
       # TODO: Find these automatically
+
       @processors[:@int] = :process_at_int
+      @processors[:@float] = :process_at_float
+
       @processors[:@const] = :process_at_const
       @processors[:@ident] = :process_at_ident
       @processors[:@cvar] = :process_at_cvar
@@ -101,9 +105,15 @@ module RipperRubyParser
       sexp
     end
 
+    # number literals
     def process_at_int exp
       _, val, _ = exp.shift 3
       s(:lit, val.to_i)
+    end
+
+    def process_at_float exp
+      _, val, _ = exp.shift 3
+      s(:lit, val.to_f)
     end
 
     # symbol-like sexps
