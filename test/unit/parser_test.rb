@@ -188,12 +188,12 @@ describe RipperRubyParser::Parser do
                               s(:splat, s(:call, nil, :baz, s(:arglist)))))
       end
 
-      it "works for a simple case with explicit block parameter" do
-        result = parser.parse "def foo &bar; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :"&bar"),
-                            s(:scope, s(:block, s(:nil))))
+      it "works for a simple case passing a block" do
+        result = parser.parse "foo &bar"
+        result.must_equal s(:call, nil, :foo,
+                            s(:arglist,
+                              s(:block_pass,
+                                s(:call, nil, :bar, s(:arglist)))))
       end
     end
 
@@ -300,6 +300,14 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args, :"*bar"),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
+      it "works for a simple case with explicit block parameter" do
+        result = parser.parse "def foo &bar; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :"&bar"),
                             s(:scope, s(:block, s(:nil))))
       end
     end

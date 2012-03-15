@@ -2,8 +2,12 @@ module RipperRubyParser
   module SexpHandlers
     module Arguments
       def process_args_add_block exp
-        _, content, _ = exp.shift 3
-        s(:arglist, *handle_list_with_optional_splat(content))
+        _, regular, block = exp.shift 3
+        args = handle_list_with_optional_splat(regular)
+        if block
+          args << s(:block_pass, process(block))
+        end
+        s(:arglist, *args)
       end
 
       def process_args_add_star exp
