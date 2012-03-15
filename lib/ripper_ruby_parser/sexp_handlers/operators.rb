@@ -1,7 +1,7 @@
 module RipperRubyParser
   module SexpHandlers
     module Operators
-      OPERATOR_MAP = {
+      BINARY_OPERTOR_MAP = {
         "&&".to_sym => :and,
         "||".to_sym => :or,
         :and => :and,
@@ -15,11 +15,21 @@ module RipperRubyParser
 
       def process_binary exp
         _, left, op, right = exp.shift 4
-        mapped = OPERATOR_MAP[op]
-        if mapped
-          s(mapped, process(left), process(right))
+        if op == :=~
+          if left.sexp_type == :regexp_literal
+            s(:match2, process(left), process(right))
+          elsif right.sexp_type == :regexp_literal
+            s(:match3, process(right), process(left))
+          else
+            s(:call, process(left), op, s(:arglist, process(right)))
+          end
         else
-          s(:call, process(left), op, s(:arglist, process(right)))
+          mapped = BINARY_OPERTOR_MAP[op]
+          if mapped
+            s(mapped, process(left), process(right))
+          else
+            s(:call, process(left), op, s(:arglist, process(right)))
+          end
         end
       end
 

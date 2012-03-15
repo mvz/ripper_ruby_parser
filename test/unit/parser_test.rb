@@ -740,6 +740,28 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)))
       end
 
+      it "handles :=~ with two non-literals" do
+        result = parser.parse "foo =~ bar"
+        result.must_equal s(:call,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :=~,
+                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+      end
+
+      it "handles :=~ with literal regexp on the left hand side" do
+        result = parser.parse "/foo/ =~ bar"
+        result.must_equal s(:match2,
+                            s(:lit, /foo/),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
+      it "handles :=~ with literal regexp on the right hand side" do
+        result = parser.parse "foo =~ /bar/"
+        result.must_equal s(:match3,
+                            s(:lit, /bar/),
+                            s(:call, nil, :foo, s(:arglist)))
+      end
+
       it "handles unary minus with a number literal" do
         result = parser.parse "-1"
         result.must_equal s(:lit, -1)
