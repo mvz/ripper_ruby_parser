@@ -151,12 +151,29 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo, s(:arglist)))
       end
 
+      it "works with a splat argument" do
+        result = parser.parse "return *foo"
+        result.must_equal s(:return,
+                            s(:svalue,
+                              s(:splat,
+                                s(:call, nil, :foo, s(:arglist)))))
+      end
+
       it "works with multiple arguments" do
         result = parser.parse "return foo, bar"
         result.must_equal s(:return,
                             s(:array,
                               s(:call, nil, :foo, s(:arglist)),
                               s(:call, nil, :bar, s(:arglist))))
+      end
+
+      it "works with a regular argument and a splat argument" do
+        result = parser.parse "return foo, *bar"
+        result.must_equal s(:return,
+                            s(:array,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:splat,
+                                s(:call, nil, :bar, s(:arglist)))))
       end
     end
 

@@ -21,7 +21,12 @@ module RipperRubyParser
         args = arglist[1..-1]
 
         if args.length == 1
-          s(:return, *args)
+          arg = args[0]
+          if arg.sexp_type == :splat
+            s(:return, s(:svalue, arg))
+          else
+            s(:return, arg)
+          end
         else
           s(:return, s(:array, *args))
         end
