@@ -38,6 +38,14 @@ describe RipperRubyParser::Parser do
                             nil)
       end
 
+      it "works in the block case" do
+        result = parser.parse "if foo; bar; end"
+        result.must_equal s(:if,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)),
+                            nil)
+      end
+
       it "works with an else clause" do
         result = parser.parse "if foo; bar; else; baz; end"
         result.must_equal s(:if,
