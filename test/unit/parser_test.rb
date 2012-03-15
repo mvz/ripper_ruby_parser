@@ -745,6 +745,16 @@ describe RipperRubyParser::Parser do
                             s(:arglist))
       end
 
+      it "handles unary not" do
+        result = parser.parse "not foo"
+        result.must_equal s(:not, s(:call, nil, :foo, s(:arglist)))
+      end
+
+      it "converts :! to :not" do
+        result = parser.parse "!foo"
+        result.must_equal s(:not, s(:call, nil, :foo, s(:arglist)))
+      end
+
       it "handles the range operator with positive number literals" do
         result = parser.parse "1..2"
         result.must_equal s(:lit, 1..2)
