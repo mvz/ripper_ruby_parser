@@ -745,6 +745,19 @@ describe RipperRubyParser::Parser do
                             s(:arglist))
       end
 
+      it "handles unary plus with a number literal" do
+        result = parser.parse "+ 1"
+        result.must_equal s(:lit, 1)
+      end
+
+      it "handles unary plus with a non-literal" do
+        result = parser.parse "+ foo"
+        result.must_equal s(:call,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :+@,
+                            s(:arglist))
+      end
+
       it "handles unary not" do
         result = parser.parse "not foo"
         result.must_equal s(:not, s(:call, nil, :foo, s(:arglist)))

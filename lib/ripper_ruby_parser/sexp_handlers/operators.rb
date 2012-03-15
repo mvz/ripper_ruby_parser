@@ -31,9 +31,9 @@ module RipperRubyParser
           s(mapped, arg)
         else
           if is_literal? arg
-            s(:lit, -arg[1])
+            s(:lit, arg[1].send(op))
           else
-            s(:call, arg, :-@, s(:arglist))
+            s(:call, arg, op, s(:arglist))
           end
         end
       end
