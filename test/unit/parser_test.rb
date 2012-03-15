@@ -802,7 +802,7 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for expressions" do
-      it "handles assignment inside expressions" do
+      it "handles assignment inside binary operator expressions" do
         result = suppress_warnings { parser.parse "foo + (bar = baz)" }
         result.must_equal s(:call,
                             s(:call, nil, :foo, s(:arglist)),
@@ -811,6 +811,14 @@ describe RipperRubyParser::Parser do
                               s(:lasgn,
                                 :bar,
                                 s(:call, nil, :baz, s(:arglist)))))
+      end
+
+      it "handles assignment inside unary operator expressions" do
+        result = suppress_warnings { parser.parse "+(foo = bar)" }
+        result.must_equal s(:call,
+                            s(:lasgn, :foo, s(:call, nil, :bar, s(:arglist))),
+                            :+@,
+                            s(:arglist))
       end
     end
 

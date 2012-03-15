@@ -45,11 +45,13 @@ module RipperRubyParser
         exp.sexp_type == :lit
       end
 
-      def maybe_list exp
+      # FIXME: Make this superfluous by ensureing sexps with type :__empty are
+      # never returned by #process.
+      def unwrap_empty exp
         if exp.sexp_type == :__empty
-          exp.sexp_body
+          return exp[1]
         else
-          [exp]
+          exp
         end
       end
     end
