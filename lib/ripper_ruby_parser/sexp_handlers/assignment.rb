@@ -54,6 +54,8 @@ module RipperRubyParser
         create_operator_assignment_sub_type lvalue, value, operator
       end
 
+      private
+
       def create_operator_assignment_sub_type lvalue, value, operator
         if operator == :"||"
           s(:op_asgn_or, lvalue, create_assignment_sub_type(lvalue, value))
@@ -79,21 +81,20 @@ module RipperRubyParser
         end
       end
 
+      ASSIGNMENT_SUB_TYPE_MAP = {
+        :ivar => :iasgn,
+        :const => :cdecl,
+        :lvar => :lasgn,
+        :cvar => :cvdecl,
+        :gvar => :gasgn
+      }
+
       def create_assignment_sub_type lvalue, value
-        case lvalue.sexp_type
-        when :ivar
-          s(:iasgn, lvalue[1], value)
-        when :const
-          s(:cdecl, lvalue[1], value)
-        when :lvar
-          s(:lasgn, lvalue[1], value)
-        when :cvar
-          s(:cvdecl, lvalue[1], value)
-        when :gvar
-          s(:gasgn, lvalue[1], value)
-        else
-          s(lvalue.sexp_type, lvalue[1], value)
-        end
+        s(map_assignment_lvalue_type(lvalue.sexp_type), lvalue[1], value)
+      end
+
+      def map_assignment_lvalue_type type
+        ASSIGNMENT_SUB_TYPE_MAP[type] || type
       end
     end
   end
