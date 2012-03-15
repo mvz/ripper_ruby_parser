@@ -44,6 +44,14 @@ module RipperRubyParser
       def is_literal? exp
         exp.sexp_type == :lit
       end
+
+      def maybe_list exp
+        if exp.sexp_type == :__empty
+          exp.sexp_body
+        else
+          [exp]
+        end
+      end
     end
   end
 end

@@ -801,6 +801,19 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for expressions" do
+      it "handles assignment inside expressions" do
+        result = suppress_warnings { parser.parse "foo + (bar = baz)" }
+        result.must_equal s(:call,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :+,
+                            s(:arglist,
+                              s(:lasgn,
+                                :bar,
+                                s(:call, nil, :baz, s(:arglist)))))
+      end
+    end
+
     # Note: differences in the handling of comments are not caught by Sexp's
     # implementation of equality.
     describe "for comments" do

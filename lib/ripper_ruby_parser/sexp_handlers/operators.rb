@@ -19,7 +19,7 @@ module RipperRubyParser
         if mapped
           s(mapped, process(left), process(right))
         else
-          s(:call, process(left), op, s(:arglist, process(right)))
+          s(:call, process(left), op, s(:arglist, *maybe_list(process(right))))
         end
       end
 
