@@ -39,7 +39,7 @@ module RipperRubyParser
     def commentize exp
       comment = @comment_stack.pop
       if comment.nil?
-        exp
+        [:comment, "", exp]
       else
         [:comment, comment, exp]
       end

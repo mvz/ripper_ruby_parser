@@ -18,13 +18,15 @@ describe RipperRubyParser::SexpBuilder do
                             [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
 
-    it "does not produce a comment node surrounding a def that has no comment" do
+    it "produces a blank comment node surrounding a def that has no comment" do
       result = parse_with_builder "def foo; end"
       result.must_equal [:program,
-                         [[:def,
+                         [[:comment,
+                           "",
+                           [:def,
                            [:@ident, "foo", [1, 4]],
                            [:params, nil, nil, nil, nil, nil],
-                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]
+                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
 
     it "produces a comment node surrounding a commented class" do
@@ -38,13 +40,15 @@ describe RipperRubyParser::SexpBuilder do
                             [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
 
-    it "does not produce a comment node surrounding a def that has no comment" do
+    it "produce a blank comment node surrounding a class that has no comment" do
       result = parse_with_builder "class Foo; end"
       result.must_equal [:program,
-                         [[:class,
+                         [[:comment,
+                           "",
+                           [:class,
                            [:const_ref, [:@const, "Foo", [1, 6]]],
                            nil,
-                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]
+                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
 
     it "produces a comment node surrounding a commented module" do
@@ -57,12 +61,14 @@ describe RipperRubyParser::SexpBuilder do
                             [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
 
-    it "does not produce a comment node surrounding a def that has no comment" do
+    it "produces a blank comment node surrounding a module that has no comment" do
       result = parse_with_builder "module Foo; end"
       result.must_equal [:program,
-                         [[:module,
+                         [[:comment,
+                           "",
+                           [:module,
                            [:const_ref, [:@const, "Foo", [1, 7]]],
-                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]
+                           [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
   end
 end
