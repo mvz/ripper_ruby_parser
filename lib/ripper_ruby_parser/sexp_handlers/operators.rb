@@ -3,7 +3,9 @@ module RipperRubyParser
     module Operators
       OPERATOR_MAP = {
         "&&".to_sym => :and,
-        "||".to_sym => :or
+        "||".to_sym => :or,
+        :and => :and,
+        :or => :or
       }
 
       def process_binary exp

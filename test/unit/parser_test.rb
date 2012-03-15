@@ -704,6 +704,20 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for operators" do
+      it "handles :and" do
+        result = parser.parse "foo and bar"
+        result.must_equal s(:and,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
+      it "handles :or" do
+        result = parser.parse "foo or bar"
+        result.must_equal s(:or,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
       it "converts :&& to :and" do
         result = parser.parse "foo && bar"
         result.must_equal s(:and,
