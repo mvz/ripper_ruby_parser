@@ -193,6 +193,22 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the while statement" do
+      it "works with do" do
+        result = parser.parse "while foo do; bar; end"
+        result.must_equal s(:while,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)), true)
+      end
+
+      it "works without do" do
+        result = parser.parse "while foo; bar; end"
+        result.must_equal s(:while,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)), true)
+      end
+    end
+
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"
