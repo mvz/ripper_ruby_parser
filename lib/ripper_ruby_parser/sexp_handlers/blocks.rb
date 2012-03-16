@@ -32,7 +32,6 @@ module RipperRubyParser
 
         if assigns.length > 0
           args += assigns.map {|lasgn| lasgn[1]}
-          args << s(:block, *assigns)
         end
 
         unless rest.nil?
@@ -43,6 +42,10 @@ module RipperRubyParser
         unless block.nil?
           name = extract_node_symbol block[1]
           args << :"&#{name}"
+        end
+
+        if assigns.length > 0
+          args << s(:block, *assigns)
         end
 
         s(:args, *args)

@@ -503,6 +503,43 @@ describe RipperRubyParser::Parser do
                             s(:scope, s(:block, s(:nil))))
       end
 
+      it "works with a regular argument plus explicit block parameter" do
+        result = parser.parse "def foo bar, &baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :bar, :"&baz"),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
+      it "works with a argument with default value plus explicit block parameter" do
+        result = parser.parse "def foo bar=1, &baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args,
+                              :bar, :"&baz",
+                              s(:block,
+                                s(:lasgn, :bar, s(:lit, 1)))),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
+      it "works with a splat plus explicit block parameter" do
+        result = parser.parse "def foo *bar, &baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :"*bar", :"&baz"),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
+      it "works with an argument with default value plus splat" do
+        result = parser.parse "def foo bar=1, *baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :bar, :"*baz",
+                              s(:block,
+                                s(:lasgn, :bar, s(:lit, 1)))),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
       it "works when the method name is an operator" do
         result = parser.parse "def +; end"
         result.must_equal s(:defn, :+, s(:args),
