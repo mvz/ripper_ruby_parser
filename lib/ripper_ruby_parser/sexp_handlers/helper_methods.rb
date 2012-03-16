@@ -22,8 +22,8 @@ module RipperRubyParser
       end
 
       def extract_node_symbol exp
+        return nil if exp.nil?
         _, ident, _ = exp.shift 3
-
         ident.to_sym
       end
 
