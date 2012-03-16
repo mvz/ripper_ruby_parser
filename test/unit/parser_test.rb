@@ -232,6 +232,26 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the for statement" do
+      it "works with do" do
+        result = suppress_warnings {
+          parser.parse "for foo in bar do; baz; end" }
+        result.must_equal s(:for,
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:lasgn, :foo),
+                            s(:call, nil, :baz, s(:arglist)))
+      end
+
+      it "works without do" do
+        result = suppress_warnings {
+          parser.parse "for foo in bar; baz; end" }
+        result.must_equal s(:for,
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:lasgn, :foo),
+                            s(:call, nil, :baz, s(:arglist)))
+      end
+    end
+
     describe "for a begin..end block" do
       it "works with no statements" do
         result = parser.parse "begin; end"
