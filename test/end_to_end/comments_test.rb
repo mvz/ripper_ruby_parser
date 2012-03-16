@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'ruby_parser'
 
-describe "Comment results for RipperRubyParser and RubyParser" do
+describe "Using RipperRubyParser and RubyParser" do
   def to_comments exp
     inner = exp.map do |sub_exp|
       if sub_exp.is_a? Sexp
