@@ -459,6 +459,14 @@ describe RipperRubyParser::Parser do
                             s(:scope, s(:block, s(:nil))))
       end
 
+      it "works with a regular argument plus splat" do
+        result = parser.parse "def foo bar, *baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args, :bar, :"*baz"),
+                            s(:scope, s(:block, s(:nil))))
+      end
+
       it "works for a simple case with explicit block parameter" do
         result = parser.parse "def foo &bar; end"
         result.must_equal s(:defn,
@@ -486,6 +494,11 @@ describe RipperRubyParser::Parser do
           result = parser.parse "foo(bar)"
           result.must_equal s(:call, nil, :foo,
                               s(:arglist, s(:call, nil, :bar, s(:arglist))))
+        end
+
+        it "works with an empty parameter list and no brackets" do
+          result = parser.parse "foo"
+          result.must_equal s(:call, nil, :foo, s(:arglist))
         end
 
         it "works with brackets around an empty parameter list" do
