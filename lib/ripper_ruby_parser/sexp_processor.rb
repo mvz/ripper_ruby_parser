@@ -167,15 +167,7 @@ module RipperRubyParser
 
     def const_node_to_symbol exp
       assert_type exp, :@const
-      _, ident, _ = exp.shift 3
-
-      ident.to_sym
-    end
-
-    def extract_node_symbol exp
-      _, ident, _ = exp.shift 3
-
-      ident.to_sym
+      extract_node_symbol exp
     end
 
     def class_or_module_body exp
