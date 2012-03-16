@@ -62,8 +62,12 @@ module RipperRubyParser
 
         arr = []
         if eclass
-          eclass = process(eclass[0])
-          arr << eclass
+          eclass = handle_potentially_typeless_sexp eclass
+          if eclass.first.is_a? Symbol
+            arr += eclass[1..-1]
+          else
+            arr << eclass[0]
+          end
         end
 
         if evar

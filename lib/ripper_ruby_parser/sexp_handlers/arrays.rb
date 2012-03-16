@@ -3,7 +3,7 @@ module RipperRubyParser
     module Arrays
       def process_array exp
         _, elems = exp.shift 2
-        s(:array, *handle_list_with_optional_splat(elems))
+        s(:array, *handle_potentially_typeless_sexp(elems))
       end
 
       def process_aref exp

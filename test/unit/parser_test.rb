@@ -296,6 +296,15 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz, s(:arglist))))
       end
 
+      it "works rescuing multiple exception types" do
+        result = parser.parse "begin; foo; rescue Bar, Baz; qux; end"
+        result.must_equal s(:rescue,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:resbody,
+                              s(:array, s(:const, :Bar), s(:const, :Baz)),
+                              s(:call, nil, :qux, s(:arglist))))
+      end
+
       it "works in the postfix case" do
         result = parser.parse "foo rescue bar"
         result.must_equal s(:rescue,

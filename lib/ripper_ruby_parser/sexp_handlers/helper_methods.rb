@@ -1,7 +1,7 @@
 module RipperRubyParser
   module SexpHandlers
     module HelperMethods
-      def handle_list_with_optional_splat exp
+      def handle_potentially_typeless_sexp exp
         if exp.nil?
           []
         elsif exp.first.is_a? Symbol

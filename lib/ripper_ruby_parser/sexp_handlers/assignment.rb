@@ -13,7 +13,7 @@ module RipperRubyParser
       def process_massign exp
         _, left, right = exp.shift 3
 
-        left = handle_list_with_optional_splat left
+        left = handle_potentially_typeless_sexp left
 
         left.each do |item|
           case item.sexp_type
