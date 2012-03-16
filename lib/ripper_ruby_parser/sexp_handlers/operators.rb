@@ -23,6 +23,8 @@ module RipperRubyParser
           else
             s(:call, process(left), op, s(:arglist, process(right)))
           end
+        elsif op == :"!="
+          s(:not, s(:call, process(left), :==, s(:arglist, process(right))))
         else
           mapped = BINARY_OPERTOR_MAP[op]
           if mapped

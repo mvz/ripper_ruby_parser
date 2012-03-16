@@ -887,6 +887,16 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)))
       end
 
+      it "handles :!=" do
+        result = parser.parse "foo != bar"
+        result.must_equal s(:not,
+                              s(:call,
+                                s(:call, nil, :foo, s(:arglist)),
+                                :==,
+                                s(:arglist,
+                                  s(:call, nil, :bar, s(:arglist)))))
+      end
+
       it "handles :=~ with two non-literals" do
         result = parser.parse "foo =~ bar"
         result.must_equal s(:call,
