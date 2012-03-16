@@ -61,11 +61,24 @@ module RipperRubyParser
     end
 
     def process_bodystmt exp
-      _, body, _, _, _ = exp.shift 5
-      body = body.
+      _, body, rescue_block, _, _ = exp.shift 5
+      body = map_body body
+      if rescue_block
+        rescue_block = process(rescue_block)
+        s(:scope,
+          s(:rescue,
+            s(:block, *body),
+            s(:resbody, s(:array),
+              s(:block, *rescue_block))))
+      else
+        s(:scope, s(:block, *body))
+      end
+    end
+
+    def map_body body
+      body.
         map { |sub_exp| process(sub_exp) }.
         reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
-      s(:scope, s(:block, *body))
     end
 
     def process_var_ref exp
