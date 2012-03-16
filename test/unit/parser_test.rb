@@ -242,6 +242,17 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the rescue statement" do
+      it "works in the postfix case" do
+        result = parser.parse "foo rescue bar"
+        result.must_equal s(:rescue,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:resbody,
+                              s(:array),
+                              s(:call, nil, :bar, s(:arglist))))
+      end
+    end
+
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"

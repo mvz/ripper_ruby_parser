@@ -63,6 +63,11 @@ module RipperRubyParser
         end
       end
 
+      def process_rescue_mod exp
+        _, scary, safe = exp.shift 3
+        s(:rescue, process(scary), s(:resbody, s(:array), process(safe)))
+      end
+
       private
 
       def handle_generic_block exp
