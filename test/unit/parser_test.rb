@@ -362,6 +362,17 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz, s(:arglist)),
                                 s(:call, nil, :qux, s(:arglist))))
       end
+
+      it "works together with rescue" do
+        result = parser.parse "begin; foo; rescue; bar; ensure; baz; end"
+        result.must_equal s(:ensure,
+                            s(:rescue,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar, s(:arglist)))),
+                            s(:call, nil, :baz, s(:arglist)))
+      end
     end
 
     describe "for arguments" do
