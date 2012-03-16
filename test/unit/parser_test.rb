@@ -209,6 +209,25 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for a begin..end block" do
+      it "works with no statements" do
+        result = parser.parse "begin; end"
+        result.must_equal s(:nil)
+      end
+
+      it "works with one statement" do
+        result = parser.parse "begin; foo; end"
+        result.must_equal s(:call, nil, :foo, s(:arglist))
+      end
+
+      it "works with multiple statements" do
+        result = parser.parse "begin; foo; bar; end"
+        result.must_equal s(:block,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+    end
+
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"

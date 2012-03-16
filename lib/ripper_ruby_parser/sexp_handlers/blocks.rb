@@ -48,6 +48,21 @@ module RipperRubyParser
         s(:args, *args)
       end
 
+      def process_begin exp
+        _, body = exp.shift 2
+
+        block = process(body)[1]
+
+        case block.length
+        when 1
+          s(:nil)
+        when 2
+          block[1]
+        else
+          block
+        end
+      end
+
       private
 
       def handle_generic_block exp
