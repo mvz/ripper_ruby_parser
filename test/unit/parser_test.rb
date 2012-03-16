@@ -265,6 +265,16 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux, s(:arglist)))))
       end
 
+      it "works with assignment to an error variable" do
+        result = suppress_warnings {
+          parser.parse "begin; foo; rescue => e; bar; end" }
+        result.must_equal s(:rescue,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:resbody,
+                              s(:array, s(:lasgn, :e, s(:gvar, :$!))),
+                              s(:call, nil, :bar, s(:arglist))))
+      end
+
       it "works in the postfix case" do
         result = parser.parse "foo rescue bar"
         result.must_equal s(:rescue,

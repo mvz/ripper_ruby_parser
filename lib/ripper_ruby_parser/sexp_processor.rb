@@ -64,12 +64,11 @@ module RipperRubyParser
       _, body, rescue_block, _, _ = exp.shift 5
       body = map_body body
       if rescue_block
-        rescue_block = process(rescue_block)
+        rescue_body = process(rescue_block)
         s(:scope,
           s(:rescue,
             wrap_in_block(body),
-            s(:resbody, s(:array),
-              wrap_in_block(rescue_block))))
+            rescue_body))
       else
         s(:scope, s(:block, *body))
       end
