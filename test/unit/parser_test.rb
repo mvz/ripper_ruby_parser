@@ -29,6 +29,15 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for a module declaration" do
+      it "works with a namespaced module name" do
+        result = parser.parse "module Foo::Bar; end"
+        result.must_equal s(:module,
+                            s(:colon2, s(:const, :Foo), :Bar),
+                            s(:scope))
+      end
+    end
+
     describe "for if" do
       it "works in the postfix case" do
         result = parser.parse "foo if bar"
