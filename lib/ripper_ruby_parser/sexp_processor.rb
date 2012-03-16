@@ -58,7 +58,7 @@ module RipperRubyParser
     end
 
     def process_bodystmt exp
-      _, body, rescue_block, _, _ = exp.shift 5
+      _, body, rescue_block, _, ensure_block = exp.shift 5
       body = map_body body
       if rescue_block
         rescue_body = process(rescue_block)
@@ -66,6 +66,12 @@ module RipperRubyParser
           s(:rescue,
             wrap_in_block(body),
             rescue_body))
+      elsif ensure_block
+        ensure_body = process(ensure_block)
+        s(:scope,
+          s(:ensure,
+            wrap_in_block(body),
+            ensure_body))
       else
         s(:scope, s(:block, *body))
       end

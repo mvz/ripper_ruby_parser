@@ -88,6 +88,11 @@ module RipperRubyParser
         s(:rescue, process(scary), s(:resbody, s(:array), process(safe)))
       end
 
+      def process_ensure exp
+        _, block = exp.shift 2
+        wrap_in_block s(*map_body(block))
+      end
+
       private
 
       def handle_generic_block exp

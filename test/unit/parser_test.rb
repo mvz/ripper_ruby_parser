@@ -344,6 +344,26 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the ensure statement" do
+      it "works with single statement main and ensure bodies" do
+        result = parser.parse "begin; foo; ensure; bar; end"
+        result.must_equal s(:ensure,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar, s(:arglist)))
+      end
+
+      it "works with multi-statement main and ensure bodies" do
+        result = parser.parse "begin; foo; bar; ensure; baz; qux; end"
+        result.must_equal s(:ensure,
+                            s(:block,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :bar, s(:arglist))),
+                            s(:block,
+                                s(:call, nil, :baz, s(:arglist)),
+                                s(:call, nil, :qux, s(:arglist))))
+      end
+    end
+
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"
