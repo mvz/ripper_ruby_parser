@@ -16,15 +16,9 @@ module RipperRubyParser
       end
 
       def handle_statement_list exp
-        statements = exp.
-          map { |sub_exp| process(sub_exp) }.
-          reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
+        statements = map_body exp
 
-        if statements.length == 1
-          statements.first
-        else
-          s(:block, *statements)
-        end
+        wrap_in_block(statements)
       end
 
       def identifier_node_to_symbol exp
@@ -44,6 +38,21 @@ module RipperRubyParser
       def is_literal? exp
         exp.sexp_type == :lit
       end
+
+      def map_body body
+        body.
+          map { |sub_exp| process(sub_exp) }.
+          reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
+      end
+
+      def wrap_in_block statements
+        if statements.length == 1
+          statements.first
+        else
+          s(:block, *statements)
+        end
+      end
+
     end
   end
 end

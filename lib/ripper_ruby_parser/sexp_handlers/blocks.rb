@@ -53,14 +53,7 @@ module RipperRubyParser
 
         block = process(body)[1]
 
-        case block.length
-        when 1
-          s(:nil)
-        when 2
-          block[1]
-        else
-          block
-        end
+        strip_wrapping_block(block)
       end
 
       def process_rescue exp
@@ -79,6 +72,18 @@ module RipperRubyParser
         _, args, stmts = exp.shift 3
         s(:block, process(args), s(handle_statement_list(stmts)))
       end
+
+      def strip_wrapping_block(block)
+        case block.length
+        when 1
+          s(:nil)
+        when 2
+          block[1]
+        else
+          block
+        end
+      end
+
     end
   end
 end

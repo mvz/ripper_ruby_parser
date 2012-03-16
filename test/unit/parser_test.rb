@@ -243,6 +243,15 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for the rescue statement" do
+      it "works with single statement main and rescue bodies" do
+        result = parser.parse "begin; foo; rescue; bar; end"
+        result.must_equal s(:rescue,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:resbody,
+                              s(:array),
+                              s(:call, nil, :bar, s(:arglist))))
+      end
+
       it "works with multi-statement main and rescue bodies" do
         result = parser.parse "begin; foo; bar; rescue; baz; qux; end"
         result.must_equal s(:rescue,
