@@ -457,6 +457,12 @@ describe RipperRubyParser::Parser do
                             s(:args, :"&bar"),
                             s(:scope, s(:block, s(:nil))))
       end
+
+      it "works when the method name is an operator" do
+        result = parser.parse "def +; end"
+        result.must_equal s(:defn, :+, s(:args),
+                            s(:scope, s(:block, s(:nil))))
+      end
     end
 
     describe "for method calls" do
