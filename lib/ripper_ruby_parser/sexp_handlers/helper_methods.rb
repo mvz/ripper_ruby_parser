@@ -21,10 +21,6 @@ module RipperRubyParser
         wrap_in_block(statements)
       end
 
-      def identifier_node_to_symbol exp
-        extract_node_symbol exp
-      end
-
       def extract_node_symbol exp
         _, ident, _ = exp.shift 3
 
@@ -55,7 +51,6 @@ module RipperRubyParser
           s(:block, *statements)
         end
       end
-
     end
   end
 end

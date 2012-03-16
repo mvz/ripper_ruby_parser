@@ -21,11 +21,11 @@ module RipperRubyParser
         _, normal, defaults, rest, _, block = exp.shift 6
 
         args = [*normal].map do |id|
-          identifier_node_to_symbol id
+          extract_node_symbol id
         end
 
         assigns = [*defaults].map do |pair|
-          sym = identifier_node_to_symbol pair[0]
+          sym = extract_node_symbol pair[0]
           val = process pair[1]
           s(:lasgn, sym, val)
         end
@@ -36,12 +36,12 @@ module RipperRubyParser
         end
 
         unless rest.nil?
-          name = identifier_node_to_symbol rest[1]
+          name = extract_node_symbol rest[1]
           args << :"*#{name}"
         end
 
         unless block.nil?
-          name = identifier_node_to_symbol block[1]
+          name = extract_node_symbol block[1]
           args << :"&#{name}"
         end
 

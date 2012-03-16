@@ -14,13 +14,13 @@ module RipperRubyParser
 
       def process_call exp
         _, receiver, _, method = exp.shift 4
-        s(:call, process(receiver), identifier_node_to_symbol(method), s(:arglist))
+        s(:call, process(receiver), extract_node_symbol(method), s(:arglist))
       end
 
       def process_command exp
         _, ident, arglist = exp.shift 3
 
-        ident = identifier_node_to_symbol ident
+        ident = extract_node_symbol ident
         arglist = process arglist
 
         s(:call, nil, ident, arglist)
@@ -30,21 +30,21 @@ module RipperRubyParser
         _, receiver, _, method, arguments = exp.shift 5
         s(:call,
           process(receiver),
-          identifier_node_to_symbol(method),
+          extract_node_symbol(method),
           process(arguments))
       end
 
       def process_vcall exp
         _, ident = exp.shift 3
 
-        ident = identifier_node_to_symbol ident
+        ident = extract_node_symbol ident
 
         s(:call, nil, ident, s(:arglist))
       end
 
       def process_fcall exp
         _, method = exp.shift 2
-        s(:call, nil, identifier_node_to_symbol(method), s(:arglist))
+        s(:call, nil, extract_node_symbol(method), s(:arglist))
       end
     end
   end

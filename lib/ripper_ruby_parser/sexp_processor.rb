@@ -83,7 +83,7 @@ module RipperRubyParser
 
     def process_const_path_ref exp
       _, left, right = exp.shift 3
-      s(:colon2, process(left), const_node_to_symbol(right))
+      s(:colon2, process(left), extract_node_symbol(right))
     end
 
     def process_const_ref exp
@@ -93,7 +93,7 @@ module RipperRubyParser
 
     def process_top_const_ref exp
       _, ref = exp.shift 2
-      s(:colon3, const_node_to_symbol(ref))
+      s(:colon3, extract_node_symbol(ref))
     end
 
     def process_paren exp
@@ -168,10 +168,6 @@ module RipperRubyParser
         const = const[1]
       end
       return const
-    end
-
-    def const_node_to_symbol exp
-      extract_node_symbol exp
     end
 
     def class_or_module_body exp
