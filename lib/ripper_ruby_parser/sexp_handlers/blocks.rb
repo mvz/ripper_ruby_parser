@@ -57,10 +57,15 @@ module RipperRubyParser
       end
 
       def process_rescue exp
-        _, _, evar, block, _ = exp.shift 5
+        _, eclass, evar, block, _ = exp.shift 5
         rescue_block = s(*map_body(block))
 
         arr = []
+        if eclass
+          eclass = process(eclass[0])
+          arr << eclass
+        end
+
         if evar
           evar = process(evar)[1]
           easgn = s(:lasgn, :e, s(:gvar, :$!))

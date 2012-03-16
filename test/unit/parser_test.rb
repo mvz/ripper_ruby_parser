@@ -275,6 +275,27 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar, s(:arglist))))
       end
 
+      it "works with filtering of the exception type" do
+        result = parser.parse "begin; foo; rescue Bar; baz; end"
+        result.must_equal s(:rescue,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:resbody,
+                              s(:array, s(:const, :Bar)),
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works with filtering of the exception type and assignment to an error variable" do
+        result = suppress_warnings {
+          parser.parse "begin; foo; rescue Bar => e; baz; end" }
+        result.must_equal s(:rescue,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:resbody,
+                              s(:array,
+                                s(:const, :Bar),
+                                s(:lasgn, :e, s(:gvar, :$!))),
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
       it "works in the postfix case" do
         result = parser.parse "foo rescue bar"
         result.must_equal s(:rescue,
