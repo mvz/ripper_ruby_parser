@@ -1167,14 +1167,29 @@ describe RipperRubyParser::Parser do
 
     # Note: differences in the handling of line numbers are not caught by
     # Sexp's implementation of equality.
-    describe "for line numbers" do
-      it "assigns a line number to a plain method call" do
+    describe "assigning line numbers" do
+      it "works for a plain method call" do
         result = parser.parse "foo"
         result.line.must_equal 1
       end
 
-      it "assigns a line number to method call with brackets" do
+      it "works for a method call with brackets" do
         result = parser.parse "foo()"
+        result.line.must_equal 1
+      end
+
+      it "works for a method call with reciever" do
+        result = parser.parse "foo.bar"
+        result.line.must_equal 1
+      end
+
+      it "works for a method call with reciever and arguments" do
+        result = parser.parse "foo.bar baz"
+        result.line.must_equal 1
+      end
+
+      it "works for a method call with arguments" do
+        result = parser.parse "foo bar"
         result.line.must_equal 1
       end
     end
