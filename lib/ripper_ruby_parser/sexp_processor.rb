@@ -28,7 +28,8 @@ module RipperRubyParser
       return nil if exp.nil?
       exp.fix_empty_type
 
-      super
+      result = super
+      trickle_up_line_numbers result
     end
 
     include SexpHandlers
@@ -186,6 +187,17 @@ module RipperRubyParser
         s(:scope, *block)
       else
         s(:scope, s(:block, *block))
+      end
+    end
+
+    def trickle_up_line_numbers exp
+      exp.map! do |sub_exp|
+        if sub_exp.is_a? Sexp
+          exp.line ||= sub_exp.line
+          trickle_up_line_numbers sub_exp
+        else
+          sub_exp
+        end
       end
     end
   end

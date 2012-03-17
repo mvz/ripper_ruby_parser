@@ -1192,6 +1192,14 @@ describe RipperRubyParser::Parser do
         result = parser.parse "foo bar"
         result.line.must_equal 1
       end
+
+      it "works for a block with two lines" do
+        result = parser.parse "foo\nbar\n"
+        result.sexp_type.must_equal :block
+        result[1].line.must_equal 1
+        result[2].line.must_equal 2
+        result.line.must_equal 1
+      end
     end
   end
 end
