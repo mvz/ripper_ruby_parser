@@ -9,7 +9,8 @@ module RipperRubyParser
                else
                  process parens
                end
-        s(:call, call[1], call[2], args)
+        with_position(call.line,
+                      s(:call, call[1], call[2], args))
       end
 
       def process_call exp
@@ -45,7 +46,9 @@ module RipperRubyParser
 
       def process_fcall exp
         _, method = exp.shift 2
-        s(:call, nil, extract_node_symbol(method), s(:arglist))
+        method, pos = extract_node_symbol_with_position method
+        with_position(pos,
+                      s(:call, nil, method, s(:arglist)))
       end
     end
   end

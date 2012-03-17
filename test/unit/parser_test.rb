@@ -1172,6 +1172,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "foo"
         result.line.must_equal 1
       end
+
+      it "assigns a line number to method call with brackets" do
+        result = parser.parse "foo()"
+        result.line.must_equal 1
+      end
     end
   end
 end

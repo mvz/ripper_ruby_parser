@@ -23,8 +23,8 @@ module RipperRubyParser
 
       def extract_node_symbol_with_position exp
         return nil if exp.nil?
-        _, ident, pos = exp.shift 3
-        return ident.to_sym, pos
+        _, ident, (line, _) = exp.shift 3
+        return ident.to_sym, line
       end
 
       def extract_node_symbol exp
@@ -34,7 +34,7 @@ module RipperRubyParser
       end
 
       def with_position pos, exp
-        exp.line = pos[0]
+        exp.line = pos
         exp
       end
 
