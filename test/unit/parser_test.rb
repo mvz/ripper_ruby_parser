@@ -1164,5 +1164,14 @@ describe RipperRubyParser::Parser do
         result.comments.must_equal "# Foo\n# Bar\n"
       end
     end
+
+    # Note: differences in the handling of line numbers are not caught by
+    # Sexp's implementation of equality.
+    describe "for line numbers" do
+      it "assigns a line number to a plain method call" do
+        result = parser.parse "foo"
+        result.line.must_equal 1
+      end
+    end
   end
 end

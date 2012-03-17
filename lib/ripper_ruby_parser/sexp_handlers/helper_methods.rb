@@ -21,10 +21,21 @@ module RipperRubyParser
         wrap_in_block(statements)
       end
 
+      def extract_node_symbol_with_position exp
+        return nil if exp.nil?
+        _, ident, pos = exp.shift 3
+        return ident.to_sym, pos
+      end
+
       def extract_node_symbol exp
         return nil if exp.nil?
         _, ident, _ = exp.shift 3
         ident.to_sym
+      end
+
+      def with_position pos, exp
+        exp.line = pos[0]
+        exp
       end
 
       def generic_add_star exp

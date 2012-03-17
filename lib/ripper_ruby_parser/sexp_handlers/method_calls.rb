@@ -35,11 +35,12 @@ module RipperRubyParser
       end
 
       def process_vcall exp
-        _, ident = exp.shift 3
+        _, ident = exp.shift 2
 
-        ident = extract_node_symbol ident
+        ident, pos = extract_node_symbol_with_position ident
 
-        s(:call, nil, ident, s(:arglist))
+        with_position(pos,
+                      s(:call, nil, ident, s(:arglist)))
       end
 
       def process_fcall exp
