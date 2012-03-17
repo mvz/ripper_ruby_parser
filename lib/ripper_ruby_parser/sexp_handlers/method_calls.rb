@@ -3,14 +3,9 @@ module RipperRubyParser
     module MethodCalls
       def process_method_add_arg exp
         _, call, parens = exp.shift 3
-        call = process call
-        args = if parens.empty?
-                 s(:arglist)
-               else
-                 process parens
-               end
-        with_position(call.line,
-                      s(:call, call[1], call[2], args))
+        call = process(call)
+        call[3] = process(parens) unless parens.empty?
+        call
       end
 
       def process_call exp
