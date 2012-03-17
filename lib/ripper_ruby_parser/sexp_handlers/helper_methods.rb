@@ -3,11 +3,11 @@ module RipperRubyParser
     module HelperMethods
       def handle_potentially_typeless_sexp exp
         if exp.nil?
-          []
+          s()
         elsif exp.first.is_a? Symbol
           process(exp)
         else
-          exp.map { |sub_exp| process(sub_exp) }
+          exp.map! { |sub_exp| process(sub_exp) }
         end
       end
 

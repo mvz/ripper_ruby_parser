@@ -980,6 +980,27 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz, s(:arglist)),
                               s(:call, nil, :qux, s(:arglist))))
       end
+
+      it "works with brackets around the left-hand side" do
+        result = suppress_warnings { parser.parse "(foo, bar) = baz" }
+        result.must_equal s(:masgn,
+                            s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                            s(:to_ary,
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works with complex destructuring" do
+        result = suppress_warnings { parser.parse "foo, (bar, baz) = qux" }
+        result.must_equal s(:masgn,
+                            s(:array,
+                              s(:lasgn, :foo),
+                              s(:masgn,
+                                s(:array,
+                                  s(:lasgn, :bar),
+                                  s(:lasgn, :baz)))),
+                            s(:to_ary,
+                              s(:call, nil, :qux, s(:arglist))))
+      end
     end
 
     describe "for operators" do

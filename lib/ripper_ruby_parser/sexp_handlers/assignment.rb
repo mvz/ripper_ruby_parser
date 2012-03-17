@@ -15,14 +15,12 @@ module RipperRubyParser
 
         left = handle_potentially_typeless_sexp left
 
-        left.each do |item|
-          case item.sexp_type
-          when :splat
-            item[1][0] = :lasgn
-          else
-            item[0] = :lasgn
-          end
+        if left.first == :masgn
+          left = left[1]
+          left.shift
         end
+
+        make_lasgn left
 
         right = process(right)
 
@@ -44,6 +42,15 @@ module RipperRubyParser
         generic_add_star exp
       end
 
+      def process_mlhs_paren exp
+        _, contents = exp.shift 2
+        items = handle_potentially_typeless_sexp(contents)
+
+        make_lasgn items
+
+        s(:masgn, s(:array, *items))
+      end
+
       def process_opassign exp
         _, lvalue, operator, value = exp.shift 4
 
@@ -55,6 +62,17 @@ module RipperRubyParser
       end
 
       private
+
+      def make_lasgn sexp_list
+        sexp_list.each do |item|
+          case item.sexp_type
+          when :splat
+            item[1][0] = :lasgn
+          when :lvar
+            item[0] = :lasgn
+          end
+        end
+      end
 
       def create_operator_assignment_sub_type lvalue, value, operator
         if operator == :"||"
