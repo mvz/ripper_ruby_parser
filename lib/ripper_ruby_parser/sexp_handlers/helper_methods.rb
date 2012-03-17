@@ -38,6 +38,11 @@ module RipperRubyParser
         exp
       end
 
+      def with_position_from_node_symbol exp
+        sym, pos = extract_node_symbol_with_position exp
+        with_position(pos, yield(sym))
+      end
+
       def generic_add_star exp
         _, args, splatarg = exp.shift 3
         items = args.map { |sub| process(sub) }
