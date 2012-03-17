@@ -1,6 +1,6 @@
 require 'ripper'
 module RipperRubyParser
-  class SexpBuilder < Ripper::SexpBuilderPP
+  class CommentingSexpBuilder < Ripper::SexpBuilderPP
     def initialize *args
       super
       @comment = nil

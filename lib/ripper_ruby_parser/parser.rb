@@ -1,4 +1,4 @@
-require 'ripper_ruby_parser/sexp_builder'
+require 'ripper_ruby_parser/commenting_sexp_builder'
 require 'ripper_ruby_parser/sexp_processor'
 
 module RipperRubyParser
@@ -10,7 +10,7 @@ module RipperRubyParser
     end
 
     def parse source, filename='-', lineno=1
-      parser = SexpBuilder.new(source, filename, lineno)
+      parser = CommentingSexpBuilder.new(source, filename, lineno)
       exp = Sexp.from_array(parser.parse)
       @processor.process exp
     end

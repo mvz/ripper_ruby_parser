@@ -1,8 +1,8 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
-describe RipperRubyParser::SexpBuilder do
+describe RipperRubyParser::CommentingSexpBuilder do
   def parse_with_builder str
-    builder = RipperRubyParser::SexpBuilder.new str
+    builder = RipperRubyParser::CommentingSexpBuilder.new str
     builder.parse
   end
 
