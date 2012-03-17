@@ -359,8 +359,8 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo, s(:arglist)),
                               s(:call, nil, :bar, s(:arglist))),
                             s(:block,
-                                s(:call, nil, :baz, s(:arglist)),
-                                s(:call, nil, :qux, s(:arglist))))
+                              s(:call, nil, :baz, s(:arglist)),
+                              s(:call, nil, :qux, s(:arglist))))
       end
 
       it "works together with rescue" do
@@ -1156,7 +1156,7 @@ describe RipperRubyParser::Parser do
         defn.comments.must_equal "# Bar\n"
       end
 
-      it "combibes multi-line comments" do
+      it "combines multi-line comments" do
         result = parser.parse "# Foo\n# Bar\ndef foo; end"
         result.must_equal s(:defn,
                             :foo,
