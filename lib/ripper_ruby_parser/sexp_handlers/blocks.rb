@@ -26,23 +26,14 @@ module RipperRubyParser
 
         assigns = [*defaults].map do |pair|
           sym = extract_node_symbol pair[0]
+          args << sym
           val = process pair[1]
           s(:lasgn, sym, val)
         end
 
-        if assigns.length > 0
-          args += assigns.map {|lasgn| lasgn[1]}
-        end
+        add_arg_unless_nil(rest, args) {|name| :"*#{name}" }
 
-        unless rest.nil?
-          name = extract_node_symbol rest[1]
-          args << :"*#{name}"
-        end
-
-        unless block.nil?
-          name = extract_node_symbol block[1]
-          args << :"&#{name}"
-        end
+        add_arg_unless_nil(block, args) {|name| :"&#{name}" }
 
         if assigns.length > 0
           args << s(:block, *assigns)
@@ -111,6 +102,12 @@ module RipperRubyParser
         end
       end
 
+      def add_arg_unless_nil(item, args)
+        unless item.nil?
+          name = extract_node_symbol item[1]
+          args << yield(name)
+        end
+      end
     end
   end
 end
