@@ -953,6 +953,15 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :baz, s(:arglist)))
       end
 
+      it "works with ||= when assigning to a collection element" do
+        result = parser.parse "foo[bar] ||= baz"
+        result.must_equal s(:op_asgn1,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:arglist, s(:call, nil, :bar, s(:arglist))),
+                            :"||",
+                            s(:call, nil, :baz, s(:arglist)))
+      end
+
       it "works when assigning to an attribute" do
         result = parser.parse "foo.bar += baz"
         result.must_equal s(:op_asgn2,
@@ -962,6 +971,14 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :baz, s(:arglist)))
       end
 
+      it "works with ||= when assigning to an attribute" do
+        result = parser.parse "foo.bar ||= baz"
+        result.must_equal s(:op_asgn2,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :bar=,
+                            :"||",
+                            s(:call, nil, :baz, s(:arglist)))
+      end
     end
 
     describe "for multiple assignment" do

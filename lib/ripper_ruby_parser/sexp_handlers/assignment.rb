@@ -75,14 +75,14 @@ module RipperRubyParser
       end
 
       def create_operator_assignment_sub_type lvalue, value, operator
-        if operator == :"||"
-          s(:op_asgn_or, lvalue, create_assignment_sub_type(lvalue, value))
+        case lvalue.sexp_type
+        when :aref_field
+          s(:op_asgn1, lvalue[1], s(:arglist, lvalue[2][1]), operator, value)
+        when :field
+          s(:op_asgn2, lvalue[1], :"#{lvalue[3][1]}=", operator, value)
         else
-          case lvalue.sexp_type
-          when :aref_field
-            s(:op_asgn1, lvalue[1], s(:arglist, lvalue[2][1]), operator, value)
-          when :field
-            s(:op_asgn2, lvalue[1], :"#{lvalue[3][1]}=", operator, value)
+          if operator == :"||"
+            s(:op_asgn_or, lvalue, create_assignment_sub_type(lvalue, value))
           else
             operator_call = s(:call, lvalue, operator, s(:arglist, value))
             create_assignment_sub_type lvalue, operator_call
