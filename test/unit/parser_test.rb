@@ -1277,6 +1277,15 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
+      it "works for an integer literal" do
+        result = parser.parse "42"
+        result.line.must_equal 1
+      end
+
+      it "works for a float literal" do
+        result = parser.parse "3.14"
+        result.line.must_equal 1
+      end
     end
   end
 end

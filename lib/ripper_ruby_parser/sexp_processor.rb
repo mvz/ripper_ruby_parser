@@ -125,13 +125,13 @@ module RipperRubyParser
 
     # number literals
     def process_at_int exp
-      _, val, _ = exp.shift 3
-      s(:lit, val.to_i)
+      _, val, pos = exp.shift 3
+      with_position(pos, s(:lit, val.to_i))
     end
 
     def process_at_float exp
-      _, val, _ = exp.shift 3
-      s(:lit, val.to_f)
+      _, val, pos = exp.shift 3
+      with_position(pos, s(:lit, val.to_f))
     end
 
     # symbol-like sexps
