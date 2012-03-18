@@ -1248,6 +1248,35 @@ describe RipperRubyParser::Parser do
         result[2].line.must_equal 2
         result.line.must_equal 1
       end
+
+      it "works for a constant reference" do
+        result = parser.parse "Foo"
+        result.line.must_equal 1
+      end
+
+      it "works for an instance variable" do
+        result = parser.parse "@foo"
+        result.line.must_equal 1
+      end
+
+      it "works for a global variable" do
+        result = parser.parse "$foo"
+        result.line.must_equal 1
+      end
+
+      it "works for a class variable" do
+        result = parser.parse "@@foo"
+        result.line.must_equal 1
+      end
+
+      it "works for a local variable" do
+        result = parser.parse "foo = bar\nfoo\n"
+        result.sexp_type.must_equal :block
+        result[1].line.must_equal 1
+        result[2].line.must_equal 2
+        result.line.must_equal 1
+      end
+
     end
   end
 end

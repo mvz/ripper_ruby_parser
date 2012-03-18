@@ -136,23 +136,23 @@ module RipperRubyParser
 
     # symbol-like sexps
     def process_at_const exp
-      s(:const, extract_node_symbol(exp))
+      make_identifier(:const, exp)
     end
 
     def process_at_cvar exp
-      s(:cvar, extract_node_symbol(exp))
+      make_identifier(:cvar, exp)
     end
 
     def process_at_gvar exp
-      s(:gvar, extract_node_symbol(exp))
+      make_identifier(:gvar, exp)
     end
 
     def process_at_ivar exp
-      s(:ivar, extract_node_symbol(exp))
+      make_identifier(:ivar, exp)
     end
 
     def process_at_ident exp
-      s(:lvar, extract_node_symbol(exp))
+      make_identifier(:lvar, exp)
     end
 
     def process_at_kw exp
@@ -188,6 +188,11 @@ module RipperRubyParser
       else
         s(:scope, s(:block, *block))
       end
+    end
+
+    def make_identifier(type, exp)
+      with_position_from_node_symbol(exp) {|ident|
+        s(type, ident) }
     end
 
     def trickle_up_line_numbers exp
