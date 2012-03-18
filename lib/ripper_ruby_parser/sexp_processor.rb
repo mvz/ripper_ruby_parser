@@ -156,12 +156,13 @@ module RipperRubyParser
     end
 
     def process_at_kw exp
-      sym = extract_node_symbol(exp)
-      if sym == :__FILE__
-        s(:str, "(string)")
-      else
-        s(sym)
-      end
+      sym, pos = extract_node_symbol_with_position(exp)
+      result = if sym == :__FILE__
+                 s(:str, "(string)")
+               else
+                 s(sym)
+               end
+      with_position(pos, result)
     end
 
     def process_at_backref exp

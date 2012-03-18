@@ -1291,6 +1291,21 @@ describe RipperRubyParser::Parser do
         result = parser.parse "$1"
         result.line.must_equal 1
       end
+
+      it "works for self" do
+        result = parser.parse "self"
+        result.line.must_equal 1
+      end
+
+      it "works for __FILE__" do
+        result = parser.parse "__FILE__"
+        result.line.must_equal 1
+      end
+
+      it "works for nil" do
+        result = parser.parse "nil"
+        result.line.must_equal 1
+      end
     end
   end
 end
