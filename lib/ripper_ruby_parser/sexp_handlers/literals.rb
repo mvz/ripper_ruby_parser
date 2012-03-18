@@ -33,8 +33,12 @@ module RipperRubyParser
 
       def process_symbol_literal exp
         _, symbol = exp.shift 2
-        sym = symbol[1]
-        s(:lit, extract_node_symbol(sym))
+        process(symbol)
+      end
+
+      def process_symbol exp
+        _, node = exp.shift 2
+        with_position_from_node_symbol(node) {|sym| s(:lit, sym) }
       end
 
       def process_dyna_symbol exp

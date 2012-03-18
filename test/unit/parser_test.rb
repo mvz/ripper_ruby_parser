@@ -1306,6 +1306,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "nil"
         result.line.must_equal 1
       end
+
+      it "works for a symbol literal" do
+        result = parser.parse ":foo"
+        result.line.must_equal 1
+      end
     end
   end
 end
