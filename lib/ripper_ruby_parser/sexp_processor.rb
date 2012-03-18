@@ -165,8 +165,8 @@ module RipperRubyParser
     end
 
     def process_at_backref exp
-      _, str, _ = exp.shift 3
-      s(:nth_ref, str[1..-1].to_i)
+      _, str, pos = exp.shift 3
+      with_position(pos, s(:nth_ref, str[1..-1].to_i))
     end
 
     private
