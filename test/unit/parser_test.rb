@@ -1423,6 +1423,18 @@ describe RipperRubyParser::Parser do
         nums = [ arglist.line, block.line ]
         nums.must_equal [1, 1]
       end
+
+      describe "when a line number is passed" do
+        it "shifts all line numbers as appropriate" do
+          result = parser.parse "foo\nbar\n", '(string)', 3
+          result.must_equal s(:block,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :bar, s(:arglist)))
+          result.line.must_equal 3
+          result[1].line.must_equal 3
+          result[2].line.must_equal 4
+        end
+      end
     end
   end
 end
