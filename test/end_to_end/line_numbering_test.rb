@@ -54,7 +54,7 @@ describe "Using RipperRubyParser and RubyParser" do
       imitation.must_equal original
     end
 
-    it "gives the same result with comments" do
+    it "gives the same result with line numbers" do
       formatted(to_line_numbers(imitation)).
         must_equal formatted(to_line_numbers(original))
     end
