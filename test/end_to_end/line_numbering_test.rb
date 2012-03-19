@@ -30,7 +30,7 @@ describe "Using RipperRubyParser and RubyParser" do
     let :program do
       <<-END
       class Foo
-        def foo
+        def foo()
           bar()
           baz(qux)
         end
