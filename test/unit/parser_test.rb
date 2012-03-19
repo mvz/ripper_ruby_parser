@@ -1083,6 +1083,17 @@ describe RipperRubyParser::Parser do
                             s(:to_ary,
                               s(:call, nil, :baz, s(:arglist))))
       end
+
+      it "works with instance variables and splat" do
+        result = parser.parse "@foo, *@bar = baz"
+        result.must_equal s(:masgn,
+                            s(:array,
+                              s(:iasgn, :@foo),
+                              s(:splat, s(:iasgn, :@bar))),
+                            s(:to_ary,
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
     end
 
     describe "for operators" do

@@ -21,7 +21,7 @@ module RipperRubyParser
           left.shift
         end
 
-        left = make_lasgn left
+        left = create_multiple_assignement_sub_types left
 
         right = process(right)
 
@@ -47,7 +47,7 @@ module RipperRubyParser
         _, contents = exp.shift 2
         items = handle_potentially_typeless_sexp(contents)
 
-        items = make_lasgn items
+        items = create_multiple_assignement_sub_types items
 
         s(:masgn, s(:array, *items))
       end
@@ -64,23 +64,25 @@ module RipperRubyParser
 
       private
 
-      def make_lasgn sexp_list
+      def create_multiple_assignement_sub_types sexp_list
         sexp_list.map! do |item|
-          case item.sexp_type
-          when :splat
-            item[1][0] = :lasgn
+          if item.sexp_type == :splat
+            s(:splat, create_valueless_assignment_sub_type(item[1]))
           else
-            item = with_line_number(item.line,
-                                    create_regular_assignment_sub_type(item, nil))
-            if item.sexp_type == :attrasgn
-              item.last.pop
-            else
-              item.pop
-            end
+            create_valueless_assignment_sub_type item
           end
-          item
         end
-        sexp_list
+      end
+
+      def create_valueless_assignment_sub_type(item)
+        item = with_line_number(item.line,
+                                create_regular_assignment_sub_type(item, nil))
+        if item.sexp_type == :attrasgn
+          item.last.pop
+        else
+          item.pop
+        end
+        return item
       end
 
       def create_operator_assignment_sub_type lvalue, value, operator
