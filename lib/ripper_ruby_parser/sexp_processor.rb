@@ -201,12 +201,10 @@ module RipperRubyParser
     end
 
     def trickle_up_line_numbers exp
-      exp.map! do |sub_exp|
+      exp.each do |sub_exp|
         if sub_exp.is_a? Sexp
-          exp.line ||= sub_exp.line
           trickle_up_line_numbers sub_exp
-        else
-          sub_exp
+          exp.line ||= sub_exp.line
         end
       end
     end
