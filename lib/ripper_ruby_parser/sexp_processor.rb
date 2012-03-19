@@ -5,6 +5,8 @@ require 'ripper_ruby_parser/sexp_ext'
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
   class SexpProcessor < ::SexpProcessor
+    attr_accessor :filename
+
     def initialize
       super
 
@@ -161,7 +163,7 @@ module RipperRubyParser
     def process_at_kw exp
       sym, pos = extract_node_symbol_with_position(exp)
       result = if sym == :__FILE__
-                 s(:str, "(string)")
+                 s(:str, @filename)
                else
                  s(sym)
                end

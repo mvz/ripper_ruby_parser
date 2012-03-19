@@ -11,6 +11,7 @@ describe RipperRubyParser::Parser do
     it "post-processes its result with the passed sexp processor" do
       sexp_p = MiniTest::Mock.new
       sexp_p.expect :process, s(:result), [Sexp]
+      sexp_p.expect :filename=, nil, ['(string)']
 
       parser = RipperRubyParser::Parser.new sexp_p
       result = parser.parse "any code"
@@ -810,9 +811,18 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for the __FILE__ keyword" do
-      it "creates a string sexp with value '(string)'" do
-        result = parser.parse "__FILE__"
-        result.must_equal s(:str, "(string)")
+      describe "when not passing a file name" do
+        it "creates a string sexp with value '(string)'" do
+          result = parser.parse "__FILE__"
+          result.must_equal s(:str, "(string)")
+        end
+      end
+
+      describe "when passing a file name" do
+        it "creates a string sexp with the file name" do
+          result = parser.parse "__FILE__", "foo"
+          result.must_equal s(:str, "foo")
+        end
       end
     end
 

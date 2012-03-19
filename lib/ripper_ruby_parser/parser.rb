@@ -9,9 +9,10 @@ module RipperRubyParser
       @processor = processor
     end
 
-    def parse source, filename='-', lineno=1
+    def parse source, filename='(string)', lineno=1
       parser = CommentingSexpBuilder.new(source, filename, lineno)
       exp = Sexp.from_array(parser.parse)
+      @processor.filename = filename
       @processor.process exp
     end
   end
