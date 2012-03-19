@@ -3,7 +3,7 @@ require 'ruby_parser'
 
 describe "Using RipperRubyParser and RubyParser" do
   def to_line_numbers exp
-    inner = exp.map do |sub_exp|
+    exp.map! do |sub_exp|
       if sub_exp.is_a? Sexp
         to_line_numbers sub_exp
       else
@@ -11,10 +11,10 @@ describe "Using RipperRubyParser and RubyParser" do
       end
     end
 
-    if exp.line.nil?
-      s(*inner)
+    if exp.sexp_type == :scope
+      exp
     else
-      s(:line_number, exp.line, s(*inner))
+      s(:line_number, exp.line, exp)
     end
   end
 
