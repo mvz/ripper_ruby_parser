@@ -1322,6 +1322,11 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
+      it "works for a method definition" do
+        result = parser.parse "def foo; end"
+        result.line.must_equal 1
+      end
+
       it "assigns line numbers to all nested sexps" do
         result = parser.parse "foo() do\nend\n"
         result.must_equal s(:iter,

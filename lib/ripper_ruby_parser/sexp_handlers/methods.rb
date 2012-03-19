@@ -3,8 +3,9 @@ module RipperRubyParser
     module Methods
       def process_def exp
         _, ident, params, body = exp.shift 4
-        ident = extract_node_symbol ident
-        s(:defn, ident, process(params), method_body(body))
+        ident, pos = extract_node_symbol_with_position ident
+        with_position(pos,
+                      s(:defn, ident, process(params), method_body(body)))
       end
 
       def process_defs exp
