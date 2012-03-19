@@ -1311,6 +1311,16 @@ describe RipperRubyParser::Parser do
         result = parser.parse ":foo"
         result.line.must_equal 1
       end
+
+      it "works for a class definition" do
+        result = parser.parse "class Foo; end"
+        result.line.must_equal 1
+      end
+
+      it "works for a module definition" do
+        result = parser.parse "module Foo; end"
+        result.line.must_equal 1
+      end
     end
   end
 end

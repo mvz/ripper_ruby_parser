@@ -47,15 +47,17 @@ module RipperRubyParser
 
     def process_module exp
       _, const_ref, body = exp.shift 3
-      const = const_ref_to_const const_ref
-      s(:module, const, class_or_module_body(body))
+      const, line = const_ref_to_const_with_line_number const_ref
+      with_line_number(line,
+                       s(:module, const, class_or_module_body(body)))
     end
 
     def process_class exp
       _, const_ref, parent, body = exp.shift 4
-      const = const_ref_to_const const_ref
+      const, line = const_ref_to_const_with_line_number const_ref
       parent = process(parent)
-      s(:class, const, parent, class_or_module_body(body))
+      with_line_number(line,
+                       s(:class, const, parent, class_or_module_body(body)))
     end
 
     def process_bodystmt exp
@@ -172,12 +174,13 @@ module RipperRubyParser
 
     private
 
-    def const_ref_to_const const_ref
+    def const_ref_to_const_with_line_number const_ref
       const = process(const_ref)
+      line = const.line
       if const.sexp_type == :const
         const = const[1]
       end
-      return const
+      return const, line
     end
 
     def class_or_module_body exp

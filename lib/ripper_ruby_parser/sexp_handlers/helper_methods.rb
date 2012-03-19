@@ -35,6 +35,10 @@ module RipperRubyParser
 
       def with_position pos, exp
         (line, _) = pos
+        with_line_number line, exp
+      end
+
+      def with_line_number line, exp
         exp.line = line
         exp
       end
