@@ -30,6 +30,7 @@ module RipperRubyParser
 
       result = super
       trickle_up_line_numbers result
+      trickle_down_line_numbers result
     end
 
     include SexpHandlers
@@ -206,6 +207,15 @@ module RipperRubyParser
           trickle_up_line_numbers sub_exp
         else
           sub_exp
+        end
+      end
+    end
+
+    def trickle_down_line_numbers exp
+      exp.each do |sub_exp|
+        if sub_exp.is_a? Sexp
+          sub_exp.line ||= exp.line
+          trickle_down_line_numbers sub_exp
         end
       end
     end

@@ -1321,6 +1321,17 @@ describe RipperRubyParser::Parser do
         result = parser.parse "module Foo; end"
         result.line.must_equal 1
       end
+
+      it "assigns line numbers to all nested sexps" do
+        result = parser.parse "foo() do\nend\n"
+        result.must_equal s(:iter,
+                            s(:call,
+                              nil, :foo, s(:arglist)), nil, s(:block))
+        arglist = result[1][3]
+        block = result[3]
+        nums = [ arglist.line, block.line ]
+        nums.must_equal [1, 1]
+      end
     end
   end
 end
