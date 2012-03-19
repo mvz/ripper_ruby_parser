@@ -21,7 +21,7 @@ module RipperRubyParser
           left.shift
         end
 
-        make_lasgn left
+        left = make_lasgn left
 
         right = process(right)
 
@@ -47,7 +47,7 @@ module RipperRubyParser
         _, contents = exp.shift 2
         items = handle_potentially_typeless_sexp(contents)
 
-        make_lasgn items
+        items = make_lasgn items
 
         s(:masgn, s(:array, *items))
       end
@@ -65,14 +65,22 @@ module RipperRubyParser
       private
 
       def make_lasgn sexp_list
-        sexp_list.each do |item|
+        sexp_list.map! do |item|
           case item.sexp_type
           when :splat
             item[1][0] = :lasgn
-          when :lvar
-            item[0] = :lasgn
+          else
+            item = with_line_number(item.line,
+                                    create_regular_assignment_sub_type(item, nil))
+            if item.sexp_type == :attrasgn
+              item.last.pop
+            else
+              item.pop
+            end
           end
+          item
         end
+        sexp_list
       end
 
       def create_operator_assignment_sub_type lvalue, value, operator

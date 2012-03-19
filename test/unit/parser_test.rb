@@ -1028,6 +1028,61 @@ describe RipperRubyParser::Parser do
                             s(:to_ary,
                               s(:call, nil, :qux, s(:arglist))))
       end
+
+      it "works with instance variables" do
+        result = parser.parse "@foo, @bar = baz"
+        result.must_equal s(:masgn,
+                            s(:array, s(:iasgn, :@foo), s(:iasgn, :@bar)),
+                            s(:to_ary,
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works with class variables" do
+        result = parser.parse "@@foo, @@bar = baz"
+        result.must_equal s(:masgn,
+                            s(:array, s(:cvdecl, :@@foo), s(:cvdecl, :@@bar)),
+                            s(:to_ary,
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works with attributes" do
+        result = parser.parse "foo.bar, foo.baz = qux"
+        result.must_equal s(:masgn,
+                            s(:array,
+                              s(:attrasgn,
+                                s(:call, nil, :foo, s(:arglist)),
+                                :bar=,
+                                s(:arglist)),
+                              s(:attrasgn,
+                                s(:call, nil, :foo, s(:arglist)),
+                                :baz=,
+                                s(:arglist))),
+                            s(:to_ary,
+                              s(:call, nil, :qux, s(:arglist))))
+      end
+
+      it "works with collection elements" do
+        result = parser.parse "foo[1], bar[2] = baz"
+        result.must_equal s(:masgn,
+                            s(:array,
+                              s(:attrasgn,
+                                s(:call, nil, :foo, s(:arglist)),
+                                :[]=,
+                                s(:arglist, s(:lit, 1))),
+                              s(:attrasgn,
+                                s(:call, nil, :bar, s(:arglist)),
+                                :[]=,
+                                s(:arglist, s(:lit, 2)))),
+                            s(:to_ary, s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works with constants" do
+        result = parser.parse "Foo, Bar = baz"
+        result.must_equal s(:masgn,
+                            s(:array, s(:cdecl, :Foo), s(:cdecl, :Bar)),
+                            s(:to_ary,
+                              s(:call, nil, :baz, s(:arglist))))
+      end
     end
 
     describe "for operators" do
