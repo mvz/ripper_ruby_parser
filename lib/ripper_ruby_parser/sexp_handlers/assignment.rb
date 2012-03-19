@@ -7,7 +7,8 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
 
-        create_regular_assignment_sub_type lvalue, value
+        with_line_number(lvalue.line,
+                         create_regular_assignment_sub_type(lvalue, value))
       end
 
       def process_massign exp
