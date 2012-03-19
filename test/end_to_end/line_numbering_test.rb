@@ -35,6 +35,10 @@ describe "Using RipperRubyParser and RubyParser" do
           baz(qux)
         end
       end
+
+      module Bar
+        @@baz = {}
+      end
       END
     end
 
