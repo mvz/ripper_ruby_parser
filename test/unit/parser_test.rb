@@ -674,6 +674,35 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for blocks" do
+      it "works with next with no arguments" do
+        result = parser.parse "foo do; next; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:next))
+      end
+
+      it "works with next with one argument" do
+        result = parser.parse "foo do; next bar; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:next, s(:call, nil, :bar, s(:arglist))))
+      end
+
+      it "works with next with several arguments" do
+        result = parser.parse "foo do; next bar, baz; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:next,
+                              s(:array,
+                                s(:call, nil, :bar, s(:arglist)),
+                                s(:call, nil, :baz, s(:arglist)))))
+      end
+    end
+
     describe "for yield" do
       it "works with no arguments and no brackets" do
         result = parser.parse "yield"

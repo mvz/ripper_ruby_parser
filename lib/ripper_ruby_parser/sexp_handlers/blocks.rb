@@ -84,6 +84,15 @@ module RipperRubyParser
         wrap_in_block s(*map_body(block))
       end
 
+      def process_next exp
+        _, args = exp.shift 2
+        if args.empty?
+          s(:next)
+        else
+          s(:next, handle_return_argument_list(args))
+        end
+      end
+
       private
 
       def handle_generic_block exp

@@ -72,6 +72,22 @@ module RipperRubyParser
           s(:block, *statements)
         end
       end
+
+      def handle_return_argument_list arglist
+        arglist = process(arglist)
+        args = arglist[1..-1]
+
+        if args.length == 1
+          arg = args[0]
+          if arg.sexp_type == :splat
+            s(:svalue, arg)
+          else
+            arg
+          end
+        else
+          s(:array, *args)
+        end
+      end
     end
   end
 end
