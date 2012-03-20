@@ -403,6 +403,15 @@ describe RipperRubyParser::Parser do
                               s(:block_pass,
                                 s(:call, nil, :bar, s(:arglist)))))
       end
+
+      it "works for a bare hash" do
+        result = parser.parse "foo bar => baz"
+        result.must_equal s(:call, nil, :foo,
+                            s(:arglist,
+                              s(:hash,
+                                s(:call, nil, :bar, s(:arglist)),
+                                s(:call, nil, :baz, s(:arglist)))))
+      end
     end
 
     describe "for array literals" do
