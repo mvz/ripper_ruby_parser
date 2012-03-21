@@ -40,9 +40,7 @@ module RipperRubyParser
         _, args = exp.shift 2
 
         args.map! do |sub_exp|
-          sub_exp = process(sub_exp)
-          sub_exp[0] = :lit
-          s(:undef, sub_exp)
+          s(:undef, make_method_name_literal(sub_exp))
         end
 
         if args.size == 1
@@ -52,7 +50,21 @@ module RipperRubyParser
         end
       end
 
+      def process_alias exp
+        _, *args = exp.shift 3
+
+        args.map! do |sub_exp|
+          make_method_name_literal sub_exp
+        end
+
+        s(:alias, *args)
+      end
+
       private
+
+      def make_method_name_literal exp
+        process(exp).tap {|it| it[0] = :lit}
+      end
 
       def method_body exp
         scope = process exp

@@ -22,6 +22,7 @@ module RipperRubyParser
       @processors[:@gvar] = :process_at_gvar
       @processors[:@ivar] = :process_at_ivar
       @processors[:@kw] = :process_at_kw
+      @processors[:@op] = :process_at_op
       @processors[:@backref] = :process_at_backref
 
       @processors[:@tstring_content] = :process_at_tstring_content
@@ -162,6 +163,10 @@ module RipperRubyParser
 
     def process_at_ident exp
       make_identifier(:lvar, exp)
+    end
+
+    def process_at_op exp
+      make_identifier(:op, exp)
     end
 
     def process_at_kw exp

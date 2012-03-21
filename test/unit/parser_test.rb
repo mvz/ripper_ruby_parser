@@ -402,6 +402,26 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the alias statement" do
+      it "works with regular barewords" do
+        result = parser.parse "alias foo bar"
+        result.must_equal s(:alias,
+                            s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it "works with symbols" do
+        result = parser.parse "alias :foo :bar"
+        result.must_equal s(:alias,
+                            s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it "works with operator barewords" do
+        result = parser.parse "alias + -"
+        result.must_equal s(:alias,
+                            s(:lit, :+), s(:lit, :-))
+      end
+    end
+
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"
