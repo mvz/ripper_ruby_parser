@@ -36,6 +36,24 @@ module RipperRubyParser
         s(:yield)
       end
 
+      def process_undef exp
+        _, args = exp.shift 2
+
+        args.map! do |sub_exp|
+          sub_exp = process(sub_exp)
+          sub_exp[0] = :lit
+          s(:undef, sub_exp)
+        end
+
+        if args.size == 1
+          args[0]
+        else
+          s(:block, *args)
+        end
+      end
+
+      private
+
       def method_body exp
         scope = process exp
         block = scope[1]

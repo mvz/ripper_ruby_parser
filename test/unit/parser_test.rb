@@ -376,6 +376,32 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the undef statement" do
+      it "works with a single bareword identifier" do
+        result = parser.parse "undef foo"
+        result.must_equal s(:undef, s(:lit, :foo))
+      end
+
+      it "works with a single symbol" do
+        result = parser.parse "undef :foo"
+        result.must_equal s(:undef, s(:lit, :foo))
+      end
+
+      it "works with multiple bareword identifiers" do
+        result = parser.parse "undef foo, bar"
+        result.must_equal s(:block,
+                            s(:undef, s(:lit, :foo)),
+                            s(:undef, s(:lit, :bar)))
+      end
+
+      it "works with multiple bareword symbols" do
+        result = parser.parse "undef :foo, :bar"
+        result.must_equal s(:block,
+                            s(:undef, s(:lit, :foo)),
+                            s(:undef, s(:lit, :bar)))
+      end
+    end
+
     describe "for arguments" do
       it "works for a simple case with splat" do
         result = parser.parse "foo *bar"
