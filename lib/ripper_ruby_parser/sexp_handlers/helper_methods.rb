@@ -7,7 +7,7 @@ module RipperRubyParser
         elsif exp.first.is_a? Symbol
           process(exp)
         else
-          exp.map! { |sub_exp| process(sub_exp) }
+          exp.map! { |sub_exp| handle_potentially_typeless_sexp(sub_exp) }
         end
       end
 

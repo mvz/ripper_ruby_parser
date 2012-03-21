@@ -478,6 +478,11 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo, s(:arglist)),
                             s(:splat, s(:call, nil, :bar, s(:arglist))))
       end
+
+      it "works for an array created with %W" do
+        result = parser.parse "%W(foo bar)"
+        result.must_equal s(:array, s(:str, "foo"), s(:str, "bar"))
+      end
     end
 
     describe "for hash literals" do
