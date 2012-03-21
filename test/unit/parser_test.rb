@@ -506,6 +506,15 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :baz, s(:arglist)),
                             s(:call, nil, :qux, s(:arglist)))
       end
+
+      it "works for a hash with label keys (Ruby 1.9 only)" do
+        result = parser.parse "{foo: bar, baz: qux}"
+        result.must_equal s(:hash,
+                            s(:lit, :foo),
+                            s(:call, nil, :bar, s(:arglist)),
+                            s(:lit, :baz),
+                            s(:call, nil, :qux, s(:arglist)))
+      end
     end
 
     describe "for number literals" do

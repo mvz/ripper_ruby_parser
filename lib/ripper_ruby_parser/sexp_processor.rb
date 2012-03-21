@@ -15,6 +15,7 @@ module RipperRubyParser
       @processors[:@int] = :process_at_int
       @processors[:@float] = :process_at_float
       @processors[:@CHAR] = :process_at_CHAR
+      @processors[:@label] = :process_at_label
 
       @processors[:@const] = :process_at_const
       @processors[:@ident] = :process_at_ident
@@ -142,6 +143,10 @@ module RipperRubyParser
     # character literals
     def process_at_CHAR exp
       make_literal(exp) {|val| eval(val) }
+    end
+
+    def process_at_label exp
+      make_literal(exp) {|val| val.chop.to_sym }
     end
 
     # symbol-like sexps
