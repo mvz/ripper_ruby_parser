@@ -171,8 +171,11 @@ module RipperRubyParser
 
     def process_at_kw exp
       sym, pos = extract_node_symbol_with_position(exp)
-      result = if sym == :__FILE__
+      result = case sym
+               when :__FILE__
                  s(:str, @filename)
+               when :__LINE__
+                 s(:lit, pos[0])
                else
                  s(sym)
                end

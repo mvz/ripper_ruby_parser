@@ -975,6 +975,15 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the __LINE__ keyword" do
+      it "creates a literal sexp with value of the line number" do
+        result = parser.parse "__LINE__"
+        result.must_equal s(:lit, 1)
+        result = parser.parse "\n__LINE__"
+        result.must_equal s(:lit, 2)
+      end
+    end
+
     describe "for constant references" do
       it "works when explicitely starting from the root namespace" do
         result = parser.parse "::Foo"
