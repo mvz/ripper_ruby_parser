@@ -17,7 +17,9 @@ module RipperRubyParser
       def process_command exp
         _, ident, arglist = exp.shift 3
         with_position_from_node_symbol(ident) {|method|
-          s(:call, nil, method, process(arglist)) }
+          s(:call, nil, method,
+            handle_potentially_typeless_sexp_with_fallback_type(:arglist, arglist))
+        }
       end
 
       def process_command_call exp
