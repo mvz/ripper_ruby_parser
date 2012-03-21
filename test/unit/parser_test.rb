@@ -927,6 +927,11 @@ describe RipperRubyParser::Parser do
                             "foo",
                             s(:evstr, s(:call, nil, :bar, s(:arglist))))
       end
+
+      it "works for character literals (which are string literals in Ruby 1.9.3)" do
+        result = parser.parse "?a"
+        result.must_equal s(:lit, "a")
+      end
     end
 
     describe "for the __FILE__ keyword" do

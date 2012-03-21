@@ -14,6 +14,7 @@ module RipperRubyParser
 
       @processors[:@int] = :process_at_int
       @processors[:@float] = :process_at_float
+      @processors[:@CHAR] = :process_at_CHAR
 
       @processors[:@const] = :process_at_const
       @processors[:@ident] = :process_at_ident
@@ -130,13 +131,16 @@ module RipperRubyParser
 
     # number literals
     def process_at_int exp
-      _, val, pos = exp.shift 3
-      with_position(pos, s(:lit, val.to_i))
+      make_literal(exp) {|val| val.to_i }
     end
 
     def process_at_float exp
-      _, val, pos = exp.shift 3
-      with_position(pos, s(:lit, val.to_f))
+      make_literal(exp) {|val| val.to_f }
+    end
+
+    # character literals
+    def process_at_CHAR exp
+      make_literal(exp) {|val| eval(val) }
     end
 
     # symbol-like sexps
@@ -200,6 +204,11 @@ module RipperRubyParser
     def make_identifier(type, exp)
       with_position_from_node_symbol(exp) {|ident|
         s(type, ident) }
+    end
+
+    def make_literal exp
+      _, val, pos = exp.shift 3
+      with_position(pos, s(:lit, yield(val)))
     end
 
     def trickle_up_line_numbers exp
