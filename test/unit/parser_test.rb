@@ -654,6 +654,17 @@ describe RipperRubyParser::Parser do
                                   s(:arglist,
                                     s(:call, nil, :qux, s(:arglist))))))
         end
+
+        it "works with nested calls without brackets" do
+          result = parser.parse "foo.bar baz qux"
+          result.must_equal s(:call,
+                              s(:call, nil, :foo, s(:arglist)),
+                              :bar,
+                              s(:arglist,
+                                s(:call, nil, :baz,
+                                  s(:arglist,
+                                    s(:call, nil, :qux, s(:arglist))))))
+        end
       end
 
       describe "with blocks" do
