@@ -701,6 +701,33 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :bar, s(:arglist)),
                                 s(:call, nil, :baz, s(:arglist)))))
       end
+
+      it "works with break with no arguments" do
+        result = parser.parse "foo do; break; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:break))
+      end
+
+      it "works with break with one argument" do
+        result = parser.parse "foo do; break bar; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:break, s(:call, nil, :bar, s(:arglist))))
+      end
+
+      it "works with break with several arguments" do
+        result = parser.parse "foo do; break bar, baz; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:break,
+                              s(:array,
+                                s(:call, nil, :bar, s(:arglist)),
+                                s(:call, nil, :baz, s(:arglist)))))
+      end
     end
 
     describe "for yield" do

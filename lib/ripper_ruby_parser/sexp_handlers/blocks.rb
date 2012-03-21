@@ -93,6 +93,15 @@ module RipperRubyParser
         end
       end
 
+      def process_break exp
+        _, args = exp.shift 2
+        if args.empty?
+          s(:break)
+        else
+          s(:break, handle_return_argument_list(args))
+        end
+      end
+
       private
 
       def handle_generic_block exp
