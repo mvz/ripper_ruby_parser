@@ -728,6 +728,14 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :bar, s(:arglist)),
                                 s(:call, nil, :baz, s(:arglist)))))
       end
+
+      it "works with redo" do
+        result = parser.parse "foo do; redo; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:redo))
+      end
     end
 
     describe "for yield" do
