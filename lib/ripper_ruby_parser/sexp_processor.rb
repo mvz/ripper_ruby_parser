@@ -27,6 +27,8 @@ module RipperRubyParser
       @processors[:@backref] = :process_at_backref
 
       @processors[:@tstring_content] = :process_at_tstring_content
+
+      @errors = []
     end
 
     def process exp

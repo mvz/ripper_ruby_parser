@@ -10,6 +10,10 @@ describe "Using RipperRubyParser" do
       newparser.parse "def foo"
     }.must_raise RuntimeError
   end
+
+  it "returns false for an invalid class name" do
+    newparser.parse("class foo; end").must_equal false
+  end
 end
 
 
