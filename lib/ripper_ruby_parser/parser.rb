@@ -11,7 +11,9 @@ module RipperRubyParser
 
     def parse source, filename='(string)', lineno=1
       parser = CommentingSexpBuilder.new(source, filename, lineno)
-      exp = Sexp.from_array(parser.parse)
+      result = parser.parse
+      raise "Ripper parse failed." if result.nil?
+      exp = Sexp.from_array(result)
       @processor.filename = filename
       @processor.process exp
     end
