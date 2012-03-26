@@ -9,7 +9,7 @@ module RipperRubyParser
       def process_string_content exp
         exp.shift
 
-        string, rest = extract_string_parts exp
+        string, rest = extract_escaped_string_parts exp
 
         if rest.empty?
           s(:str, string)
@@ -26,7 +26,7 @@ module RipperRubyParser
       def process_regexp_literal exp
         _, content, _ = exp.shift 3
 
-        string, rest = extract_regexp_parts content
+        string, rest = extract_string_parts content
 
         if rest.empty?
           s(:lit, Regexp.new(string))
@@ -48,7 +48,7 @@ module RipperRubyParser
       def process_dyna_symbol exp
         _, list = exp.shift 2
 
-        string, rest = extract_string_parts list
+        string, rest = extract_escaped_string_parts list
         if rest.empty?
           s(:lit, string.to_sym)
         else
@@ -63,17 +63,15 @@ module RipperRubyParser
 
       private
 
-      def extract_inner_string exp
-        process(exp) || s(:str, "")
-      end
-
-      def extract_regexp_parts exp
+      def extract_string_parts exp
         inner = exp.shift
 
-        string = extract_inner_string(inner)
+        string = process(inner)
         rest = []
 
-        if string.sexp_type == :str
+        if string.nil?
+          string = ""
+        elsif string.sexp_type == :str
           string = string[1]
         else
           rest << string
@@ -88,27 +86,15 @@ module RipperRubyParser
         return string, rest
       end
 
-      def extract_string_parts exp
-        inner = exp.shift
-
-        string = extract_inner_string(inner)
-        rest = []
-
-        if string.sexp_type == :str
-          string = string[1]
-        else
-          rest << string
-          string = ""
-        end
+      def extract_escaped_string_parts exp
+        string, rest = extract_string_parts exp
 
         string = unescape(string)
 
-        until exp.empty? do
-          result = process(exp.shift)
-          if result.sexp_type == :str
-            result[1] = unescape(result[1])
+        rest.each do |sub_exp|
+          if sub_exp.sexp_type == :str
+            sub_exp[1] = unescape(sub_exp[1])
           end
-          rest << result
         end
 
         return string, rest
