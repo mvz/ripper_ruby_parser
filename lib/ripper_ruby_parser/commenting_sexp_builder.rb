@@ -48,6 +48,10 @@ module RipperRubyParser
       raise SyntaxError.new(*args)
     end
 
+    def on_assign_error *args
+      raise SyntaxError.new(*args)
+    end
+
     private
 
     def commentize exp

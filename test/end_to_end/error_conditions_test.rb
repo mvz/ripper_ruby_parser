@@ -35,5 +35,11 @@ describe "Handling errors" do
         newparser.parse "alias $1 $2"
       }.must_raise RipperRubyParser::SyntaxError
     end
+
+    it "raises an error assigning to $1" do
+      proc {
+        newparser.parse "$1 = foo"
+      }.must_raise RipperRubyParser::SyntaxError
+    end
   end
 end
