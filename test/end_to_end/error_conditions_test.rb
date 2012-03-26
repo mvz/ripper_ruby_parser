@@ -18,9 +18,21 @@ describe "Handling errors" do
       }.must_raise RipperRubyParser::SyntaxError
     end
 
-    it "raises an error for an invalid alias" do
+    it "raises an error aliasing $1 as foo" do
       proc {
         newparser.parse "alias foo $1"
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it "raises an error aliasing foo as $1" do
+      proc {
+        newparser.parse "alias $1 foo"
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it "raises an error aliasing $2 as $1" do
+      proc {
+        newparser.parse "alias $1 $2"
       }.must_raise RipperRubyParser::SyntaxError
     end
   end
