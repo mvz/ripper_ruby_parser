@@ -30,7 +30,7 @@ module RipperRubyParser
           if mapped
             left = process(left)
             right = process(right)
-            if mapped == :and and left.sexp_type == :and
+            if mapped == left.sexp_type
               s(left.sexp_type, left[1], s(mapped, left[2], right))
             else
               s(mapped, left, right)

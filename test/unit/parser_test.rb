@@ -1323,6 +1323,15 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)))
       end
 
+      it "handles double :or" do
+        result = parser.parse "foo or bar or baz"
+        result.must_equal s(:or,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:or,
+                              s(:call, nil, :bar, s(:arglist)),
+                              s(:call, nil, :baz, s(:arglist))))
+      end
+
       it "converts :&& to :and" do
         result = parser.parse "foo && bar"
         result.must_equal s(:and,
