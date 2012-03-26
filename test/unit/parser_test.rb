@@ -974,6 +974,24 @@ describe RipperRubyParser::Parser do
         result = parser.parse "?a"
         result.must_equal s(:lit, "a")
       end
+
+      it "works for basic backtick strings" do
+        result = parser.parse '`foo`'
+        result.must_equal s(:xstr, "foo")
+      end
+
+      it "works for interpolated backtick strings" do
+        result = parser.parse '`foo#{bar}`'
+        result.must_equal s(:dxstr,
+                            "foo",
+                            s(:evstr, s(:call, nil, :bar, s(:arglist))))
+      end
+
+      it "works for backtick strings with escape sequences" do
+        result = parser.parse '`foo\\n`'
+        result.must_equal s(:xstr, "foo\n")
+      end
+
     end
 
     describe "for the __FILE__ keyword" do

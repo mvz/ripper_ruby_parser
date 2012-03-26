@@ -9,7 +9,7 @@ module RipperRubyParser
       def process_string_content exp
         exp.shift
 
-        string, rest = extract_escaped_string_parts exp
+        string, rest = extract_unescaped_string_parts exp
 
         if rest.empty?
           s(:str, string)
@@ -21,6 +21,16 @@ module RipperRubyParser
       def process_string_embexpr exp
         _, list = exp.shift 2
         s(:evstr, process(list.first))
+      end
+
+      def process_xstring_literal exp
+        _, content = exp.shift 2
+        string, rest = extract_unescaped_string_parts content
+        if rest.empty?
+          s(:xstr, string)
+        else
+          s(:dxstr, string, *rest)
+        end
       end
 
       def process_regexp_literal exp
@@ -48,7 +58,7 @@ module RipperRubyParser
       def process_dyna_symbol exp
         _, list = exp.shift 2
 
-        string, rest = extract_escaped_string_parts list
+        string, rest = extract_unescaped_string_parts list
         if rest.empty?
           s(:lit, string.to_sym)
         else
@@ -86,7 +96,7 @@ module RipperRubyParser
         return string, rest
       end
 
-      def extract_escaped_string_parts exp
+      def extract_unescaped_string_parts exp
         string, rest = extract_string_parts exp
 
         string = unescape(string)
