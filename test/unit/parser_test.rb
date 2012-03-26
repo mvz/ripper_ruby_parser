@@ -950,6 +950,14 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:lit, /\)\n\\/)
       end
 
+      it "works for regexes with interpolations" do
+        result = parser.parse '/foo#{bar}baz/'
+        result.must_equal s(:dregx,
+                            "foo",
+                            s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                            s(:str, "baz"))
+      end
+
       it "works for simple dsyms" do
         result = parser.parse ':"foo"'
         result.must_equal s(:lit, :foo)

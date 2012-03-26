@@ -86,7 +86,7 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for a example with operators and explicit block parameter from Reek" do
+  describe "for an example with operators and explicit block parameter from Reek" do
     let :program do
       <<-END
         def parse(arg, argv, &error)
@@ -103,6 +103,19 @@ describe "Using RipperRubyParser and RubyParser" do
           val
         end
       END
+    end
+
+    it "gives the same result" do
+      original = oldparser.parse program
+      imitation = newparser.parse program
+
+      formatted(imitation).must_equal formatted(original)
+    end
+  end
+
+  describe "for an example of a complex regular expression from Reek" do
+    let :program do
+      '/(#{@types})\s*(\w+)\s*\(([^)]*)\)/'
     end
 
     it "gives the same result" do
