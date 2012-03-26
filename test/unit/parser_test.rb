@@ -522,6 +522,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "3.14"
         result.must_equal s(:lit, 3.14)
       end
+
+      it "works for octal integer literals" do
+        result = parser.parse "0700"
+        result.must_equal s(:lit, 448)
+      end
     end
 
     describe "for collection indexing" do

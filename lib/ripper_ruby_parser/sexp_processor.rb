@@ -135,7 +135,7 @@ module RipperRubyParser
 
     # number literals
     def process_at_int exp
-      make_literal(exp) {|val| val.to_i }
+      make_literal(exp) {|val| Integer(val) }
     end
 
     def process_at_float exp
