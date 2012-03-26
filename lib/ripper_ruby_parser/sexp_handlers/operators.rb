@@ -28,7 +28,13 @@ module RipperRubyParser
         else
           mapped = BINARY_OPERTOR_MAP[op]
           if mapped
-            s(mapped, process(left), process(right))
+            left = process(left)
+            right = process(right)
+            if mapped == :and and left.sexp_type == :and
+              s(left.sexp_type, left[1], s(mapped, left[2], right))
+            else
+              s(mapped, left, right)
+            end
           else
             s(:call, process(left), op, s(:arglist, process(right)))
           end
