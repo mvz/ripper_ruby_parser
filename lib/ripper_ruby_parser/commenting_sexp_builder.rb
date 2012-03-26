@@ -52,6 +52,10 @@ module RipperRubyParser
       raise SyntaxError.new(*args)
     end
 
+    def on_param_error *args
+      raise SyntaxError.new(*args)
+    end
+
     private
 
     def commentize exp

@@ -41,5 +41,11 @@ describe "Handling errors" do
         newparser.parse "$1 = foo"
       }.must_raise RipperRubyParser::SyntaxError
     end
+
+    it "raises an error using an invalid parameter name" do
+      proc {
+        newparser.parse "def foo(BAR); end"
+      }.must_raise RipperRubyParser::SyntaxError
+    end
   end
 end
