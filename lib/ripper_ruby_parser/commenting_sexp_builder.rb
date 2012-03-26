@@ -34,6 +34,14 @@ module RipperRubyParser
       commentize(super)
     end
 
+    def on_parse_error *args
+      raise SyntaxError.new(*args)
+    end
+
+    def on_class_name_error *args
+      raise SyntaxError.new(*args)
+    end
+
     private
 
     def commentize exp
