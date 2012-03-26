@@ -289,13 +289,6 @@ describe RipperRubyParser::SexpProcessor do
                             nil)
       end
     end
-
-    describe "for a :class_name_error sexp" do
-      it "raises a RipperRubyParser::SyntaxError" do
-        sexp = s(:class_name_error, s(:foo))
-        proc { processor.process sexp }.must_raise RipperRubyParser::SyntaxError
-      end
-    end
   end
 
   describe "#extract_node_symbol" do

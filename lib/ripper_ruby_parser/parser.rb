@@ -15,11 +15,7 @@ module RipperRubyParser
       raise "Ripper parse failed." if result.nil?
       exp = Sexp.from_array(result)
       @processor.filename = filename
-      begin
-        @processor.process exp
-      rescue SyntaxError
-        false
-      end
+      @processor.process exp
     end
   end
 end

@@ -1,4 +1,6 @@
 require 'ripper'
+require 'ripper_ruby_parser/syntax_error'
+
 module RipperRubyParser
   class CommentingSexpBuilder < Ripper::SexpBuilderPP
     def initialize *args
