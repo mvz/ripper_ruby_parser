@@ -17,6 +17,7 @@ describe "Using RipperRubyParser and RubyParser" do
       end
 
       it "gives the same result" do
+        newparser.extra_compatible = true
         original = oldparser.parse program
         imitation = newparser.parse program
 

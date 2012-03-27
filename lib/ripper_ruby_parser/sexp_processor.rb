@@ -6,6 +6,7 @@ module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
   class SexpProcessor < ::SexpProcessor
     attr_accessor :filename
+    attr_accessor :extra_compatible
 
     def initialize
       super
@@ -144,7 +145,13 @@ module RipperRubyParser
 
     # character literals
     def process_at_CHAR exp
-      make_literal(exp) {|val| eval(val) }
+      make_literal(exp) do |val|
+        if extra_compatible
+          val[1].codepoints.first
+        else
+          val[1]
+        end
+      end
     end
 
     def process_at_label exp

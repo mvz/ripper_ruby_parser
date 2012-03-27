@@ -12,6 +12,7 @@ describe RipperRubyParser::Parser do
       sexp_p = MiniTest::Mock.new
       sexp_p.expect :process, s(:result), [Sexp]
       sexp_p.expect :filename=, nil, ['(string)']
+      sexp_p.expect :extra_compatible=, nil, [false]
 
       parser = RipperRubyParser::Parser.new sexp_p
       result = parser.parse "any code"
@@ -978,6 +979,12 @@ describe RipperRubyParser::Parser do
       it "works for character literals (which are string literals in Ruby 1.9.3)" do
         result = parser.parse "?a"
         result.must_equal s(:lit, "a")
+      end
+
+      it "works for character literals in extra compatible mode" do
+        parser.extra_compatible = true
+        result = parser.parse "?a"
+        result.must_equal s(:lit, 97)
       end
 
       it "works for basic backtick strings" do
