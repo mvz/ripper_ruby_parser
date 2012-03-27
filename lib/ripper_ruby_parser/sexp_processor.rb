@@ -30,6 +30,8 @@ module RipperRubyParser
       @processors[:@tstring_content] = :process_at_tstring_content
 
       @errors = []
+
+      @in_method_body = false
     end
 
     def process exp

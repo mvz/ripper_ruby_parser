@@ -12,7 +12,7 @@ module RipperRubyParser
         _, receiver, _, method, args, body = exp.shift 6
         s(:defs, process(receiver),
           extract_node_symbol(method),
-          process(args), process(body))
+          process(args), in_method { process(body) })
       end
 
       def process_return exp
@@ -62,12 +62,19 @@ module RipperRubyParser
 
       private
 
+      def in_method
+        @in_method_body = true
+        result = yield
+        @in_method_body = false
+        result
+      end
+
       def make_method_name_literal exp
         process(exp).tap {|it| it[0] = :lit}
       end
 
       def method_body exp
-        scope = process exp
+        scope = in_method { process exp }
         block = scope[1]
         if block.length == 1
           block.push s(:nil)

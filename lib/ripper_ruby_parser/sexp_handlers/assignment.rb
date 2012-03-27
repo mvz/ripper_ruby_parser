@@ -120,12 +120,18 @@ module RipperRubyParser
         :gvar => :gasgn
       }
 
+      ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP = {
+        :cvar => :cvasgn
+      }
+
       def create_assignment_sub_type lvalue, value
         s(map_assignment_lvalue_type(lvalue.sexp_type), lvalue[1], value)
       end
 
       def map_assignment_lvalue_type type
-        ASSIGNMENT_SUB_TYPE_MAP[type] || type
+        @in_method_body && ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP[type] ||
+        ASSIGNMENT_SUB_TYPE_MAP[type] ||
+        type
       end
     end
   end

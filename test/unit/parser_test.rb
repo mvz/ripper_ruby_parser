@@ -1112,6 +1112,25 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar, s(:arglist)))
       end
 
+      it "works when assigning to a class variable inside a method" do
+        result = parser.parse "def foo; @@bar = baz; end"
+        result.must_equal s(:defn,
+                            :foo, s(:args),
+                            s(:scope,
+                              s(:block,
+                                s(:cvasgn, :@@bar, s(:call, nil, :baz, s(:arglist))))))
+      end
+
+      it "works when assigning to a class variable inside a method with a receiver" do
+        result = parser.parse "def self.foo; @@bar = baz; end"
+        result.must_equal s(:defs,
+                            s(:self),
+                            :foo, s(:args),
+                            s(:scope,
+                              s(:block,
+                                s(:cvasgn, :@@bar, s(:call, nil, :baz, s(:arglist))))))
+      end
+
       it "works when assigning to a global variable" do
         result = parser.parse "$foo = bar"
         result.must_equal s(:gasgn,
