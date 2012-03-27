@@ -964,6 +964,34 @@ describe RipperRubyParser::Parser do
                             s(:str, "baz"))
       end
 
+      it "works for a regex literal with the multiline flag" do
+        result = parser.parse "/foo/m"
+        result.must_equal s(:lit, /foo/m)
+      end
+
+      it "works for a regex literal with the extended flag" do
+        result = parser.parse "/foo/x"
+        result.must_equal s(:lit, /foo/x)
+      end
+
+      it "works for a regex literal with the ignorecase flag" do
+        result = parser.parse "/foo/i"
+        result.must_equal s(:lit, /foo/i)
+      end
+
+      it "works for a regex literal with a combination of flags" do
+        result = parser.parse "/foo/ixm"
+        result.must_equal s(:lit, /foo/ixm)
+      end
+
+      it "works for a regex literal with flags and interpolation" do
+        result = parser.parse '/foo#{bar}/ixm'
+        result.must_equal s(:dregx,
+                            "foo",
+                            s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                            7)
+      end
+
       it "works for simple dsyms" do
         result = parser.parse ':"foo"'
         result.must_equal s(:lit, :foo)

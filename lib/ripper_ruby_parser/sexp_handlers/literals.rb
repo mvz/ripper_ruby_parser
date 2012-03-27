@@ -34,13 +34,19 @@ module RipperRubyParser
       end
 
       def process_regexp_literal exp
-        _, content, _ = exp.shift 3
+        _, content, (_, flags, _) = exp.shift 3
 
         string, rest = extract_string_parts content
 
+        numflags = 0
+        flags =~ /m/ and numflags |= Regexp::MULTILINE
+        flags =~ /x/ and numflags |= Regexp::EXTENDED
+        flags =~ /i/ and numflags |= Regexp::IGNORECASE
+
         if rest.empty?
-          s(:lit, Regexp.new(string))
+          s(:lit, Regexp.new(string, numflags))
         else
+          rest << numflags if numflags > 0
           s(:dregx, string, *rest)
         end
       end
