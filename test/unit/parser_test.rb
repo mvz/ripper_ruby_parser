@@ -992,6 +992,13 @@ describe RipperRubyParser::Parser do
                             7)
       end
 
+      it "works for a regex literal with interpolate-once flag" do
+        result = parser.parse '/foo#{bar}/o'
+        result.must_equal s(:dregx_once,
+                            "foo",
+                            s(:evstr, s(:call, nil, :bar, s(:arglist))))
+      end
+
       it "works for simple dsyms" do
         result = parser.parse ':"foo"'
         result.must_equal s(:lit, :foo)
