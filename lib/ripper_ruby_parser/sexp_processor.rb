@@ -149,7 +149,7 @@ module RipperRubyParser
     def process_at_CHAR exp
       make_literal(exp) do |val|
         if extra_compatible
-          val[1].codepoints.first
+          val[1].ord
         else
           val[1]
         end
