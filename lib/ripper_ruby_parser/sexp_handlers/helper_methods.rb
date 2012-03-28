@@ -26,11 +26,19 @@ module RipperRubyParser
       def convert_block_args(args)
         if args
           names = args[1][1..-1]
-          if names.length > 1
-            s(:masgn, s(:array, *names.map {|name| s(:lasgn, name) }))
+          if names.length > 1 or names.first =~ /^\*/
+            s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
           else
-            s(:lasgn, *names)
+            s(:lasgn, names.first)
           end
+        end
+      end
+
+      def arg_name_to_lasgn(name)
+        if name =~ /^\*(.*)/
+          s(:splat, s(:lasgn, $1.to_sym))
+        else
+          s(:lasgn, name)
         end
       end
 

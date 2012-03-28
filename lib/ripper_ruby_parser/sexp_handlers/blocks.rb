@@ -35,6 +35,8 @@ module RipperRubyParser
           s(:lasgn, sym, val)
         end
 
+        # FIXME: Delay conflating all arguments until later, so that
+        # #convert_block_args doesn't need to tease this apart again.
         add_arg_unless_nil(rest, args) {|name| :"*#{name}" }
 
         add_arg_unless_nil(block, args) {|name| :"&#{name}" }

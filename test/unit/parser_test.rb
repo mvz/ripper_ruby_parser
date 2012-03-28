@@ -846,6 +846,26 @@ describe RipperRubyParser::Parser do
                                 s(:lasgn, :bar),
                                 s(:lasgn, :baz))))
       end
+
+      it "works with a single splat argument" do
+        result = parser.parse "foo do |*bar|; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:masgn,
+                              s(:array,
+                                s(:splat, s(:lasgn, :bar)))))
+      end
+
+      it "works with a combination of regular arguments and a splat argument" do
+        result = parser.parse "foo do |bar, *baz|; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:masgn,
+                              s(:array,
+                                s(:lasgn, :bar),
+                                s(:splat, s(:lasgn, :baz)))))
+      end
+
     end
 
     describe "for yield" do
