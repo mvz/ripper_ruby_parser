@@ -541,7 +541,7 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for method definitions" do
-      it "works with def with reciever" do
+      it "works with def with receiver" do
         result = parser.parse "def foo.bar; end"
         result.must_equal s(:defs,
                             s(:call, nil, :foo, s(:arglist)),
@@ -655,7 +655,7 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for method calls" do
-      describe "without a reciever" do
+      describe "without a receiver" do
         it "works without brackets" do
           result = parser.parse "foo bar"
           result.must_equal s(:call, nil, :foo,
@@ -693,7 +693,7 @@ describe RipperRubyParser::Parser do
         end
       end
 
-      describe "with a reciever" do
+      describe "with a receiver" do
         it "works without brackets" do
           result = parser.parse "foo.bar baz"
           result.must_equal s(:call,
@@ -1597,12 +1597,12 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
-      it "works for a method call with reciever" do
+      it "works for a method call with receiver" do
         result = parser.parse "foo.bar"
         result.line.must_equal 1
       end
 
-      it "works for a method call with reciever and arguments" do
+      it "works for a method call with receiver and arguments" do
         result = parser.parse "foo.bar baz"
         result.line.must_equal 1
       end
