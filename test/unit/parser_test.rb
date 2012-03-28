@@ -761,6 +761,13 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for blocks" do
+      it "works with no statements in the block body" do
+        result = parser.parse "foo do; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil)
+      end
+
       it "works with next with no arguments" do
         result = parser.parse "foo do; next; end"
         result.must_equal s(:iter,
@@ -1708,11 +1715,12 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
-      it "assigns line numbers to all nested sexps" do
-        result = parser.parse "foo() do\nend\n"
+      it "assigns line numbers to nested sexps that don't generate their own line numbers" do
+        result = parser.parse "foo() do\nnext\nend\n"
         result.must_equal s(:iter,
-                            s(:call,
-                              nil, :foo, s(:arglist)), nil, s(:block))
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:next))
         arglist = result[1][3]
         block = result[3]
         nums = [ arglist.line, block.line ]

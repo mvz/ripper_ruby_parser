@@ -6,7 +6,11 @@ module RipperRubyParser
         block = process(block)
         args = convert_block_args(block[1])
         stmt = block[2].first
-        s(:iter, process(call), args, stmt)
+        if stmt.empty?
+          s(:iter, process(call), args)
+        else
+          s(:iter, process(call), args, stmt)
+        end
       end
 
       def process_brace_block exp
@@ -106,6 +110,7 @@ module RipperRubyParser
 
       def handle_generic_block exp
         _, args, stmts = exp.shift 3
+        # FIXME: Symbol :block is irrelevant.
         s(:block, process(args), s(handle_statement_list(stmts)))
       end
 

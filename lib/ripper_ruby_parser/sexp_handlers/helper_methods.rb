@@ -78,7 +78,10 @@ module RipperRubyParser
       end
 
       def wrap_in_block statements
-        if statements.length == 1
+        case statements.length
+        when 0
+          statements
+        when 1
           statements.first
         else
           s(:block, *statements)
