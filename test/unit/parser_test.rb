@@ -829,6 +829,23 @@ describe RipperRubyParser::Parser do
                             nil,
                             s(:redo))
       end
+
+      it "works with one argument" do
+        result = parser.parse "foo do |bar|; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:lasgn, :bar))
+      end
+
+      it "works with multiple arguments" do
+        result = parser.parse "foo do |bar, baz|; end"
+        result.must_equal s(:iter,
+                            s(:call, nil, :foo, s(:arglist)),
+                            s(:masgn,
+                              s(:array,
+                                s(:lasgn, :bar),
+                                s(:lasgn, :baz))))
+      end
     end
 
     describe "for yield" do

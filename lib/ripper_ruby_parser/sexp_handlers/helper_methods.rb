@@ -24,7 +24,14 @@ module RipperRubyParser
       end
 
       def convert_block_args(args)
-        args && s(:lasgn, args[1][1])
+        if args
+          names = args[1][1..-1]
+          if names.length > 1
+            s(:masgn, s(:array, *names.map {|name| s(:lasgn, name) }))
+          else
+            s(:lasgn, *names)
+          end
+        end
       end
 
       def handle_statement_list exp
