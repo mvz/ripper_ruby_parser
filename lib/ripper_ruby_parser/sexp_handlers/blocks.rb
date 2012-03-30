@@ -6,7 +6,7 @@ module RipperRubyParser
         block = process(block)
         args = convert_block_args(block[1])
         stmt = block[2].first
-        if stmt.empty?
+        if stmt.nil?
           s(:iter, process(call), args)
         else
           s(:iter, process(call), args, stmt)
@@ -53,12 +53,12 @@ module RipperRubyParser
 
         block = process(body)[1]
 
-        strip_wrapping_block(block)
+        strip_wrapping_block(block.compact)
       end
 
       def process_rescue exp
         _, eclass, evar, block, _ = exp.shift 5
-        rescue_block = s(*map_body(block))
+        rescue_block = map_body(block)
 
         arr = []
         if eclass
@@ -78,6 +78,28 @@ module RipperRubyParser
 
         s(:resbody, s(:array, *arr),
           wrap_in_block(rescue_block))
+      end
+
+      def process_bodystmt exp
+        _, body, rescue_block, _, ensure_block = exp.shift 5
+
+        body = map_body body
+
+        unless rescue_block or ensure_block
+          return s(:scope, s(:block, *body))
+        end
+
+        body = wrap_in_block(body)
+
+        if rescue_block
+          body = s(:rescue, body, process(rescue_block))
+        end
+
+        if ensure_block
+          body = s(:ensure, body, process(ensure_block))
+        end
+
+        s(:scope, body)
       end
 
       def process_rescue_mod exp
@@ -117,6 +139,7 @@ module RipperRubyParser
       end
 
       def strip_wrapping_block(block)
+        return block unless block.sexp_type == :block
         case block.length
         when 1
           s(:nil)

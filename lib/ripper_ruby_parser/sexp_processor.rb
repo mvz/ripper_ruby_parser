@@ -71,28 +71,6 @@ module RipperRubyParser
                        s(:class, const, parent, class_or_module_body(body)))
     end
 
-    def process_bodystmt exp
-      _, body, rescue_block, _, ensure_block = exp.shift 5
-
-      body = map_body body
-
-      unless rescue_block or ensure_block
-        return s(:scope, s(:block, *body))
-      end
-
-      body = wrap_in_block(body)
-
-      if rescue_block
-        body = s(:rescue, body, process(rescue_block))
-      end
-
-      if ensure_block
-        body = s(:ensure, body, process(ensure_block))
-      end
-
-      s(:scope, body)
-    end
-
     def process_var_ref exp
       _, contents = exp.shift 2
       process(contents)

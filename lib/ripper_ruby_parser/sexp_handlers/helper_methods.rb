@@ -95,7 +95,7 @@ module RipperRubyParser
       def wrap_in_block statements
         case statements.length
         when 0
-          statements
+          nil
         when 1
           statements.first
         else
