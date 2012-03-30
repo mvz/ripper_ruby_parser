@@ -3,10 +3,17 @@ module RipperRubyParser
     module Conditionals
       def process_if exp
         _, cond, truepart, falsepart = exp.shift 4
-        s(:if,
-          process(cond),
-          handle_statement_list(truepart),
-          process(falsepart))
+
+        cond = process(cond)
+        truepart = handle_statement_list(truepart)
+        falsepart = process(falsepart)
+
+        if cond.sexp_type == :not
+          cond = cond[1]
+          truepart, falsepart = falsepart, truepart
+        end
+
+        s(:if, cond, truepart, falsepart)
       end
 
       def process_elsif exp

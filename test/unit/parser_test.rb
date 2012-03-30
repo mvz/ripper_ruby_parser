@@ -75,6 +75,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :qux, s(:arglist)),
                               nil))
       end
+
+      it "handles a negative condition correctly" do
+        result = parser.parse "if not foo; bar; end"
+        result.must_equal s(:if,
+                            s(:call, nil, :foo, s(:arglist)),
+                            nil,
+                            s(:call, nil, :bar, s(:arglist)))
+      end
     end
 
     describe "for unless" do
