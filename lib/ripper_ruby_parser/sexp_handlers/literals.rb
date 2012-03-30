@@ -122,7 +122,7 @@ module RipperRubyParser
       end
 
       def unescape string
-        string.gsub(/(\\[n\\"])/) do
+        string.gsub(/(\\[^)])/) do
           eval "\"#{$1}\""
         end
       end

@@ -115,7 +115,7 @@ describe "Using RipperRubyParser and RubyParser" do
 
   describe "for an example of a complex regular expression from Reek" do
     let :program do
-      '/(#{@types})\s*(\w+)\s*\(([^)]*)\)/'
+      "/(\#{@types})\\s*(\\w+)\\s*\\(([^)]*)\\)/"
     end
 
     it "gives the same result" do

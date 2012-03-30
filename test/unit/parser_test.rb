@@ -956,6 +956,11 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:str, "\n")
       end
 
+      it "works for strings with useless escape sequences" do
+        result = parser.parse "\"F\\OO\""
+        result.must_equal s(:str, "FOO")
+      end
+
       it "works for strings with escaped backslashes" do
         result = parser.parse "\"\\\\n\""
         result.must_equal s(:str, "\\n")
