@@ -17,7 +17,11 @@ module RipperRubyParser
       end
 
       def process_elsif exp
-        process_if exp
+        _, cond, truepart, falsepart = exp.shift 4
+
+        s(:if, process(cond),
+          handle_statement_list(truepart),
+          process(falsepart))
       end
 
       def process_if_mod exp
