@@ -92,14 +92,18 @@ module RipperRubyParser
         body = wrap_in_block(body)
 
         if rescue_block
-          body = s(:rescue, body, process(rescue_block))
+          if body.nil?
+            body = s(:rescue, process(rescue_block))
+          else
+            body = s(:rescue, body, process(rescue_block))
+          end
         end
 
         if ensure_block
           body = s(:ensure, body, process(ensure_block))
         end
 
-        s(:scope, body)
+        s(:scope, s(:block, body))
       end
 
       def process_rescue_mod exp

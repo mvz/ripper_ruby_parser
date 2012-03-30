@@ -368,6 +368,20 @@ describe RipperRubyParser::Parser do
                               s(:array),
                               s(:call, nil, :bar, s(:arglist))))
       end
+
+      it "works in a plain method body" do
+        result = parser.parse "def foo; bar; rescue; baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args),
+                            s(:scope,
+                              s(:block,
+                                s(:rescue,
+                                  s(:call, nil, :bar, s(:arglist)),
+                                  s(:resbody,
+                                    s(:array),
+                                    s(:call, nil, :baz, s(:arglist)))))))
+      end
     end
 
     describe "for the ensure statement" do
