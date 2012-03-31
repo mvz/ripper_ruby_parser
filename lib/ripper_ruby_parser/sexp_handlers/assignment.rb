@@ -21,7 +21,7 @@ module RipperRubyParser
           left.shift
         end
 
-        left = create_multiple_assignement_sub_types left
+        left = create_multiple_assignment_sub_types left
 
         right = process(right)
 
@@ -47,7 +47,7 @@ module RipperRubyParser
         _, contents = exp.shift 2
         items = handle_potentially_typeless_sexp(contents)
 
-        items = create_multiple_assignement_sub_types items
+        items = create_multiple_assignment_sub_types items
 
         s(:masgn, s(:array, *items))
       end
@@ -64,7 +64,7 @@ module RipperRubyParser
 
       private
 
-      def create_multiple_assignement_sub_types sexp_list
+      def create_multiple_assignment_sub_types sexp_list
         sexp_list.map! do |item|
           if item.sexp_type == :splat
             s(:splat, create_valueless_assignment_sub_type(item[1]))
