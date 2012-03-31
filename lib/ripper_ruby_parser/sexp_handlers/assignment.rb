@@ -67,7 +67,11 @@ module RipperRubyParser
       def create_multiple_assignment_sub_types sexp_list
         sexp_list.map! do |item|
           if item.sexp_type == :splat
-            s(:splat, create_valueless_assignment_sub_type(item[1]))
+            if item[1].nil?
+              s(:splat)
+            else
+              s(:splat, create_valueless_assignment_sub_type(item[1]))
+            end
           else
             create_valueless_assignment_sub_type item
           end
