@@ -1,7 +1,7 @@
 module RipperRubyParser
   module SexpHandlers
     module Operators
-      BINARY_OPERTOR_MAP = {
+      BINARY_OPERATOR_MAP = {
         "&&".to_sym => :and,
         "||".to_sym => :or,
         :and => :and,
@@ -11,6 +11,11 @@ module RipperRubyParser
       UNARY_OPERATOR_MAP = {
         :"!" => :not,
         :not => :not
+      }
+
+      NEGATED_BINARY_OPERATOR_MAP = {
+        :"!~" => :=~,
+        :"!=" => :==
       }
 
       def process_binary exp
@@ -23,21 +28,18 @@ module RipperRubyParser
           else
             s(:call, process(left), op, s(:arglist, process(right)))
           end
-        elsif op == :"!="
-          s(:not, s(:call, process(left), :==, s(:arglist, process(right))))
-        else
-          mapped = BINARY_OPERTOR_MAP[op]
-          if mapped
-            left = process(left)
-            right = process(right)
-            if mapped == left.sexp_type
-              s(left.sexp_type, left[1], s(mapped, left[2], right))
-            else
-              s(mapped, left, right)
-            end
+        elsif (mapped = NEGATED_BINARY_OPERATOR_MAP[op])
+          s(:not, process(s(:binary, left, mapped, right)))
+        elsif (mapped = BINARY_OPERATOR_MAP[op])
+          left = process(left)
+          right = process(right)
+          if mapped == left.sexp_type
+            s(left.sexp_type, left[1], s(mapped, left[2], right))
           else
-            s(:call, process(left), op, s(:arglist, process(right)))
+            s(mapped, left, right)
           end
+        else
+          s(:call, process(left), op, s(:arglist, process(right)))
         end
       end
 
