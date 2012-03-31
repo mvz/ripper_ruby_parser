@@ -1188,6 +1188,9 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:nth_ref, 1)
       end
 
+      specify { "$'".must_be_parsed_as s(:back_ref, :"'") }
+      specify { "$&".must_be_parsed_as s(:back_ref, :"&") }
+
       it "works for class variables" do
         result = parser.parse "@@foo"
         result.must_equal s(:cvar, :@@foo)
