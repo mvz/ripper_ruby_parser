@@ -41,6 +41,13 @@ module RipperRubyParser
         with_position_from_node_symbol(ident) {|method|
           s(:call, nil, method, s(:arglist)) }
       end
+
+      def process_super exp
+        _, args = exp.shift 2
+        args = process(args)
+        args.shift
+        s(:super, *args)
+      end
     end
   end
 end
