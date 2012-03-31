@@ -12,18 +12,13 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 * Drop-in replacement for RubyParser.
 * Should handle 1.9 syntax gracefully.
-* Only tested with MRI 1.9.3. Definitely does not work with the ripper gem for
-  MRI 1.8.
-* Many edge cases are surely not yet taken care of (but hey, it's version
-  0.0.1).
+* Needs MRI 1.9.3.
 
 == Install
 
 * gem install ripper_ruby_parser
 
 == Synopsis
-
-Basic usage:
 
   require 'ripper_ruby_parser'
 
@@ -34,7 +29,7 @@ Basic usage:
 
 == Requirements
 
-* Ruby 1.9.3. It may work with lower 1.9 versions. Let me know if it does.
+* Ruby 1.9.3.
 * sexp_processor
 
 == Hacking and contributing
