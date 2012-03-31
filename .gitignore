@@ -1,3 +1,5 @@
 Gemfile.lock
 ripper_ruby_parser-*.gem
 coverage/
+.bundle/
+bin/
