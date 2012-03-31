@@ -14,6 +14,23 @@ class MiniTest::Spec
     exp.to_s.gsub(/\), /, "),\n")
   end
 
+  def to_comments exp
+    inner = exp.map do |sub_exp|
+      if sub_exp.is_a? Sexp
+        to_comments sub_exp
+      else
+        sub_exp
+      end
+    end
+
+    comments = exp.comments.to_s.gsub(/\n\s*\n/, "\n")
+    if comments.empty?
+      s(*inner)
+    else
+      s(:comment, comments, s(*inner))
+    end
+  end
+
   def suppress_warnings
     old_verbose = $VERBOSE
     $VERBOSE = nil

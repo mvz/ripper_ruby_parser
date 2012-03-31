@@ -1653,6 +1653,15 @@ describe RipperRubyParser::Parser do
         result.comments.must_equal "# Foo\n"
       end
 
+      it "handles comments for methods with explicit receiver" do
+        result = parser.parse "# Foo\ndef foo.bar; end"
+        result.must_equal s(:defs,
+                            s(:call, nil, :foo, s(:arglist)),
+                            :bar,
+                            s(:args), s(:scope, s(:block)))
+        result.comments.must_equal "# Foo\n"
+      end
+
       it "matches comments to the correct entity" do
         result = parser.parse "# Foo\nclass Foo\n# Bar\ndef bar\nend\nend"
         result.must_equal s(:class, :Foo, nil,

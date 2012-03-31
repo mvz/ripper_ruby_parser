@@ -16,12 +16,22 @@ describe "Using RipperRubyParser and RubyParser" do
         File.read file
       end
 
-      it "gives the same result" do
-        newparser.extra_compatible = true
-        original = oldparser.parse program
-        imitation = newparser.parse program
+      let :original do
+        oldparser.parse program
+      end
 
+      let :imitation do
+        newparser.extra_compatible = true
+        newparser.parse program
+      end
+
+      it "gives the same result" do
         formatted(imitation).must_equal formatted(original)
+      end
+
+      it "gives the same result with comments" do
+        formatted(to_comments(imitation)).
+          must_equal formatted(to_comments(original))
       end
     end
   end
