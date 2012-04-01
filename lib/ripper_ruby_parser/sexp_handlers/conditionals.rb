@@ -59,8 +59,16 @@ module RipperRubyParser
           end
         end
 
-        s(s(:when,
-            process(s(:array, values)),
+        values = handle_array_elements values
+        values = values.map do |val|
+          if val.sexp_type == :splat
+            s(:when, val[1], nil)
+          else
+            val
+          end
+        end
+
+        s(s(:when, s(:array, *values),
             handle_statement_list(truepart)),
           *falsepart)
       end

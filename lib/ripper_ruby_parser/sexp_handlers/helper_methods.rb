@@ -100,6 +100,17 @@ module RipperRubyParser
           s(:array, *args)
         end
       end
+
+      def handle_array_elements elems
+        elems = handle_potentially_typeless_sexp(elems)
+        elems.map do |elem|
+          if elem.first.is_a? Symbol
+            elem
+          else
+            elem.first
+          end
+        end
+      end
     end
   end
 end
