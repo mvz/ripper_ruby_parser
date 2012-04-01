@@ -168,7 +168,11 @@ module RipperRubyParser
         when :lvar
           s(:lasgn, name[1])
         when :splat
-          s(:splat, s(:lasgn, name[1][1]))
+          if name[1].nil?
+            s(:splat)
+          else
+            s(:splat, s(:lasgn, name[1][1]))
+          end
         else
           name
         end
