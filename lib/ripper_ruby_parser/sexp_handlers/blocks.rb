@@ -4,7 +4,7 @@ module RipperRubyParser
       def process_method_add_block exp
         _, call, block = exp.shift 3
         block = process(block)
-        args = convert_block_args(block[1])
+        args = block[1]
         stmt = block[2].first
         if stmt.nil?
           s(:iter, process(call), args)
@@ -40,6 +40,17 @@ module RipperRubyParser
         args << s(:block, *assigns) if assigns.length > 0
 
         s(:args, *args)
+      end
+
+      def process_block_var exp
+        _, args, _ = exp.shift 3
+        args = process(args)
+        names = args[1..-1]
+        if names.length == 1 and names.first.is_a? Symbol
+          s(:lasgn, names.first)
+        else
+          s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
+        end
       end
 
       def process_begin exp

@@ -23,18 +23,6 @@ module RipperRubyParser
         end
       end
 
-      # TODO: Create a #process_block_var method that incorporates this code.
-      def convert_block_args(args)
-        if args
-          names = args[1][1..-1]
-          if names.length == 1 and names.first.is_a? Symbol
-            s(:lasgn, names.first)
-          else
-            s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
-          end
-        end
-      end
-
       def arg_name_to_lasgn(name)
         if name.is_a? Symbol
           s(:lasgn, name)
