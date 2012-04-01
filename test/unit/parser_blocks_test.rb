@@ -37,5 +37,36 @@ describe RipperRubyParser::Parser do
                               s(:lasgn, :bar))
       end
     end
+
+    describe "for rescue/else/ensure" do
+      it "works for a block with multiple rescue statements" do
+        "begin foo; rescue; bar; rescue; baz; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar, s(:arglist))),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :baz, s(:arglist))))
+      end
+
+      it "works for a block with rescue and else" do
+        "begin; foo; rescue; bar; else; baz; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar, s(:arglist))),
+                              s(:call, nil, :baz, s(:arglist)))
+      end
+
+      it "works for a block with only else" do
+        "begin; foo; else; bar; end".
+          must_be_parsed_as s(:block,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :bar, s(:arglist)))
+      end
+    end
   end
 end

@@ -66,7 +66,7 @@ module RipperRubyParser
       end
 
       def process_rescue exp
-        _, eclass, evar, block, _ = exp.shift 5
+        _, eclass, evar, block, after = exp.shift 5
         rescue_block = map_body(block)
 
         arr = []
@@ -85,34 +85,46 @@ module RipperRubyParser
           arr << easgn
         end
 
-        s(:resbody, s(:array, *arr),
-          wrap_in_block(rescue_block))
+        s(
+          s(:resbody, s(:array, *arr), wrap_in_block(rescue_block)),
+          *process(after))
       end
 
       def process_bodystmt exp
-        _, body, rescue_block, _, ensure_block = exp.shift 5
+        _, body, rescue_block, else_block, ensure_block = exp.shift 5
 
         body = map_body body
 
-        unless rescue_block or ensure_block
-          return s(:scope, s(:block, *body))
-        end
+        #unless rescue_block or ensure_block
+        #  return s(:scope, s(:block, *body))
+        #end
 
         body = wrap_in_block(body)
 
+        body = if body.nil?
+                 s()
+               else
+                 s(body)
+               end
+
         if rescue_block
-          if body.nil?
-            body = s(:rescue, process(rescue_block))
-          else
-            body = s(:rescue, body, process(rescue_block))
-          end
+          body.push(*process(rescue_block))
+          body << process(else_block) if else_block
+          body = s(s(:rescue, *body))
+        elsif else_block
+          body << process(else_block)
         end
 
         if ensure_block
-          body = s(:ensure, body, process(ensure_block))
+          body << process(ensure_block)
+          body = s(s(:ensure, *body))
         end
 
-        s(:scope, s(:block, body))
+        if body.length == 1 and body.first.sexp_type == :block
+          s(:scope, *body)
+        else
+          s(:scope, s(:block, *body))
+        end
       end
 
       def process_rescue_mod exp
