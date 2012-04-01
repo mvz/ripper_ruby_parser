@@ -26,7 +26,7 @@ module RipperRubyParser
 
       def process_if_mod exp
         _, cond, truepart = exp.shift 3
-        s(:if, process(cond), process(truepart), nil)
+        process_if s(:if, cond, s(truepart), nil)
       end
 
       def process_unless_mod exp
