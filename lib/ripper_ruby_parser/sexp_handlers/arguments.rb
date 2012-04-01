@@ -22,6 +22,11 @@ module RipperRubyParser
         end
         process(args)
       end
+
+      def process_rest_param exp
+        _, ident = exp.shift 2
+        s(:splat, process(ident))
+      end
     end
   end
 end

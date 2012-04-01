@@ -35,15 +35,9 @@ module RipperRubyParser
           s(:lasgn, sym, val)
         end
 
-        # FIXME: Delay conflating all arguments until later, so that
-        # #convert_block_args doesn't need to tease this apart again.
-        add_arg_unless_nil(rest, args) {|name| :"*#{name}" }
-
-        add_arg_unless_nil(block, args) {|name| :"&#{name}" }
-
-        if assigns.length > 0
-          args << s(:block, *assigns)
-        end
+        args << process(rest) unless rest.nil?
+        args << process(block) unless block.nil?
+        args << s(:block, *assigns) if assigns.length > 0
 
         s(:args, *args)
       end
@@ -151,13 +145,6 @@ module RipperRubyParser
           block[1]
         else
           block
-        end
-      end
-
-      def add_arg_unless_nil(item, args)
-        unless item.nil?
-          name = extract_node_symbol item[1]
-          args << yield(name)
         end
       end
     end

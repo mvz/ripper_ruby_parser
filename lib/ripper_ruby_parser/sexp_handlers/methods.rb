@@ -4,15 +4,17 @@ module RipperRubyParser
       def process_def exp
         _, ident, params, body = exp.shift 4
         ident, pos = extract_node_symbol_with_position ident
+        params = convert_special_args(process(params))
         with_position(pos,
-                      s(:defn, ident, process(params), method_body(body)))
+                      s(:defn, ident, params, method_body(body)))
       end
 
       def process_defs exp
-        _, receiver, _, method, args, body = exp.shift 6
+        _, receiver, _, method, params, body = exp.shift 6
+        params = convert_special_args(process(params))
         s(:defs, process(receiver),
           extract_node_symbol(method),
-          process(args), in_method { process(body) })
+          params, in_method { process(body) })
       end
 
       def process_return exp
@@ -80,6 +82,26 @@ module RipperRubyParser
           block.push s(:nil)
         end
         scope
+      end
+
+      SPECIAL_ARG_MARKER = {
+        :splat => "*",
+        :blockarg => "&"
+      }
+
+      def convert_special_args args
+        args.map! do |item|
+          if item.is_a? Symbol
+            item
+          else
+            if (marker = SPECIAL_ARG_MARKER[item.sexp_type])
+              name = extract_node_symbol item[1]
+              :"#{marker}#{name}"
+            else
+              item
+            end
+          end
+        end
       end
     end
   end
