@@ -23,14 +23,6 @@ module RipperRubyParser
         end
       end
 
-      def arg_name_to_lasgn(name)
-        if name.is_a? Symbol
-          s(:lasgn, name)
-        else
-          s(:splat, s(:lasgn, name[1][1]))
-        end
-      end
-
       def handle_statement_list exp
         statements = map_body exp
 

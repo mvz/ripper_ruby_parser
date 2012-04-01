@@ -185,11 +185,11 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe "for a :params sexp" do
-      describe "with a normal argument" do
-        it "uses the bare argument names" do
+      describe "with a normal arguments" do
+        it "creates :lvar sexps" do
           sexp =  s(:params, s(s(:@ident, "bar", s(1, 8))), nil, nil, nil, nil)
           result = processor.process sexp
-          result.must_equal s(:args, :bar)
+          result.must_equal s(:args, s(:lvar, :bar))
         end
       end
     end

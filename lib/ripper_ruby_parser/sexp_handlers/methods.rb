@@ -97,6 +97,8 @@ module RipperRubyParser
             if (marker = SPECIAL_ARG_MARKER[item.sexp_type])
               name = extract_node_symbol item[1]
               :"#{marker}#{name}"
+            elsif item.sexp_type == :lvar
+              item[1]
             else
               item
             end

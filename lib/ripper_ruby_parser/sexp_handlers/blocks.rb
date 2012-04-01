@@ -25,14 +25,14 @@ module RipperRubyParser
         _, normal, defaults, rest, _, block = exp.shift 6
 
         args = [*normal].map do |id|
-          extract_node_symbol id
+          process(id)
         end
 
         assigns = [*defaults].map do |pair|
-          sym = extract_node_symbol pair[0]
+          sym = process(pair[0])
           args << sym
-          val = process pair[1]
-          s(:lasgn, sym, val)
+          val = process(pair[1])
+          s(:lasgn, sym[1], val)
         end
 
         args << process(rest) unless rest.nil?
@@ -46,8 +46,8 @@ module RipperRubyParser
         _, args, _ = exp.shift 3
         args = process(args)
         names = args[1..-1]
-        if names.length == 1 and names.first.is_a? Symbol
-          s(:lasgn, names.first)
+        if names.length == 1 and names.first.sexp_type == :lvar
+          s(:lasgn, names.first[1])
         else
           s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
         end
@@ -158,6 +158,18 @@ module RipperRubyParser
           block
         end
       end
+
+      def arg_name_to_lasgn(name)
+        case name.sexp_type
+        when :lvar
+          s(:lasgn, name[1])
+        when :splat
+          s(:splat, s(:lasgn, name[1][1]))
+        else
+          name
+        end
+      end
+
     end
   end
 end
