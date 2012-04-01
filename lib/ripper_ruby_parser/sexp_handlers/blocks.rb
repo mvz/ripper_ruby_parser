@@ -44,10 +44,14 @@ module RipperRubyParser
 
       def process_block_var exp
         _, args, _ = exp.shift 3
-        args = process(args)
-        names = args[1..-1]
+
+        names = process(args)
+        names.shift
+
         if names.length == 1 and names.first.sexp_type == :lvar
           s(:lasgn, names.first[1])
+        elsif names.length == 1 and names.first.sexp_type == :masgn
+          names.first
         else
           s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
         end

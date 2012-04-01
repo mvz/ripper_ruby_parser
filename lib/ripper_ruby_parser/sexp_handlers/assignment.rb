@@ -45,11 +45,12 @@ module RipperRubyParser
 
       def process_mlhs_paren exp
         _, contents = exp.shift 2
+
         items = handle_potentially_typeless_sexp(contents)
 
-        items = create_multiple_assignment_sub_types items
+        return items if items.first.is_a? Symbol
 
-        s(:masgn, s(:array, *items))
+        s(:masgn, s(:array, *create_multiple_assignment_sub_types(items)))
       end
 
       def process_opassign exp
