@@ -254,8 +254,7 @@ describe RipperRubyParser::Parser do
 
     describe "for the for statement" do
       it "works with do" do
-        result = suppress_warnings {
-          parser.parse "for foo in bar do; baz; end" }
+        result = parser.parse "for foo in bar do; baz; end"
         result.must_equal s(:for,
                             s(:call, nil, :bar, s(:arglist)),
                             s(:lasgn, :foo),
@@ -263,8 +262,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works without do" do
-        result = suppress_warnings {
-          parser.parse "for foo in bar; baz; end" }
+        result = parser.parse "for foo in bar; baz; end"
         result.must_equal s(:for,
                             s(:call, nil, :bar, s(:arglist)),
                             s(:lasgn, :foo),
@@ -321,8 +319,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with assignment to an error variable" do
-        result = suppress_warnings {
-          parser.parse "begin; foo; rescue => e; bar; end" }
+        result = parser.parse "begin; foo; rescue => e; bar; end"
         result.must_equal s(:rescue,
                             s(:call, nil, :foo, s(:arglist)),
                             s(:resbody,
@@ -340,8 +337,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with filtering of the exception type and assignment to an error variable" do
-        result = suppress_warnings {
-          parser.parse "begin; foo; rescue Bar => e; baz; end" }
+        result = parser.parse "begin; foo; rescue Bar => e; baz; end"
         result.must_equal s(:rescue,
                             s(:call, nil, :foo, s(:arglist)),
                             s(:resbody,
@@ -1266,7 +1262,7 @@ describe RipperRubyParser::Parser do
 
     describe "for operator assignment" do
       it "works with +=" do
-        result = suppress_warnings { parser.parse "foo += bar" }
+        result = parser.parse "foo += bar"
         result.must_equal s(:lasgn,
                             :foo,
                             s(:call,
@@ -1276,7 +1272,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with -=" do
-        result = suppress_warnings { parser.parse "foo -= bar" }
+        result = parser.parse "foo -= bar"
         result.must_equal s(:lasgn,
                             :foo,
                             s(:call,
@@ -1286,7 +1282,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with ||=" do
-        result = suppress_warnings { parser.parse "foo ||= bar" }
+        result = parser.parse "foo ||= bar"
         result.must_equal s(:op_asgn_or,
                             s(:lvar, :foo),
                             s(:lasgn, :foo,
@@ -1342,7 +1338,7 @@ describe RipperRubyParser::Parser do
 
     describe "for multiple assignment" do
       it "works the same number of items on each side" do
-        result = suppress_warnings { parser.parse "foo, bar = baz, qux" }
+        result = parser.parse "foo, bar = baz, qux"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                             s(:array,
@@ -1351,7 +1347,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with a single item on the right-hand side" do
-        result = suppress_warnings { parser.parse "foo, bar = baz" }
+        result = parser.parse "foo, bar = baz"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                             s(:to_ary,
@@ -1359,7 +1355,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with left-hand splat" do
-        result = suppress_warnings { parser.parse "foo, *bar = baz, qux" }
+        result = parser.parse "foo, *bar = baz, qux"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:splat, s(:lasgn, :bar))),
                             s(:array,
@@ -1368,7 +1364,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with brackets around the left-hand side" do
-        result = suppress_warnings { parser.parse "(foo, bar) = baz" }
+        result = parser.parse "(foo, bar) = baz"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                             s(:to_ary,
@@ -1376,7 +1372,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with complex destructuring" do
-        result = suppress_warnings { parser.parse "foo, (bar, baz) = qux" }
+        result = parser.parse "foo, (bar, baz) = qux"
         result.must_equal s(:masgn,
                             s(:array,
                               s(:lasgn, :foo),
@@ -1623,7 +1619,7 @@ describe RipperRubyParser::Parser do
 
     describe "for expressions" do
       it "handles assignment inside binary operator expressions" do
-        result = suppress_warnings { parser.parse "foo + (bar = baz)" }
+        result = parser.parse "foo + (bar = baz)"
         result.must_equal s(:call,
                             s(:call, nil, :foo, s(:arglist)),
                             :+,
@@ -1634,7 +1630,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "handles assignment inside unary operator expressions" do
-        result = suppress_warnings { parser.parse "+(foo = bar)" }
+        result = parser.parse "+(foo = bar)"
         result.must_equal s(:call,
                             s(:lasgn, :foo, s(:call, nil, :bar, s(:arglist))),
                             :+@,
@@ -1798,12 +1794,12 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for assignment of the empty hash" do
-        result = suppress_warnings { parser.parse "foo = {}" }
+        result = parser.parse "foo = {}"
         result.line.must_equal 1
       end
 
       it "works for multiple assignment of empty hashes" do
-        result = suppress_warnings { parser.parse "foo, bar = {}, {}" }
+        result = parser.parse "foo, bar = {}, {}"
         result.line.must_equal 1
       end
 

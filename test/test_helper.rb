@@ -31,14 +31,6 @@ class MiniTest::Spec
     end
   end
 
-  def suppress_warnings
-    old_verbose = $VERBOSE
-    $VERBOSE = nil
-    result = yield
-    $VERBOSE = old_verbose
-    result
-  end
-
   def assert_parsed_as sexp, code
     parser = RipperRubyParser::Parser.new
     result = parser.parse code
