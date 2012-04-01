@@ -19,5 +19,18 @@ describe RipperRubyParser::Parser do
                               s(:to_ary, s(:call, nil, :baz, s(:arglist))))
       end
     end
+
+    describe "for assignment to a collection element" do
+      it "handles multiple indices" do
+        "foo[bar, baz] = qux".
+          must_be_parsed_as s(:attrasgn,
+                              s(:call, nil, :foo, s(:arglist)),
+                              :[]=,
+                              s(:arglist,
+                                s(:call, nil, :bar, s(:arglist)),
+                                s(:call, nil, :baz, s(:arglist)),
+                                s(:call, nil, :qux, s(:arglist))))
+      end
+    end
   end
 end

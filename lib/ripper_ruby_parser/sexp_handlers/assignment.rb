@@ -109,9 +109,12 @@ module RipperRubyParser
       def create_regular_assignment_sub_type lvalue, value
         case lvalue.sexp_type
         when :aref_field
-          s(:attrasgn, lvalue[1], :[]=, s(:arglist, lvalue[2][1], value))
+          _, arr, arglist = *lvalue
+          arglist << value
+          s(:attrasgn, arr, :[]=, arglist)
         when :field
-          s(:attrasgn, lvalue[1], :"#{lvalue[3][1]}=", s(:arglist, value))
+          _, obj, _, (_, field) = *lvalue
+          s(:attrasgn, obj, :"#{field}=", s(:arglist, value))
         else
           create_assignment_sub_type lvalue, value
         end
