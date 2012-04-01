@@ -93,10 +93,10 @@ module RipperRubyParser
       def create_operator_assignment_sub_type lvalue, value, operator
         case lvalue.sexp_type
         when :aref_field
-          _, arr, arglist = *lvalue
+          _, arr, arglist = lvalue
           s(:op_asgn1, arr, arglist, operator, value)
         when :field
-          _, obj, _, (_, field) = *lvalue
+          _, obj, _, (_, field) = lvalue
           s(:op_asgn2, obj, :"#{field}=", operator, value)
         else
           if operator == :"||"
@@ -111,11 +111,11 @@ module RipperRubyParser
       def create_regular_assignment_sub_type lvalue, value
         case lvalue.sexp_type
         when :aref_field
-          _, arr, arglist = *lvalue
+          _, arr, arglist = lvalue
           arglist << value
           s(:attrasgn, arr, :[]=, arglist)
         when :field
-          _, obj, _, (_, field) = *lvalue
+          _, obj, _, (_, field) = lvalue
           s(:attrasgn, obj, :"#{field}=", s(:arglist, value))
         else
           create_assignment_sub_type lvalue, value
