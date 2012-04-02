@@ -25,7 +25,7 @@ module RipperRubyParser
 
         right = process(right)
 
-        unless right.sexp_type == :array
+        unless [:array, :splat].include? right.sexp_type
           right = s(:to_ary, right)
         end
 
@@ -35,8 +35,16 @@ module RipperRubyParser
       def process_mrhs_new_from_args exp
         _, inner, last = exp.shift 3
         inner.map! {|item| process(item)}
-        inner.push process(last)
+        inner.push process(last) unless last.nil?
         s(:array, *inner)
+      end
+
+      def process_mrhs_add_star exp
+        exp = generic_add_star exp
+        unless exp.first.is_a? Symbol
+          exp = exp.first
+        end
+        exp
       end
 
       def process_mlhs_add_star exp

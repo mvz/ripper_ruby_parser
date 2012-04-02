@@ -59,9 +59,9 @@ module RipperRubyParser
 
       def generic_add_star exp
         _, args, splatarg = exp.shift 3
-        items = args.map { |sub| process(sub) }
+        items = handle_potentially_typeless_sexp args
         items << s(:splat, process(splatarg))
-        s(*items)
+        items
       end
 
       def is_literal? exp
