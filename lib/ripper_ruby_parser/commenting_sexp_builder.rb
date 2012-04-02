@@ -7,6 +7,7 @@ module RipperRubyParser
       super
       @comment = nil
       @comment_stack = []
+      @in_symbol = false
     end
 
     def on_comment tok
@@ -18,26 +19,38 @@ module RipperRubyParser
     def on_kw tok
       case tok
       when "class", "def", "module"
-        @comment_stack.push @comment
-        @comment = nil
+        unless @in_symbol
+          @comment_stack.push [tok.to_sym, @comment]
+          @comment = nil
+        end
       end
       super
     end
 
+    def on_module *args
+      commentize(:module, super)
+    end
+
     def on_class *args
-      commentize(super)
+      commentize(:class, super)
     end
 
     def on_def *args
-      commentize(super)
+      commentize(:def, super)
     end
 
     def on_defs *args
-      commentize(super)
+      commentize(:def, super)
     end
 
-    def on_module *args
-      commentize(super)
+    def on_symbeg *args
+      @in_symbol = true
+      super
+    end
+
+    def on_symbol *args
+      @in_symbol = false
+      super
     end
 
     def on_parse_error *args
@@ -62,8 +75,13 @@ module RipperRubyParser
 
     private
 
-    def commentize exp
-      comment = @comment_stack.pop
+    def commentize name, exp
+      tok, comment = @comment_stack.pop
+      unless tok == name
+        p @comment_stack
+        p [tok, comment]
+        raise "Expected on_#{tok} event, got on_#{name}"
+      end
       if comment.nil?
         [:comment, "", exp]
       else

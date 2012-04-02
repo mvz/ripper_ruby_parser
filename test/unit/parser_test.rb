@@ -1677,6 +1677,15 @@ describe RipperRubyParser::Parser do
                             s(:args), s(:scope, s(:block, s(:nil))))
         result.comments.must_equal "# Foo\n# Bar\n"
       end
+
+      it "handles the use of symbols that are keywords" do
+        result = parser.parse "# Foo\ndef bar\n:class\nend"
+        result.must_equal s(:defn,
+                            :bar,
+                            s(:args),
+                            s(:scope, s(:block, s(:lit, :class))))
+        result.comments.must_equal "# Foo\n"
+      end
     end
 
     # Note: differences in the handling of line numbers are not caught by
