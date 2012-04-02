@@ -29,6 +29,10 @@ describe RipperRubyParser::Parser do
                             nil,
                             s(:scope))
       end
+
+      it "works for singleton classes" do
+        "class << self; end".must_be_parsed_as s(:sclass, s(:self), s(:scope))
+      end
     end
 
     describe "for a module declaration" do
@@ -1684,6 +1688,18 @@ describe RipperRubyParser::Parser do
                             :bar,
                             s(:args),
                             s(:scope, s(:block, s(:lit, :class))))
+        result.comments.must_equal "# Foo\n"
+      end
+
+      it "handles use of singleton class inside methods" do
+        result = parser.parse "# Foo\ndef bar\nclass << self\nbaz\nend\nend"
+        result.must_equal s(:defn,
+                            :bar,
+                            s(:args),
+                            s(:scope,
+                              s(:block,
+                                s(:sclass, s(:self),
+                                  s(:scope, s(:call, nil, :baz, s(:arglist)))))))
         result.comments.must_equal "# Foo\n"
       end
     end

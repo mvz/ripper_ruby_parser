@@ -71,6 +71,11 @@ module RipperRubyParser
                        s(:class, const, parent, class_or_module_body(body)))
     end
 
+    def process_sclass exp
+      _, klass, block = exp.shift 3
+      s(:sclass, process(klass), class_or_module_body(block))
+    end
+
     def process_var_ref exp
       _, contents = exp.shift 2
       process(contents)

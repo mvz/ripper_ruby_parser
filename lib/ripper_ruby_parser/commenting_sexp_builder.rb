@@ -35,6 +35,10 @@ module RipperRubyParser
       commentize(:class, super)
     end
 
+    def on_sclass *args
+      commentize(:class, super)
+    end
+
     def on_def *args
       commentize(:def, super)
     end
