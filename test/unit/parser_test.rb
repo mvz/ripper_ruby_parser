@@ -576,6 +576,12 @@ describe RipperRubyParser::Parser do
                             :[],
                             s(:arglist, s(:call, nil, :bar, s(:arglist))))
       end
+
+      it "drops self from self[]" do
+        "self[foo]".must_be_parsed_as s(:call, nil, :[],
+                                        s(:arglist,
+                                          s(:call, nil, :foo, s(:arglist))))
+      end
     end
 
     describe "for method definitions" do

@@ -7,8 +7,12 @@ module RipperRubyParser
       end
 
       def process_aref exp
-        _, item, idx = exp.shift 3
-        s(:call, process(item), :[], process(idx))
+        _, coll, idx = exp.shift 3
+
+        coll = process(coll)
+        coll = nil if coll == s(:self)
+
+        s(:call, coll, :[], process(idx))
       end
     end
   end
