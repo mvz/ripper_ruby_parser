@@ -4,43 +4,29 @@ module RipperRubyParser
       def process_until exp
         _, cond, block = exp.shift 3
 
-        cond = process(cond)
-        block = handle_statement_list(block)
-
-        if cond.sexp_type == :not
-          s(:while, cond[1], block, true)
-        else
-          s(:until, cond, block, true)
-        end
+        make_until(process(cond), handle_statement_list(block), true)
       end
 
       def process_until_mod exp
         _, cond, block = exp.shift 3
 
-        check_at_start = block.sexp_type != :begin
+        check_at_start = check_at_start?(block)
 
-        s(:until, process(cond), process(block), check_at_start)
+        make_until(process(cond), process(block), check_at_start)
       end
 
       def process_while exp
         _, cond, block = exp.shift 3
 
-        cond = process(cond)
-        block = handle_statement_list(block)
-
-        if cond.sexp_type == :not
-          s(:until, cond[1], block, true)
-        else
-          s(:while, cond, block, true)
-        end
+        make_while(process(cond), handle_statement_list(block), true)
       end
 
       def process_while_mod exp
         _, cond, block = exp.shift 3
 
-        check_at_start = block.sexp_type != :begin
+        check_at_start = check_at_start?(block)
 
-        s(:while, process(cond), process(block), check_at_start)
+        make_while(process(cond), process(block), check_at_start)
       end
 
       def process_for exp
@@ -48,6 +34,28 @@ module RipperRubyParser
         s(:for, process(coll),
           s(:lasgn, process(var)[1]),
           handle_statement_list(block))
+      end
+
+      private
+
+      def make_guarded_block(type, inverse, cond, block, check_at_start)
+        if cond.sexp_type == :not
+          type = inverse
+          cond = cond[1]
+        end
+        s(type, cond, block, check_at_start)
+      end
+
+      def make_until(cond, block, check_at_start)
+        make_guarded_block(:until, :while, cond, block, check_at_start)
+      end
+
+      def make_while(cond, block, check_at_start)
+        make_guarded_block(:while, :until, cond, block, check_at_start)
+      end
+
+      def check_at_start?(block)
+        block.sexp_type != :begin
       end
     end
   end

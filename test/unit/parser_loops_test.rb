@@ -23,6 +23,13 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo, s(:arglist)),
                               s(:call, nil, :bar, s(:arglist)), true)
       end
+
+      it "normalizes a negative condition in the postfix case" do
+        "foo while not bar".
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :bar, s(:arglist)),
+                              s(:call, nil, :foo, s(:arglist)), true)
+      end
     end
 
     describe "for the until statement" do
@@ -32,6 +39,13 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo, s(:arglist)),
                               s(:call, nil, :bar, s(:arglist)), true)
 
+      end
+
+      it "normalizes a negative condition in the postfix case" do
+        "foo until not bar".
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :bar, s(:arglist)),
+                              s(:call, nil, :foo, s(:arglist)), true)
       end
     end
   end
