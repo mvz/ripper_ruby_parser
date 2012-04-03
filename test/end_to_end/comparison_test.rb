@@ -125,5 +125,25 @@ describe "Using RipperRubyParser and RubyParser" do
       formatted(imitation).must_equal formatted(original)
     end
   end
+
+  describe "for an example with regular expressions with different encoding flags" do
+    it "gives the same result" do
+      program = <<-END
+        regular = /foo/
+        noenc = /foo/n
+        utf8 = /foo/u
+        euc = /foo/e
+        sjis = /foo/s
+
+        regular = /foo\#{bar}/
+        noenc = /foo\#{bar}/n
+        utf8 = /foo\#{bar}/u
+        euc = /foo\#{bar}/e
+        sjis = /foo\#{bar}/s
+      END
+
+      program.must_be_parsed_as_before
+    end
+  end
 end
 

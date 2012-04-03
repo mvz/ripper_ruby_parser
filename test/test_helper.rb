@@ -36,9 +36,18 @@ class MiniTest::Spec
     result = parser.parse code
     assert_equal sexp, result
   end
+
+  def assert_parsed_as_before code
+    oldparser = RubyParser.new
+    newparser = RipperRubyParser::Parser.new
+    expected = oldparser.parse code.dup
+    result = newparser.parse code
+    assert_equal formatted(expected), formatted(result)
+  end
 end
 
 module MiniTest::Expectations
   infect_an_assertion :assert_parsed_as, :must_be_parsed_as
+  infect_an_assertion :assert_parsed_as_before, :must_be_parsed_as_before, :unary
 end
 

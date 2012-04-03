@@ -43,6 +43,9 @@ module RipperRubyParser
         flags =~ /x/ and numflags |= Regexp::EXTENDED
         flags =~ /i/ and numflags |= Regexp::IGNORECASE
 
+        flags =~ /n/ and numflags |= Regexp::NOENCODING
+        flags =~ /[ues]/ and numflags |= Regexp::FIXEDENCODING
+
         if rest.empty?
           s(:lit, Regexp.new(string, numflags))
         else
