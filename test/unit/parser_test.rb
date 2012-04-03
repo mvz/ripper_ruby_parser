@@ -21,6 +21,12 @@ describe RipperRubyParser::Parser do
       sexp_p.verify
     end
 
+    describe "for an empty program" do
+      it "returns nil" do
+        "".must_be_parsed_as nil
+      end
+    end
+
     describe "for a class declaration" do
       it "works with a namespaced class name" do
         result = parser.parse "class Foo::Bar; end"

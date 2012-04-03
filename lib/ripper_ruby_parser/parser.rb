@@ -23,7 +23,13 @@ module RipperRubyParser
 
       @processor.filename = filename
       @processor.extra_compatible = extra_compatible
-      @processor.process exp
+      result = @processor.process exp
+
+      if result == s(:void_stmt)
+        nil
+      else
+        result
+      end
     end
 
     private

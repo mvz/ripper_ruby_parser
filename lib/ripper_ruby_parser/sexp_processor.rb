@@ -48,12 +48,8 @@ module RipperRubyParser
     def process_program exp
       _, content = exp.shift 2
 
-      if content.length == 1
-        process(content.first)
-      else
-        statements = content.map { |sub_exp| process(sub_exp) }
-        s(:block, *statements)
-      end
+      statements = content.map { |sub_exp| process(sub_exp) }
+      wrap_in_block statements
     end
 
     def process_module exp
