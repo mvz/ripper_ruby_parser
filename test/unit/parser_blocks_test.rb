@@ -68,5 +68,17 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar, s(:arglist)))
       end
     end
+
+    describe "for rescue" do
+      it "works with assignment to an error variable" do
+        "begin; foo; rescue => bar; baz; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:resbody,
+                                s(:array,
+                                  s(:lasgn, :bar, s(:gvar, :$!))),
+                                s(:call, nil, :baz, s(:arglist))))
+      end
+    end
   end
 end

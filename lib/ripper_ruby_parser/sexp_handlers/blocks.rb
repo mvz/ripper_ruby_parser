@@ -81,7 +81,7 @@ module RipperRubyParser
 
         if evar
           evar = process(evar)[1]
-          easgn = s(:lasgn, :e, s(:gvar, :$!))
+          easgn = s(:lasgn, evar, s(:gvar, :$!))
           arr << easgn
         end
 
