@@ -35,6 +35,14 @@ module RipperRubyParser
         end
       end
 
+      def process_while_mod exp
+        _, cond, block = exp.shift 3
+
+        check_at_start = block.sexp_type != :begin
+
+        s(:while, process(cond), process(block), check_at_start)
+      end
+
       def process_for exp
         _, var, coll, block = exp.shift 4
         s(:for, process(coll),
