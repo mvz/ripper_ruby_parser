@@ -48,6 +48,14 @@ describe RipperRubyParser::Parser do
           it "performs the interpolation when it is at the end" do
             '/foo#{"bar"}/'.must_be_parsed_as s(:lit, /foobar/)
           end
+
+          it "performs the interpolation when it is in the middle" do
+            '/foo#{"bar"}baz/'.must_be_parsed_as s(:lit, /foobarbaz/)
+          end
+
+          it "performs the interpolation when it is at the start" do
+            '/#{"foo"}bar/'.must_be_parsed_as s(:lit, /foobar/)
+          end
         end
       end
     end

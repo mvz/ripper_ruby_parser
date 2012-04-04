@@ -20,7 +20,12 @@ module RipperRubyParser
 
       def process_string_embexpr exp
         _, list = exp.shift 2
-        s(:evstr, process(list.first))
+        val = process(list.first)
+        if val.sexp_type == :str
+          val
+        else
+          s(:evstr, val)
+        end
       end
 
       def process_xstring_literal exp
@@ -46,10 +51,12 @@ module RipperRubyParser
         flags =~ /n/ and numflags |= Regexp::NOENCODING
         flags =~ /[ues]/ and numflags |= Regexp::FIXEDENCODING
 
+        while not(rest.empty?) and rest.first.sexp_type == :str
+          str = rest.shift
+          string += str[1]
+        end
+
         if rest.empty?
-          s(:lit, Regexp.new(string, numflags))
-        elsif rest.size == 1 and rest[0].sexp_type == :evstr and rest[0][1].sexp_type == :str
-          string += rest[0][1][1]
           s(:lit, Regexp.new(string, numflags))
         else
           rest << numflags if numflags > 0
