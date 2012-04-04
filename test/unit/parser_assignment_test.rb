@@ -45,6 +45,12 @@ describe RipperRubyParser::Parser do
                                 :+,
                                 s(:call, nil, :qux, s(:arglist)))
         end
+
+        it "works with &&=" do
+          "foo &&= bar".
+            must_be_parsed_as s(:op_asgn_and,
+                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar, s(:arglist))))
+        end
       end
     end
 

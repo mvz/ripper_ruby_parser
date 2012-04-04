@@ -98,6 +98,11 @@ module RipperRubyParser
         return item
       end
 
+      OPERATOR_ASSIGNMENT_MAP = {
+        :"||" => :op_asgn_or,
+        :"&&" => :op_asgn_and
+      }
+
       def create_operator_assignment_sub_type lvalue, value, operator
         case lvalue.sexp_type
         when :aref_field
@@ -107,8 +112,8 @@ module RipperRubyParser
           _, obj, _, (_, field) = lvalue
           s(:op_asgn2, obj, :"#{field}=", operator, value)
         else
-          if operator == :"||"
-            s(:op_asgn_or, lvalue, create_assignment_sub_type(lvalue, value))
+          if (mapped = OPERATOR_ASSIGNMENT_MAP[operator])
+            s(mapped, lvalue, create_assignment_sub_type(lvalue, value))
           else
             operator_call = s(:call, lvalue, operator, s(:arglist, value))
             create_assignment_sub_type lvalue, operator_call
