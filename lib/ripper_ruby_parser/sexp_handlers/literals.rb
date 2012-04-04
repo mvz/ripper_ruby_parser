@@ -36,23 +36,18 @@ module RipperRubyParser
 
       def process_string_concat exp
         _, left, right = exp.shift 3
+
         left = process(left)
         right = process(right)
-        if left.sexp_type == :str and right.sexp_type == :str
-          s(:str, left[1] + right[1])
-        elsif left.sexp_type == :str and right.sexp_type == :dstr
+
+        if left.sexp_type == :str
           right[1] = left[1] + right[1]
           right
-        elsif left.sexp_type == :dstr and right.sexp_type == :str
-          left << right
+        else # Expecting left.sexp_type == :dstr
+          _, first, *rest = right
+          left.push s(:str, first)
+          left.push(*rest)
           left
-        elsif left.sexp_type == :dstr and right.sexp_type == :dstr
-          right.shift
-          left.push s(:str, right.shift)
-          left.push *right
-          left
-        else
-          s(:string_concat, left, right)
         end
       end
 
