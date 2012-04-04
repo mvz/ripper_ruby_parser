@@ -34,6 +34,17 @@ module RipperRubyParser
         s(:evstr, val)
       end
 
+      def process_string_concat exp
+        _, left, right = exp.shift 3
+        left = process(left)
+        right = process(right)
+        if left.sexp_type == :str and right.sexp_type == :str
+          s(:str, left[1] + right[1])
+        else
+          s(:string_concat, left, right)
+        end
+      end
+
       def process_xstring_literal exp
         _, content = exp.shift 2
         string, rest = extract_unescaped_string_parts content

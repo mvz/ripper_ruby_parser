@@ -144,6 +144,12 @@ describe RipperRubyParser::Parser do
           end
         end
       end
+
+      describe "with string concatenation" do
+        it "performs the concatenation in the case of two literal strings" do
+          "\"foo\" \"bar\"".must_be_parsed_as s(:str, "foobar")
+        end
+      end
     end
   end
 end
