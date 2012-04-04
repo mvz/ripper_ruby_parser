@@ -1,3 +1,4 @@
+# coding: utf-8
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
@@ -65,7 +66,7 @@ describe RipperRubyParser::Parser do
         it "works with hex escapes" do
           "\"\\x36\"".must_be_parsed_as s(:str, "6")
           "\"\\x4a\"".must_be_parsed_as s(:str, "J")
-          "\"\\xAF\"".must_be_parsed_as s(:str, "\xAF")
+          "\"\\x4A\"".must_be_parsed_as s(:str, "J")
           "\"\\x3Z\"".must_be_parsed_as s(:str, "\x03Z")
         end
 
@@ -78,6 +79,10 @@ describe RipperRubyParser::Parser do
           "\"foo\\rbar\"".must_be_parsed_as s(:str, "foo\rbar")
           "\"foo\\sbar\"".must_be_parsed_as s(:str, "foo\sbar")
           "\"foo\\tbar\"".must_be_parsed_as s(:str, "foo\tbar")
+        end
+
+        it "works with unicode escapes (unlike RubyParser)" do
+          "\"foo\\u273bbar\"".must_be_parsed_as s(:str, "foo✻bar")
         end
       end
 

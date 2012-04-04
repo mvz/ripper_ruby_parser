@@ -142,13 +142,19 @@ module RipperRubyParser
         Regexp.new("^[#{SINGLE_LETTER_ESCAPES.keys.join}]")
 
       def unescape string
-        string.gsub(/\\([^x]|x[0-9a-fA-F]{1,2})/) do
+        string.gsub(/\\(
+          x[0-9a-fA-F]{1,2} | # byte
+          u[0-9a-fA-F]{4}   | # unicode character
+          .                   # single-character
+        )/x) do
           bare = $1
           case bare
           when SINGLE_LETTER_ESCAPES_REGEXP
             SINGLE_LETTER_ESCAPES[bare]
           when /^x/
             bare[1..-1].to_i(16).chr
+          when /^u/
+            bare[1..-1].to_i(16).chr(Encoding::UTF_8)
           else
             bare
           end
