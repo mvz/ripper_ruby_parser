@@ -79,6 +79,7 @@ describe RipperRubyParser::Parser do
           "\"foo\\rbar\"".must_be_parsed_as s(:str, "foo\rbar")
           "\"foo\\sbar\"".must_be_parsed_as s(:str, "foo\sbar")
           "\"foo\\tbar\"".must_be_parsed_as s(:str, "foo\tbar")
+          "\"foo\\vbar\"".must_be_parsed_as s(:str, "foo\vbar")
         end
 
         it "works with octal number escapes" do
