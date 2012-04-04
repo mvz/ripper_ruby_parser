@@ -28,6 +28,12 @@ module RipperRubyParser
         end
       end
 
+      def process_string_dvar exp
+        _, list = exp.shift 2
+        val = process(list)
+        s(:evstr, val)
+      end
+
       def process_xstring_literal exp
         _, content = exp.shift 2
         string, rest = extract_unescaped_string_parts content

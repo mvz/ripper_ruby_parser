@@ -583,6 +583,11 @@ describe RipperRubyParser::Parser do
                             s(:arglist, s(:call, nil, :bar, s(:arglist))))
       end
 
+      it "works without any indexes" do
+        "foo[]".must_be_parsed_as s(:call, s(:call, nil, :foo, s(:arglist)),
+                                    :[], s(:arglist))
+      end
+
       it "drops self from self[]" do
         "self[foo]".must_be_parsed_as s(:call, nil, :[],
                                         s(:arglist,
