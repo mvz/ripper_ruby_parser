@@ -9,6 +9,13 @@ describe RipperRubyParser::Parser do
                               s(:colon2, s(:const, :Foo), :Bar),
                               s(:call, nil, :baz, s(:arglist)))
       end
+
+      it "works when assigning to constant in the root namespace" do
+        "::Foo = bar".
+          must_be_parsed_as s(:cdecl,
+                              s(:colon3, :Foo),
+                              s(:call, nil, :bar, s(:arglist)))
+      end
     end
 
     describe "for multiple assignment" do
