@@ -81,6 +81,16 @@ describe RipperRubyParser::Parser do
           "\"foo\\tbar\"".must_be_parsed_as s(:str, "foo\tbar")
         end
 
+        it "works with octal number escapes" do
+          "\"foo\\123bar\"".must_be_parsed_as s(:str, "foo\123bar")
+          "\"foo\\23bar\"".must_be_parsed_as s(:str, "foo\023bar")
+          "\"foo\\3bar\"".must_be_parsed_as s(:str, "foo\003bar")
+
+          "\"foo\\118bar\"".must_be_parsed_as s(:str, "foo\0118bar")
+          "\"foo\\18bar\"".must_be_parsed_as s(:str, "foo\0018bar")
+        end
+
+        # TODO: Behave differently in extra_compatible mode.
         it "works with unicode escapes (unlike RubyParser)" do
           "\"foo\\u273bbar\"".must_be_parsed_as s(:str, "foo✻bar")
         end
