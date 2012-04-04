@@ -68,6 +68,17 @@ describe RipperRubyParser::Parser do
           "\"\\xAF\"".must_be_parsed_as s(:str, "\xAF")
           "\"\\x3Z\"".must_be_parsed_as s(:str, "\x03Z")
         end
+
+        it "works with single-letter escapes" do
+          "\"foo\\abar\"".must_be_parsed_as s(:str, "foo\abar")
+          "\"foo\\bbar\"".must_be_parsed_as s(:str, "foo\bbar")
+          "\"foo\\ebar\"".must_be_parsed_as s(:str, "foo\ebar")
+          "\"foo\\fbar\"".must_be_parsed_as s(:str, "foo\fbar")
+          "\"foo\\nbar\"".must_be_parsed_as s(:str, "foo\nbar")
+          "\"foo\\rbar\"".must_be_parsed_as s(:str, "foo\rbar")
+          "\"foo\\sbar\"".must_be_parsed_as s(:str, "foo\sbar")
+          "\"foo\\tbar\"".must_be_parsed_as s(:str, "foo\tbar")
+        end
       end
 
       describe "with interpolations" do
