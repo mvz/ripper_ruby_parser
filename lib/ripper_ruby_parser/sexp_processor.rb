@@ -87,6 +87,10 @@ module RipperRubyParser
       s(:colon2, process(left), extract_node_symbol(right))
     end
 
+    def process_const_path_field exp
+      s(:const, process_const_path_ref(exp))
+    end
+
     def process_const_ref exp
       _, ref = exp.shift 3
       process(ref)

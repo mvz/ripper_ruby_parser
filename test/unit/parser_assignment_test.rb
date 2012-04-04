@@ -2,6 +2,15 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   describe "#parse" do
+    describe "for single assignment" do
+      it "works when assigning to a namespaced constant" do
+        "Foo::Bar = baz".
+          must_be_parsed_as s(:cdecl,
+                              s(:colon2, s(:const, :Foo), :Bar),
+                              s(:call, nil, :baz, s(:arglist)))
+      end
+    end
+
     describe "for multiple assignment" do
       specify do
         "foo, * = bar".
