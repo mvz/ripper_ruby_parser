@@ -129,7 +129,7 @@ module RipperRubyParser
 
       # FIXME: This is incomplete
       def unescape string
-        string.gsub(/(\\[^x)]|\\x[0-9a-fA-F]{1,2})/) do
+        string.gsub(/(\\[^x]|\\x[0-9a-fA-F]{1,2})/) do
           eval "\"#{$1}\""
         end
       end

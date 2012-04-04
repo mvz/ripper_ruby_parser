@@ -993,13 +993,13 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for a double-quoted string representing a regex literal with escaped right bracket" do
-        result = parser.parse "\"/\\)/\""
+        result = parser.parse "\"/\\\\)/\""
         result.must_equal s(:str, "/\\)/")
       end
 
-      it "works for a single-quoted string representing a regex literal with escaped right bracket" do
-        result = parser.parse "'/\\)/'"
-        result.must_equal s(:str, "/\\)/")
+      it "works for a double-quoted string containing a uselessly escaped right bracket" do
+        result = parser.parse "\"/\\)/\""
+        result.must_equal s(:str, "/)/")
       end
 
       it "works for a string containing escaped quotes" do
