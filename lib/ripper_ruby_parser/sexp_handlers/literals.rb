@@ -44,11 +44,6 @@ module RipperRubyParser
         string, rest = extract_string_parts content
         numflags = character_flags_to_numerical flags
 
-        while not(rest.empty?) and rest.first.sexp_type == :str
-          str = rest.shift
-          string += str[1]
-        end
-
         if rest.empty?
           s(:lit, Regexp.new(string, numflags))
         else
@@ -108,6 +103,11 @@ module RipperRubyParser
         until exp.empty? do
           result = process(exp.shift)
           rest << result
+        end
+
+        while not(rest.empty?) and rest.first.sexp_type == :str
+          str = rest.shift
+          string += str[1]
         end
 
         return string, rest
