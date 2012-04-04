@@ -20,6 +20,7 @@ module RipperRubyParser
 
       def process_binary exp
         _, left, op, right = exp.shift 4
+
         if op == :=~
           if left.sexp_type == :regexp_literal
             s(:match2, process(left), process(right))
@@ -31,13 +32,7 @@ module RipperRubyParser
         elsif (mapped = NEGATED_BINARY_OPERATOR_MAP[op])
           s(:not, process(s(:binary, left, mapped, right)))
         elsif (mapped = BINARY_OPERATOR_MAP[op])
-          left = process(left)
-          right = process(right)
-          if mapped == left.sexp_type
-            s(left.sexp_type, left[1], s(mapped, left[2], right))
-          else
-            s(mapped, left, right)
-          end
+          rebalance_binary(s(mapped, process(left), process(right)))
         else
           s(:call, process(left), op, s(:arglist, process(right)))
         end
@@ -72,6 +67,18 @@ module RipperRubyParser
       def process_ifop exp
         _, cond, truepart, falsepart = exp.shift 4
         s(:if, process(cond), process(truepart), process(falsepart))
+      end
+
+      private
+
+      def rebalance_binary exp
+        op, left, right = exp
+
+        if op == left.sexp_type
+          s(op, left[1], rebalance_binary(s(op, left[2], right)))
+        else
+          s(op, left, right)
+        end
       end
     end
   end

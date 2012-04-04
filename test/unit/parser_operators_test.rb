@@ -12,5 +12,18 @@ describe RipperRubyParser::Parser do
                                              s(:call, nil, :bar, s(:arglist)))))
       end
     end
+
+    describe "for boolean operators" do
+      it "handles triple :and" do
+        "foo and bar and baz and qux".
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:and,
+                                s(:call, nil, :bar, s(:arglist)),
+                                s(:and,
+                                  s(:call, nil, :baz, s(:arglist)),
+                                  s(:call, nil, :qux, s(:arglist)))))
+      end
+    end
   end
 end
