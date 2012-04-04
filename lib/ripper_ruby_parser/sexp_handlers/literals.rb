@@ -43,6 +43,9 @@ module RipperRubyParser
         elsif left.sexp_type == :str and right.sexp_type == :dstr
           right[1] = left[1] + right[1]
           right
+        elsif left.sexp_type == :dstr and right.sexp_type == :str
+          left << right
+          left
         else
           s(:string_concat, left, right)
         end
