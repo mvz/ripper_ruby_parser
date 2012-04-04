@@ -96,6 +96,11 @@ describe RipperRubyParser::Parser do
           "\"foo\\cZbar\"".must_be_parsed_as s(:str, "foo\cZbar")
         end
 
+        it "works with simple regular control sequence escapes" do
+          "\"foo\\C-abar\"".must_be_parsed_as s(:str, "foo\C-abar")
+          "\"foo\\C-Zbar\"".must_be_parsed_as s(:str, "foo\C-Zbar")
+        end
+
         # TODO: Behave differently in extra_compatible mode.
         it "works with unicode escapes (unlike RubyParser)" do
           "\"foo\\u273bbar\"".must_be_parsed_as s(:str, "foo✻bar")
