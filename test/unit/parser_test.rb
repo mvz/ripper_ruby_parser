@@ -1170,7 +1170,7 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe "for constant references" do
+    describe "for constant lookups" do
       it "works when explicitely starting from the root namespace" do
         result = parser.parse "::Foo"
         result.must_equal s(:colon3, :Foo)
@@ -1181,6 +1181,12 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:colon2,
                             s(:colon2, s(:const, :Foo), :Bar),
                             :Baz)
+      end
+
+      it "works looking up a constant in a non-constant" do
+        "foo::Bar".must_be_parsed_as s(:colon2,
+                                       s(:call, nil, :foo, s(:arglist)),
+                                       :Bar)
       end
     end
 
