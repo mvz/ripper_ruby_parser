@@ -43,6 +43,12 @@ describe RipperRubyParser::Parser do
                                 s(:evstr,
                                   s(:call, nil, :bar, s(:arglist))), 16)
         end
+
+        describe "containing just a literal string" do
+          it "performs the interpolation when it is at the end" do
+            '/foo#{"bar"}/'.must_be_parsed_as s(:lit, /foobar/)
+          end
+        end
       end
     end
   end

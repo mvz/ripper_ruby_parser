@@ -48,6 +48,9 @@ module RipperRubyParser
 
         if rest.empty?
           s(:lit, Regexp.new(string, numflags))
+        elsif rest.size == 1 and rest[0].sexp_type == :evstr and rest[0][1].sexp_type == :str
+          string += rest[0][1][1]
+          s(:lit, Regexp.new(string, numflags))
         else
           rest << numflags if numflags > 0
           sexp_type = if flags =~ /o/
