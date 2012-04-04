@@ -42,14 +42,7 @@ module RipperRubyParser
         _, content, (_, flags, _) = exp.shift 3
 
         string, rest = extract_string_parts content
-
-        numflags = 0
-        flags =~ /m/ and numflags |= Regexp::MULTILINE
-        flags =~ /x/ and numflags |= Regexp::EXTENDED
-        flags =~ /i/ and numflags |= Regexp::IGNORECASE
-
-        flags =~ /n/ and numflags |= Regexp::NOENCODING
-        flags =~ /[ues]/ and numflags |= Regexp::FIXEDENCODING
+        numflags = character_flags_to_numerical flags
 
         while not(rest.empty?) and rest.first.sexp_type == :str
           str = rest.shift
@@ -139,6 +132,20 @@ module RipperRubyParser
           eval "\"#{$1}\""
         end
       end
+
+      def character_flags_to_numerical flags
+        numflags = 0
+
+        flags =~ /m/ and numflags |= Regexp::MULTILINE
+        flags =~ /x/ and numflags |= Regexp::EXTENDED
+        flags =~ /i/ and numflags |= Regexp::IGNORECASE
+
+        flags =~ /n/ and numflags |= Regexp::NOENCODING
+        flags =~ /[ues]/ and numflags |= Regexp::FIXEDENCODING
+
+        numflags
+      end
+
     end
   end
 end
