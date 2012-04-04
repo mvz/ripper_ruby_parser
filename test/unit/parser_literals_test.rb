@@ -61,6 +61,15 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for string literals" do
+      describe "with escape sequences" do
+        it "works with hex escapes" do
+          "\"\\x36\"".must_be_parsed_as s(:str, "6")
+          "\"\\x4a\"".must_be_parsed_as s(:str, "J")
+          "\"\\xAF\"".must_be_parsed_as s(:str, "\xAF")
+          "\"\\x3Z\"".must_be_parsed_as s(:str, "\x03Z")
+        end
+      end
+
       describe "with interpolations" do
         describe "containing just a literal string" do
           it "performs the interpolation when it is at the end" do
