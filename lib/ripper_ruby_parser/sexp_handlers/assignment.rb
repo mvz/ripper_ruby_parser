@@ -7,6 +7,10 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
 
+        if value.sexp_type == :splat
+          value = s(:svalue, value)
+        end
+
         with_line_number(lvalue.line,
                          create_regular_assignment_sub_type(lvalue, value))
       end

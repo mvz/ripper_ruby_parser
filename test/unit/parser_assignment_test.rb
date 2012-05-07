@@ -16,6 +16,16 @@ describe RipperRubyParser::Parser do
                               s(:colon3, :Foo),
                               s(:call, nil, :bar, s(:arglist)))
       end
+
+      describe "with a right-hand splat" do
+        specify do
+          "foo = *bar".
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:svalue,
+                                  s(:splat,
+                                    s(:call, nil, :bar, s(:arglist)))))
+        end
+      end
     end
 
     describe "for multiple assignment" do
