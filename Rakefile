@@ -14,8 +14,13 @@ namespace :test do
     t.warning = true
   end
 
-  task :run => [:unit, :end_to_end]
+  Rake::TestTask.new(:pt_testcase) do |t|
+    t.libs = ['lib']
+    t.test_files = FileList['test/pt_testcase/*_test.rb']
+    t.warning = true
+  end
 
+  task :run => [:unit, :end_to_end, :pt_testcase]
 end
 
 desc 'Alias to test:run'
