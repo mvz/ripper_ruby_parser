@@ -7,11 +7,10 @@ module RipperRubyParser
         lvalue = process(lvalue)
         value = process(value)
 
-        if value.sexp_type == :splat
+        case value.sexp_type
+        when :splat
           value = s(:svalue, value)
-        end
-
-        if value.sexp_type == :fake_array
+        when :fake_array
           value = s(:svalue, s(:array, *value.sexp_body))
         end
 
@@ -33,11 +32,12 @@ module RipperRubyParser
 
         right = process(right)
 
-        if right.sexp_type == :fake_array
+        case right.sexp_type
+        when :fake_array
           right[0] = :array
-        end
-
-        unless [:array, :splat].include? right.sexp_type
+        when :array, :splat
+          # Do nothing
+        else
           right = s(:to_ary, right)
         end
 
