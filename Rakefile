@@ -20,7 +20,7 @@ namespace :test do
     t.warning = true
   end
 
-  task :run => [:unit, :end_to_end, :pt_testcase]
+  task :run => [:unit, :end_to_end]
 end
 
 desc 'Alias to test:run'
