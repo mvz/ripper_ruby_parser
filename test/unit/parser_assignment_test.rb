@@ -25,6 +25,37 @@ describe RipperRubyParser::Parser do
                                   s(:splat,
                                     s(:call, nil, :bar, s(:arglist)))))
         end
+
+        specify do
+          "foo = bar, *baz".
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:svalue,
+                                  s(:array,
+                                    s(:call, nil, :bar, s(:arglist)),
+                                    s(:splat,
+                                      s(:call, nil, :baz, s(:arglist))))))
+        end
+      end
+
+      describe "with several items on the right hand side" do
+        specify do
+          "foo = bar, baz".
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:svalue,
+                                  s(:array,
+                                    s(:call, nil, :bar, s(:arglist)),
+                                    s(:call, nil, :baz, s(:arglist)))))
+        end
+      end
+
+      describe "with an array literal on the right hand side" do
+        specify do
+          "foo = [bar, baz]".
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:array,
+                                  s(:call, nil, :bar, s(:arglist)),
+                                  s(:call, nil, :baz, s(:arglist))))
+        end
       end
     end
 

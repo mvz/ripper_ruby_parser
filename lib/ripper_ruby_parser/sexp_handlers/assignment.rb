@@ -11,6 +11,10 @@ module RipperRubyParser
           value = s(:svalue, value)
         end
 
+        if value.sexp_type == :fake_array
+          value = s(:svalue, s(:array, *value.sexp_body))
+        end
+
         with_line_number(lvalue.line,
                          create_regular_assignment_sub_type(lvalue, value))
       end
@@ -29,6 +33,10 @@ module RipperRubyParser
 
         right = process(right)
 
+        if right.sexp_type == :fake_array
+          right[0] = :array
+        end
+
         unless [:array, :splat].include? right.sexp_type
           right = s(:to_ary, right)
         end
@@ -40,7 +48,7 @@ module RipperRubyParser
         _, inner, last = exp.shift 3
         inner.map! {|item| process(item)}
         inner.push process(last) unless last.nil?
-        s(:array, *inner)
+        s(:fake_array, *inner)
       end
 
       def process_mrhs_add_star exp
