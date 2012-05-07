@@ -179,6 +179,8 @@ module RipperRubyParser
         case name.sexp_type
         when :lvar
           s(:lasgn, name[1])
+        when :blockarg
+          s(:lasgn, :"&#{name[1][1]}")
         when :splat
           if name[1].nil?
             s(:splat)

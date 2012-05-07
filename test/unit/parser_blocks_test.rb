@@ -30,6 +30,16 @@ describe RipperRubyParser::Parser do
                               s(:masgn, s(:array, s(:lasgn, :bar), s(:splat))))
       end
 
+      specify do
+        "foo do |bar, &baz| end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo, s(:arglist)),
+                              s(:masgn,
+                                s(:array,
+                                  s(:lasgn, :bar),
+                                  s(:lasgn, :"&baz"))))
+      end
+
       it "behaves differently from RubyParser with a trailing comma in the block parameters" do
         "foo do |bar, | end".
           must_be_parsed_as s(:iter,
