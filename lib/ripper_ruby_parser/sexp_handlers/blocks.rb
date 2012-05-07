@@ -6,11 +6,8 @@ module RipperRubyParser
         block = process(block)
         args = block[1]
         stmt = block[2].first
-        if stmt.nil?
-          s(:iter, process(call), args)
-        else
-          s(:iter, process(call), args, stmt)
-        end
+        call = process(call)
+        make_iter call, args, stmt
       end
 
       def process_brace_block exp
@@ -46,15 +43,8 @@ module RipperRubyParser
         _, args, _ = exp.shift 3
 
         names = process(args)
-        names.shift
 
-        if names.length == 1 and names.first.sexp_type == :lvar
-          s(:lasgn, names.first[1])
-        elsif names.length == 1 and names.first.sexp_type == :masgn
-          names.first
-        else
-          s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
-        end
+        args_to_assignment names
       end
 
       def process_begin exp
@@ -155,6 +145,13 @@ module RipperRubyParser
         end
       end
 
+      def process_lambda exp
+        _, args, statements = exp.shift 3
+        make_iter(s(:call, nil, :lambda, s(:arglist)),
+                  args_to_assignment(process(args)),
+                  *handle_potentially_typeless_sexp(statements))
+      end
+
       private
 
       def handle_generic_block exp
@@ -192,6 +189,24 @@ module RipperRubyParser
         end
       end
 
+      def make_iter call, args, stmt
+        if stmt.nil?
+          s(:iter, call, args)
+        else
+          s(:iter, call, args, stmt)
+        end
+      end
+
+      def args_to_assignment names
+        names.shift
+        if names.length == 1 and names.first.sexp_type == :lvar
+          s(:lasgn, names.first[1])
+        elsif names.length == 1 and names.first.sexp_type == :masgn
+          names.first
+        else
+          s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
+        end
+      end
     end
   end
 end

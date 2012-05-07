@@ -90,5 +90,15 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz, s(:arglist))))
       end
     end
+
+    describe "for stabby lambda" do
+      it "works in the simple case" do
+        "->(foo) { bar }".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda, s(:arglist)),
+                              s(:lasgn, :foo),
+                              s(:call, nil, :bar, s(:arglist))) 
+      end
+    end
   end
 end
