@@ -53,10 +53,12 @@ module RipperRubyParser
 
       def process_mrhs_add_star exp
         exp = generic_add_star exp
-        unless exp.first.is_a? Symbol
-          exp = exp.first
+
+        if exp.first.is_a? Symbol
+          exp
+        else
+          exp.first
         end
-        exp
       end
 
       def process_mlhs_add_star exp
