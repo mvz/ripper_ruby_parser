@@ -13,7 +13,6 @@ class RubyParserTestCase < ParseTreeTestCase
   end
 
   def self.generate_test klass, node, data, input_name, output_name
-    return if node.to_s =~ /bmethod|dmethod/
     return if Array === data['Ruby']
 
     output_name = "ParseTree"
