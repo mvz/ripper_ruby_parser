@@ -57,6 +57,11 @@ module RipperRubyParser
       super
     end
 
+    def on_dyna_symbol *args
+      @in_symbol = false
+      super
+    end
+
     def on_parse_error *args
       raise SyntaxError.new(*args)
     end
@@ -80,10 +85,9 @@ module RipperRubyParser
     private
 
     def commentize name, exp
+      raise "Comment stack empty in #{name} event" if @comment_stack.empty?
       tok, comment = @comment_stack.pop
       unless tok == name
-        p @comment_stack
-        p [tok, comment]
         raise "Expected on_#{tok} event, got on_#{name}"
       end
       if comment.nil?

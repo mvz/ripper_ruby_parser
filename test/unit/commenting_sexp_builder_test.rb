@@ -70,6 +70,30 @@ describe RipperRubyParser::CommentingSexpBuilder do
                            [:const_ref, [:@const, "Foo", [1, 7]]],
                            [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
+
+    it "is not confused by a symbol containing a keyword" do
+      result = parse_with_builder ":class; def foo; end"
+      result.must_equal [:program,
+                         [[:symbol_literal, [:symbol, [:@kw, "class", [1, 1]]]],
+                          [:comment,
+                           "",
+                           [:def,
+                            [:@ident, "foo", [1, 12]],
+                            [:params, nil, nil, nil, nil, nil],
+                            [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
+    end
+
+    it "is not confused by a dynamic symbol" do
+      result = parse_with_builder ":'foo'; def bar; end"
+      result.must_equal [:program,
+                         [[:dyna_symbol, [[:@tstring_content, "foo", [1, 2]]]],
+                          [:comment,
+                           "",
+                           [:def,
+                            [:@ident, "bar", [1, 12]],
+                            [:params, nil, nil, nil, nil, nil],
+                            [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
+    end
   end
 end
 
