@@ -57,6 +57,11 @@ module RipperRubyParser
       super
     end
 
+    def on_embexpr_beg *args
+      @in_symbol = false
+      super
+    end
+
     def on_dyna_symbol *args
       @in_symbol = false
       super

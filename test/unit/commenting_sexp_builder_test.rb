@@ -94,6 +94,20 @@ describe RipperRubyParser::CommentingSexpBuilder do
                             [:params, nil, nil, nil, nil, nil],
                             [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]
     end
+
+    it "is not confused by a dynamic symbol containing a class definition" do
+      result = parse_with_builder ":\"foo\#{class Bar;end}\""
+      result.must_equal [:program,
+                         [[:dyna_symbol,
+                           [[:@tstring_content, "foo", [1, 2]],
+                            [:string_embexpr,
+                             [[:comment,
+                               "",
+                               [:class,
+                                [:const_ref, [:@const, "Bar", [1, 13]]],
+                                nil,
+                                [:bodystmt, [[:void_stmt]], nil, nil, nil]]]]]]]]]
+    end
   end
 end
 
