@@ -2,7 +2,6 @@ if ENV["SIMPLECOV"]
   require 'simplecov'
   SimpleCov.start
 end
-require 'minitest/spec'
 require 'minitest/autorun'
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
