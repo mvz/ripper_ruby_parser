@@ -7,14 +7,14 @@ describe RipperRubyParser::Parser do
         "Foo::Bar = baz".
           must_be_parsed_as s(:cdecl,
                               s(:colon2, s(:const, :Foo), :Bar),
-                              s(:call, nil, :baz, s(:arglist)))
+                              s(:call, nil, :baz))
       end
 
       it "works when assigning to constant in the root namespace" do
         "::Foo = bar".
           must_be_parsed_as s(:cdecl,
                               s(:colon3, :Foo),
-                              s(:call, nil, :bar, s(:arglist)))
+                              s(:call, nil, :bar))
       end
 
       describe "with a right-hand splat" do
@@ -23,7 +23,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:svalue,
                                   s(:splat,
-                                    s(:call, nil, :bar, s(:arglist)))))
+                                    s(:call, nil, :bar))))
         end
 
         specify do
@@ -31,9 +31,9 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:svalue,
                                   s(:array,
-                                    s(:call, nil, :bar, s(:arglist)),
+                                    s(:call, nil, :bar),
                                     s(:splat,
-                                      s(:call, nil, :baz, s(:arglist))))))
+                                      s(:call, nil, :baz)))))
         end
       end
 
@@ -43,8 +43,8 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:svalue,
                                   s(:array,
-                                    s(:call, nil, :bar, s(:arglist)),
-                                    s(:call, nil, :baz, s(:arglist)))))
+                                    s(:call, nil, :bar),
+                                    s(:call, nil, :baz))))
         end
       end
 
@@ -53,8 +53,8 @@ describe RipperRubyParser::Parser do
           "foo = [bar, baz]".
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:array,
-                                  s(:call, nil, :bar, s(:arglist)),
-                                  s(:call, nil, :baz, s(:arglist))))
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz)))
         end
       end
     end
@@ -64,7 +64,7 @@ describe RipperRubyParser::Parser do
         "foo, * = bar".
           must_be_parsed_as s(:masgn,
                               s(:array, s(:lasgn, :foo), s(:splat)),
-                              s(:to_ary, s(:call, nil, :bar, s(:arglist))))
+                              s(:to_ary, s(:call, nil, :bar)))
       end
 
       specify do
@@ -73,7 +73,7 @@ describe RipperRubyParser::Parser do
                               s(:array,
                                 s(:lasgn, :foo),
                                 s(:splat, s(:lasgn, :bar))),
-                              s(:to_ary, s(:call, nil, :baz, s(:arglist))))
+                              s(:to_ary, s(:call, nil, :baz)))
       end
     end
 
@@ -81,12 +81,11 @@ describe RipperRubyParser::Parser do
       it "handles multiple indices" do
         "foo[bar, baz] = qux".
           must_be_parsed_as s(:attrasgn,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               :[]=,
-                              s(:arglist,
-                                s(:call, nil, :bar, s(:arglist)),
-                                s(:call, nil, :baz, s(:arglist)),
-                                s(:call, nil, :qux, s(:arglist))))
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux))
       end
     end
 
@@ -95,18 +94,18 @@ describe RipperRubyParser::Parser do
         it "handles multiple indices" do
           "foo[bar, baz] += qux".
             must_be_parsed_as s(:op_asgn1,
-                                s(:call, nil, :foo, s(:arglist)),
+                                s(:call, nil, :foo),
                                 s(:arglist,
-                                  s(:call, nil, :bar, s(:arglist)),
-                                  s(:call, nil, :baz, s(:arglist))),
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz)),
                                 :+,
-                                s(:call, nil, :qux, s(:arglist)))
+                                s(:call, nil, :qux))
         end
 
         it "works with &&=" do
           "foo &&= bar".
             must_be_parsed_as s(:op_asgn_and,
-                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar, s(:arglist))))
+                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
         end
       end
     end
@@ -117,15 +116,15 @@ describe RipperRubyParser::Parser do
           "foo, bar = *baz".
             must_be_parsed_as s(:masgn,
                                 s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                                s(:splat, s(:call, nil, :baz, s(:arglist))))
+                                s(:splat, s(:call, nil, :baz)))
         end
         specify do
           "foo, bar = baz, *qux".
             must_be_parsed_as s(:masgn,
                                 s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                                 s(:array,
-                                  s(:call, nil, :baz, s(:arglist)),
-                                  s(:splat, s(:call, nil, :qux, s(:arglist)))))
+                                  s(:call, nil, :baz),
+                                  s(:splat, s(:call, nil, :qux))))
         end
       end
     end

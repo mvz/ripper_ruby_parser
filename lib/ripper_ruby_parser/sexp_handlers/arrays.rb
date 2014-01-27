@@ -13,7 +13,8 @@ module RipperRubyParser
         coll = nil if coll == s(:self)
 
         idx = process(idx) || s(:arglist)
-        s(:call, coll, :[], idx)
+        idx.shift
+        s(:call, coll, :[], *idx)
       end
     end
   end

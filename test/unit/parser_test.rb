@@ -54,54 +54,54 @@ describe RipperRubyParser::Parser do
       it "works in the postfix case" do
         result = parser.parse "foo if bar"
         result.must_equal s(:if,
-                            s(:call, nil, :bar, s(:arglist)),
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :bar),
+                            s(:call, nil, :foo),
                             nil)
       end
 
       it "works in the block case" do
         result = parser.parse "if foo; bar; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar),
                             nil)
       end
 
       it "works with an else clause" do
         result = parser.parse "if foo; bar; else; baz; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)),
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar),
+                            s(:call, nil, :baz))
       end
 
       it "works with an elsif clause" do
         result = parser.parse "if foo; bar; elsif baz; qux; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar),
                             s(:if,
-                              s(:call, nil, :baz, s(:arglist)),
-                              s(:call, nil, :qux, s(:arglist)),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux),
                               nil))
       end
 
       it "handles a negative condition correctly" do
         result = parser.parse "if not foo; bar; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             nil,
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :bar))
       end
 
       it "handles a negative condition in elsif correctly" do
         result = parser.parse "if foo; bar; elsif not baz; qux; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar),
                             s(:if,
-                              s(:not, s(:call, nil, :baz, s(:arglist))),
-                              s(:call, nil, :qux, s(:arglist)), nil))
+                              s(:not, s(:call, nil, :baz)),
+                              s(:call, nil, :qux), nil))
       end
     end
 
@@ -109,25 +109,25 @@ describe RipperRubyParser::Parser do
       it "works in the postfix case" do
         result = parser.parse "foo unless bar"
         result.must_equal s(:if,
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :bar),
                             nil,
-                            s(:call, nil, :foo, s(:arglist)))
+                            s(:call, nil, :foo))
       end
 
       it "works in the block case" do
         result = parser.parse "unless bar; foo; end"
         result.must_equal s(:if,
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :bar),
                             nil,
-                            s(:call, nil, :foo, s(:arglist)))
+                            s(:call, nil, :foo))
       end
 
       it "works with an else clause" do
         result = parser.parse "unless foo; bar; else; baz; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :baz, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :baz),
+                            s(:call, nil, :bar))
       end
     end
 
@@ -135,46 +135,46 @@ describe RipperRubyParser::Parser do
       it "works with a single when clause" do
         result = parser.parse "case foo; when bar; baz; end"
         result.must_equal s(:case,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:when,
-                              s(:array, s(:call, nil, :bar, s(:arglist))),
-                              s(:call, nil, :baz, s(:arglist))),
+                              s(:array, s(:call, nil, :bar)),
+                              s(:call, nil, :baz)),
                             nil)
       end
 
       it "works with multiple when clauses" do
         result = parser.parse "case foo; when bar; baz; when qux; quux; end"
         result.must_equal s(:case,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:when,
-                              s(:array, s(:call, nil, :bar, s(:arglist))),
-                              s(:call, nil, :baz, s(:arglist))),
+                              s(:array, s(:call, nil, :bar)),
+                              s(:call, nil, :baz)),
                             s(:when,
-                              s(:array, s(:call, nil, :qux, s(:arglist))),
-                              s(:call, nil, :quux, s(:arglist))),
+                              s(:array, s(:call, nil, :qux)),
+                              s(:call, nil, :quux)),
                             nil)
       end
 
       it "works with multiple statements in the when block" do
         result = parser.parse "case foo; when bar; baz; qux; end"
         result.must_equal s(:case,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:when,
-                              s(:array, s(:call, nil, :bar, s(:arglist))),
+                              s(:array, s(:call, nil, :bar)),
                               s(:block,
-                                s(:call, nil, :baz, s(:arglist)),
-                                s(:call, nil, :qux, s(:arglist)))),
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux))),
                             nil)
       end
 
       it "works with an else clause" do
         result = parser.parse "case foo; when bar; baz; else; qux; end"
         result.must_equal s(:case,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:when,
-                              s(:array, s(:call, nil, :bar, s(:arglist))),
-                              s(:call, nil, :baz, s(:arglist))),
-                            s(:call, nil, :qux, s(:arglist)))
+                              s(:array, s(:call, nil, :bar)),
+                              s(:call, nil, :baz)),
+                            s(:call, nil, :qux))
       end
     end
 
@@ -187,7 +187,7 @@ describe RipperRubyParser::Parser do
       it "works with one argument" do
         result = parser.parse "return foo"
         result.must_equal s(:return,
-                            s(:call, nil, :foo, s(:arglist)))
+                            s(:call, nil, :foo))
       end
 
       it "works with a splat argument" do
@@ -195,24 +195,24 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:return,
                             s(:svalue,
                               s(:splat,
-                                s(:call, nil, :foo, s(:arglist)))))
+                                s(:call, nil, :foo))))
       end
 
       it "works with multiple arguments" do
         result = parser.parse "return foo, bar"
         result.must_equal s(:return,
                             s(:array,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar)))
       end
 
       it "works with a regular argument and a splat argument" do
         result = parser.parse "return foo, *bar"
         result.must_equal s(:return,
                             s(:array,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               s(:splat,
-                                s(:call, nil, :bar, s(:arglist)))))
+                                s(:call, nil, :bar))))
       end
     end
 
@@ -220,29 +220,29 @@ describe RipperRubyParser::Parser do
       it "works in the prefix block case with do" do
         result = parser.parse "until foo do; bar; end"
         result.must_equal s(:until,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)), true)
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar), true)
       end
 
       it "works in the prefix block case without do" do
         result = parser.parse "until foo; bar; end"
         result.must_equal s(:until,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)), true)
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar), true)
       end
 
       it "works in the single-line postfix case" do
         result = parser.parse "foo until bar"
         result.must_equal s(:until,
-                            s(:call, nil, :bar, s(:arglist)),
-                            s(:call, nil, :foo, s(:arglist)), true)
+                            s(:call, nil, :bar),
+                            s(:call, nil, :foo), true)
       end
 
       it "works in the block postfix case" do
         result = parser.parse "begin; foo; end until bar"
         result.must_equal s(:until,
-                            s(:call, nil, :bar, s(:arglist)),
-                            s(:call, nil, :foo, s(:arglist)), false)
+                            s(:call, nil, :bar),
+                            s(:call, nil, :foo), false)
       end
     end
 
@@ -250,15 +250,15 @@ describe RipperRubyParser::Parser do
       it "works with do" do
         result = parser.parse "while foo do; bar; end"
         result.must_equal s(:while,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)), true)
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar), true)
       end
 
       it "works without do" do
         result = parser.parse "while foo; bar; end"
         result.must_equal s(:while,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)), true)
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar), true)
       end
     end
 
@@ -266,17 +266,17 @@ describe RipperRubyParser::Parser do
       it "works with do" do
         result = parser.parse "for foo in bar do; baz; end"
         result.must_equal s(:for,
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :bar),
                             s(:lasgn, :foo),
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :baz))
       end
 
       it "works without do" do
         result = parser.parse "for foo in bar; baz; end"
         result.must_equal s(:for,
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :bar),
                             s(:lasgn, :foo),
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :baz))
       end
     end
 
@@ -288,14 +288,14 @@ describe RipperRubyParser::Parser do
 
       it "works with one statement" do
         result = parser.parse "begin; foo; end"
-        result.must_equal s(:call, nil, :foo, s(:arglist))
+        result.must_equal s(:call, nil, :foo)
       end
 
       it "works with multiple statements" do
         result = parser.parse "begin; foo; bar; end"
         result.must_equal s(:block,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
     end
 
@@ -309,70 +309,70 @@ describe RipperRubyParser::Parser do
       it "works with single statement main and rescue bodies" do
         result = parser.parse "begin; foo; rescue; bar; end"
         result.must_equal s(:rescue,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:resbody,
                               s(:array),
-                              s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar)))
       end
 
       it "works with multi-statement main and rescue bodies" do
         result = parser.parse "begin; foo; bar; rescue; baz; qux; end"
         result.must_equal s(:rescue,
                             s(:block,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist))),
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar)),
                             s(:resbody,
                               s(:array),
                               s(:block,
-                                s(:call, nil, :baz, s(:arglist)),
-                                s(:call, nil, :qux, s(:arglist)))))
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux))))
       end
 
       it "works with assignment to an error variable" do
         result = parser.parse "begin; foo; rescue => e; bar; end"
         result.must_equal s(:rescue,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:resbody,
                               s(:array, s(:lasgn, :e, s(:gvar, :$!))),
-                              s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar)))
       end
 
       it "works with filtering of the exception type" do
         result = parser.parse "begin; foo; rescue Bar; baz; end"
         result.must_equal s(:rescue,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:resbody,
                               s(:array, s(:const, :Bar)),
-                              s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :baz)))
       end
 
       it "works with filtering of the exception type and assignment to an error variable" do
         result = parser.parse "begin; foo; rescue Bar => e; baz; end"
         result.must_equal s(:rescue,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:resbody,
                               s(:array,
                                 s(:const, :Bar),
                                 s(:lasgn, :e, s(:gvar, :$!))),
-                              s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :baz)))
       end
 
       it "works rescuing multiple exception types" do
         result = parser.parse "begin; foo; rescue Bar, Baz; qux; end"
         result.must_equal s(:rescue,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:resbody,
                               s(:array, s(:const, :Bar), s(:const, :Baz)),
-                              s(:call, nil, :qux, s(:arglist))))
+                              s(:call, nil, :qux)))
       end
 
       it "works in the postfix case" do
         result = parser.parse "foo rescue bar"
         result.must_equal s(:rescue,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:resbody,
                               s(:array),
-                              s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar)))
       end
 
       it "works in a plain method body" do
@@ -383,10 +383,10 @@ describe RipperRubyParser::Parser do
                             s(:scope,
                               s(:block,
                                 s(:rescue,
-                                  s(:call, nil, :bar, s(:arglist)),
+                                  s(:call, nil, :bar),
                                   s(:resbody,
                                     s(:array),
-                                    s(:call, nil, :baz, s(:arglist)))))))
+                                    s(:call, nil, :baz))))))
       end
     end
 
@@ -394,30 +394,30 @@ describe RipperRubyParser::Parser do
       it "works with single statement main and ensure bodies" do
         result = parser.parse "begin; foo; ensure; bar; end"
         result.must_equal s(:ensure,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "works with multi-statement main and ensure bodies" do
         result = parser.parse "begin; foo; bar; ensure; baz; qux; end"
         result.must_equal s(:ensure,
                             s(:block,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist))),
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar)),
                             s(:block,
-                              s(:call, nil, :baz, s(:arglist)),
-                              s(:call, nil, :qux, s(:arglist))))
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux)))
       end
 
       it "works together with rescue" do
         result = parser.parse "begin; foo; rescue; bar; ensure; baz; end"
         result.must_equal s(:ensure,
                             s(:rescue,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               s(:resbody,
                                 s(:array),
-                                s(:call, nil, :bar, s(:arglist)))),
-                            s(:call, nil, :baz, s(:arglist)))
+                                s(:call, nil, :bar))),
+                            s(:call, nil, :baz))
       end
     end
 
@@ -473,8 +473,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:call,
                             nil,
                             :foo,
-                            s(:arglist,
-                              s(:splat, s(:call, nil, :bar, s(:arglist)))))
+                            s(:splat, s(:call, nil, :bar)))
       end
 
       it "works for a multi-argument case with splat" do
@@ -482,26 +481,23 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:call,
                             nil,
                             :foo,
-                            s(:arglist,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:splat, s(:call, nil, :baz, s(:arglist)))))
+                            s(:call, nil, :bar),
+                            s(:splat, s(:call, nil, :baz)))
       end
 
       it "works for a simple case passing a block" do
         result = parser.parse "foo &bar"
         result.must_equal s(:call, nil, :foo,
-                            s(:arglist,
                               s(:block_pass,
-                                s(:call, nil, :bar, s(:arglist)))))
+                                s(:call, nil, :bar)))
       end
 
       it "works for a bare hash" do
         result = parser.parse "foo bar => baz"
         result.must_equal s(:call, nil, :foo,
-                            s(:arglist,
-                              s(:hash,
-                                s(:call, nil, :bar, s(:arglist)),
-                                s(:call, nil, :baz, s(:arglist)))))
+                            s(:hash,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz)))
       end
     end
 
@@ -514,14 +510,14 @@ describe RipperRubyParser::Parser do
       it "works for a simple case with splat" do
         result = parser.parse "[*foo]"
         result.must_equal s(:array,
-                            s(:splat, s(:call, nil, :foo, s(:arglist))))
+                            s(:splat, s(:call, nil, :foo)))
       end
 
       it "works for a multi-element case with splat" do
         result = parser.parse "[foo, *bar]"
         result.must_equal s(:array,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:splat, s(:call, nil, :bar, s(:arglist))))
+                            s(:call, nil, :foo),
+                            s(:splat, s(:call, nil, :bar)))
       end
 
       it "works for an array created with %W" do
@@ -539,26 +535,26 @@ describe RipperRubyParser::Parser do
       it "works for a hash with one pair" do
         result = parser.parse "{foo => bar}"
         result.must_equal s(:hash,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "works for a hash with multiple pairs" do
         result = parser.parse "{foo => bar, baz => qux}"
         result.must_equal s(:hash,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)),
-                            s(:call, nil, :baz, s(:arglist)),
-                            s(:call, nil, :qux, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar),
+                            s(:call, nil, :baz),
+                            s(:call, nil, :qux))
       end
 
       it "works for a hash with label keys (Ruby 1.9 only)" do
         result = parser.parse "{foo: bar, baz: qux}"
         result.must_equal s(:hash,
                             s(:lit, :foo),
-                            s(:call, nil, :bar, s(:arglist)),
+                            s(:call, nil, :bar),
                             s(:lit, :baz),
-                            s(:call, nil, :qux, s(:arglist)))
+                            s(:call, nil, :qux))
       end
     end
 
@@ -578,20 +574,19 @@ describe RipperRubyParser::Parser do
       it "works in the simple case" do
         result = parser.parse "foo[bar]"
         result.must_equal s(:call,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :[],
-                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+                            s(:call, nil, :bar))
       end
 
       it "works without any indexes" do
-        "foo[]".must_be_parsed_as s(:call, s(:call, nil, :foo, s(:arglist)),
-                                    :[], s(:arglist))
+        "foo[]".must_be_parsed_as s(:call, s(:call, nil, :foo),
+                                    :[])
       end
 
       it "drops self from self[]" do
         "self[foo]".must_be_parsed_as s(:call, nil, :[],
-                                        s(:arglist,
-                                          s(:call, nil, :foo, s(:arglist))))
+                                        s(:call, nil, :foo))
       end
     end
 
@@ -599,7 +594,7 @@ describe RipperRubyParser::Parser do
       it "works with def with receiver" do
         result = parser.parse "def foo.bar; end"
         result.must_equal s(:defs,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :bar,
                             s(:args),
                             s(:scope, s(:block)))
@@ -714,37 +709,35 @@ describe RipperRubyParser::Parser do
         it "works without brackets" do
           result = parser.parse "foo bar"
           result.must_equal s(:call, nil, :foo,
-                              s(:arglist, s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar))
         end
 
         it "works with brackets" do
           result = parser.parse "foo(bar)"
           result.must_equal s(:call, nil, :foo,
-                              s(:arglist, s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar))
         end
 
         it "works with an empty parameter list and no brackets" do
           result = parser.parse "foo"
-          result.must_equal s(:call, nil, :foo, s(:arglist))
+          result.must_equal s(:call, nil, :foo)
         end
 
         it "works with brackets around an empty parameter list" do
           result = parser.parse "foo()"
-          result.must_equal s(:call, nil, :foo, s(:arglist))
+          result.must_equal s(:call, nil, :foo)
         end
 
         it "works for methods ending in a question mark" do
           result = parser.parse "foo?"
-          result.must_equal s(:call, nil, :foo?, s(:arglist))
+          result.must_equal s(:call, nil, :foo?)
         end
 
         it "works with nested calls without brackets" do
           result = parser.parse "foo bar baz"
           result.must_equal s(:call, nil, :foo,
-                              s(:arglist,
-                                s(:call, nil, :bar,
-                                  s(:arglist,
-                                    s(:call, nil, :baz, s(:arglist))))))
+                              s(:call, nil, :bar,
+                                s(:call, nil, :baz)))
         end
       end
 
@@ -752,39 +745,35 @@ describe RipperRubyParser::Parser do
         it "works without brackets" do
           result = parser.parse "foo.bar baz"
           result.must_equal s(:call,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               :bar,
-                              s(:arglist, s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :baz))
         end
 
         it "works with brackets" do
           result = parser.parse "foo.bar(baz)"
           result.must_equal s(:call,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               :bar,
-                              s(:arglist, s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :baz))
         end
 
         it "works with brackets around a call with no brackets" do
           result = parser.parse "foo.bar(baz qux)"
           result.must_equal s(:call,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               :bar,
-                              s(:arglist,
-                                s(:call, nil, :baz,
-                                  s(:arglist,
-                                    s(:call, nil, :qux, s(:arglist))))))
+                              s(:call, nil, :baz,
+                                s(:call, nil, :qux)))
         end
 
         it "works with nested calls without brackets" do
           result = parser.parse "foo.bar baz qux"
           result.must_equal s(:call,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               :bar,
-                              s(:arglist,
-                                s(:call, nil, :baz,
-                                  s(:arglist,
-                                    s(:call, nil, :qux, s(:arglist))))))
+                              s(:call, nil, :baz,
+                                s(:call, nil, :qux)))
         end
       end
 
@@ -793,24 +782,22 @@ describe RipperRubyParser::Parser do
           result = parser.parse "foo.bar do baz; end"
           result.must_equal s(:iter,
                               s(:call,
-                                s(:call, nil, :foo, s(:arglist)),
-                                :bar,
-                                s(:arglist)),
-                              nil,
-                              s(:call, nil, :baz, s(:arglist)))
+                                s(:call, nil, :foo),
+                                :bar),
+                              s(:args),
+                              s(:call, nil, :baz))
         end
 
         it "works for a do block with several statements" do
           result = parser.parse "foo.bar do baz; qux; end"
           result.must_equal s(:iter,
                               s(:call,
-                                s(:call, nil, :foo, s(:arglist)),
-                                :bar,
-                                s(:arglist)),
-                              nil,
+                                s(:call, nil, :foo),
+                                :bar),
+                              s(:args),
                               s(:block,
-                                s(:call, nil, :baz, s(:arglist)),
-                                s(:call, nil, :qux, s(:arglist))))
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)))
         end
       end
     end
@@ -819,83 +806,83 @@ describe RipperRubyParser::Parser do
       it "works with no statements in the block body" do
         result = parser.parse "foo do; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil)
+                            s(:call, nil, :foo),
+                            s(:args))
       end
 
       it "works with next with no arguments" do
         result = parser.parse "foo do; next; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
+                            s(:call, nil, :foo),
+                            s(:args),
                             s(:next))
       end
 
       it "works with next with one argument" do
         result = parser.parse "foo do; next bar; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
-                            s(:next, s(:call, nil, :bar, s(:arglist))))
+                            s(:call, nil, :foo),
+                            s(:args),
+                            s(:next, s(:call, nil, :bar)))
       end
 
       it "works with next with several arguments" do
         result = parser.parse "foo do; next bar, baz; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
+                            s(:call, nil, :foo),
+                            s(:args),
                             s(:next,
                               s(:array,
-                                s(:call, nil, :bar, s(:arglist)),
-                                s(:call, nil, :baz, s(:arglist)))))
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz))))
       end
 
       it "works with break with no arguments" do
         result = parser.parse "foo do; break; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
+                            s(:call, nil, :foo),
+                            s(:args),
                             s(:break))
       end
 
       it "works with break with one argument" do
         result = parser.parse "foo do; break bar; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
-                            s(:break, s(:call, nil, :bar, s(:arglist))))
+                            s(:call, nil, :foo),
+                            s(:args),
+                            s(:break, s(:call, nil, :bar)))
       end
 
       it "works with break with several arguments" do
         result = parser.parse "foo do; break bar, baz; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
+                            s(:call, nil, :foo),
+                            s(:args),
                             s(:break,
                               s(:array,
-                                s(:call, nil, :bar, s(:arglist)),
-                                s(:call, nil, :baz, s(:arglist)))))
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz))))
       end
 
       it "works with redo" do
         result = parser.parse "foo do; redo; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
+                            s(:call, nil, :foo),
+                            s(:args),
                             s(:redo))
       end
 
       it "works with one argument" do
         result = parser.parse "foo do |bar|; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:lasgn, :bar))
       end
 
       it "works with multiple arguments" do
         result = parser.parse "foo do |bar, baz|; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:masgn,
                               s(:array,
                                 s(:lasgn, :bar),
@@ -905,7 +892,7 @@ describe RipperRubyParser::Parser do
       it "works with a single splat argument" do
         result = parser.parse "foo do |*bar|; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:masgn,
                               s(:array,
                                 s(:splat, s(:lasgn, :bar)))))
@@ -914,7 +901,7 @@ describe RipperRubyParser::Parser do
       it "works with a combination of regular arguments and a splat argument" do
         result = parser.parse "foo do |bar, *baz|; end"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:masgn,
                               s(:array,
                                 s(:lasgn, :bar),
@@ -936,33 +923,33 @@ describe RipperRubyParser::Parser do
 
       it "works with one argument and no brackets" do
         result = parser.parse "yield foo"
-        result.must_equal s(:yield, s(:call, nil, :foo, s(:arglist)))
+        result.must_equal s(:yield, s(:call, nil, :foo))
       end
 
       it "works with one argument and brackets" do
         result = parser.parse "yield(foo)"
-        result.must_equal s(:yield, s(:call, nil, :foo, s(:arglist)))
+        result.must_equal s(:yield, s(:call, nil, :foo))
       end
 
       it "works with multiple arguments and no brackets" do
         result = parser.parse "yield foo, bar"
         result.must_equal s(:yield,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "works with multiple arguments and brackets" do
         result = parser.parse "yield(foo, bar)"
         result.must_equal s(:yield,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "works with splat" do
         result = parser.parse "yield foo, *bar"
         result.must_equal s(:yield,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:splat, s(:call, nil, :bar, s(:arglist))))
+                            s(:call, nil, :foo),
+                            s(:splat, s(:call, nil, :bar)))
       end
     end
 
@@ -1017,7 +1004,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:dstr,
                             "",
                             s(:evstr,
-                              s(:call, nil, :foo, s(:arglist))))
+                              s(:call, nil, :foo)))
       end
 
       it "works for basic interpolated strings" do
@@ -1025,23 +1012,23 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:dstr,
                             "foo",
                             s(:evstr,
-                              s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar)))
       end
 
       it "works for strings with several interpolations" do
         result = parser.parse '"foo#{bar}baz#{qux}"'
         result.must_equal s(:dstr,
                             "foo",
-                            s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                            s(:evstr, s(:call, nil, :bar)),
                             s(:str, "baz"),
-                            s(:evstr, s(:call, nil, :qux, s(:arglist))))
+                            s(:evstr, s(:call, nil, :qux)))
       end
 
       it "works for strings with interpolations followed by escape sequences" do
         result = parser.parse '"#{foo}\\n"'
         result.must_equal  s(:dstr,
                              "",
-                             s(:evstr, s(:call, nil, :foo, s(:arglist))),
+                             s(:evstr, s(:call, nil, :foo)),
                              s(:str, "\n"))
       end
 
@@ -1064,7 +1051,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse '/foo#{bar}baz/'
         result.must_equal s(:dregx,
                             "foo",
-                            s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                            s(:evstr, s(:call, nil, :bar)),
                             s(:str, "baz"))
       end
 
@@ -1092,7 +1079,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse '/foo#{bar}/ixm'
         result.must_equal s(:dregx,
                             "foo",
-                            s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                            s(:evstr, s(:call, nil, :bar)),
                             7)
       end
 
@@ -1100,7 +1087,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse '/foo#{bar}/o'
         result.must_equal s(:dregx_once,
                             "foo",
-                            s(:evstr, s(:call, nil, :bar, s(:arglist))))
+                            s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for simple dsyms" do
@@ -1112,7 +1099,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse ':"foo#{bar}"'
         result.must_equal s(:dsym,
                             "foo",
-                            s(:evstr, s(:call, nil, :bar, s(:arglist))))
+                            s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for character literals (which are string literals in Ruby 1.9.3)" do
@@ -1135,7 +1122,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse '`foo#{bar}`'
         result.must_equal s(:dxstr,
                             "foo",
-                            s(:evstr, s(:call, nil, :bar, s(:arglist))))
+                            s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for backtick strings with escape sequences" do
@@ -1185,7 +1172,7 @@ describe RipperRubyParser::Parser do
 
       it "works looking up a constant in a non-constant" do
         "foo::Bar".must_be_parsed_as s(:colon2,
-                                       s(:call, nil, :foo, s(:arglist)),
+                                       s(:call, nil, :foo),
                                        :Bar)
       end
     end
@@ -1225,39 +1212,38 @@ describe RipperRubyParser::Parser do
         result = parser.parse "@foo = bar"
         result.must_equal s(:iasgn,
                             :@foo,
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :bar))
       end
 
       it "works when assigning to a constant" do
         result = parser.parse "FOO = bar"
         result.must_equal s(:cdecl,
                             :FOO,
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :bar))
       end
 
       it "works when assigning to a collection element" do
         result = parser.parse "foo[bar] = baz"
         result.must_equal s(:attrasgn,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :[]=,
-                            s(:arglist,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :baz, s(:arglist))))
+                            s(:call, nil, :bar),
+                            s(:call, nil, :baz))
       end
 
       it "works when assigning to an attribute" do
         result = parser.parse "foo.bar = baz"
         result.must_equal s(:attrasgn,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :bar=,
-                            s(:arglist, s(:call, nil, :baz, s(:arglist))))
+                            s(:arglist, s(:call, nil, :baz)))
       end
 
       it "works when assigning to a class variable" do
         result = parser.parse "@@foo = bar"
         result.must_equal s(:cvdecl,
                             :@@foo,
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :bar))
       end
 
       it "works when assigning to a class variable inside a method" do
@@ -1266,7 +1252,7 @@ describe RipperRubyParser::Parser do
                             :foo, s(:args),
                             s(:scope,
                               s(:block,
-                                s(:cvasgn, :@@bar, s(:call, nil, :baz, s(:arglist))))))
+                                s(:cvasgn, :@@bar, s(:call, nil, :baz)))))
       end
 
       it "works when assigning to a class variable inside a method with a receiver" do
@@ -1276,14 +1262,14 @@ describe RipperRubyParser::Parser do
                             :foo, s(:args),
                             s(:scope,
                               s(:block,
-                                s(:cvasgn, :@@bar, s(:call, nil, :baz, s(:arglist))))))
+                                s(:cvasgn, :@@bar, s(:call, nil, :baz)))))
       end
 
       it "works when assigning to a global variable" do
         result = parser.parse "$foo = bar"
         result.must_equal s(:gasgn,
                             :$foo,
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :bar))
       end
     end
 
@@ -1295,7 +1281,7 @@ describe RipperRubyParser::Parser do
                             s(:call,
                               s(:lvar, :foo),
                               :+,
-                              s(:arglist, s(:call, nil, :bar, s(:arglist)))))
+                              s(:arglist, s(:call, nil, :bar))))
       end
 
       it "works with -=" do
@@ -1305,7 +1291,7 @@ describe RipperRubyParser::Parser do
                             s(:call,
                               s(:lvar, :foo),
                               :-,
-                              s(:arglist, s(:call, nil, :bar, s(:arglist)))))
+                              s(:arglist, s(:call, nil, :bar))))
       end
 
       it "works with ||=" do
@@ -1313,7 +1299,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:op_asgn_or,
                             s(:lvar, :foo),
                             s(:lasgn, :foo,
-                              s(:call, nil, :bar, s(:arglist))))
+                              s(:call, nil, :bar)))
       end
 
       it "works when assigning to an instance variable" do
@@ -1323,43 +1309,43 @@ describe RipperRubyParser::Parser do
                             s(:call,
                               s(:ivar, :@foo),
                               :+,
-                              s(:arglist, s(:call, nil, :bar, s(:arglist)))))
+                              s(:arglist, s(:call, nil, :bar))))
       end
 
       it "works when assigning to a collection element" do
         result = parser.parse "foo[bar] += baz"
         result.must_equal s(:op_asgn1,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:arglist, s(:call, nil, :bar, s(:arglist))),
+                            s(:call, nil, :foo),
+                            s(:arglist, s(:call, nil, :bar)),
                             :+,
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :baz))
       end
 
       it "works with ||= when assigning to a collection element" do
         result = parser.parse "foo[bar] ||= baz"
         result.must_equal s(:op_asgn1,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:arglist, s(:call, nil, :bar, s(:arglist))),
+                            s(:call, nil, :foo),
+                            s(:arglist, s(:call, nil, :bar)),
                             :"||",
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :baz))
       end
 
       it "works when assigning to an attribute" do
         result = parser.parse "foo.bar += baz"
         result.must_equal s(:op_asgn2,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :bar=,
                             :+,
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :baz))
       end
 
       it "works with ||= when assigning to an attribute" do
         result = parser.parse "foo.bar ||= baz"
         result.must_equal s(:op_asgn2,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :bar=,
                             :"||",
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :baz))
       end
     end
 
@@ -1369,8 +1355,8 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                             s(:array,
-                              s(:call, nil, :baz, s(:arglist)),
-                              s(:call, nil, :qux, s(:arglist))))
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux)))
       end
 
       it "works with a single item on the right-hand side" do
@@ -1378,7 +1364,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                             s(:to_ary,
-                              s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :baz)))
       end
 
       it "works with left-hand splat" do
@@ -1386,16 +1372,15 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:splat, s(:lasgn, :bar))),
                             s(:array,
-                              s(:call, nil, :baz, s(:arglist)),
-                              s(:call, nil, :qux, s(:arglist))))
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux)))
       end
 
       it "works with brackets around the left-hand side" do
         result = parser.parse "(foo, bar) = baz"
         result.must_equal s(:masgn,
                             s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                            s(:to_ary,
-                              s(:call, nil, :baz, s(:arglist))))
+                            s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with complex destructuring" do
@@ -1404,43 +1389,31 @@ describe RipperRubyParser::Parser do
                             s(:array,
                               s(:lasgn, :foo),
                               s(:masgn,
-                                s(:array,
-                                  s(:lasgn, :bar),
-                                  s(:lasgn, :baz)))),
-                            s(:to_ary,
-                              s(:call, nil, :qux, s(:arglist))))
+                                s(:array, s(:lasgn, :bar), s(:lasgn, :baz)))),
+                            s(:to_ary, s(:call, nil, :qux)))
       end
 
       it "works with instance variables" do
         result = parser.parse "@foo, @bar = baz"
         result.must_equal s(:masgn,
                             s(:array, s(:iasgn, :@foo), s(:iasgn, :@bar)),
-                            s(:to_ary,
-                              s(:call, nil, :baz, s(:arglist))))
+                            s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with class variables" do
         result = parser.parse "@@foo, @@bar = baz"
         result.must_equal s(:masgn,
                             s(:array, s(:cvdecl, :@@foo), s(:cvdecl, :@@bar)),
-                            s(:to_ary,
-                              s(:call, nil, :baz, s(:arglist))))
+                            s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with attributes" do
         result = parser.parse "foo.bar, foo.baz = qux"
         result.must_equal s(:masgn,
                             s(:array,
-                              s(:attrasgn,
-                                s(:call, nil, :foo, s(:arglist)),
-                                :bar=,
-                                s(:arglist)),
-                              s(:attrasgn,
-                                s(:call, nil, :foo, s(:arglist)),
-                                :baz=,
-                                s(:arglist))),
-                            s(:to_ary,
-                              s(:call, nil, :qux, s(:arglist))))
+                              s(:attrasgn, s(:call, nil, :foo), :bar=),
+                              s(:attrasgn, s(:call, nil, :foo), :baz=)),
+                            s(:to_ary, s(:call, nil, :qux)))
       end
 
       it "works with collection elements" do
@@ -1448,22 +1421,17 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:masgn,
                             s(:array,
                               s(:attrasgn,
-                                s(:call, nil, :foo, s(:arglist)),
-                                :[]=,
-                                s(:arglist, s(:lit, 1))),
+                                s(:call, nil, :foo), :[]=, s(:lit, 1)),
                               s(:attrasgn,
-                                s(:call, nil, :bar, s(:arglist)),
-                                :[]=,
-                                s(:arglist, s(:lit, 2)))),
-                            s(:to_ary, s(:call, nil, :baz, s(:arglist))))
+                                s(:call, nil, :bar), :[]=, s(:lit, 2))),
+                            s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with constants" do
         result = parser.parse "Foo, Bar = baz"
         result.must_equal s(:masgn,
                             s(:array, s(:cdecl, :Foo), s(:cdecl, :Bar)),
-                            s(:to_ary,
-                              s(:call, nil, :baz, s(:arglist))))
+                            s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with instance variables and splat" do
@@ -1473,7 +1441,7 @@ describe RipperRubyParser::Parser do
                               s(:iasgn, :@foo),
                               s(:splat, s(:iasgn, :@bar))),
                             s(:to_ary,
-                              s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :baz)))
       end
 
     end
@@ -1482,97 +1450,96 @@ describe RipperRubyParser::Parser do
       it "handles :and" do
         result = parser.parse "foo and bar"
         result.must_equal s(:and,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "handles double :and" do
         result = parser.parse "foo and bar and baz"
         result.must_equal s(:and,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:and,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz)))
       end
 
       it "handles :or" do
         result = parser.parse "foo or bar"
         result.must_equal s(:or,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "handles double :or" do
         result = parser.parse "foo or bar or baz"
         result.must_equal s(:or,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             s(:or,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :baz, s(:arglist))))
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz)))
       end
 
       it "handles :or after :and" do
         result = parser.parse "foo and bar or baz"
         result.must_equal s(:or,
                             s(:and,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist))),
-                            s(:call, nil, :baz, s(:arglist)))
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar)),
+                            s(:call, nil, :baz))
       end
 
       it "handles :and after :or" do
         result = parser.parse "foo or bar and baz"
         result.must_equal s(:and,
                             s(:or,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist))),
-                            s(:call, nil, :baz, s(:arglist)))
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar)),
+                            s(:call, nil, :baz))
       end
 
       it "converts :&& to :and" do
         result = parser.parse "foo && bar"
         result.must_equal s(:and,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "converts :|| to :or" do
         result = parser.parse "foo || bar"
         result.must_equal s(:or,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "handles :!=" do
         result = parser.parse "foo != bar"
         result.must_equal s(:not,
                               s(:call,
-                                s(:call, nil, :foo, s(:arglist)),
+                                s(:call, nil, :foo),
                                 :==,
-                                s(:arglist,
-                                  s(:call, nil, :bar, s(:arglist)))))
+                                s(:call, nil, :bar)))
       end
 
       it "handles :=~ with two non-literals" do
         result = parser.parse "foo =~ bar"
         result.must_equal s(:call,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :=~,
-                            s(:arglist, s(:call, nil, :bar, s(:arglist))))
+                            s(:call, nil, :bar))
       end
 
       it "handles :=~ with literal regexp on the left hand side" do
         result = parser.parse "/foo/ =~ bar"
         result.must_equal s(:match2,
                             s(:lit, /foo/),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :bar))
       end
 
       it "handles :=~ with literal regexp on the right hand side" do
         result = parser.parse "foo =~ /bar/"
         result.must_equal s(:match3,
                             s(:lit, /bar/),
-                            s(:call, nil, :foo, s(:arglist)))
+                            s(:call, nil, :foo))
       end
 
       it "handles unary minus with a number literal" do
@@ -1583,9 +1550,8 @@ describe RipperRubyParser::Parser do
       it "handles unary minus with a non-literal" do
         result = parser.parse "-foo"
         result.must_equal s(:call,
-                            s(:call, nil, :foo, s(:arglist)),
-                            :-@,
-                            s(:arglist))
+                            s(:call, nil, :foo),
+                            :-@)
       end
 
       it "handles unary plus with a number literal" do
@@ -1596,19 +1562,18 @@ describe RipperRubyParser::Parser do
       it "handles unary plus with a non-literal" do
         result = parser.parse "+ foo"
         result.must_equal s(:call,
-                            s(:call, nil, :foo, s(:arglist)),
-                            :+@,
-                            s(:arglist))
+                            s(:call, nil, :foo),
+                            :+@)
       end
 
       it "handles unary not" do
         result = parser.parse "not foo"
-        result.must_equal s(:not, s(:call, nil, :foo, s(:arglist)))
+        result.must_equal s(:not, s(:call, nil, :foo))
       end
 
       it "converts :! to :not" do
         result = parser.parse "!foo"
-        result.must_equal s(:not, s(:call, nil, :foo, s(:arglist)))
+        result.must_equal s(:not, s(:call, nil, :foo))
       end
 
       it "handles the range operator with positive number literals" do
@@ -1631,16 +1596,16 @@ describe RipperRubyParser::Parser do
       it "handles the range operator with non-literals" do
         result = parser.parse "foo..bar"
         result.must_equal s(:dot2,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
       end
 
       it "handles the ternary operator" do
         result = parser.parse "foo ? bar : baz"
         result.must_equal s(:if,
-                            s(:call, nil, :foo, s(:arglist)),
-                            s(:call, nil, :bar, s(:arglist)),
-                            s(:call, nil, :baz, s(:arglist)))
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar),
+                            s(:call, nil, :baz))
       end
     end
 
@@ -1648,20 +1613,18 @@ describe RipperRubyParser::Parser do
       it "handles assignment inside binary operator expressions" do
         result = parser.parse "foo + (bar = baz)"
         result.must_equal s(:call,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :+,
-                            s(:arglist,
-                              s(:lasgn,
-                                :bar,
-                                s(:call, nil, :baz, s(:arglist)))))
+                            s(:lasgn,
+                              :bar,
+                              s(:call, nil, :baz)))
       end
 
       it "handles assignment inside unary operator expressions" do
         result = parser.parse "+(foo = bar)"
         result.must_equal s(:call,
-                            s(:lasgn, :foo, s(:call, nil, :bar, s(:arglist))),
-                            :+@,
-                            s(:arglist))
+                            s(:lasgn, :foo, s(:call, nil, :bar)),
+                            :+@)
       end
     end
 
@@ -1679,7 +1642,7 @@ describe RipperRubyParser::Parser do
       it "handles comments for methods with explicit receiver" do
         result = parser.parse "# Foo\ndef foo.bar; end"
         result.must_equal s(:defs,
-                            s(:call, nil, :foo, s(:arglist)),
+                            s(:call, nil, :foo),
                             :bar,
                             s(:args), s(:scope, s(:block)))
         result.comments.must_equal "# Foo\n"
@@ -1722,7 +1685,7 @@ describe RipperRubyParser::Parser do
                             s(:scope,
                               s(:block,
                                 s(:sclass, s(:self),
-                                  s(:scope, s(:call, nil, :baz, s(:arglist)))))))
+                                  s(:scope, s(:call, nil, :baz))))))
         result.comments.must_equal "# Foo\n"
       end
     end
@@ -1852,23 +1815,23 @@ describe RipperRubyParser::Parser do
       end
 
       it "assigns line numbers to nested sexps that don't generate their own line numbers" do
-        result = parser.parse "foo() do\nnext\nend\n"
+        result = parser.parse "foo(bar) do\nnext baz\nend\n"
         result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:arglist)),
-                            nil,
-                            s(:next))
+                            s(:call, nil, :foo, s(:call, nil, :bar)),
+                            s(:args),
+                            s(:next, s(:call, nil, :baz)))
         arglist = result[1][3]
         block = result[3]
         nums = [ arglist.line, block.line ]
-        nums.must_equal [1, 1]
+        nums.must_equal [1, 2]
       end
 
       describe "when a line number is passed" do
         it "shifts all line numbers as appropriate" do
           result = parser.parse "foo\nbar\n", '(string)', 3
           result.must_equal s(:block,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist)))
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
           result.line.must_equal 3
           result[1].line.must_equal 3
           result[2].line.must_equal 4

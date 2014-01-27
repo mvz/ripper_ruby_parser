@@ -27,14 +27,14 @@ module RipperRubyParser
           elsif right.sexp_type == :regexp_literal
             s(:match3, process(right), process(left))
           else
-            s(:call, process(left), op, s(:arglist, process(right)))
+            s(:call, process(left), op, process(right))
           end
         elsif (mapped = NEGATED_BINARY_OPERATOR_MAP[op])
           s(:not, process(s(:binary, left, mapped, right)))
         elsif (mapped = BINARY_OPERATOR_MAP[op])
           rebalance_binary(s(mapped, process(left), process(right)))
         else
-          s(:call, process(left), op, s(:arglist, process(right)))
+          s(:call, process(left), op, process(right))
         end
       end
 
@@ -48,7 +48,7 @@ module RipperRubyParser
           if is_literal? arg
             s(:lit, arg[1].send(op))
           else
-            s(:call, arg, op, s(:arglist))
+            s(:call, arg, op)
           end
         end
       end

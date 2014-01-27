@@ -18,7 +18,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:dregx,
                                 "foo",
                                 s(:evstr,
-                                  s(:call, nil, :bar, s(:arglist))), 32)
+                                  s(:call, nil, :bar)), 32)
         end
 
         it "works with the unicode-encoding flag" do
@@ -26,7 +26,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:dregx,
                                 "foo",
                                 s(:evstr,
-                                  s(:call, nil, :bar, s(:arglist))), 16)
+                                  s(:call, nil, :bar)), 16)
         end
 
         it "works with the euc-encoding flag" do
@@ -34,7 +34,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:dregx,
                                 "foo",
                                 s(:evstr,
-                                  s(:call, nil, :bar, s(:arglist))), 16)
+                                  s(:call, nil, :bar)), 16)
         end
 
         it "works with the sjis-encoding flag" do
@@ -42,7 +42,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:dregx,
                                 "foo",
                                 s(:evstr,
-                                  s(:call, nil, :bar, s(:arglist))), 16)
+                                  s(:call, nil, :bar)), 16)
         end
 
         describe "containing just a literal string" do
@@ -154,14 +154,14 @@ describe RipperRubyParser::Parser do
           "\"foo\" \"bar\#{baz}\"".
             must_be_parsed_as s(:dstr,
                                 "foobar",
-                                s(:evstr, s(:call, nil, :baz, s(:arglist))))
+                                s(:evstr, s(:call, nil, :baz)))
         end
 
         it "performs the concatenation when the left string has interpolations" do
           "\"foo\#{bar}\" \"baz\"".
             must_be_parsed_as s(:dstr,
                                 "foo",
-                                s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                                s(:evstr, s(:call, nil, :bar)),
                                 s(:str, "baz"))
         end
 
@@ -169,9 +169,9 @@ describe RipperRubyParser::Parser do
           "\"foo\#{bar}\" \"baz\#{qux}\"".
             must_be_parsed_as s(:dstr,
                                 "foo",
-                                s(:evstr, s(:call, nil, :bar, s(:arglist))),
+                                s(:evstr, s(:call, nil, :bar)),
                                 s(:str, "baz"),
-                                s(:evstr, s(:call, nil, :qux, s(:arglist))))
+                                s(:evstr, s(:call, nil, :qux)))
         end
       end
     end

@@ -6,29 +6,29 @@ describe RipperRubyParser::Parser do
       it "works in the single-line postfix case" do
         "foo while bar".
           must_be_parsed_as s(:while,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :foo, s(:arglist)), true)
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), true)
       end
 
       it "works in the block postfix case" do
         "begin; foo; end while bar".
           must_be_parsed_as s(:while,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :foo, s(:arglist)), false)
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), false)
       end
 
       it "normalizes a negative condition" do
         "while not foo; bar; end".
           must_be_parsed_as s(:until,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist)), true)
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
       end
 
       it "normalizes a negative condition in the postfix case" do
         "foo while not bar".
           must_be_parsed_as s(:until,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :foo, s(:arglist)), true)
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), true)
       end
     end
 
@@ -36,16 +36,16 @@ describe RipperRubyParser::Parser do
       it "normalizes a negative condition" do
         "until not foo; bar; end".
           must_be_parsed_as s(:while,
-                              s(:call, nil, :foo, s(:arglist)),
-                              s(:call, nil, :bar, s(:arglist)), true)
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
 
       end
 
       it "normalizes a negative condition in the postfix case" do
         "foo until not bar".
           must_be_parsed_as s(:while,
-                              s(:call, nil, :bar, s(:arglist)),
-                              s(:call, nil, :foo, s(:arglist)), true)
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), true)
       end
     end
   end

@@ -3,7 +3,6 @@ module RipperRubyParser
     module Assignment
       def process_assign exp
         _, lvalue, value = exp.shift 3
-
         lvalue = process(lvalue)
         value = process(value)
 
@@ -104,11 +103,7 @@ module RipperRubyParser
       def create_valueless_assignment_sub_type(item)
         item = with_line_number(item.line,
                                 create_regular_assignment_sub_type(item, nil))
-        if item.sexp_type == :attrasgn
-          item.last.pop
-        else
-          item.pop
-        end
+        item.pop
         return item
       end
 
@@ -140,7 +135,8 @@ module RipperRubyParser
         when :aref_field
           _, arr, arglist = lvalue
           arglist << value
-          s(:attrasgn, arr, :[]=, arglist)
+          arglist.shift
+          s(:attrasgn, arr, :[]=, *arglist)
         when :field
           _, obj, _, (_, field) = lvalue
           s(:attrasgn, obj, :"#{field}=", s(:arglist, value))

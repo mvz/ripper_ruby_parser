@@ -55,6 +55,7 @@ describe RipperRubyParser::SexpProcessor do
       end
     end
 
+    if false
     describe "for an :args_add_block sexp" do
       it "transforms a one-argument sexp to an :arglist" do
         sexp = s(:args_add_block, s(s(:foo)), false)
@@ -68,10 +69,11 @@ describe RipperRubyParser::SexpProcessor do
         result.must_equal s(:arglist, s(:foo_p), s(:bar_p))
       end
     end
+    end
 
     describe "for a :command sexp" do
       it "transforms a sexp to a :call" do
-        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:foo))
+        sexp = s(:command, s(:@ident, "foo", s(1, 0)), s(:arglist, s(:foo)))
         result = processor.process sexp
         result.must_equal s(:call, nil, :foo, s(:foo_p))
       end
@@ -89,7 +91,7 @@ describe RipperRubyParser::SexpProcessor do
       it "transforms the sexp to a :call sexp" do
         sexp = s(:vcall, s(:@ident, "bar", s(1, 4)))
         result = processor.process sexp
-        result.must_equal s(:call, nil, :bar, s(:arglist))
+        result.must_equal s(:call, nil, :bar)
       end
     end
 
@@ -205,10 +207,10 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe "for a :binary sexp" do
-      it "creates a :call sexp with an :arglist" do
+      it "creates a :call sexp" do
         sexp = s(:binary, s(:bar), :==, s(:foo))
         result = processor.process sexp
-        result.must_equal s(:call, s(:bar_p), :==, s(:arglist, s(:foo_p)))
+        result.must_equal s(:call, s(:bar_p), :==, s(:foo_p))
       end
     end
 
@@ -219,7 +221,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:brace_block, nil, s(s(:bar))))
         result = processor.process sexp
         result.must_equal s(:iter,
-                            s(:call, s(:foo_p), :baz, s(:arglist)), nil,
+                            s(:call, s(:foo_p), :baz), s(:args),
                             s(:bar_p))
       end
 
@@ -234,7 +236,7 @@ describe RipperRubyParser::SexpProcessor do
                      s(s(:bar))))
           result = processor.process sexp
           result.must_equal s(:iter,
-                              s(:call, s(:foo_p), :baz, s(:arglist)),
+                              s(:call, s(:foo_p), :baz),
                               s(:lasgn, :i),
                               s(:bar_p))
         end

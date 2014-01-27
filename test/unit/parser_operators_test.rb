@@ -6,10 +6,9 @@ describe RipperRubyParser::Parser do
       specify do
         "foo !~ bar".must_be_parsed_as s(:not,
                                          s(:call,
-                                           s(:call, nil, :foo, s(:arglist)),
+                                           s(:call, nil, :foo),
                                            :=~,
-                                           s(:arglist,
-                                             s(:call, nil, :bar, s(:arglist)))))
+                                           s(:call, nil, :bar)))
       end
     end
 
@@ -17,12 +16,12 @@ describe RipperRubyParser::Parser do
       it "handles triple :and" do
         "foo and bar and baz and qux".
           must_be_parsed_as s(:and,
-                              s(:call, nil, :foo, s(:arglist)),
+                              s(:call, nil, :foo),
                               s(:and,
-                                s(:call, nil, :bar, s(:arglist)),
+                                s(:call, nil, :bar),
                                 s(:and,
-                                  s(:call, nil, :baz, s(:arglist)),
-                                  s(:call, nil, :qux, s(:arglist)))))
+                                  s(:call, nil, :baz),
+                                  s(:call, nil, :qux))))
       end
     end
   end

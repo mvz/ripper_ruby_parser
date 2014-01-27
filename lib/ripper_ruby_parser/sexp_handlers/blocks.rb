@@ -147,7 +147,7 @@ module RipperRubyParser
 
       def process_lambda exp
         _, args, statements = exp.shift 3
-        make_iter(s(:call, nil, :lambda, s(:arglist)),
+        make_iter(s(:call, nil, :lambda),
                   args_to_assignment(process(args)),
                   *handle_potentially_typeless_sexp(statements))
       end
@@ -190,6 +190,7 @@ module RipperRubyParser
       end
 
       def make_iter call, args, stmt
+        args = s(:args) unless args
         if stmt.nil?
           s(:iter, call, args)
         else
