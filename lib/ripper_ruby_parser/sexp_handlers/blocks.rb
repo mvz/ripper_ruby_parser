@@ -25,16 +25,14 @@ module RipperRubyParser
           process(id)
         end
 
-        assigns = [*defaults].map do |pair|
+        [*defaults].each do |pair|
           sym = process(pair[0])
-          args << sym
           val = process(pair[1])
-          s(:lasgn, sym[1], val)
+          args << s(:lasgn, sym[1], val)
         end
 
         args << process(rest) unless rest.nil?
         args << process(block) unless block.nil?
-        args << s(:block, *assigns) if assigns.length > 0
 
         s(:args, *args)
       end
@@ -85,10 +83,6 @@ module RipperRubyParser
 
         body = map_body body
 
-        #unless rescue_block or ensure_block
-        #  return s(:scope, s(:block, *body))
-        #end
-
         body = wrap_in_block(body)
 
         body = if body.nil?
@@ -110,6 +104,7 @@ module RipperRubyParser
           body = s(s(:ensure, *body))
         end
 
+        # FIXME: Don't wrap in scope, block.
         if body.length == 1 and body.first.sexp_type == :block
           s(:scope, *body)
         else

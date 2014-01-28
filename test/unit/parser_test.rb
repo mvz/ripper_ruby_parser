@@ -32,12 +32,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse "class Foo::Bar; end"
         result.must_equal s(:class,
                             s(:colon2, s(:const, :Foo), :Bar),
-                            nil,
-                            s(:scope))
+                            nil)
       end
 
       it "works for singleton classes" do
-        "class << self; end".must_be_parsed_as s(:sclass, s(:self), s(:scope))
+        "class << self; end".must_be_parsed_as s(:sclass, s(:self))
       end
     end
 
@@ -45,8 +44,7 @@ describe RipperRubyParser::Parser do
       it "works with a namespaced module name" do
         result = parser.parse "module Foo::Bar; end"
         result.must_equal s(:module,
-                            s(:colon2, s(:const, :Foo), :Bar),
-                            s(:scope))
+                            s(:colon2, s(:const, :Foo), :Bar))
       end
     end
 
@@ -380,13 +378,11 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args),
-                            s(:scope,
-                              s(:block,
-                                s(:rescue,
-                                  s(:call, nil, :bar),
-                                  s(:resbody,
-                                    s(:array),
-                                    s(:call, nil, :baz))))))
+                            s(:rescue,
+                              s(:call, nil, :bar),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :baz))))
       end
     end
 
@@ -596,16 +592,15 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defs,
                             s(:call, nil, :foo),
                             :bar,
-                            s(:args),
-                            s(:scope, s(:block)))
+                            s(:args))
       end
 
       it "works with a method argument with a default value" do
         result = parser.parse "def foo bar=nil; end"
         result.must_equal s(:defn,
                             :foo,
-                            s(:args, :bar, s(:block, s(:lasgn, :bar, s(:nil)))),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:args, s(:lasgn, :bar, s(:nil))),
+                            s(:nil))
       end
 
       it "works with several method arguments with default values" do
@@ -613,35 +608,24 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args,
-                              :bar, :baz,
-                              s(:block,
-                                s(:lasgn, :bar, s(:lit, 1)),
-                                s(:lasgn, :baz, s(:lit, 2)))),
-                            s(:scope, s(:block, s(:nil))))
+                              s(:lasgn, :bar, s(:lit, 1)),
+                              s(:lasgn, :baz, s(:lit, 2))),
+                            s(:nil))
       end
 
       it "works with brackets around the parameter list" do
         result = parser.parse "def foo(bar); end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :bar),
-                            s(:scope, s(:block, s(:nil))))
+        result.must_equal s(:defn, :foo, s(:args, :bar), s(:nil))
       end
 
       it "works with a simple splat" do
         result = parser.parse "def foo *bar; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :"*bar"),
-                            s(:scope, s(:block, s(:nil))))
+        result.must_equal s(:defn, :foo, s(:args, :"*bar"), s(:nil))
       end
 
       it "works with a regular argument plus splat" do
         result = parser.parse "def foo bar, *baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :bar, :"*baz"),
-                            s(:scope, s(:block, s(:nil))))
+        result.must_equal s(:defn, :foo, s(:args, :bar, :"*baz"), s(:nil))
       end
 
       it "works with a nameless splat" do
@@ -649,7 +633,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args, :"*"),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:nil))
       end
 
       it "works for a simple case with explicit block parameter" do
@@ -657,7 +641,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args, :"&bar"),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:nil))
       end
 
       it "works with a regular argument plus explicit block parameter" do
@@ -665,7 +649,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args, :bar, :"&baz"),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:nil))
       end
 
       it "works with a argument with default value plus explicit block parameter" do
@@ -673,10 +657,9 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args,
-                              :bar, :"&baz",
-                              s(:block,
-                                s(:lasgn, :bar, s(:lit, 1)))),
-                            s(:scope, s(:block, s(:nil))))
+                              s(:lasgn, :bar, s(:lit, 1)),
+                              :"&baz"),
+                            s(:nil))
       end
 
       it "works with a splat plus explicit block parameter" do
@@ -684,23 +667,23 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :foo,
                             s(:args, :"*bar", :"&baz"),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:nil))
       end
 
       it "works with an argument with default value plus splat" do
         result = parser.parse "def foo bar=1, *baz; end"
         result.must_equal s(:defn,
                             :foo,
-                            s(:args, :bar, :"*baz",
-                              s(:block,
-                                s(:lasgn, :bar, s(:lit, 1)))),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:args,
+                              s(:lasgn, :bar, s(:lit, 1)),
+                              :"*baz"),
+                            s(:nil))
       end
 
       it "works when the method name is an operator" do
         result = parser.parse "def +; end"
         result.must_equal s(:defn, :+, s(:args),
-                            s(:scope, s(:block, s(:nil))))
+                            s(:nil))
       end
     end
 
@@ -1250,9 +1233,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse "def foo; @@bar = baz; end"
         result.must_equal s(:defn,
                             :foo, s(:args),
-                            s(:scope,
-                              s(:block,
-                                s(:cvasgn, :@@bar, s(:call, nil, :baz)))))
+                            s(:cvasgn, :@@bar, s(:call, nil, :baz)))
       end
 
       it "works when assigning to a class variable inside a method with a receiver" do
@@ -1260,9 +1241,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defs,
                             s(:self),
                             :foo, s(:args),
-                            s(:scope,
-                              s(:block,
-                                s(:cvasgn, :@@bar, s(:call, nil, :baz)))))
+                            s(:cvasgn, :@@bar, s(:call, nil, :baz)))
       end
 
       it "works when assigning to a global variable" do
@@ -1635,7 +1614,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse "# Foo\ndef foo; end"
         result.must_equal s(:defn,
                             :foo,
-                            s(:args), s(:scope, s(:block, s(:nil))))
+                            s(:args), s(:nil))
         result.comments.must_equal "# Foo\n"
       end
 
@@ -1644,18 +1623,17 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defs,
                             s(:call, nil, :foo),
                             :bar,
-                            s(:args), s(:scope, s(:block)))
+                            s(:args))
         result.comments.must_equal "# Foo\n"
       end
 
       it "matches comments to the correct entity" do
         result = parser.parse "# Foo\nclass Foo\n# Bar\ndef bar\nend\nend"
         result.must_equal s(:class, :Foo, nil,
-                            s(:scope,
-                              s(:defn, :bar,
-                                s(:args), s(:scope, s(:block, s(:nil))))))
+                            s(:defn, :bar,
+                              s(:args), s(:nil)))
         result.comments.must_equal "# Foo\n"
-        defn = result[3][1]
+        defn = result[3]
         defn.sexp_type.must_equal :defn
         defn.comments.must_equal "# Bar\n"
       end
@@ -1664,7 +1642,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse "# Foo\n# Bar\ndef foo; end"
         result.must_equal s(:defn,
                             :foo,
-                            s(:args), s(:scope, s(:block, s(:nil))))
+                            s(:args), s(:nil))
         result.comments.must_equal "# Foo\n# Bar\n"
       end
 
@@ -1673,7 +1651,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :bar,
                             s(:args),
-                            s(:scope, s(:block, s(:lit, :class))))
+                            s(:lit, :class))
         result.comments.must_equal "# Foo\n"
       end
 
@@ -1682,10 +1660,8 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defn,
                             :bar,
                             s(:args),
-                            s(:scope,
-                              s(:block,
-                                s(:sclass, s(:self),
-                                  s(:scope, s(:call, nil, :baz))))))
+                            s(:sclass, s(:self),
+                              s(:call, nil, :baz)))
         result.comments.must_equal "# Foo\n"
       end
     end

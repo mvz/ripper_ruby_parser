@@ -56,7 +56,7 @@ module RipperRubyParser
       _, const_ref, body = exp.shift 3
       const, line = const_ref_to_const_with_line_number const_ref
       with_line_number(line,
-                       s(:module, const, class_or_module_body(body)))
+                       s(:module, const, *class_or_module_body(body)))
     end
 
     def process_class exp
@@ -64,12 +64,12 @@ module RipperRubyParser
       const, line = const_ref_to_const_with_line_number const_ref
       parent = process(parent)
       with_line_number(line,
-                       s(:class, const, parent, class_or_module_body(body)))
+                       s(:class, const, parent, *class_or_module_body(body)))
     end
 
     def process_sclass exp
       _, klass, block = exp.shift 3
-      s(:sclass, process(klass), class_or_module_body(block))
+      s(:sclass, process(klass), *class_or_module_body(block))
     end
 
     def process_var_ref exp
@@ -212,11 +212,7 @@ module RipperRubyParser
       scope = process exp
       block = scope[1]
       block.shift
-      if block.length <= 1
-        s(:scope, *block)
-      else
-        s(:scope, s(:block, *block))
-      end
+      block
     end
 
     def make_identifier(type, exp)

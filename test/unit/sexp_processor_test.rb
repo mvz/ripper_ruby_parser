@@ -96,57 +96,54 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe "for a :module sexp" do
-      it "does not create a nested :block sexp for an empty definition" do
+      it "does not create body eleents for an empty definition" do
         sexp = s(:module,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))),
                  s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo, s(:scope))
+        result.must_equal s(:module, :Foo)
       end
 
-      it "does not create a nested :block sexp for a definition with one statement" do
+      it "creates a single body element for a definition with one statement" do
         sexp = s(:module,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))),
                  s(:bodystmt, s(s(:foo)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo, s(:scope, s(:foo_p)))
+        result.must_equal s(:module, :Foo, s(:foo_p))
       end
 
-      it "creates a nested :block sexp for a definition with more than one statement" do
+      it "creates multiple body elements for a definition with more than one statement" do
         sexp = s(:module,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))),
                  s(:bodystmt, s(s(:foo), s(:bar)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo,
-                            s(:scope, s(:block, s(:foo_p), s(:bar_p))))
+        result.must_equal s(:module, :Foo, s(:foo_p), s(:bar_p))
       end
     end
 
     describe "for a :class sexp" do
-      it "does not create a nested :block sexp for an empty definition" do
+      it "does not create body eleents for an empty definition" do
         sexp = s(:class,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))), nil,
                  s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, nil, s(:scope))
+        result.must_equal s(:class, :Foo, nil)
       end
 
-      it "does not create a nested :block sexp for a definition with one statement" do
+      it "creates a single body element for a definition with one statement" do
         sexp = s(:class,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))), nil,
                  s(:bodystmt, s(s(:foo)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, nil, s(:scope, s(:foo_p)))
+        result.must_equal s(:class, :Foo, nil, s(:foo_p))
       end
 
-      it "creates a nested :block sexp for a definition with more than one statement" do
+      it "creates multiple body elements for a definition with more than one statement" do
         sexp = s(:class,
                  s(:const_ref, s(:@const, "Foo", s(1, 13))), nil,
                  s(:bodystmt, s(s(:foo), s(:bar)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class,
-                            :Foo, nil,
-                            s(:scope, s(:block, s(:foo_p), s(:bar_p))))
+        result.must_equal s(:class, :Foo, nil, s(:foo_p), s(:bar_p))
       end
 
       it "passes on the given ancestor" do
@@ -155,7 +152,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:var_ref, s(:@const, "Bar", s(1, 12))),
                  s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, s(:const, :Bar), s(:scope))
+        result.must_equal s(:class, :Foo, s(:const, :Bar))
       end
     end
 
@@ -180,8 +177,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:params, nil, nil, nil, nil, nil),
                  s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:defn,
-                            :foo, s(:args), s(:scope, s(:block, s(:nil))))
+        result.must_equal s(:defn, :foo, s(:args), s(:nil))
 
       end
     end

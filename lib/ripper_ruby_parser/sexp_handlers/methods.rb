@@ -12,9 +12,21 @@ module RipperRubyParser
       def process_defs exp
         _, receiver, _, method, params, body = exp.shift 6
         params = convert_special_args(process(params))
-        s(:defs, process(receiver),
+
+        body = in_method do
+          scope = process(body)
+          block = scope[1]
+          if block.length == 1
+            []
+          else
+            [block[1]]
+          end
+        end
+
+        s(:defs,
+          process(receiver),
           extract_node_symbol(method),
-          params, in_method { process(body) })
+          params, *body)
       end
 
       def process_return exp
@@ -81,7 +93,7 @@ module RipperRubyParser
         if block.length == 1
           block.push s(:nil)
         end
-        scope
+        scope[1][1]
       end
 
       SPECIAL_ARG_MARKER = {
