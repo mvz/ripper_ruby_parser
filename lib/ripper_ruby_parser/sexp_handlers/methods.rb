@@ -6,7 +6,7 @@ module RipperRubyParser
         ident, pos = extract_node_symbol_with_position ident
         params = convert_special_args(process(params))
         with_position(pos,
-                      s(:defn, ident, params, method_body(body)))
+                      s(:defn, ident, params, *method_body(body)))
       end
 
       def process_defs exp
@@ -16,11 +16,8 @@ module RipperRubyParser
         body = in_method do
           scope = process(body)
           block = scope[1]
-          if block.length == 1
-            []
-          else
-            [block[1]]
-          end
+          block.shift
+          block
         end
 
         s(:defs,
@@ -93,7 +90,8 @@ module RipperRubyParser
         if block.length == 1
           block.push s(:nil)
         end
-        scope[1][1]
+        block.shift
+        block
       end
 
       SPECIAL_ARG_MARKER = {
