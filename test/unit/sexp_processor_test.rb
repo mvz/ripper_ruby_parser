@@ -160,13 +160,13 @@ describe RipperRubyParser::SexpProcessor do
       it "creates a :scope sexp with nested :block" do
         sexp = s(:bodystmt, s(s(:foo), s(:bar)), nil, nil, nil)
         result = processor.process sexp
-        result.must_equal s(:scope, s(:block, s(:foo_p), s(:bar_p)))
+        result.must_equal s(s(:block, s(:foo_p), s(:bar_p)))
       end
 
       it "removes nested :void_stmt sexps" do
         sexp = s(:bodystmt, s(s(:void_stmt), s(:foo)), nil, nil, nil)
         result = processor.process sexp
-        result.must_equal s(:scope, s(:block, s(:foo_p)))
+        result.must_equal s(s(:foo_p))
       end
     end
 

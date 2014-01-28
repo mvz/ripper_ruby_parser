@@ -209,10 +209,14 @@ module RipperRubyParser
     end
 
     def class_or_module_body exp
-      scope = process exp
-      block = scope[1]
-      block.shift
-      block
+      body = process(exp)
+
+      if body.length == 1 && body.first.sexp_type == :block
+        body = body.first
+        body.shift
+      end
+
+      body
     end
 
     def make_identifier(type, exp)

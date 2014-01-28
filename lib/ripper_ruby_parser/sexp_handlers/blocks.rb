@@ -48,9 +48,8 @@ module RipperRubyParser
       def process_begin exp
         _, body = exp.shift 2
 
-        block = process(body)[1]
-
-        strip_wrapping_block(block.compact)
+        body = process(body)
+        strip_wrapping_block(body)
       end
 
       def process_rescue exp
@@ -104,12 +103,15 @@ module RipperRubyParser
           body = s(s(:ensure, *body))
         end
 
-        # FIXME: Don't wrap in scope, block.
-        if body.length == 1 and body.first.sexp_type == :block
-          s(:scope, *body)
-        else
-          s(:scope, s(:block, *body))
-        end
+        body = wrap_in_block(body)
+
+        body = if body.nil?
+                 s()
+               else
+                 s(body)
+               end
+
+        body
       end
 
       def process_rescue_mod exp
@@ -156,12 +158,11 @@ module RipperRubyParser
       end
 
       def strip_wrapping_block(block)
-        return block unless block.sexp_type == :block
         case block.length
-        when 1
+        when 0
           s(:nil)
-        when 2
-          block[1]
+        when 1
+          block[0]
         else
           block
         end

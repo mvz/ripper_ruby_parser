@@ -14,10 +14,12 @@ module RipperRubyParser
         params = convert_special_args(process(params))
 
         body = in_method do
-          scope = process(body)
-          block = scope[1]
-          block.shift
-          block
+          process(body)
+        end
+
+        if body.length == 1 && body.first.sexp_type == :block
+          body = body.first
+          body.shift
         end
 
         s(:defs,
@@ -85,12 +87,16 @@ module RipperRubyParser
       end
 
       def method_body exp
-        scope = in_method { process exp }
-        block = scope[1]
-        if block.length == 1
+        block = in_method { process exp }
+        case block.length
+        when 0
           block.push s(:nil)
+        when 1
+          if block.first.sexp_type == :block
+            block = block.first
+            block.shift
+          end
         end
-        block.shift
         block
       end
 
