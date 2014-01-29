@@ -222,7 +222,7 @@ describe RipperRubyParser::SexpProcessor do
       end
 
       describe "with a block parameter" do
-        it "creates an :iter sexp with a :lasgn sexp for the block parameter" do
+        it "creates an :iter sexp with an :args sexp for the block parameter" do
           sexp = s(:method_add_block,
                    s(:call, s(:foo), :".", s(:@ident, "baz", s(1, 2))),
                    s(:brace_block,
@@ -233,7 +233,7 @@ describe RipperRubyParser::SexpProcessor do
           result = processor.process sexp
           result.must_equal s(:iter,
                               s(:call, s(:foo_p), :baz),
-                              s(:lasgn, :i),
+                              s(:args, :i),
                               s(:bar_p))
         end
       end

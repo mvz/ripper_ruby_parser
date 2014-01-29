@@ -7,44 +7,37 @@ describe RipperRubyParser::Parser do
         "foo do |(bar, baz)| end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:masgn,
-                                s(:array,
-                                  s(:lasgn, :bar),
-                                  s(:lasgn, :baz))))
+                              s(:args,
+                                s(:masgn, :bar, :baz)))
       end
 
       specify do
         "foo do |(bar, *baz)| end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:masgn,
-                                s(:array,
-                                  s(:lasgn, :bar),
-                                  s(:splat, s(:lasgn, :baz)))))
+                              s(:args,
+                                s(:masgn, :bar, :"*baz")))
       end
 
       specify do
         "foo do |bar,*| end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:masgn, s(:array, s(:lasgn, :bar), s(:splat))))
+                              s(:args, :bar, :"*"))
       end
 
       specify do
         "foo do |bar, &baz| end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:masgn,
-                                s(:array,
-                                  s(:lasgn, :bar),
-                                  s(:lasgn, :"&baz"))))
+                              s(:args, :bar, :"&baz"))
       end
 
       it "behaves differently from RubyParser with a trailing comma in the block parameters" do
         "foo do |bar, | end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:lasgn, :bar))
+                              s(:args, :bar))
       end
     end
 
@@ -96,7 +89,7 @@ describe RipperRubyParser::Parser do
         "->(foo) { bar }".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :lambda),
-                              s(:lasgn, :foo),
+                              s(:args, :foo),
                               s(:call, nil, :bar)) 
       end
     end

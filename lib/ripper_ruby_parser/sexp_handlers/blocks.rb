@@ -42,7 +42,7 @@ module RipperRubyParser
 
         names = process(args)
 
-        args_to_assignment names
+        convert_special_args names
       end
 
       def process_begin exp
@@ -145,7 +145,7 @@ module RipperRubyParser
       def process_lambda exp
         _, args, statements = exp.shift 3
         make_iter(s(:call, nil, :lambda),
-                  args_to_assignment(process(args)),
+                  convert_special_args(process(args)),
                   *handle_potentially_typeless_sexp(statements))
       end
 
@@ -168,40 +168,12 @@ module RipperRubyParser
         end
       end
 
-      def arg_name_to_lasgn(name)
-        case name.sexp_type
-        when :lvar
-          s(:lasgn, name[1])
-        when :blockarg
-          s(:lasgn, :"&#{name[1][1]}")
-        when :splat
-          if name[1].nil?
-            s(:splat)
-          else
-            s(:splat, s(:lasgn, name[1][1]))
-          end
-        else
-          name
-        end
-      end
-
       def make_iter call, args, stmt
         args = s(:args) unless args
         if stmt.nil?
           s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
-        end
-      end
-
-      def args_to_assignment names
-        names.shift
-        if names.length == 1 and names.first.sexp_type == :lvar
-          s(:lasgn, names.first[1])
-        elsif names.length == 1 and names.first.sexp_type == :masgn
-          names.first
-        else
-          s(:masgn, s(:array, *names.map { |name| arg_name_to_lasgn(name) }))
         end
       end
     end

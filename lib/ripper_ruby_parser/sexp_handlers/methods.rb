@@ -110,11 +110,23 @@ module RipperRubyParser
           if item.is_a? Symbol
             item
           else
-            if (marker = SPECIAL_ARG_MARKER[item.sexp_type])
+            case item.sexp_type
+            when *SPECIAL_ARG_MARKER.keys
+              marker = SPECIAL_ARG_MARKER[item.sexp_type]
               name = extract_node_symbol item[1]
               :"#{marker}#{name}"
-            elsif item.sexp_type == :lvar
+            when :lvar
               item[1]
+            when :masgn
+              args = item[1]
+              args.shift
+              s(:masgn, *convert_special_args(args))
+            when :lasgn
+              if item.length == 2
+                item[1]
+              else
+                item
+              end
             else
               item
             end

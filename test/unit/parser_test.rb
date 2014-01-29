@@ -881,36 +881,28 @@ describe RipperRubyParser::Parser do
         result = parser.parse "foo do |bar|; end"
         result.must_equal s(:iter,
                             s(:call, nil, :foo),
-                            s(:lasgn, :bar))
+                            s(:args, :bar))
       end
 
       it "works with multiple arguments" do
         result = parser.parse "foo do |bar, baz|; end"
         result.must_equal s(:iter,
                             s(:call, nil, :foo),
-                            s(:masgn,
-                              s(:array,
-                                s(:lasgn, :bar),
-                                s(:lasgn, :baz))))
+                            s(:args, :bar, :baz))
       end
 
       it "works with a single splat argument" do
         result = parser.parse "foo do |*bar|; end"
         result.must_equal s(:iter,
                             s(:call, nil, :foo),
-                            s(:masgn,
-                              s(:array,
-                                s(:splat, s(:lasgn, :bar)))))
+                            s(:args, :"*bar"))
       end
 
       it "works with a combination of regular arguments and a splat argument" do
         result = parser.parse "foo do |bar, *baz|; end"
         result.must_equal s(:iter,
                             s(:call, nil, :foo),
-                            s(:masgn,
-                              s(:array,
-                                s(:lasgn, :bar),
-                                s(:splat, s(:lasgn, :baz)))))
+                            s(:args, :bar, :"*baz"))
       end
 
     end
