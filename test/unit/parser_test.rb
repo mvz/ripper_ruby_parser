@@ -684,6 +684,16 @@ describe RipperRubyParser::Parser do
                             s(:nil))
       end
 
+      it "works with a argument with default value followed by a mandatory argument" do
+        result = parser.parse "def foo bar=1, baz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args,
+                              s(:lasgn, :bar, s(:lit, 1)),
+                              :baz),
+                            s(:nil))
+      end
+
       it "works with a splat plus explicit block parameter" do
         result = parser.parse "def foo *bar, &baz; end"
         result.must_equal s(:defn,
@@ -699,6 +709,16 @@ describe RipperRubyParser::Parser do
                             s(:args,
                               s(:lasgn, :bar, s(:lit, 1)),
                               :"*baz"),
+                            s(:nil))
+      end
+
+      it "works with an argument with default value plus splat plus final mandatory arguments" do
+        result = parser.parse "def foo bar=1, *baz, qux, quuz; end"
+        result.must_equal s(:defn,
+                            :foo,
+                            s(:args,
+                              s(:lasgn, :bar, s(:lit, 1)),
+                              :"*baz", :qux, :quuz),
                             s(:nil))
       end
 
