@@ -135,7 +135,7 @@ module RipperRubyParser
     # character literals
     def process_at_CHAR exp
       _, val, pos = exp.shift 3
-      with_position(pos, s(:str, val[1]))
+      with_position(pos, s(:str, unescape(val[1..-1])))
     end
 
     def process_at_label exp

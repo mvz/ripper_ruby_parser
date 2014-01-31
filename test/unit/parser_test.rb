@@ -1139,6 +1139,11 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:str, "a")
       end
 
+      it "works for escaped character literals" do
+        result = parser.parse '?\n'
+        result.must_equal s(:str, "\n")
+      end
+
       it "works for basic backtick strings" do
         result = parser.parse '`foo`'
         result.must_equal s(:xstr, "foo")
