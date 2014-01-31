@@ -1534,11 +1534,10 @@ describe RipperRubyParser::Parser do
 
       it "handles :!=" do
         result = parser.parse "foo != bar"
-        result.must_equal s(:not,
-                              s(:call,
-                                s(:call, nil, :foo),
-                                :==,
-                                s(:call, nil, :bar)))
+        result.must_equal s(:call,
+                            s(:call, nil, :foo),
+                            :!=,
+                            s(:call, nil, :bar))
       end
 
       it "handles :=~ with two non-literals" do
