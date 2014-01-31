@@ -139,7 +139,7 @@ module RipperRubyParser
           s(:attrasgn, arr, :[]=, *arglist)
         when :field
           _, obj, _, (_, field) = lvalue
-          s(:attrasgn, obj, :"#{field}=", s(:arglist, value))
+          s(:attrasgn, obj, :"#{field}=", value)
         else
           create_assignment_sub_type lvalue, value
         end

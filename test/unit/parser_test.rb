@@ -1261,7 +1261,7 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:attrasgn,
                             s(:call, nil, :foo),
                             :bar=,
-                            s(:arglist, s(:call, nil, :baz)))
+                            s(:call, nil, :baz))
       end
 
       it "works when assigning to a class variable" do
