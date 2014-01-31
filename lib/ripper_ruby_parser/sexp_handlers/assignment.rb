@@ -124,7 +124,7 @@ module RipperRubyParser
           if (mapped = OPERATOR_ASSIGNMENT_MAP[operator])
             s(mapped, lvalue, create_assignment_sub_type(lvalue, value))
           else
-            operator_call = s(:call, lvalue, operator, s(:arglist, value))
+            operator_call = s(:call, lvalue, operator, value)
             create_assignment_sub_type lvalue, operator_call
           end
         end

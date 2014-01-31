@@ -1302,7 +1302,7 @@ describe RipperRubyParser::Parser do
                             s(:call,
                               s(:lvar, :foo),
                               :+,
-                              s(:arglist, s(:call, nil, :bar))))
+                              s(:call, nil, :bar)))
       end
 
       it "works with -=" do
@@ -1312,7 +1312,7 @@ describe RipperRubyParser::Parser do
                             s(:call,
                               s(:lvar, :foo),
                               :-,
-                              s(:arglist, s(:call, nil, :bar))))
+                              s(:call, nil, :bar)))
       end
 
       it "works with ||=" do
@@ -1330,7 +1330,7 @@ describe RipperRubyParser::Parser do
                             s(:call,
                               s(:ivar, :@foo),
                               :+,
-                              s(:arglist, s(:call, nil, :bar))))
+                              s(:call, nil, :bar)))
       end
 
       it "works when assigning to a collection element" do
