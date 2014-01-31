@@ -58,6 +58,17 @@ module RipperRubyParser
         end
       end
 
+      def process_dot3 exp
+        _, left, right = exp.shift 3
+        left = process(left)
+        right = process(right)
+        if is_literal?(left) && is_literal?(right)
+          s(:lit, Range.new(left[1], right[1], true))
+        else
+          s(:dot3, left, right)
+        end
+      end
+
       def process_ifop exp
         _, cond, truepart, falsepart = exp.shift 4
         s(:if, process(cond), process(truepart), process(falsepart))

@@ -1631,6 +1631,30 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :bar))
       end
 
+      it "handles the exclusive range operator with positive number literals" do
+        result = parser.parse "1...2"
+        result.must_equal s(:lit, 1...2)
+      end
+
+      it "handles the exclusive range operator with negative number literals" do
+        result = parser.parse "-1...-2"
+        result.must_equal s(:lit, -1...-2)
+      end
+
+      it "handles the exclusive range operator with string literals" do
+        result = parser.parse "'a'...'z'"
+        result.must_equal s(:dot3,
+                            s(:str, "a"),
+                            s(:str, "z"))
+      end
+
+      it "handles the exclusive range operator with non-literals" do
+        result = parser.parse "foo...bar"
+        result.must_equal s(:dot3,
+                            s(:call, nil, :foo),
+                            s(:call, nil, :bar))
+      end
+
       it "handles the ternary operator" do
         result = parser.parse "foo ? bar : baz"
         result.must_equal s(:if,
