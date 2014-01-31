@@ -97,9 +97,9 @@ describe RipperRubyParser::Parser do
       it "handles a negative condition correctly" do
         result = parser.parse "if not foo; bar; end"
         result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            nil,
-                            s(:call, nil, :bar))
+                            s(:call, s(:call, nil, :foo), :!),
+                            s(:call, nil, :bar),
+                            nil)
       end
 
       it "handles a negative condition in elsif correctly" do
@@ -108,7 +108,7 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo),
                             s(:call, nil, :bar),
                             s(:if,
-                              s(:not, s(:call, nil, :baz)),
+                              s(:call, s(:call, nil, :baz), :!),
                               s(:call, nil, :qux), nil))
       end
     end
@@ -1587,14 +1587,14 @@ describe RipperRubyParser::Parser do
                             :+@)
       end
 
-      it "handles unary not" do
-        result = parser.parse "not foo"
-        result.must_equal s(:not, s(:call, nil, :foo))
+      it "handles unary !" do
+        result = parser.parse "!foo"
+        result.must_equal s(:call, s(:call, nil, :foo), :!)
       end
 
-      it "converts :! to :not" do
-        result = parser.parse "!foo"
-        result.must_equal s(:not, s(:call, nil, :foo))
+      it "converts :not to :!" do
+        result = parser.parse "not foo"
+        result.must_equal s(:call, s(:call, nil, :foo), :!)
       end
 
       it "handles the range operator with positive number literals" do

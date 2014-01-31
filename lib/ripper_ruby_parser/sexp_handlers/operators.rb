@@ -2,15 +2,14 @@ module RipperRubyParser
   module SexpHandlers
     module Operators
       BINARY_OPERATOR_MAP = {
-        "&&".to_sym => :and,
-        "||".to_sym => :or,
+        :"&&" => :and,
+        :"||" => :or,
         :and => :and,
         :or => :or
       }
 
       UNARY_OPERATOR_MAP = {
-        :"!" => :not,
-        :not => :not
+        :not => :!
       }
 
       NEGATED_BINARY_OPERATOR_MAP = {
@@ -41,15 +40,11 @@ module RipperRubyParser
       def process_unary exp
         _, op, arg = exp.shift 3
         arg = process(arg)
-        mapped = UNARY_OPERATOR_MAP[op]
-        if mapped
-          s(mapped, arg)
+        op = UNARY_OPERATOR_MAP[op] || op
+        if is_literal? arg
+          s(:lit, arg[1].send(op))
         else
-          if is_literal? arg
-            s(:lit, arg[1].send(op))
-          else
-            s(:call, arg, op)
-          end
+          s(:call, arg, op)
         end
       end
 
