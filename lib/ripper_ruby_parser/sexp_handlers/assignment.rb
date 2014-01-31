@@ -34,7 +34,7 @@ module RipperRubyParser
         case right.sexp_type
         when :fake_array
           right[0] = :array
-        when :array, :splat
+        when :splat
           # Do nothing
         else
           right = s(:to_ary, right)

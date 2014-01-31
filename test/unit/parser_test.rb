@@ -1420,6 +1420,18 @@ describe RipperRubyParser::Parser do
                             s(:to_ary, s(:call, nil, :qux)))
       end
 
+      it "works with complex destructuring of the value" do
+        result = parser.parse "foo, (bar, baz) = [qux, [quz, quuz]]"
+        result.must_equal s(:masgn,
+                            s(:array,
+                              s(:lasgn, :foo),
+                              s(:masgn, s(:array, s(:lasgn, :bar), s(:lasgn, :baz)))),
+                            s(:to_ary,
+                              s(:array,
+                                s(:call, nil, :qux),
+                                s(:array, s(:call, nil, :quz), s(:call, nil, :quuz)))))
+      end
+
       it "works with instance variables" do
         result = parser.parse "@foo, @bar = baz"
         result.must_equal s(:masgn,
