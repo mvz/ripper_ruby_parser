@@ -1602,6 +1602,11 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:call, s(:call, nil, :foo), :!)
       end
 
+      it "handles unary ! with a number literal" do
+        result = parser.parse "!1"
+        result.must_equal s(:call, s(:lit, 1), :!)
+      end
+
       it "handles the range operator with positive number literals" do
         result = parser.parse "1..2"
         result.must_equal s(:lit, 1..2)
