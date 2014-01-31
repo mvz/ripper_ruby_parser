@@ -65,6 +65,16 @@ describe RipperRubyParser::Parser do
                             nil)
       end
 
+      it "works with multiple statements" do
+        "if foo; bar; baz; end".
+          must_be_parsed_as s(:if,
+                            s(:call, nil, :foo),
+                            s(:block,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz)),
+                            nil)
+      end
+
       it "works with an else clause" do
         result = parser.parse "if foo; bar; else; baz; end"
         result.must_equal s(:if,
@@ -159,9 +169,8 @@ describe RipperRubyParser::Parser do
                             s(:call, nil, :foo),
                             s(:when,
                               s(:array, s(:call, nil, :bar)),
-                              s(:block,
-                                s(:call, nil, :baz),
-                                s(:call, nil, :qux))),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux)),
                             nil)
       end
 
@@ -321,9 +330,8 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar)),
                             s(:resbody,
                               s(:array),
-                              s(:block,
-                                s(:call, nil, :baz),
-                                s(:call, nil, :qux))))
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux)))
       end
 
       it "works with assignment to an error variable" do

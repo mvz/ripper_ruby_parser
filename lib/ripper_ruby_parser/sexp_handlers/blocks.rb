@@ -56,6 +56,7 @@ module RipperRubyParser
       def process_rescue exp
         _, eclass, evar, block, after = exp.shift 5
         rescue_block = map_body(block)
+        rescue_block << nil if rescue_block.empty?
 
         arr = []
         if eclass
@@ -74,7 +75,7 @@ module RipperRubyParser
         end
 
         s(
-          s(:resbody, s(:array, *arr), wrap_in_block(rescue_block)),
+          s(:resbody, s(:array, *arr), *rescue_block),
           *process(after))
       end
 

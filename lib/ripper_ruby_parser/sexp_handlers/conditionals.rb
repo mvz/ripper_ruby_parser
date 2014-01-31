@@ -68,8 +68,9 @@ module RipperRubyParser
           end
         end
 
-        s(s(:when, s(:array, *values),
-            handle_statement_list(truepart)),
+        s(s(:when,
+            s(:array, *values),
+            *map_body(truepart)),
           *falsepart)
       end
 
