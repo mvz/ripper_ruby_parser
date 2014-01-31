@@ -100,6 +100,14 @@ describe RipperRubyParser::Parser do
                               s(:args, :foo),
                               s(:call, nil, :bar)) 
       end
+
+      it "works when there are no arguments" do
+        "-> { bar }".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              0,
+                              s(:call, nil, :bar)) 
+      end
     end
   end
 end
