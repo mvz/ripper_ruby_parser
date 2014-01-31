@@ -134,13 +134,8 @@ module RipperRubyParser
 
     # character literals
     def process_at_CHAR exp
-      make_literal(exp) do |val|
-        if extra_compatible
-          val[1].ord
-        else
-          val[1]
-        end
-      end
+      _, val, pos = exp.shift 3
+      with_position(pos, s(:str, val[1]))
     end
 
     def process_at_label exp

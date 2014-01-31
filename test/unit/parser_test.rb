@@ -1129,13 +1129,14 @@ describe RipperRubyParser::Parser do
 
       it "works for character literals (which are string literals in Ruby 1.9.3)" do
         result = parser.parse "?a"
-        result.must_equal s(:lit, "a")
+        result.must_equal s(:str, "a")
       end
 
       it "works for character literals in extra compatible mode" do
+        # TODO: Remove #extra_compatible, which now does nothing.
         parser.extra_compatible = true
         result = parser.parse "?a"
-        result.must_equal s(:lit, 97)
+        result.must_equal s(:str, "a")
       end
 
       it "works for basic backtick strings" do
