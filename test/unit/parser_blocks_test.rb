@@ -33,6 +33,14 @@ describe RipperRubyParser::Parser do
                               s(:args, :bar, :"&baz"))
       end
 
+      it "handles empty parameter specs" do
+        "foo do ||; bar; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:call, nil, :bar))
+      end
+
       it "behaves differently from RubyParser with a trailing comma in the block parameters" do
         "foo do |bar, | end".
           must_be_parsed_as s(:iter,

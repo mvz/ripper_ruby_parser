@@ -155,8 +155,10 @@ module RipperRubyParser
 
       def handle_generic_block exp
         _, args, stmts = exp.shift 3
+        args = process(args)
+        args = 0 if args == s(:args)
         # FIXME: Symbol :block is irrelevant.
-        s(:block, process(args), s(handle_statement_list(stmts)))
+        s(:block, args, s(handle_statement_list(stmts)))
       end
 
       def strip_wrapping_block(block)
