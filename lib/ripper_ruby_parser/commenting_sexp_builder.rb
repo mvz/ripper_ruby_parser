@@ -2,6 +2,8 @@ require 'ripper'
 require 'ripper_ruby_parser/syntax_error'
 
 module RipperRubyParser
+  # Variant of Ripper's SexpBuilderPP parser class that inserts comments as
+  # Sexps into the built parse tree.
   class CommentingSexpBuilder < Ripper::SexpBuilderPP
     def initialize *args
       super
@@ -95,11 +97,7 @@ module RipperRubyParser
       unless tok == name
         raise "Expected on_#{tok} event, got on_#{name}"
       end
-      if comment.nil?
-        [:comment, "", exp]
-      else
-        [:comment, comment, exp]
-      end
+      [:comment, comment || "", exp]
     end
   end
 end
