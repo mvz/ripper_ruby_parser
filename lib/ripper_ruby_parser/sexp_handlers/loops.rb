@@ -38,16 +38,12 @@ module RipperRubyParser
 
       private
 
-      def make_guarded_block(type, inverse, cond, block, check_at_start)
-        s(type, cond, block, check_at_start)
-      end
-
       def make_until(cond, block, check_at_start)
-        make_guarded_block(:until, :while, cond, block, check_at_start)
+        s(:until, cond, block, check_at_start)
       end
 
       def make_while(cond, block, check_at_start)
-        make_guarded_block(:while, :until, cond, block, check_at_start)
+        s(:while, cond, block, check_at_start)
       end
 
       def check_at_start?(block)
