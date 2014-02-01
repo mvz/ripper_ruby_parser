@@ -4,7 +4,7 @@ require 'ripper_ruby_parser/syntax_error'
 module RipperRubyParser
   # Variant of Ripper's SexpBuilderPP parser class that inserts comments as
   # Sexps into the built parse tree.
-  class CommentingSexpBuilder < Ripper::SexpBuilderPP
+  class CommentingRipperParser < Ripper::SexpBuilderPP
     def initialize *args
       super
       @comment = nil

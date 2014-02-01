@@ -1,4 +1,4 @@
-require 'ripper_ruby_parser/commenting_sexp_builder'
+require 'ripper_ruby_parser/commenting_ripper_parser'
 require 'ripper_ruby_parser/sexp_processor'
 
 module RipperRubyParser
@@ -13,7 +13,7 @@ module RipperRubyParser
     end
 
     def parse source, filename='(string)', lineno=1
-      parser = CommentingSexpBuilder.new(source, filename, lineno)
+      parser = CommentingRipperParser.new(source, filename, lineno)
       exp = parser.parse
 
       @processor.filename = filename
