@@ -8,11 +8,6 @@ module RipperRubyParser
         truepart = handle_statement_list(truepart)
         falsepart = process(falsepart)
 
-        if cond.sexp_type == :not
-          cond = cond[1]
-          truepart, falsepart = falsepart, truepart
-        end
-
         s(:if, cond, truepart, falsepart)
       end
 

@@ -39,10 +39,6 @@ module RipperRubyParser
       private
 
       def make_guarded_block(type, inverse, cond, block, check_at_start)
-        if cond.sexp_type == :not
-          type = inverse
-          cond = cond[1]
-        end
         s(type, cond, block, check_at_start)
       end
 
