@@ -285,6 +285,13 @@ describe RipperRubyParser::Parser do
                             s(:lasgn, :foo),
                             s(:call, nil, :baz))
       end
+
+      it "works with an empty body" do
+        result = parser.parse "for foo in bar; end"
+        result.must_equal s(:for,
+                            s(:call, nil, :bar),
+                            s(:lasgn, :foo))
+      end
     end
 
     describe "for a begin..end block" do

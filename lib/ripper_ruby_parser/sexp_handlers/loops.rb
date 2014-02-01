@@ -31,9 +31,14 @@ module RipperRubyParser
 
       def process_for exp
         _, var, coll, block = exp.shift 4
-        s(:for, process(coll),
-          s(:lasgn, process(var)[1]),
-          handle_statement_list(block))
+        coll = process(coll)
+        assgn = s(:lasgn, process(var)[1])
+        block = handle_statement_list(block)
+        if block.nil?
+          s(:for, coll, assgn)
+        else
+          s(:for, coll, assgn, block)
+        end
       end
 
       private
