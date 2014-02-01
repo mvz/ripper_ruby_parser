@@ -12,6 +12,13 @@ module RipperRubyParser
       @in_symbol = false
     end
 
+    def parse
+      result = suppress_warnings { super }
+      raise "Ripper parse failed." unless result
+
+      Sexp.from_array(result)
+    end
+
     def on_comment tok
       @comment ||= ""
       @comment += tok
@@ -98,6 +105,16 @@ module RipperRubyParser
         raise "Expected on_#{tok} event, got on_#{name}"
       end
       [:comment, comment || "", exp]
+    end
+
+    private
+
+    def suppress_warnings
+      old_verbose = $VERBOSE
+      $VERBOSE = nil
+      result = yield
+      $VERBOSE = old_verbose
+      result
     end
   end
 end
