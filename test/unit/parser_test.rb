@@ -29,10 +29,10 @@ describe RipperRubyParser::Parser do
 
     describe "for a class declaration" do
       it "works with a namespaced class name" do
-        result = parser.parse "class Foo::Bar; end"
-        result.must_equal s(:class,
-                            s(:colon2, s(:const, :Foo), :Bar),
-                            nil)
+        "class Foo::Bar; end".
+          must_be_parsed_as s(:class,
+                              s(:colon2, s(:const, :Foo), :Bar),
+                              nil)
       end
 
       it "works for singleton classes" do
@@ -42,564 +42,564 @@ describe RipperRubyParser::Parser do
 
     describe "for a module declaration" do
       it "works with a namespaced module name" do
-        result = parser.parse "module Foo::Bar; end"
-        result.must_equal s(:module,
-                            s(:colon2, s(:const, :Foo), :Bar))
+        "module Foo::Bar; end".
+          must_be_parsed_as s(:module,
+                              s(:colon2, s(:const, :Foo), :Bar))
       end
     end
 
     describe "for if" do
       it "works in the postfix case" do
-        result = parser.parse "foo if bar"
-        result.must_equal s(:if,
-                            s(:call, nil, :bar),
-                            s(:call, nil, :foo),
-                            nil)
+        "foo if bar".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo),
+                              nil)
       end
 
       it "works in the block case" do
-        result = parser.parse "if foo; bar; end"
-        result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar),
-                            nil)
+        "if foo; bar; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              nil)
       end
 
       it "works with multiple statements" do
         "if foo; bar; baz; end".
           must_be_parsed_as s(:if,
-                            s(:call, nil, :foo),
-                            s(:block,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz)),
-                            nil)
+                              s(:call, nil, :foo),
+                              s(:block,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)),
+                              nil)
       end
 
       it "works with an else clause" do
-        result = parser.parse "if foo; bar; else; baz; end"
-        result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar),
-                            s(:call, nil, :baz))
+        "if foo; bar; else; baz; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
       end
 
       it "works with an elsif clause" do
-        result = parser.parse "if foo; bar; elsif baz; qux; end"
-        result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar),
-                            s(:if,
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux),
-                              nil))
+        "if foo; bar; elsif baz; qux; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                nil))
       end
 
       it "handles a negative condition correctly" do
-        result = parser.parse "if not foo; bar; end"
-        result.must_equal s(:if,
-                            s(:call, s(:call, nil, :foo), :!),
-                            s(:call, nil, :bar),
-                            nil)
+        "if not foo; bar; end".
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :!),
+                              s(:call, nil, :bar),
+                              nil)
       end
 
       it "handles a negative condition in elsif correctly" do
-        result = parser.parse "if foo; bar; elsif not baz; qux; end"
-        result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar),
-                            s(:if,
-                              s(:call, s(:call, nil, :baz), :!),
-                              s(:call, nil, :qux), nil))
+        "if foo; bar; elsif not baz; qux; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, s(:call, nil, :baz), :!),
+                                s(:call, nil, :qux), nil))
       end
     end
 
     describe "for unless" do
       it "works in the postfix case" do
-        result = parser.parse "foo unless bar"
-        result.must_equal s(:if,
-                            s(:call, nil, :bar),
-                            nil,
-                            s(:call, nil, :foo))
+        "foo unless bar".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              nil,
+                              s(:call, nil, :foo))
       end
 
       it "works in the block case" do
-        result = parser.parse "unless bar; foo; end"
-        result.must_equal s(:if,
-                            s(:call, nil, :bar),
-                            nil,
-                            s(:call, nil, :foo))
+        "unless bar; foo; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              nil,
+                              s(:call, nil, :foo))
       end
 
       it "works with an else clause" do
-        result = parser.parse "unless foo; bar; else; baz; end"
-        result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :baz),
-                            s(:call, nil, :bar))
+        "unless foo; bar; else; baz; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :bar))
       end
     end
 
     describe "for a case block" do
       it "works with a single when clause" do
-        result = parser.parse "case foo; when bar; baz; end"
-        result.must_equal s(:case,
-                            s(:call, nil, :foo),
-                            s(:when,
-                              s(:array, s(:call, nil, :bar)),
-                              s(:call, nil, :baz)),
-                            nil)
+        "case foo; when bar; baz; end".
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array, s(:call, nil, :bar)),
+                                s(:call, nil, :baz)),
+                              nil)
       end
 
       it "works with multiple when clauses" do
-        result = parser.parse "case foo; when bar; baz; when qux; quux; end"
-        result.must_equal s(:case,
-                            s(:call, nil, :foo),
-                            s(:when,
-                              s(:array, s(:call, nil, :bar)),
-                              s(:call, nil, :baz)),
-                            s(:when,
-                              s(:array, s(:call, nil, :qux)),
-                              s(:call, nil, :quux)),
-                            nil)
+        "case foo; when bar; baz; when qux; quux; end".
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array, s(:call, nil, :bar)),
+                                s(:call, nil, :baz)),
+                              s(:when,
+                                s(:array, s(:call, nil, :qux)),
+                                s(:call, nil, :quux)),
+                              nil)
       end
 
       it "works with multiple statements in the when block" do
-        result = parser.parse "case foo; when bar; baz; qux; end"
-        result.must_equal s(:case,
-                            s(:call, nil, :foo),
-                            s(:when,
-                              s(:array, s(:call, nil, :bar)),
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux)),
-                            nil)
+        "case foo; when bar; baz; qux; end".
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array, s(:call, nil, :bar)),
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)),
+                              nil)
       end
 
       it "works with an else clause" do
-        result = parser.parse "case foo; when bar; baz; else; qux; end"
-        result.must_equal s(:case,
-                            s(:call, nil, :foo),
-                            s(:when,
-                              s(:array, s(:call, nil, :bar)),
-                              s(:call, nil, :baz)),
-                            s(:call, nil, :qux))
+        "case foo; when bar; baz; else; qux; end".
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array, s(:call, nil, :bar)),
+                                s(:call, nil, :baz)),
+                              s(:call, nil, :qux))
       end
     end
 
     describe "for the return statement" do
       it "works with no arguments" do
-        result = parser.parse "return"
-        result.must_equal s(:return)
+        "return".
+          must_be_parsed_as s(:return)
       end
 
       it "works with one argument" do
-        result = parser.parse "return foo"
-        result.must_equal s(:return,
-                            s(:call, nil, :foo))
+        "return foo".
+          must_be_parsed_as s(:return,
+                              s(:call, nil, :foo))
       end
 
       it "works with a splat argument" do
-        result = parser.parse "return *foo"
-        result.must_equal s(:return,
-                            s(:svalue,
-                              s(:splat,
-                                s(:call, nil, :foo))))
+        "return *foo".
+          must_be_parsed_as s(:return,
+                              s(:svalue,
+                                s(:splat,
+                                  s(:call, nil, :foo))))
       end
 
       it "works with multiple arguments" do
-        result = parser.parse "return foo, bar"
-        result.must_equal s(:return,
-                            s(:array,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar)))
+        "return foo, bar".
+          must_be_parsed_as s(:return,
+                              s(:array,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)))
       end
 
       it "works with a regular argument and a splat argument" do
-        result = parser.parse "return foo, *bar"
-        result.must_equal s(:return,
-                            s(:array,
-                              s(:call, nil, :foo),
-                              s(:splat,
-                                s(:call, nil, :bar))))
+        "return foo, *bar".
+          must_be_parsed_as s(:return,
+                              s(:array,
+                                s(:call, nil, :foo),
+                                s(:splat,
+                                  s(:call, nil, :bar))))
       end
     end
 
     describe "for the until statement" do
       it "works in the prefix block case with do" do
-        result = parser.parse "until foo do; bar; end"
-        result.must_equal s(:until,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar), true)
+        "until foo do; bar; end".
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
       end
 
       it "works in the prefix block case without do" do
-        result = parser.parse "until foo; bar; end"
-        result.must_equal s(:until,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar), true)
+        "until foo; bar; end".
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
       end
 
       it "works in the single-line postfix case" do
-        result = parser.parse "foo until bar"
-        result.must_equal s(:until,
-                            s(:call, nil, :bar),
-                            s(:call, nil, :foo), true)
+        "foo until bar".
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), true)
       end
 
       it "works in the block postfix case" do
-        result = parser.parse "begin; foo; end until bar"
-        result.must_equal s(:until,
-                            s(:call, nil, :bar),
-                            s(:call, nil, :foo), false)
+        "begin; foo; end until bar".
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), false)
       end
     end
 
     describe "for the while statement" do
       it "works with do" do
-        result = parser.parse "while foo do; bar; end"
-        result.must_equal s(:while,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar), true)
+        "while foo do; bar; end".
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
       end
 
       it "works without do" do
-        result = parser.parse "while foo; bar; end"
-        result.must_equal s(:while,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar), true)
+        "while foo; bar; end".
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
       end
     end
 
     describe "for the for statement" do
       it "works with do" do
-        result = parser.parse "for foo in bar do; baz; end"
-        result.must_equal s(:for,
-                            s(:call, nil, :bar),
-                            s(:lasgn, :foo),
-                            s(:call, nil, :baz))
+        "for foo in bar do; baz; end".
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:lasgn, :foo),
+                              s(:call, nil, :baz))
       end
 
       it "works without do" do
-        result = parser.parse "for foo in bar; baz; end"
-        result.must_equal s(:for,
-                            s(:call, nil, :bar),
-                            s(:lasgn, :foo),
-                            s(:call, nil, :baz))
+        "for foo in bar; baz; end".
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:lasgn, :foo),
+                              s(:call, nil, :baz))
       end
 
       it "works with an empty body" do
-        result = parser.parse "for foo in bar; end"
-        result.must_equal s(:for,
-                            s(:call, nil, :bar),
-                            s(:lasgn, :foo))
+        "for foo in bar; end".
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:lasgn, :foo))
       end
     end
 
     describe "for a begin..end block" do
       it "works with no statements" do
-        result = parser.parse "begin; end"
-        result.must_equal s(:nil)
+        "begin; end".
+          must_be_parsed_as s(:nil)
       end
 
       it "works with one statement" do
-        result = parser.parse "begin; foo; end"
-        result.must_equal s(:call, nil, :foo)
+        "begin; foo; end".
+          must_be_parsed_as s(:call, nil, :foo)
       end
 
       it "works with multiple statements" do
-        result = parser.parse "begin; foo; bar; end"
-        result.must_equal s(:block,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "begin; foo; bar; end".
+          must_be_parsed_as s(:block,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
     end
 
     describe "for the rescue statement" do
       it "works with empty main and rescue bodies" do
-        result = parser.parse "begin; rescue; end"
-        result.must_equal s(:rescue,
-                            s(:resbody, s(:array), nil))
+        "begin; rescue; end".
+          must_be_parsed_as s(:rescue,
+                              s(:resbody, s(:array), nil))
       end
 
       it "works with single statement main and rescue bodies" do
-        result = parser.parse "begin; foo; rescue; bar; end"
-        result.must_equal s(:rescue,
-                            s(:call, nil, :foo),
-                            s(:resbody,
-                              s(:array),
-                              s(:call, nil, :bar)))
+        "begin; foo; rescue; bar; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar)))
       end
 
       it "works with multi-statement main and rescue bodies" do
-        result = parser.parse "begin; foo; bar; rescue; baz; qux; end"
-        result.must_equal s(:rescue,
-                            s(:block,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar)),
-                            s(:resbody,
-                              s(:array),
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux)))
+        "begin; foo; bar; rescue; baz; qux; end".
+          must_be_parsed_as s(:rescue,
+                              s(:block,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)))
       end
 
       it "works with assignment to an error variable" do
-        result = parser.parse "begin; foo; rescue => e; bar; end"
-        result.must_equal s(:rescue,
-                            s(:call, nil, :foo),
-                            s(:resbody,
-                              s(:array, s(:lasgn, :e, s(:gvar, :$!))),
-                              s(:call, nil, :bar)))
+        "begin; foo; rescue => e; bar; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array, s(:lasgn, :e, s(:gvar, :$!))),
+                                s(:call, nil, :bar)))
       end
 
       it "works with filtering of the exception type" do
-        result = parser.parse "begin; foo; rescue Bar; baz; end"
-        result.must_equal s(:rescue,
-                            s(:call, nil, :foo),
-                            s(:resbody,
-                              s(:array, s(:const, :Bar)),
-                              s(:call, nil, :baz)))
+        "begin; foo; rescue Bar; baz; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array, s(:const, :Bar)),
+                                s(:call, nil, :baz)))
       end
 
       it "works with filtering of the exception type and assignment to an error variable" do
-        result = parser.parse "begin; foo; rescue Bar => e; baz; end"
-        result.must_equal s(:rescue,
-                            s(:call, nil, :foo),
-                            s(:resbody,
-                              s(:array,
-                                s(:const, :Bar),
-                                s(:lasgn, :e, s(:gvar, :$!))),
-                              s(:call, nil, :baz)))
+        "begin; foo; rescue Bar => e; baz; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array,
+                                  s(:const, :Bar),
+                                  s(:lasgn, :e, s(:gvar, :$!))),
+                                s(:call, nil, :baz)))
       end
 
       it "works rescuing multiple exception types" do
-        result = parser.parse "begin; foo; rescue Bar, Baz; qux; end"
-        result.must_equal s(:rescue,
-                            s(:call, nil, :foo),
-                            s(:resbody,
-                              s(:array, s(:const, :Bar), s(:const, :Baz)),
-                              s(:call, nil, :qux)))
+        "begin; foo; rescue Bar, Baz; qux; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array, s(:const, :Bar), s(:const, :Baz)),
+                                s(:call, nil, :qux)))
       end
 
       it "works in the postfix case" do
-        result = parser.parse "foo rescue bar"
-        result.must_equal s(:rescue,
-                            s(:call, nil, :foo),
-                            s(:resbody,
-                              s(:array),
-                              s(:call, nil, :bar)))
+        "foo rescue bar".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar)))
       end
 
       it "works in a plain method body" do
-        result = parser.parse "def foo; bar; rescue; baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args),
-                            s(:rescue,
-                              s(:call, nil, :bar),
-                              s(:resbody,
-                                s(:array),
-                                s(:call, nil, :baz))))
+        "def foo; bar; rescue; baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args),
+                              s(:rescue,
+                                s(:call, nil, :bar),
+                                s(:resbody,
+                                  s(:array),
+                                  s(:call, nil, :baz))))
       end
 
       it "works in a method body inside begin..end" do
-        result = parser.parse "def foo; bar; begin; baz; rescue; qux; end; quuz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args),
-                            s(:call, nil, :bar),
-                            s(:rescue,
-                              s(:call, nil, :baz),
-                              s(:resbody, s(:array), s(:call, nil, :qux))),
-                            s(:call, nil, :quuz))
+        "def foo; bar; begin; baz; rescue; qux; end; quuz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args),
+                              s(:call, nil, :bar),
+                              s(:rescue,
+                                s(:call, nil, :baz),
+                                s(:resbody, s(:array), s(:call, nil, :qux))),
+                              s(:call, nil, :quuz))
       end
     end
 
     describe "for the ensure statement" do
       it "works with single statement main and ensure bodies" do
-        result = parser.parse "begin; foo; ensure; bar; end"
-        result.must_equal s(:ensure,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "begin; foo; ensure; bar; end".
+          must_be_parsed_as s(:ensure,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "works with multi-statement main and ensure bodies" do
-        result = parser.parse "begin; foo; bar; ensure; baz; qux; end"
-        result.must_equal s(:ensure,
-                            s(:block,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar)),
-                            s(:block,
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux)))
+        "begin; foo; bar; ensure; baz; qux; end".
+          must_be_parsed_as s(:ensure,
+                              s(:block,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)),
+                              s(:block,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)))
       end
 
       it "works together with rescue" do
-        result = parser.parse "begin; foo; rescue; bar; ensure; baz; end"
-        result.must_equal s(:ensure,
-                            s(:rescue,
-                              s(:call, nil, :foo),
-                              s(:resbody,
-                                s(:array),
-                                s(:call, nil, :bar))),
-                            s(:call, nil, :baz))
+        "begin; foo; rescue; bar; ensure; baz; end".
+          must_be_parsed_as s(:ensure,
+                              s(:rescue,
+                                s(:call, nil, :foo),
+                                s(:resbody,
+                                  s(:array),
+                                  s(:call, nil, :bar))),
+                              s(:call, nil, :baz))
       end
     end
 
     describe "for the undef statement" do
       it "works with a single bareword identifier" do
-        result = parser.parse "undef foo"
-        result.must_equal s(:undef, s(:lit, :foo))
+        "undef foo".
+          must_be_parsed_as s(:undef, s(:lit, :foo))
       end
 
       it "works with a single symbol" do
-        result = parser.parse "undef :foo"
-        result.must_equal s(:undef, s(:lit, :foo))
+        "undef :foo".
+          must_be_parsed_as s(:undef, s(:lit, :foo))
       end
 
       it "works with multiple bareword identifiers" do
-        result = parser.parse "undef foo, bar"
-        result.must_equal s(:block,
-                            s(:undef, s(:lit, :foo)),
-                            s(:undef, s(:lit, :bar)))
+        "undef foo, bar".
+          must_be_parsed_as s(:block,
+                              s(:undef, s(:lit, :foo)),
+                              s(:undef, s(:lit, :bar)))
       end
 
       it "works with multiple bareword symbols" do
-        result = parser.parse "undef :foo, :bar"
-        result.must_equal s(:block,
-                            s(:undef, s(:lit, :foo)),
-                            s(:undef, s(:lit, :bar)))
+        "undef :foo, :bar".
+          must_be_parsed_as s(:block,
+                              s(:undef, s(:lit, :foo)),
+                              s(:undef, s(:lit, :bar)))
       end
     end
 
     describe "for the alias statement" do
       it "works with regular barewords" do
-        result = parser.parse "alias foo bar"
-        result.must_equal s(:alias,
-                            s(:lit, :foo), s(:lit, :bar))
+        "alias foo bar".
+          must_be_parsed_as s(:alias,
+                              s(:lit, :foo), s(:lit, :bar))
       end
 
       it "works with symbols" do
-        result = parser.parse "alias :foo :bar"
-        result.must_equal s(:alias,
-                            s(:lit, :foo), s(:lit, :bar))
+        "alias :foo :bar".
+          must_be_parsed_as s(:alias,
+                              s(:lit, :foo), s(:lit, :bar))
       end
 
       it "works with operator barewords" do
-        result = parser.parse "alias + -"
-        result.must_equal s(:alias,
-                            s(:lit, :+), s(:lit, :-))
+        "alias + -".
+          must_be_parsed_as s(:alias,
+                              s(:lit, :+), s(:lit, :-))
       end
     end
 
     describe "for arguments" do
       it "works for a simple case with splat" do
-        result = parser.parse "foo *bar"
-        result.must_equal s(:call,
-                            nil,
-                            :foo,
-                            s(:splat, s(:call, nil, :bar)))
+        "foo *bar".
+          must_be_parsed_as s(:call,
+                              nil,
+                              :foo,
+                              s(:splat, s(:call, nil, :bar)))
       end
 
       it "works for a multi-argument case with splat" do
-        result = parser.parse "foo bar, *baz"
-        result.must_equal s(:call,
-                            nil,
-                            :foo,
-                            s(:call, nil, :bar),
-                            s(:splat, s(:call, nil, :baz)))
+        "foo bar, *baz".
+          must_be_parsed_as s(:call,
+                              nil,
+                              :foo,
+                              s(:call, nil, :bar),
+                              s(:splat, s(:call, nil, :baz)))
       end
 
       it "works for a simple case passing a block" do
-        result = parser.parse "foo &bar"
-        result.must_equal s(:call, nil, :foo,
+        "foo &bar".
+          must_be_parsed_as s(:call, nil, :foo,
                               s(:block_pass,
                                 s(:call, nil, :bar)))
       end
 
       it "works for a bare hash" do
-        result = parser.parse "foo bar => baz"
-        result.must_equal s(:call, nil, :foo,
-                            s(:hash,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz)))
+        "foo bar => baz".
+          must_be_parsed_as s(:call, nil, :foo,
+                              s(:hash,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
       end
     end
 
     describe "for array literals" do
       it "works for an empty array" do
-        result = parser.parse "[]"
-        result.must_equal s(:array)
+        "[]".
+          must_be_parsed_as s(:array)
       end
 
       it "works for a simple case with splat" do
-        result = parser.parse "[*foo]"
-        result.must_equal s(:array,
-                            s(:splat, s(:call, nil, :foo)))
+        "[*foo]".
+          must_be_parsed_as s(:array,
+                              s(:splat, s(:call, nil, :foo)))
       end
 
       it "works for a multi-element case with splat" do
-        result = parser.parse "[foo, *bar]"
-        result.must_equal s(:array,
-                            s(:call, nil, :foo),
-                            s(:splat, s(:call, nil, :bar)))
+        "[foo, *bar]".
+          must_be_parsed_as s(:array,
+                              s(:call, nil, :foo),
+                              s(:splat, s(:call, nil, :bar)))
       end
 
       it "works for an array created with %W" do
-        result = parser.parse "%W(foo bar)"
-        result.must_equal s(:array, s(:str, "foo"), s(:str, "bar"))
+        "%W(foo bar)".
+          must_be_parsed_as s(:array, s(:str, "foo"), s(:str, "bar"))
       end
     end
 
     describe "for hash literals" do
       it "works for an empty hash" do
-        result = parser.parse "{}"
-        result.must_equal s(:hash)
+        "{}".
+          must_be_parsed_as s(:hash)
       end
 
       it "works for a hash with one pair" do
-        result = parser.parse "{foo => bar}"
-        result.must_equal s(:hash,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "{foo => bar}".
+          must_be_parsed_as s(:hash,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "works for a hash with multiple pairs" do
-        result = parser.parse "{foo => bar, baz => qux}"
-        result.must_equal s(:hash,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar),
-                            s(:call, nil, :baz),
-                            s(:call, nil, :qux))
+        "{foo => bar, baz => qux}".
+          must_be_parsed_as s(:hash,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux))
       end
 
       it "works for a hash with label keys (Ruby 1.9 only)" do
-        result = parser.parse "{foo: bar, baz: qux}"
-        result.must_equal s(:hash,
-                            s(:lit, :foo),
-                            s(:call, nil, :bar),
-                            s(:lit, :baz),
-                            s(:call, nil, :qux))
+        "{foo: bar, baz: qux}".
+          must_be_parsed_as s(:hash,
+                              s(:lit, :foo),
+                              s(:call, nil, :bar),
+                              s(:lit, :baz),
+                              s(:call, nil, :qux))
       end
     end
 
     describe "for number literals" do
       it "works for floats" do
-        result = parser.parse "3.14"
-        result.must_equal s(:lit, 3.14)
+        "3.14".
+          must_be_parsed_as s(:lit, 3.14)
       end
 
       it "works for octal integer literals" do
-        result = parser.parse "0700"
-        result.must_equal s(:lit, 448)
+        "0700".
+          must_be_parsed_as s(:lit, 448)
       end
     end
 
     describe "for collection indexing" do
       it "works in the simple case" do
-        result = parser.parse "foo[bar]"
-        result.must_equal s(:call,
-                            s(:call, nil, :foo),
-                            :[],
-                            s(:call, nil, :bar))
+        "foo[bar]".
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :[],
+                              s(:call, nil, :bar))
       end
 
       it "works without any indexes" do
@@ -615,566 +615,565 @@ describe RipperRubyParser::Parser do
 
     describe "for method definitions" do
       it "works with def with receiver" do
-        result = parser.parse "def foo.bar; end"
-        result.must_equal s(:defs,
-                            s(:call, nil, :foo),
-                            :bar,
-                            s(:args))
+        "def foo.bar; end".
+          must_be_parsed_as s(:defs,
+                              s(:call, nil, :foo),
+                              :bar,
+                              s(:args))
       end
 
       it "works with def with receiver and multiple statements" do
-        result = parser.parse "def foo.bar; baz; qux; end"
-        result.must_equal s(:defs,
-                            s(:call, nil, :foo),
-                            :bar,
-                            s(:args),
-                            s(:call, nil, :baz),
-                            s(:call, nil, :qux))
+        "def foo.bar; baz; qux; end".
+          must_be_parsed_as s(:defs,
+                              s(:call, nil, :foo),
+                              :bar,
+                              s(:args),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux))
       end
 
       it "works with a method argument with a default value" do
-        result = parser.parse "def foo bar=nil; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, s(:lasgn, :bar, s(:nil))),
-                            s(:nil))
+        "def foo bar=nil; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args, s(:lasgn, :bar, s(:nil))),
+                              s(:nil))
       end
 
       it "works with several method arguments with default values" do
-        result = parser.parse "def foo bar=1, baz=2; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args,
-                              s(:lasgn, :bar, s(:lit, 1)),
-                              s(:lasgn, :baz, s(:lit, 2))),
-                            s(:nil))
+        "def foo bar=1, baz=2; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args,
+                                s(:lasgn, :bar, s(:lit, 1)),
+                                s(:lasgn, :baz, s(:lit, 2))),
+                              s(:nil))
       end
 
       it "works with brackets around the parameter list" do
-        result = parser.parse "def foo(bar); end"
-        result.must_equal s(:defn, :foo, s(:args, :bar), s(:nil))
+        "def foo(bar); end".
+          must_be_parsed_as s(:defn, :foo, s(:args, :bar), s(:nil))
       end
 
       it "works with a simple splat" do
-        result = parser.parse "def foo *bar; end"
-        result.must_equal s(:defn, :foo, s(:args, :"*bar"), s(:nil))
+        "def foo *bar; end".
+          must_be_parsed_as s(:defn, :foo, s(:args, :"*bar"), s(:nil))
       end
 
       it "works with a regular argument plus splat" do
-        result = parser.parse "def foo bar, *baz; end"
-        result.must_equal s(:defn, :foo, s(:args, :bar, :"*baz"), s(:nil))
+        "def foo bar, *baz; end".
+          must_be_parsed_as s(:defn, :foo, s(:args, :bar, :"*baz"), s(:nil))
       end
 
       it "works with a nameless splat" do
-        result = parser.parse "def foo *; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :"*"),
-                            s(:nil))
+        "def foo *; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args, :"*"),
+                              s(:nil))
       end
 
       it "works for a simple case with explicit block parameter" do
-        result = parser.parse "def foo &bar; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :"&bar"),
-                            s(:nil))
+        "def foo &bar; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args, :"&bar"),
+                              s(:nil))
       end
 
       it "works with a regular argument plus explicit block parameter" do
-        result = parser.parse "def foo bar, &baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :bar, :"&baz"),
-                            s(:nil))
+        "def foo bar, &baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args, :bar, :"&baz"),
+                              s(:nil))
       end
 
       it "works with a argument with default value plus explicit block parameter" do
-        result = parser.parse "def foo bar=1, &baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args,
-                              s(:lasgn, :bar, s(:lit, 1)),
-                              :"&baz"),
-                            s(:nil))
+        "def foo bar=1, &baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args,
+                                s(:lasgn, :bar, s(:lit, 1)),
+                                :"&baz"),
+                                s(:nil))
       end
 
       it "works with a argument with default value followed by a mandatory argument" do
-        result = parser.parse "def foo bar=1, baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args,
-                              s(:lasgn, :bar, s(:lit, 1)),
-                              :baz),
-                            s(:nil))
+        "def foo bar=1, baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args,
+                                s(:lasgn, :bar, s(:lit, 1)),
+                                :baz),
+                                s(:nil))
       end
 
       it "works with a splat plus explicit block parameter" do
-        result = parser.parse "def foo *bar, &baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args, :"*bar", :"&baz"),
-                            s(:nil))
+        "def foo *bar, &baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args, :"*bar", :"&baz"),
+                              s(:nil))
       end
 
       it "works with an argument with default value plus splat" do
-        result = parser.parse "def foo bar=1, *baz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args,
-                              s(:lasgn, :bar, s(:lit, 1)),
-                              :"*baz"),
-                            s(:nil))
+        "def foo bar=1, *baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args,
+                                s(:lasgn, :bar, s(:lit, 1)),
+                                :"*baz"),
+                                s(:nil))
       end
 
       it "works with an argument with default value plus splat plus final mandatory arguments" do
-        result = parser.parse "def foo bar=1, *baz, qux, quuz; end"
-        result.must_equal s(:defn,
-                            :foo,
-                            s(:args,
-                              s(:lasgn, :bar, s(:lit, 1)),
-                              :"*baz", :qux, :quuz),
-                            s(:nil))
+        "def foo bar=1, *baz, qux, quuz; end".
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args,
+                                s(:lasgn, :bar, s(:lit, 1)),
+                                :"*baz", :qux, :quuz),
+                                s(:nil))
       end
 
       it "works when the method name is an operator" do
-        result = parser.parse "def +; end"
-        result.must_equal s(:defn, :+, s(:args),
-                            s(:nil))
+        "def +; end".
+          must_be_parsed_as s(:defn, :+, s(:args),
+                              s(:nil))
       end
     end
 
     describe "for method calls" do
       describe "without a receiver" do
         it "works without brackets" do
-          result = parser.parse "foo bar"
-          result.must_equal s(:call, nil, :foo,
-                              s(:call, nil, :bar))
+          "foo bar".
+            must_be_parsed_as s(:call, nil, :foo,
+                                s(:call, nil, :bar))
         end
 
         it "works with brackets" do
-          result = parser.parse "foo(bar)"
-          result.must_equal s(:call, nil, :foo,
-                              s(:call, nil, :bar))
+          "foo(bar)".
+            must_be_parsed_as s(:call, nil, :foo,
+                                s(:call, nil, :bar))
         end
 
         it "works with an empty parameter list and no brackets" do
-          result = parser.parse "foo"
-          result.must_equal s(:call, nil, :foo)
+          "foo".
+            must_be_parsed_as s(:call, nil, :foo)
         end
 
         it "works with brackets around an empty parameter list" do
-          result = parser.parse "foo()"
-          result.must_equal s(:call, nil, :foo)
+          "foo()".
+            must_be_parsed_as s(:call, nil, :foo)
         end
 
         it "works for methods ending in a question mark" do
-          result = parser.parse "foo?"
-          result.must_equal s(:call, nil, :foo?)
+          "foo?".
+            must_be_parsed_as s(:call, nil, :foo?)
         end
 
         it "works with nested calls without brackets" do
-          result = parser.parse "foo bar baz"
-          result.must_equal s(:call, nil, :foo,
-                              s(:call, nil, :bar,
-                                s(:call, nil, :baz)))
+          "foo bar baz".
+            must_be_parsed_as s(:call, nil, :foo,
+                                s(:call, nil, :bar,
+                                  s(:call, nil, :baz)))
         end
       end
 
       describe "with a receiver" do
         it "works without brackets" do
-          result = parser.parse "foo.bar baz"
-          result.must_equal s(:call,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:call, nil, :baz))
+          "foo.bar baz".
+            must_be_parsed_as s(:call,
+                                s(:call, nil, :foo),
+                                :bar,
+                                s(:call, nil, :baz))
         end
 
         it "works with brackets" do
-          result = parser.parse "foo.bar(baz)"
-          result.must_equal s(:call,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:call, nil, :baz))
+          "foo.bar(baz)".
+            must_be_parsed_as s(:call,
+                                s(:call, nil, :foo),
+                                :bar,
+                                s(:call, nil, :baz))
         end
 
         it "works with brackets around a call with no brackets" do
-          result = parser.parse "foo.bar(baz qux)"
-          result.must_equal s(:call,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:call, nil, :baz,
-                                s(:call, nil, :qux)))
+          "foo.bar(baz qux)".
+            must_be_parsed_as s(:call,
+                                s(:call, nil, :foo),
+                                :bar,
+                                s(:call, nil, :baz,
+                                  s(:call, nil, :qux)))
         end
 
         it "works with nested calls without brackets" do
-          result = parser.parse "foo.bar baz qux"
-          result.must_equal s(:call,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:call, nil, :baz,
-                                s(:call, nil, :qux)))
+          "foo.bar baz qux".
+            must_be_parsed_as s(:call,
+                                s(:call, nil, :foo),
+                                :bar,
+                                s(:call, nil, :baz,
+                                  s(:call, nil, :qux)))
         end
       end
 
       describe "with blocks" do
         it "works for a do block" do
-          result = parser.parse "foo.bar do baz; end"
-          result.must_equal s(:iter,
-                              s(:call,
-                                s(:call, nil, :foo),
-                                :bar),
-                              s(:args),
-                              s(:call, nil, :baz))
+          "foo.bar do baz; end".
+            must_be_parsed_as s(:iter,
+                                s(:call,
+                                  s(:call, nil, :foo),
+                                  :bar),
+                                  s(:args),
+                                  s(:call, nil, :baz))
         end
 
         it "works for a do block with several statements" do
-          result = parser.parse "foo.bar do baz; qux; end"
-          result.must_equal s(:iter,
-                              s(:call,
-                                s(:call, nil, :foo),
-                                :bar),
-                              s(:args),
-                              s(:block,
-                                s(:call, nil, :baz),
-                                s(:call, nil, :qux)))
+          "foo.bar do baz; qux; end".
+            must_be_parsed_as s(:iter,
+                                s(:call,
+                                  s(:call, nil, :foo),
+                                  :bar),
+                                  s(:args),
+                                  s(:block,
+                                    s(:call, nil, :baz),
+                                    s(:call, nil, :qux)))
         end
       end
     end
 
     describe "for blocks" do
       it "works with no statements in the block body" do
-        result = parser.parse "foo do; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args))
+        "foo do; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args))
       end
 
       it "works with next with no arguments" do
-        result = parser.parse "foo do; next; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:next))
+        "foo do; next; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:next))
       end
 
       it "works with next with one argument" do
-        result = parser.parse "foo do; next bar; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:next, s(:call, nil, :bar)))
+        "foo do; next bar; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:next, s(:call, nil, :bar)))
       end
 
       it "works with next with several arguments" do
-        result = parser.parse "foo do; next bar, baz; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:next,
-                              s(:array,
-                                s(:call, nil, :bar),
-                                s(:call, nil, :baz))))
+        "foo do; next bar, baz; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:next,
+                                s(:array,
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz))))
       end
 
       it "works with break with no arguments" do
-        result = parser.parse "foo do; break; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:break))
+        "foo do; break; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:break))
       end
 
       it "works with break with one argument" do
-        result = parser.parse "foo do; break bar; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:break, s(:call, nil, :bar)))
+        "foo do; break bar; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:break, s(:call, nil, :bar)))
       end
 
       it "works with break with several arguments" do
-        result = parser.parse "foo do; break bar, baz; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:break,
-                              s(:array,
-                                s(:call, nil, :bar),
-                                s(:call, nil, :baz))))
+        "foo do; break bar, baz; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:break,
+                                s(:array,
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz))))
       end
 
       it "works with redo" do
-        result = parser.parse "foo do; redo; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args),
-                            s(:redo))
+        "foo do; redo; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args),
+                              s(:redo))
       end
 
       it "works with one argument" do
-        result = parser.parse "foo do |bar|; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args, :bar))
+        "foo do |bar|; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar))
       end
 
       it "works with multiple arguments" do
-        result = parser.parse "foo do |bar, baz|; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args, :bar, :baz))
+        "foo do |bar, baz|; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar, :baz))
       end
 
       it "works with a single splat argument" do
-        result = parser.parse "foo do |*bar|; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args, :"*bar"))
+        "foo do |*bar|; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :"*bar"))
       end
 
       it "works with a combination of regular arguments and a splat argument" do
-        result = parser.parse "foo do |bar, *baz|; end"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo),
-                            s(:args, :bar, :"*baz"))
+        "foo do |bar, *baz|; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar, :"*baz"))
       end
 
     end
 
     describe "for yield" do
       it "works with no arguments and no brackets" do
-        result = parser.parse "yield"
-        result.must_equal s(:yield)
+        "yield".
+          must_be_parsed_as s(:yield)
       end
 
       it "works with brackets but no arguments" do
-        result = parser.parse "yield()"
-        result.must_equal s(:yield)
+        "yield()".
+          must_be_parsed_as s(:yield)
       end
 
       it "works with one argument and no brackets" do
-        result = parser.parse "yield foo"
-        result.must_equal s(:yield, s(:call, nil, :foo))
+        "yield foo".
+          must_be_parsed_as s(:yield, s(:call, nil, :foo))
       end
 
       it "works with one argument and brackets" do
-        result = parser.parse "yield(foo)"
-        result.must_equal s(:yield, s(:call, nil, :foo))
+        "yield(foo)".
+          must_be_parsed_as s(:yield, s(:call, nil, :foo))
       end
 
       it "works with multiple arguments and no brackets" do
-        result = parser.parse "yield foo, bar"
-        result.must_equal s(:yield,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "yield foo, bar".
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "works with multiple arguments and brackets" do
-        result = parser.parse "yield(foo, bar)"
-        result.must_equal s(:yield,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "yield(foo, bar)".
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "works with splat" do
-        result = parser.parse "yield foo, *bar"
-        result.must_equal s(:yield,
-                            s(:call, nil, :foo),
-                            s(:splat, s(:call, nil, :bar)))
+        "yield foo, *bar".
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo),
+                              s(:splat, s(:call, nil, :bar)))
       end
     end
 
     describe "for literals" do
       it "works for symbols" do
-        result = parser.parse ":foo"
-        result.must_equal s(:lit, :foo)
+        ":foo".
+          must_be_parsed_as s(:lit, :foo)
       end
 
       it "works for symbols that look like instance variable names" do
-        result = parser.parse ":@foo"
-        result.must_equal s(:lit, :@foo)
+        ":@foo".
+          must_be_parsed_as s(:lit, :@foo)
       end
 
       it "works for empty strings" do
-        result = parser.parse "''"
-        result.must_equal s(:str, "")
+        "''".
+          must_be_parsed_as s(:str, "")
       end
 
       it "works for strings with escape sequences" do
-        result = parser.parse "\"\\n\""
-        result.must_equal s(:str, "\n")
+        "\"\\n\"".
+          must_be_parsed_as s(:str, "\n")
       end
 
       it "works for strings with useless escape sequences" do
-        result = parser.parse "\"F\\OO\""
-        result.must_equal s(:str, "FOO")
+        "\"F\\OO\"".
+          must_be_parsed_as s(:str, "FOO")
       end
 
       it "works for strings with escaped backslashes" do
-        result = parser.parse "\"\\\\n\""
-        result.must_equal s(:str, "\\n")
+        "\"\\\\n\"".
+          must_be_parsed_as s(:str, "\\n")
       end
 
       it "works for a double-quoted string representing a regex literal with escaped right bracket" do
-        result = parser.parse "\"/\\\\)/\""
-        result.must_equal s(:str, "/\\)/")
+        "\"/\\\\)/\"".
+          must_be_parsed_as s(:str, "/\\)/")
       end
 
       it "works for a double-quoted string containing a uselessly escaped right bracket" do
-        result = parser.parse "\"/\\)/\""
-        result.must_equal s(:str, "/)/")
+        "\"/\\)/\"".
+          must_be_parsed_as s(:str, "/)/")
       end
 
       it "works for a string containing escaped quotes" do
-        result = parser.parse "\"\\\"\""
-        result.must_equal s(:str, "\"")
+        "\"\\\"\"".
+          must_be_parsed_as s(:str, "\"")
       end
 
       it "works for trivial interpolated strings" do
-        result = parser.parse '"#{foo}"'
-        result.must_equal s(:dstr,
-                            "",
-                            s(:evstr,
-                              s(:call, nil, :foo)))
+        '"#{foo}"'.
+          must_be_parsed_as s(:dstr,
+                              "",
+                              s(:evstr,
+                                s(:call, nil, :foo)))
       end
 
       it "works for basic interpolated strings" do
-        result = parser.parse '"foo#{bar}"'
-        result.must_equal s(:dstr,
-                            "foo",
-                            s(:evstr,
-                              s(:call, nil, :bar)))
+        '"foo#{bar}"'.
+          must_be_parsed_as s(:dstr,
+                              "foo",
+                              s(:evstr,
+                                s(:call, nil, :bar)))
       end
 
       it "works for strings with several interpolations" do
-        result = parser.parse '"foo#{bar}baz#{qux}"'
-        result.must_equal s(:dstr,
-                            "foo",
-                            s(:evstr, s(:call, nil, :bar)),
-                            s(:str, "baz"),
-                            s(:evstr, s(:call, nil, :qux)))
+        '"foo#{bar}baz#{qux}"'.
+          must_be_parsed_as s(:dstr,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)),
+                              s(:str, "baz"),
+                              s(:evstr, s(:call, nil, :qux)))
       end
 
       it "works for strings with interpolations followed by escape sequences" do
-        result = parser.parse '"#{foo}\\n"'
-        result.must_equal  s(:dstr,
-                             "",
-                             s(:evstr, s(:call, nil, :foo)),
-                             s(:str, "\n"))
+        '"#{foo}\\n"'.
+          must_be_parsed_as  s(:dstr,
+                               "",
+                               s(:evstr, s(:call, nil, :foo)),
+                               s(:str, "\n"))
       end
 
       it "works for a simple regex literal" do
-        result = parser.parse "/foo/"
-        result.must_equal s(:lit, /foo/)
+        "/foo/".
+          must_be_parsed_as s(:lit, /foo/)
       end
 
       it "works for regex literals with escaped right bracket" do
-        result = parser.parse '/\\)/'
-        result.must_equal s(:lit, /\)/)
+        '/\\)/'.
+          must_be_parsed_as s(:lit, /\)/)
       end
 
       it "works for regex literals with escape sequences" do
-        result = parser.parse '/\\)\\n\\\\/'
-        result.must_equal s(:lit, /\)\n\\/)
+        '/\\)\\n\\\\/'.
+          must_be_parsed_as s(:lit, /\)\n\\/)
       end
 
       it "works for regexes with interpolations" do
-        result = parser.parse '/foo#{bar}baz/'
-        result.must_equal s(:dregx,
-                            "foo",
-                            s(:evstr, s(:call, nil, :bar)),
-                            s(:str, "baz"))
+        '/foo#{bar}baz/'.
+          must_be_parsed_as s(:dregx,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)),
+                              s(:str, "baz"))
       end
 
       it "works for a regex literal with the multiline flag" do
-        result = parser.parse "/foo/m"
-        result.must_equal s(:lit, /foo/m)
+        "/foo/m".
+          must_be_parsed_as s(:lit, /foo/m)
       end
 
       it "works for a regex literal with the extended flag" do
-        result = parser.parse "/foo/x"
-        result.must_equal s(:lit, /foo/x)
+        "/foo/x".
+          must_be_parsed_as s(:lit, /foo/x)
       end
 
       it "works for a regex literal with the ignorecase flag" do
-        result = parser.parse "/foo/i"
-        result.must_equal s(:lit, /foo/i)
+        "/foo/i".
+          must_be_parsed_as s(:lit, /foo/i)
       end
 
       it "works for a regex literal with a combination of flags" do
-        result = parser.parse "/foo/ixm"
-        result.must_equal s(:lit, /foo/ixm)
+        "/foo/ixm".
+          must_be_parsed_as s(:lit, /foo/ixm)
       end
 
       it "works for a regex literal with flags and interpolation" do
-        result = parser.parse '/foo#{bar}/ixm'
-        result.must_equal s(:dregx,
-                            "foo",
-                            s(:evstr, s(:call, nil, :bar)),
-                            7)
+        '/foo#{bar}/ixm'.
+          must_be_parsed_as s(:dregx,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)),
+                              7)
       end
 
       it "works for a regex literal with interpolate-once flag" do
-        result = parser.parse '/foo#{bar}/o'
-        result.must_equal s(:dregx_once,
-                            "foo",
-                            s(:evstr, s(:call, nil, :bar)))
+        '/foo#{bar}/o'.
+          must_be_parsed_as s(:dregx_once,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for simple dsyms" do
-        result = parser.parse ':"foo"'
-        result.must_equal s(:lit, :foo)
+        ':"foo"'.
+          must_be_parsed_as s(:lit, :foo)
       end
 
       it "works for dsyms with interpolations" do
-        result = parser.parse ':"foo#{bar}"'
-        result.must_equal s(:dsym,
-                            "foo",
-                            s(:evstr, s(:call, nil, :bar)))
+        ':"foo#{bar}"'.
+          must_be_parsed_as s(:dsym,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for character literals (which are string literals in Ruby 1.9.3)" do
-        result = parser.parse "?a"
-        result.must_equal s(:str, "a")
+        "?a".
+          must_be_parsed_as s(:str, "a")
       end
 
       it "works for character literals in extra compatible mode" do
         # TODO: Remove #extra_compatible, which now does nothing.
         parser.extra_compatible = true
-        result = parser.parse "?a"
-        result.must_equal s(:str, "a")
+        "?a".
+          must_be_parsed_as s(:str, "a")
       end
 
       it "works for escaped character literals" do
-        result = parser.parse '?\n'
-        result.must_equal s(:str, "\n")
+        '?\n'.
+          must_be_parsed_as s(:str, "\n")
       end
 
       it "works for basic backtick strings" do
-        result = parser.parse '`foo`'
-        result.must_equal s(:xstr, "foo")
+        '`foo`'.
+          must_be_parsed_as s(:xstr, "foo")
       end
 
       it "works for interpolated backtick strings" do
-        result = parser.parse '`foo#{bar}`'
-        result.must_equal s(:dxstr,
-                            "foo",
-                            s(:evstr, s(:call, nil, :bar)))
+        '`foo#{bar}`'.
+          must_be_parsed_as s(:dxstr,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for backtick strings with escape sequences" do
-        result = parser.parse '`foo\\n`'
-        result.must_equal s(:xstr, "foo\n")
+        '`foo\\n`'.
+          must_be_parsed_as s(:xstr, "foo\n")
       end
-
     end
 
     describe "for the __FILE__ keyword" do
       describe "when not passing a file name" do
         it "creates a string sexp with value '(string)'" do
-          result = parser.parse "__FILE__"
-          result.must_equal s(:str, "(string)")
+          "__FILE__".
+            must_be_parsed_as s(:str, "(string)")
         end
       end
 
@@ -1188,24 +1187,24 @@ describe RipperRubyParser::Parser do
 
     describe "for the __LINE__ keyword" do
       it "creates a literal sexp with value of the line number" do
-        result = parser.parse "__LINE__"
-        result.must_equal s(:lit, 1)
-        result = parser.parse "\n__LINE__"
-        result.must_equal s(:lit, 2)
+        "__LINE__".
+          must_be_parsed_as s(:lit, 1)
+        "\n__LINE__".
+          must_be_parsed_as s(:lit, 2)
       end
     end
 
     describe "for constant lookups" do
       it "works when explicitely starting from the root namespace" do
-        result = parser.parse "::Foo"
-        result.must_equal s(:colon3, :Foo)
+        "::Foo".
+          must_be_parsed_as s(:colon3, :Foo)
       end
 
       it "works with a three-level constant lookup" do
-        result = parser.parse "Foo::Bar::Baz"
-        result.must_equal s(:colon2,
-                            s(:colon2, s(:const, :Foo), :Bar),
-                            :Baz)
+        "Foo::Bar::Baz".
+          must_be_parsed_as s(:colon2,
+                              s(:colon2, s(:const, :Foo), :Bar),
+                              :Baz)
       end
 
       it "works looking up a constant in a non-constant" do
@@ -1217,488 +1216,487 @@ describe RipperRubyParser::Parser do
 
     describe "for variable references" do
       it "works for self" do
-        result = parser.parse "self"
-        result.must_equal s(:self)
+        "self".
+          must_be_parsed_as s(:self)
       end
 
       it "works for instance variables" do
-        result = parser.parse "@foo"
-        result.must_equal s(:ivar, :@foo)
+        "@foo".
+          must_be_parsed_as s(:ivar, :@foo)
       end
 
       it "works for global variables" do
-        result = parser.parse "$foo"
-        result.must_equal s(:gvar, :$foo)
+        "$foo".
+          must_be_parsed_as s(:gvar, :$foo)
       end
 
       it "works for regexp match references" do
-        result = parser.parse "$1"
-        result.must_equal s(:nth_ref, 1)
+        "$1".
+          must_be_parsed_as s(:nth_ref, 1)
       end
 
       specify { "$'".must_be_parsed_as s(:back_ref, :"'") }
       specify { "$&".must_be_parsed_as s(:back_ref, :"&") }
 
       it "works for class variables" do
-        result = parser.parse "@@foo"
-        result.must_equal s(:cvar, :@@foo)
+        "@@foo".
+          must_be_parsed_as s(:cvar, :@@foo)
       end
     end
 
     describe "for single assignment" do
       it "works when assigning to an instance variable" do
-        result = parser.parse "@foo = bar"
-        result.must_equal s(:iasgn,
-                            :@foo,
-                            s(:call, nil, :bar))
+        "@foo = bar".
+          must_be_parsed_as s(:iasgn,
+                              :@foo,
+                              s(:call, nil, :bar))
       end
 
       it "works when assigning to a constant" do
-        result = parser.parse "FOO = bar"
-        result.must_equal s(:cdecl,
-                            :FOO,
-                            s(:call, nil, :bar))
+        "FOO = bar".
+          must_be_parsed_as s(:cdecl,
+                              :FOO,
+                              s(:call, nil, :bar))
       end
 
       it "works when assigning to a collection element" do
-        result = parser.parse "foo[bar] = baz"
-        result.must_equal s(:attrasgn,
-                            s(:call, nil, :foo),
-                            :[]=,
-                            s(:call, nil, :bar),
-                            s(:call, nil, :baz))
+        "foo[bar] = baz".
+          must_be_parsed_as s(:attrasgn,
+                              s(:call, nil, :foo),
+                              :[]=,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
       end
 
       it "works when assigning to an attribute" do
-        result = parser.parse "foo.bar = baz"
-        result.must_equal s(:attrasgn,
-                            s(:call, nil, :foo),
-                            :bar=,
-                            s(:call, nil, :baz))
+        "foo.bar = baz".
+          must_be_parsed_as s(:attrasgn,
+                              s(:call, nil, :foo),
+                              :bar=,
+                              s(:call, nil, :baz))
       end
 
       it "works when assigning to a class variable" do
-        result = parser.parse "@@foo = bar"
-        result.must_equal s(:cvdecl,
-                            :@@foo,
-                            s(:call, nil, :bar))
+        "@@foo = bar".
+          must_be_parsed_as s(:cvdecl,
+                              :@@foo,
+                              s(:call, nil, :bar))
       end
 
       it "works when assigning to a class variable inside a method" do
-        result = parser.parse "def foo; @@bar = baz; end"
-        result.must_equal s(:defn,
-                            :foo, s(:args),
-                            s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+        "def foo; @@bar = baz; end".
+          must_be_parsed_as s(:defn,
+                              :foo, s(:args),
+                              s(:cvasgn, :@@bar, s(:call, nil, :baz)))
       end
 
       it "works when assigning to a class variable inside a method with a receiver" do
-        result = parser.parse "def self.foo; @@bar = baz; end"
-        result.must_equal s(:defs,
-                            s(:self),
-                            :foo, s(:args),
-                            s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+        "def self.foo; @@bar = baz; end".
+          must_be_parsed_as s(:defs,
+                              s(:self),
+                              :foo, s(:args),
+                              s(:cvasgn, :@@bar, s(:call, nil, :baz)))
       end
 
       it "works when assigning to a global variable" do
-        result = parser.parse "$foo = bar"
-        result.must_equal s(:gasgn,
-                            :$foo,
-                            s(:call, nil, :bar))
+        "$foo = bar".
+          must_be_parsed_as s(:gasgn,
+                              :$foo,
+                              s(:call, nil, :bar))
       end
     end
 
     describe "for operator assignment" do
       it "works with +=" do
-        result = parser.parse "foo += bar"
-        result.must_equal s(:lasgn,
-                            :foo,
-                            s(:call,
-                              s(:lvar, :foo),
-                              :+,
-                              s(:call, nil, :bar)))
+        "foo += bar".
+          must_be_parsed_as s(:lasgn,
+                              :foo,
+                              s(:call,
+                                s(:lvar, :foo),
+                                :+,
+                                s(:call, nil, :bar)))
       end
 
       it "works with -=" do
-        result = parser.parse "foo -= bar"
-        result.must_equal s(:lasgn,
-                            :foo,
-                            s(:call,
-                              s(:lvar, :foo),
-                              :-,
-                              s(:call, nil, :bar)))
+        "foo -= bar".
+          must_be_parsed_as s(:lasgn,
+                              :foo,
+                              s(:call,
+                                s(:lvar, :foo),
+                                :-,
+                                s(:call, nil, :bar)))
       end
 
       it "works with ||=" do
-        result = parser.parse "foo ||= bar"
-        result.must_equal s(:op_asgn_or,
-                            s(:lvar, :foo),
-                            s(:lasgn, :foo,
-                              s(:call, nil, :bar)))
+        "foo ||= bar".
+          must_be_parsed_as s(:op_asgn_or,
+                              s(:lvar, :foo),
+                              s(:lasgn, :foo,
+                                s(:call, nil, :bar)))
       end
 
       it "works when assigning to an instance variable" do
-        result = parser.parse "@foo += bar"
-        result.must_equal s(:iasgn,
-                            :@foo,
-                            s(:call,
-                              s(:ivar, :@foo),
-                              :+,
-                              s(:call, nil, :bar)))
+        "@foo += bar".
+          must_be_parsed_as s(:iasgn,
+                              :@foo,
+                              s(:call,
+                                s(:ivar, :@foo),
+                                :+,
+                                s(:call, nil, :bar)))
       end
 
       it "works when assigning to a collection element" do
-        result = parser.parse "foo[bar] += baz"
-        result.must_equal s(:op_asgn1,
-                            s(:call, nil, :foo),
-                            s(:arglist, s(:call, nil, :bar)),
-                            :+,
-                            s(:call, nil, :baz))
+        "foo[bar] += baz".
+          must_be_parsed_as s(:op_asgn1,
+                              s(:call, nil, :foo),
+                              s(:arglist, s(:call, nil, :bar)),
+                              :+,
+                              s(:call, nil, :baz))
       end
 
       it "works with ||= when assigning to a collection element" do
-        result = parser.parse "foo[bar] ||= baz"
-        result.must_equal s(:op_asgn1,
-                            s(:call, nil, :foo),
-                            s(:arglist, s(:call, nil, :bar)),
-                            :"||",
-                            s(:call, nil, :baz))
+        "foo[bar] ||= baz".
+          must_be_parsed_as s(:op_asgn1,
+                              s(:call, nil, :foo),
+                              s(:arglist, s(:call, nil, :bar)),
+                              :"||",
+                              s(:call, nil, :baz))
       end
 
       it "works when assigning to an attribute" do
-        result = parser.parse "foo.bar += baz"
-        result.must_equal s(:op_asgn2,
-                            s(:call, nil, :foo),
-                            :bar=,
-                            :+,
-                            s(:call, nil, :baz))
+        "foo.bar += baz".
+          must_be_parsed_as s(:op_asgn2,
+                              s(:call, nil, :foo),
+                              :bar=,
+                              :+,
+                              s(:call, nil, :baz))
       end
 
       it "works with ||= when assigning to an attribute" do
-        result = parser.parse "foo.bar ||= baz"
-        result.must_equal s(:op_asgn2,
-                            s(:call, nil, :foo),
-                            :bar=,
-                            :"||",
-                            s(:call, nil, :baz))
+        "foo.bar ||= baz".
+          must_be_parsed_as s(:op_asgn2,
+                              s(:call, nil, :foo),
+                              :bar=,
+                              :"||",
+                              s(:call, nil, :baz))
       end
     end
 
     describe "for multiple assignment" do
       it "works the same number of items on each side" do
-        result = parser.parse "foo, bar = baz, qux"
-        result.must_equal s(:masgn,
-                            s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                            s(:array,
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux)))
+        "foo, bar = baz, qux".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                              s(:array,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)))
       end
 
       it "works with a single item on the right-hand side" do
-        result = parser.parse "foo, bar = baz"
-        result.must_equal s(:masgn,
-                            s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                            s(:to_ary,
-                              s(:call, nil, :baz)))
+        "foo, bar = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                              s(:to_ary,
+                                s(:call, nil, :baz)))
       end
 
       it "works with left-hand splat" do
-        result = parser.parse "foo, *bar = baz, qux"
-        result.must_equal s(:masgn,
-                            s(:array, s(:lasgn, :foo), s(:splat, s(:lasgn, :bar))),
-                            s(:array,
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux)))
+        "foo, *bar = baz, qux".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:lasgn, :foo), s(:splat, s(:lasgn, :bar))),
+                              s(:array,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)))
       end
 
       it "works with brackets around the left-hand side" do
-        result = parser.parse "(foo, bar) = baz"
-        result.must_equal s(:masgn,
-                            s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                            s(:to_ary, s(:call, nil, :baz)))
+        "(foo, bar) = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                              s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with complex destructuring" do
-        result = parser.parse "foo, (bar, baz) = qux"
-        result.must_equal s(:masgn,
-                            s(:array,
-                              s(:lasgn, :foo),
-                              s(:masgn,
-                                s(:array, s(:lasgn, :bar), s(:lasgn, :baz)))),
-                            s(:to_ary, s(:call, nil, :qux)))
+        "foo, (bar, baz) = qux".
+          must_be_parsed_as s(:masgn,
+                              s(:array,
+                                s(:lasgn, :foo),
+                                s(:masgn,
+                                  s(:array, s(:lasgn, :bar), s(:lasgn, :baz)))),
+                              s(:to_ary, s(:call, nil, :qux)))
       end
 
       it "works with complex destructuring of the value" do
-        result = parser.parse "foo, (bar, baz) = [qux, [quz, quuz]]"
-        result.must_equal s(:masgn,
-                            s(:array,
-                              s(:lasgn, :foo),
-                              s(:masgn, s(:array, s(:lasgn, :bar), s(:lasgn, :baz)))),
-                            s(:to_ary,
+        "foo, (bar, baz) = [qux, [quz, quuz]]".
+          must_be_parsed_as s(:masgn,
                               s(:array,
-                                s(:call, nil, :qux),
-                                s(:array, s(:call, nil, :quz), s(:call, nil, :quuz)))))
+                                s(:lasgn, :foo),
+                                s(:masgn, s(:array, s(:lasgn, :bar), s(:lasgn, :baz)))),
+                              s(:to_ary,
+                                s(:array,
+                                  s(:call, nil, :qux),
+                                  s(:array, s(:call, nil, :quz), s(:call, nil, :quuz)))))
       end
 
       it "works with instance variables" do
-        result = parser.parse "@foo, @bar = baz"
-        result.must_equal s(:masgn,
-                            s(:array, s(:iasgn, :@foo), s(:iasgn, :@bar)),
-                            s(:to_ary, s(:call, nil, :baz)))
+        "@foo, @bar = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:iasgn, :@foo), s(:iasgn, :@bar)),
+                              s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with class variables" do
-        result = parser.parse "@@foo, @@bar = baz"
-        result.must_equal s(:masgn,
-                            s(:array, s(:cvdecl, :@@foo), s(:cvdecl, :@@bar)),
-                            s(:to_ary, s(:call, nil, :baz)))
+        "@@foo, @@bar = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:cvdecl, :@@foo), s(:cvdecl, :@@bar)),
+                              s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with attributes" do
-        result = parser.parse "foo.bar, foo.baz = qux"
-        result.must_equal s(:masgn,
-                            s(:array,
-                              s(:attrasgn, s(:call, nil, :foo), :bar=),
-                              s(:attrasgn, s(:call, nil, :foo), :baz=)),
-                            s(:to_ary, s(:call, nil, :qux)))
+        "foo.bar, foo.baz = qux".
+          must_be_parsed_as s(:masgn,
+                              s(:array,
+                                s(:attrasgn, s(:call, nil, :foo), :bar=),
+                                s(:attrasgn, s(:call, nil, :foo), :baz=)),
+                              s(:to_ary, s(:call, nil, :qux)))
       end
 
       it "works with collection elements" do
-        result = parser.parse "foo[1], bar[2] = baz"
-        result.must_equal s(:masgn,
-                            s(:array,
-                              s(:attrasgn,
-                                s(:call, nil, :foo), :[]=, s(:lit, 1)),
-                              s(:attrasgn,
-                                s(:call, nil, :bar), :[]=, s(:lit, 2))),
-                            s(:to_ary, s(:call, nil, :baz)))
+        "foo[1], bar[2] = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array,
+                                s(:attrasgn,
+                                  s(:call, nil, :foo), :[]=, s(:lit, 1)),
+                                s(:attrasgn,
+                                  s(:call, nil, :bar), :[]=, s(:lit, 2))),
+                              s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with constants" do
-        result = parser.parse "Foo, Bar = baz"
-        result.must_equal s(:masgn,
-                            s(:array, s(:cdecl, :Foo), s(:cdecl, :Bar)),
-                            s(:to_ary, s(:call, nil, :baz)))
+        "Foo, Bar = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:cdecl, :Foo), s(:cdecl, :Bar)),
+                              s(:to_ary, s(:call, nil, :baz)))
       end
 
       it "works with instance variables and splat" do
-        result = parser.parse "@foo, *@bar = baz"
-        result.must_equal s(:masgn,
-                            s(:array,
-                              s(:iasgn, :@foo),
-                              s(:splat, s(:iasgn, :@bar))),
-                            s(:to_ary,
-                              s(:call, nil, :baz)))
+        "@foo, *@bar = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array,
+                                s(:iasgn, :@foo),
+                                s(:splat, s(:iasgn, :@bar))),
+                              s(:to_ary,
+                                s(:call, nil, :baz)))
       end
-
     end
 
     describe "for operators" do
       it "handles :and" do
-        result = parser.parse "foo and bar"
-        result.must_equal s(:and,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "foo and bar".
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "handles double :and" do
-        result = parser.parse "foo and bar and baz"
-        result.must_equal s(:and,
-                            s(:call, nil, :foo),
-                            s(:and,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz)))
+        "foo and bar and baz".
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:and,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
       end
 
       it "handles :or" do
-        result = parser.parse "foo or bar"
-        result.must_equal s(:or,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "foo or bar".
+          must_be_parsed_as s(:or,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "handles double :or" do
-        result = parser.parse "foo or bar or baz"
-        result.must_equal s(:or,
-                            s(:call, nil, :foo),
-                            s(:or,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz)))
+        "foo or bar or baz".
+          must_be_parsed_as s(:or,
+                              s(:call, nil, :foo),
+                              s(:or,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
       end
 
       it "handles :or after :and" do
-        result = parser.parse "foo and bar or baz"
-        result.must_equal s(:or,
-                            s(:and,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar)),
-                            s(:call, nil, :baz))
+        "foo and bar or baz".
+          must_be_parsed_as s(:or,
+                              s(:and,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
       end
 
       it "handles :and after :or" do
-        result = parser.parse "foo or bar and baz"
-        result.must_equal s(:and,
-                            s(:or,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar)),
-                            s(:call, nil, :baz))
+        "foo or bar and baz".
+          must_be_parsed_as s(:and,
+                              s(:or,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
       end
 
       it "converts :&& to :and" do
-        result = parser.parse "foo && bar"
-        result.must_equal s(:and,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "foo && bar".
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "converts :|| to :or" do
-        result = parser.parse "foo || bar"
-        result.must_equal s(:or,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "foo || bar".
+          must_be_parsed_as s(:or,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "handles :!=" do
-        result = parser.parse "foo != bar"
-        result.must_equal s(:call,
-                            s(:call, nil, :foo),
-                            :!=,
-                            s(:call, nil, :bar))
+        "foo != bar".
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :!=,
+                              s(:call, nil, :bar))
       end
 
       it "handles :=~ with two non-literals" do
-        result = parser.parse "foo =~ bar"
-        result.must_equal s(:call,
-                            s(:call, nil, :foo),
-                            :=~,
-                            s(:call, nil, :bar))
+        "foo =~ bar".
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :=~,
+                              s(:call, nil, :bar))
       end
 
       it "handles :=~ with literal regexp on the left hand side" do
-        result = parser.parse "/foo/ =~ bar"
-        result.must_equal s(:match2,
-                            s(:lit, /foo/),
-                            s(:call, nil, :bar))
+        "/foo/ =~ bar".
+          must_be_parsed_as s(:match2,
+                              s(:lit, /foo/),
+                              s(:call, nil, :bar))
       end
 
       it "handles :=~ with literal regexp on the right hand side" do
-        result = parser.parse "foo =~ /bar/"
-        result.must_equal s(:match3,
-                            s(:lit, /bar/),
-                            s(:call, nil, :foo))
+        "foo =~ /bar/".
+          must_be_parsed_as s(:match3,
+                              s(:lit, /bar/),
+                              s(:call, nil, :foo))
       end
 
       it "handles unary minus with a number literal" do
-        result = parser.parse "-1"
-        result.must_equal s(:lit, -1)
+        "-1".
+          must_be_parsed_as s(:lit, -1)
       end
 
       it "handles unary minus with a non-literal" do
-        result = parser.parse "-foo"
-        result.must_equal s(:call,
-                            s(:call, nil, :foo),
-                            :-@)
+        "-foo".
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :-@)
       end
 
       it "handles unary plus with a number literal" do
-        result = parser.parse "+ 1"
-        result.must_equal s(:lit, 1)
+        "+ 1".
+          must_be_parsed_as s(:lit, 1)
       end
 
       it "handles unary plus with a non-literal" do
-        result = parser.parse "+ foo"
-        result.must_equal s(:call,
-                            s(:call, nil, :foo),
-                            :+@)
+        "+ foo".
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :+@)
       end
 
       it "handles unary !" do
-        result = parser.parse "!foo"
-        result.must_equal s(:call, s(:call, nil, :foo), :!)
+        "!foo".
+          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
       end
 
       it "converts :not to :!" do
-        result = parser.parse "not foo"
-        result.must_equal s(:call, s(:call, nil, :foo), :!)
+        "not foo".
+          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
       end
 
       it "handles unary ! with a number literal" do
-        result = parser.parse "!1"
-        result.must_equal s(:call, s(:lit, 1), :!)
+        "!1".
+          must_be_parsed_as s(:call, s(:lit, 1), :!)
       end
 
       it "handles the range operator with positive number literals" do
-        result = parser.parse "1..2"
-        result.must_equal s(:lit, 1..2)
+        "1..2".
+          must_be_parsed_as s(:lit, 1..2)
       end
 
       it "handles the range operator with negative number literals" do
-        result = parser.parse "-1..-2"
-        result.must_equal s(:lit, -1..-2)
+        "-1..-2".
+          must_be_parsed_as s(:lit, -1..-2)
       end
 
       it "handles the range operator with string literals" do
-        result = parser.parse "'a'..'z'"
-        result.must_equal s(:dot2,
-                            s(:str, "a"),
-                            s(:str, "z"))
+        "'a'..'z'".
+          must_be_parsed_as s(:dot2,
+                              s(:str, "a"),
+                              s(:str, "z"))
       end
 
       it "handles the range operator with non-literals" do
-        result = parser.parse "foo..bar"
-        result.must_equal s(:dot2,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "foo..bar".
+          must_be_parsed_as s(:dot2,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "handles the exclusive range operator with positive number literals" do
-        result = parser.parse "1...2"
-        result.must_equal s(:lit, 1...2)
+        "1...2".
+          must_be_parsed_as s(:lit, 1...2)
       end
 
       it "handles the exclusive range operator with negative number literals" do
-        result = parser.parse "-1...-2"
-        result.must_equal s(:lit, -1...-2)
+        "-1...-2".
+          must_be_parsed_as s(:lit, -1...-2)
       end
 
       it "handles the exclusive range operator with string literals" do
-        result = parser.parse "'a'...'z'"
-        result.must_equal s(:dot3,
-                            s(:str, "a"),
-                            s(:str, "z"))
+        "'a'...'z'".
+          must_be_parsed_as s(:dot3,
+                              s(:str, "a"),
+                              s(:str, "z"))
       end
 
       it "handles the exclusive range operator with non-literals" do
-        result = parser.parse "foo...bar"
-        result.must_equal s(:dot3,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar))
+        "foo...bar".
+          must_be_parsed_as s(:dot3,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
 
       it "handles the ternary operator" do
-        result = parser.parse "foo ? bar : baz"
-        result.must_equal s(:if,
-                            s(:call, nil, :foo),
-                            s(:call, nil, :bar),
-                            s(:call, nil, :baz))
+        "foo ? bar : baz".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
       end
     end
 
     describe "for expressions" do
       it "handles assignment inside binary operator expressions" do
-        result = parser.parse "foo + (bar = baz)"
-        result.must_equal s(:call,
-                            s(:call, nil, :foo),
-                            :+,
-                            s(:lasgn,
-                              :bar,
-                              s(:call, nil, :baz)))
+        "foo + (bar = baz)".
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :+,
+                              s(:lasgn,
+                                :bar,
+                                s(:call, nil, :baz)))
       end
 
       it "handles assignment inside unary operator expressions" do
-        result = parser.parse "+(foo = bar)"
-        result.must_equal s(:call,
-                            s(:lasgn, :foo, s(:call, nil, :bar)),
-                            :+@)
+        "+(foo = bar)".
+          must_be_parsed_as s(:call,
+                              s(:lasgn, :foo, s(:call, nil, :bar)),
+                              :+@)
       end
     end
 
