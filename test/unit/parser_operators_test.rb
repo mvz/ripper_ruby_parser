@@ -70,6 +70,33 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar))
       end
 
+      it "handles :|| after :&&" do
+        "foo && bar || baz".
+          must_be_parsed_as s(:or,
+                              s(:and,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
+      end
+
+      it "handles :&& after :||" do
+        "foo || bar && baz".
+          must_be_parsed_as s(:or,
+                              s(:call, nil, :foo),
+                              s(:and,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
+      end
+
+      it "handles bracketed :||" do
+        "(foo || bar) || baz".
+          must_be_parsed_as s(:or,
+                              s(:or,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
+      end
+
       it "converts :|| to :or" do
         "foo || bar".
           must_be_parsed_as s(:or,

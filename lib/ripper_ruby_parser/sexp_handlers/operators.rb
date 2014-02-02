@@ -30,7 +30,11 @@ module RipperRubyParser
         elsif (mapped = NEGATED_BINARY_OPERATOR_MAP[op])
           s(:not, process(s(:binary, left, mapped, right)))
         elsif (mapped = BINARY_OPERATOR_MAP[op])
-          rebalance_binary(s(mapped, process(left), process(right)))
+          if left.first == :paren
+            s(mapped, process(left), process(right))
+          else
+            rebalance_binary(s(mapped, process(left), process(right)))
+          end
         else
           s(:call, process(left), op, process(right))
         end
