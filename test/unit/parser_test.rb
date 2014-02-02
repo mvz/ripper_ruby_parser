@@ -139,52 +139,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe "for a case block" do
-      it "works with a single when clause" do
-        "case foo; when bar; baz; end".
-          must_be_parsed_as s(:case,
-                              s(:call, nil, :foo),
-                              s(:when,
-                                s(:array, s(:call, nil, :bar)),
-                                s(:call, nil, :baz)),
-                              nil)
-      end
-
-      it "works with multiple when clauses" do
-        "case foo; when bar; baz; when qux; quux; end".
-          must_be_parsed_as s(:case,
-                              s(:call, nil, :foo),
-                              s(:when,
-                                s(:array, s(:call, nil, :bar)),
-                                s(:call, nil, :baz)),
-                              s(:when,
-                                s(:array, s(:call, nil, :qux)),
-                                s(:call, nil, :quux)),
-                              nil)
-      end
-
-      it "works with multiple statements in the when block" do
-        "case foo; when bar; baz; qux; end".
-          must_be_parsed_as s(:case,
-                              s(:call, nil, :foo),
-                              s(:when,
-                                s(:array, s(:call, nil, :bar)),
-                                s(:call, nil, :baz),
-                                s(:call, nil, :qux)),
-                              nil)
-      end
-
-      it "works with an else clause" do
-        "case foo; when bar; baz; else; qux; end".
-          must_be_parsed_as s(:case,
-                              s(:call, nil, :foo),
-                              s(:when,
-                                s(:array, s(:call, nil, :bar)),
-                                s(:call, nil, :baz)),
-                              s(:call, nil, :qux))
-      end
-    end
-
     describe "for the return statement" do
       it "works with no arguments" do
         "return".
