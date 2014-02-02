@@ -1629,6 +1629,31 @@ describe RipperRubyParser::Parser do
         result.comments.must_equal "# Foo\n# Bar\n"
       end
 
+      it "drops comments inside method bodies" do
+        result = parser.parse <<-END
+          # Foo
+          class Foo
+            # foo
+            def foo
+              bar # this is dropped
+            end
+
+            # bar
+            def bar
+              baz
+            end
+          end
+        END
+        result.must_equal s(:class,
+                            :Foo,
+                            nil,
+                            s(:defn, :foo, s(:args), s(:call, nil, :bar)),
+                            s(:defn, :bar, s(:args), s(:call, nil, :baz)))
+        result.comments.must_equal "# Foo\n"
+        result[3].comments.must_equal "# foo\n"
+        result[4].comments.must_equal "# bar\n"
+      end
+
       it "handles the use of symbols that are keywords" do
         result = parser.parse "# Foo\ndef bar\n:class\nend"
         result.must_equal s(:defn,

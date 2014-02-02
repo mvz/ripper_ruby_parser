@@ -101,6 +101,7 @@ module RipperRubyParser
     def commentize name, exp
       raise "Comment stack empty in #{name} event" if @comment_stack.empty?
       tok, comment = @comment_stack.pop
+      @comment = nil
       unless tok == name
         raise "Expected on_#{tok} event, got on_#{name}"
       end
