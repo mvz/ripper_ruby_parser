@@ -57,7 +57,7 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :qux))
       end
 
-      it "works with an empty when clause" do
+      it "works with an empty when block" do
         "case foo; when bar; end".
           must_be_parsed_as s(:case,
                               s(:call, nil, :foo),
@@ -65,13 +65,13 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
-      it "emulates RubyParser's strange handling of splat" do
+      it "worrks with a splat in the when clause" do
         "case foo; when *bar; baz; end".
-          must_be_parsed_as s(:case, s(:call, nil, :foo),
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
                               s(:when,
                                 s(:array,
-                                  s(:when, s(:call, nil, :bar),
-                                  nil)),
+                                  s(:splat, s(:call, nil, :bar))),
                                 s(:call, nil, :baz)),
                               nil)
 
