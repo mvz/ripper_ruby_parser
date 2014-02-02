@@ -2,6 +2,24 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   describe "#parse" do
+    describe "for regular if" do
+      it "handles bare regex literal in condition" do
+        "if /foo/; bar; end".
+          must_be_parsed_as s(:if,
+                              s(:match, s(:lit, /foo/)),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+
+      it "handles interpolated regex in condition" do
+        'if /#{foo}/; bar; end'.
+          must_be_parsed_as s(:if,
+                              s(:dregx, "", s(:evstr, s(:call, nil, :foo))),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+    end
+
     describe "for postfix if" do
       it "handles negative conditions" do
         "foo if not bar".
@@ -9,6 +27,58 @@ describe RipperRubyParser::Parser do
                               s(:call, s(:call, nil, :bar), :!),
                               s(:call, nil, :foo),
                               nil)
+      end
+
+      it "handles bare regex literal in condition" do
+        "foo if /bar/".
+          must_be_parsed_as s(:if,
+                              s(:match, s(:lit, /bar/)),
+                              s(:call, nil, :foo),
+                              nil)
+      end
+
+      it "handles interpolated regex in condition" do
+        'foo if /#{bar}/'.
+          must_be_parsed_as s(:if,
+                              s(:dregx, "", s(:evstr, s(:call, nil, :bar))),
+                              s(:call, nil, :foo),
+                              nil)
+      end
+    end
+
+    describe "for regular unless" do
+      it "handles bare regex literal in condition" do
+        "unless /foo/; bar; end".
+          must_be_parsed_as s(:if,
+                              s(:match, s(:lit, /foo/)),
+                              nil,
+                              s(:call, nil, :bar))
+      end
+
+      it "handles interpolated regex in condition" do
+        'unless /#{foo}/; bar; end'.
+          must_be_parsed_as s(:if,
+                              s(:dregx, "", s(:evstr, s(:call, nil, :foo))),
+                              nil,
+                              s(:call, nil, :bar))
+      end
+    end
+
+    describe "for postfix unless" do
+      it "handles bare regex literal in condition" do
+        "foo unless /bar/".
+          must_be_parsed_as s(:if,
+                              s(:match, s(:lit, /bar/)),
+                              nil,
+                              s(:call, nil, :foo))
+      end
+
+      it "handles interpolated regex in condition" do
+        'foo unless /#{bar}/'.
+          must_be_parsed_as s(:if,
+                              s(:dregx, "", s(:evstr, s(:call, nil, :bar))),
+                              nil,
+                              s(:call, nil, :foo))
       end
     end
 

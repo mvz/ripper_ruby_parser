@@ -4,7 +4,7 @@ module RipperRubyParser
       def process_if exp
         _, cond, truepart, falsepart = exp.shift 4
 
-        s(:if, process(cond),
+        s(:if, handle_condition(cond),
           handle_statement_list(truepart),
           process(falsepart))
       end
@@ -19,18 +19,18 @@ module RipperRubyParser
 
       def process_if_mod exp
         _, cond, truepart = exp.shift 3
-        s(:if, process(cond), process(truepart), nil)
+        s(:if, handle_condition(cond), process(truepart), nil)
       end
 
       def process_unless_mod exp
         _, cond, truepart = exp.shift 3
-        s(:if, process(cond), nil, process(truepart))
+        s(:if, handle_condition(cond), nil, process(truepart))
       end
 
       def process_unless exp
         _, cond, truepart, falsepart = exp.shift 4
         s(:if,
-          process(cond),
+          handle_condition(cond),
           process(falsepart),
           handle_statement_list(truepart))
       end
@@ -67,6 +67,17 @@ module RipperRubyParser
         _, body = exp.shift 2
         handle_statement_list body
       end
+
+      private
+
+      def handle_condition(cond)
+        cond = process(cond)
+        if (cond.sexp_type == :lit) && cond[1].is_a?(Regexp)
+          cond = s(:match, cond)
+        end
+        return cond
+      end
+
     end
   end
 end
