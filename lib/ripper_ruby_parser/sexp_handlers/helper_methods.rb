@@ -24,9 +24,7 @@ module RipperRubyParser
       end
 
       def handle_statement_list exp
-        statements = map_body exp
-
-        wrap_in_block(statements)
+        wrap_in_block(map_body(exp))
       end
 
       def extract_node_symbol_with_position exp
