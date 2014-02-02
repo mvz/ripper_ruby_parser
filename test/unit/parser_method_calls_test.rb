@@ -22,6 +22,11 @@ describe RipperRubyParser::Parser do
                               s(:splat, s(:call, nil, :bar)),
                               s(:block_pass, s(:call, nil, :baz))) }
     end
+
+    it "handles calling a proc" do
+      "foo.()".
+        must_be_parsed_as s(:call, s(:call, nil, :foo), :call)
+    end
   end
 end
 
