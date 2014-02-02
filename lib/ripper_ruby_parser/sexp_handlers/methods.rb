@@ -64,13 +64,11 @@ module RipperRubyParser
       end
 
       def process_alias exp
-        _, *args = exp.shift 3
+        _, left, right = exp.shift 3
 
-        args.map! do |sub_exp|
-          make_method_name_literal sub_exp
-        end
-
-        s(:alias, *args)
+        s(:alias,
+          make_method_name_literal(left),
+          make_method_name_literal(right))
       end
 
       private
