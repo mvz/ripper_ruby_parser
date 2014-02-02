@@ -82,6 +82,11 @@ module RipperRubyParser
       process(contents)
     end
 
+    def process_var_alias exp
+      _, left, right = exp.shift 3
+      s(:valias, left[1].to_sym, right[1].to_sym)
+    end
+
     def process_const_path_ref exp
       _, left, right = exp.shift 3
       s(:colon2, process(left), extract_node_symbol(right))

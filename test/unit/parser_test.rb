@@ -442,6 +442,11 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:alias,
                               s(:lit, :+), s(:lit, :-))
       end
+
+      it "works with global variables" do
+        "alias $foo $bar".
+          must_be_parsed_as s(:valias, :$foo, :$bar)
+      end
     end
 
     describe "for arguments" do
