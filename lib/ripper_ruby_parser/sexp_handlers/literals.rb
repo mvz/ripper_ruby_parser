@@ -45,7 +45,7 @@ module RipperRubyParser
           right
         else # Expecting left.sexp_type == :dstr
           _, first, *rest = right
-          left.push s(:str, first)
+          left.push s(:str, first) unless first.empty?
           left.push(*rest)
           left
         end

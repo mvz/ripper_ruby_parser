@@ -143,6 +143,16 @@ describe RipperRubyParser::Parser do
                                                 s(:evstr, s(:cvar, :@@bar)))
           end
         end
+
+        describe "with braces" do
+          it "correctly handles two interpolations in a row" do
+            "\"\#{bar}\#{qux}\"".
+              must_be_parsed_as s(:dstr,
+                                  "",
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:evstr, s(:call, nil, :qux)))
+          end
+        end
       end
 
       describe "with string concatenation" do
@@ -171,6 +181,14 @@ describe RipperRubyParser::Parser do
                                 "foo",
                                 s(:evstr, s(:call, nil, :bar)),
                                 s(:str, "baz"),
+                                s(:evstr, s(:call, nil, :qux)))
+        end
+
+        it "removes empty substrings from the concatenation when both strings have interpolations" do
+          "\"foo\#{bar}\" \"\#{qux}\"".
+            must_be_parsed_as s(:dstr,
+                                "foo",
+                                s(:evstr, s(:call, nil, :bar)),
                                 s(:evstr, s(:call, nil, :qux)))
         end
       end
