@@ -1101,7 +1101,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for escaped character literals" do
-        '?\n'.
+        "?\\n".
           must_be_parsed_as s(:str, "\n")
       end
 
