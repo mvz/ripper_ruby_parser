@@ -63,9 +63,11 @@ module RipperRubyParser
           end
         end
 
+        tp = map_body(truepart)
+        tp = [nil] if tp.empty?
         s(s(:when,
             s(:array, *values),
-            *map_body(truepart)),
+            *tp),
           *falsepart)
       end
 
