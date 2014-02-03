@@ -117,7 +117,8 @@ module RipperRubyParser
       elsif body.first.is_a? Symbol
         process body
       else
-        convert_void_stmt_to_nil process body[0]
+        body.map! {|it| convert_void_stmt_to_nil process it }
+        wrap_in_block body
       end
     end
 

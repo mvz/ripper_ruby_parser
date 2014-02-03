@@ -18,6 +18,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar),
                               nil)
       end
+
+      it "handles block conditions" do
+        "if (foo; bar); baz; end".
+          must_be_parsed_as s(:if,
+                              s(:block, s(:call, nil, :foo), s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              nil)
+      end
     end
 
     describe "for postfix if" do
