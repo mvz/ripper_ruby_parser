@@ -139,6 +139,12 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for empty brackets" do
+      it "works with lone ()" do
+        "()".must_be_parsed_as s(:nil)
+      end
+    end
+
     describe "for the return statement" do
       it "works with no arguments" do
         "return".

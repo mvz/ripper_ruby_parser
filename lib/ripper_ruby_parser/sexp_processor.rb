@@ -117,7 +117,7 @@ module RipperRubyParser
       elsif body.first.is_a? Symbol
         process body
       else
-        process body[0]
+        convert_void_stmt_to_nil process body[0]
       end
     end
 
@@ -244,6 +244,14 @@ module RipperRubyParser
           sub_exp.line ||= exp.line
           trickle_down_line_numbers sub_exp
         end
+      end
+    end
+
+    def convert_void_stmt_to_nil sexp
+      if sexp == s(:void_stmt)
+        s(:nil)
+      else
+        sexp
       end
     end
   end
