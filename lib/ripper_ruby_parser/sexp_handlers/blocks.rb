@@ -50,7 +50,7 @@ module RipperRubyParser
         _, body = exp.shift 2
 
         body = process(body)
-        strip_wrapping_block(body)
+        strip_typeless_sexp(body)
       end
 
       def process_rescue exp
@@ -121,7 +121,7 @@ module RipperRubyParser
 
       def process_ensure exp
         _, block = exp.shift 2
-        strip_wrapping_block safe_wrap_in_block s(*map_body(block))
+        strip_typeless_sexp safe_wrap_in_block s(*map_body(block))
       end
 
       def process_next exp
@@ -161,7 +161,7 @@ module RipperRubyParser
         s(:block, args, s(wrap_in_block(map_body(stmts))))
       end
 
-      def strip_wrapping_block(block)
+      def strip_typeless_sexp(block)
         case block.length
         when 0
           s(:nil)

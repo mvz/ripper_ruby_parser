@@ -234,7 +234,24 @@ describe RipperRubyParser::Parser do
         "begin; ensure; end".
           must_be_parsed_as s(:ensure, s(:nil))
       end
+    end
 
+    describe "for lists of consecutive statments" do
+      it "works with statements grouped through parentheses" do
+        "(foo; bar); baz".
+          must_be_parsed_as s(:block,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
+
+      it "works with statements grouped through parentheses 2" do
+        "foo; (bar; baz)".
+          must_be_parsed_as s(:block,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
     end
 
     describe "for stabby lambda" do
