@@ -123,7 +123,7 @@ module RipperRubyParser
 
       def process_ensure exp
         _, block = exp.shift 2
-        safe_wrap_in_block s(*map_body(block))
+        strip_wrapping_block safe_wrap_in_block s(*map_body(block))
       end
 
       def process_next exp
