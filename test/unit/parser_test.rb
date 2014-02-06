@@ -1,3 +1,4 @@
+# coding: utf-8
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
@@ -1097,23 +1098,6 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:dsym,
                               "foo",
                               s(:evstr, s(:call, nil, :bar)))
-      end
-
-      it "works for character literals (which are string literals in Ruby 1.9.3)" do
-        "?a".
-          must_be_parsed_as s(:str, "a")
-      end
-
-      it "works for character literals in extra compatible mode" do
-        # TODO: Remove #extra_compatible, which now does nothing.
-        parser.extra_compatible = true
-        "?a".
-          must_be_parsed_as s(:str, "a")
-      end
-
-      it "works for escaped character literals" do
-        "?\\n".
-          must_be_parsed_as s(:str, "\n")
       end
 
       it "works for basic backtick strings" do

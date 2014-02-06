@@ -170,8 +170,13 @@ module RipperRubyParser
           [0-7]{1,3}        | # octal character
           x[0-9a-fA-F]{1,2} | # hex byte
           u[0-9a-fA-F]{4}   | # unicode character
+          M-\\C-.           | # meta-ctrl
+          C-\\M-.           | # ctrl-meta
+          M-\\c.            | # meta-ctrl (shorthand)
+          c\\M-.            | # ctrl-meta (shorthand)
           C-.               | # control (regular)
           c.                | # control (shorthand)
+          M-.               | # meta
           .                   # single-character
         )/x) do
           bare = $1
@@ -182,8 +187,12 @@ module RipperRubyParser
             bare[1..-1].to_i(16).chr
           when /^u/
             bare[1..-1].to_i(16).chr(Encoding::UTF_8)
-          when /^(c|C-)(.)$/
-            ($2.ord & 0b1001_1111).chr
+          when /^(?:c|C-)(.)$/
+            ($1.ord & 0b1001_1111).chr
+          when /^M-(.)$/
+            ($1.ord | 0b1000_0000).chr
+          when /^(?:M-\\C-|C-\\M-|M-\\c|c\\M-)(.)$/
+            ($1.ord & 0b1001_1111 | 0b1000_0000).chr
           when /^[0-7]+/
             bare.to_i(8).chr
           else

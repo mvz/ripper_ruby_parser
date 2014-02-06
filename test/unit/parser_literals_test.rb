@@ -193,5 +193,47 @@ describe RipperRubyParser::Parser do
         end
       end
     end
+
+    describe "for character literals" do
+      it "works for simple character literals" do
+        "?a".
+          must_be_parsed_as s(:str, "a")
+      end
+
+      it "works for escaped character literals" do
+        "?\\n".
+          must_be_parsed_as s(:str, "\n")
+      end
+
+      it "works for escaped character literals with ctrl" do
+        "?\\C-a".
+          must_be_parsed_as s(:str, "\u0001")
+      end
+
+      it "works for escaped character literals with meta" do
+        "?\\M-a".
+          must_be_parsed_as s(:str, "\xE1".force_encoding("ascii-8bit"))
+      end
+
+      it "works for escaped character literals with meta plus shorthand ctrl" do
+        "?\\M-\\ca".
+          must_be_parsed_as s(:str, "\x81".force_encoding("ascii-8bit"))
+      end
+
+      it "works for escaped character literals with shorthand ctrl plus meta" do
+        "?\\c\\M-a".
+          must_be_parsed_as s(:str, "\x81".force_encoding("ascii-8bit"))
+      end
+
+      it "works for escaped character literals with meta plus ctrl" do
+        "?\\M-\\C-a".
+          must_be_parsed_as s(:str, "\x81".force_encoding("ascii-8bit"))
+      end
+
+      it "works for escaped character literals with ctrl plus meta" do
+        "?\\C-\\M-a".
+          must_be_parsed_as s(:str, "\x81".force_encoding("ascii-8bit"))
+      end
+    end
   end
 end
