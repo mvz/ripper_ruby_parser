@@ -123,7 +123,7 @@ module RipperRubyParser
 
       def process_ensure exp
         _, block = exp.shift 2
-        wrap_in_block s(*map_body(block))
+        safe_wrap_in_block s(*map_body(block))
       end
 
       def process_next exp
@@ -160,7 +160,7 @@ module RipperRubyParser
         args = process(args)
         args = 0 if args == s(:args)
         # FIXME: Symbol :block is irrelevant.
-        s(:block, args, s(handle_statement_list(stmts)))
+        s(:block, args, s(wrap_in_block(map_body(stmts))))
       end
 
       def strip_wrapping_block(block)

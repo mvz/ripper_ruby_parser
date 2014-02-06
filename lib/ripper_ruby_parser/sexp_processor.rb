@@ -49,7 +49,7 @@ module RipperRubyParser
       _, content = exp.shift 2
 
       statements = content.map { |sub_exp| process(sub_exp) }
-      wrap_in_block statements
+      safe_wrap_in_block statements
     end
 
     def process_module exp
@@ -118,7 +118,7 @@ module RipperRubyParser
         process body
       else
         body.map! {|it| convert_void_stmt_to_nil process it }
-        wrap_in_block body
+        safe_wrap_in_block body
       end
     end
 

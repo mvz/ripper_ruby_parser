@@ -4,7 +4,7 @@ module RipperRubyParser
       def process_until exp
         _, cond, block = exp.shift 3
 
-        s(:until, process(cond), handle_statement_list(block), true)
+        s(:until, process(cond), wrap_in_block(map_body(block)), true)
       end
 
       def process_until_mod exp
@@ -18,7 +18,7 @@ module RipperRubyParser
       def process_while exp
         _, cond, block = exp.shift 3
 
-        s(:while, process(cond), handle_statement_list(block), true)
+        s(:while, process(cond), wrap_in_block(map_body(block)), true)
       end
 
       def process_while_mod exp
@@ -33,7 +33,7 @@ module RipperRubyParser
         _, var, coll, block = exp.shift 4
         coll = process(coll)
         assgn = s(:lasgn, process(var)[1])
-        block = handle_statement_list(block)
+        block = wrap_in_block(map_body(block))
         if block.nil?
           s(:for, coll, assgn)
         else

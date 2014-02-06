@@ -5,7 +5,7 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         s(:if, handle_condition(cond),
-          handle_statement_list(truepart),
+          wrap_in_block(map_body(truepart)),
           process(falsepart))
       end
 
@@ -13,7 +13,7 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         s(:if, process(cond),
-          handle_statement_list(truepart),
+          wrap_in_block(map_body(truepart)),
           process(falsepart))
       end
 
@@ -32,7 +32,7 @@ module RipperRubyParser
         s(:if,
           handle_condition(cond),
           process(falsepart),
-          handle_statement_list(truepart))
+          wrap_in_block(map_body(truepart)))
       end
 
       def process_case exp
@@ -65,7 +65,7 @@ module RipperRubyParser
 
       def process_else exp
         _, body = exp.shift 2
-        handle_statement_list body
+        safe_wrap_in_block(map_body(body))
       end
 
       private

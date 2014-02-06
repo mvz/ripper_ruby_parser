@@ -23,10 +23,6 @@ module RipperRubyParser
         end
       end
 
-      def handle_statement_list exp
-        wrap_in_block(map_body(exp))
-      end
-
       def extract_node_symbol_with_position exp
         return nil if exp.nil?
         return exp if exp.is_a? Symbol
@@ -83,6 +79,11 @@ module RipperRubyParser
         else
           s(:block, *statements)
         end
+      end
+
+      def safe_wrap_in_block statements
+        result = wrap_in_block statements
+        result ? result : s()
       end
 
       def handle_return_argument_list arglist
