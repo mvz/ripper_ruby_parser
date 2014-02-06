@@ -109,19 +109,8 @@ module RipperRubyParser
       private
 
       def extract_string_parts exp
-        inner = exp.shift
-
-        string = process(inner)
+        string = ""
         rest = []
-
-        if string.nil?
-          string = ""
-        elsif string.sexp_type == :str
-          string = string[1]
-        else
-          rest << string
-          string = ""
-        end
 
         until exp.empty? do
           result = process(exp.shift)
