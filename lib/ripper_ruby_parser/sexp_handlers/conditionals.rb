@@ -75,6 +75,8 @@ module RipperRubyParser
         cond = process(cond)
         if (cond.sexp_type == :lit) && cond[1].is_a?(Regexp)
           cond = s(:match, cond)
+        elsif cond.sexp_type == :dot2
+          cond = s(:flip2, *cond[1..-1])
         end
         return cond
       end

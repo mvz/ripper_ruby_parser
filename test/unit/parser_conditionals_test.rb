@@ -26,6 +26,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz),
                               nil)
       end
+
+      it "converts :dot2 to :flip2" do
+        "if foo..bar; baz; end".
+          must_be_parsed_as s(:if,
+                              s(:flip2, s(:call, nil, :foo), s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              nil)
+      end
     end
 
     describe "for postfix if" do
