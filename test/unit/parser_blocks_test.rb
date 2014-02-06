@@ -91,6 +91,16 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz)))
       end
 
+      it "works with assignment of the exception to an instance variable" do
+        "begin; foo; rescue => @bar; baz; end".
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array,
+                                  s(:iasgn, :@bar, s(:gvar, :$!))),
+                                s(:call, nil, :baz)))
+      end
+
       it "works with empty main and rescue bodies" do
         "begin; rescue; end".
           must_be_parsed_as s(:rescue,
