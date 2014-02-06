@@ -143,7 +143,17 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
-      it "worrks with a splat in the when clause" do
+      it "works with an empty else block" do
+        "case foo; when bar; baz; else; end".
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array, s(:call, nil, :bar)),
+                                s(:call, nil, :baz)),
+                              nil)
+      end
+
+      it "works with a splat in the when clause" do
         "case foo; when *bar; baz; end".
           must_be_parsed_as s(:case,
                               s(:call, nil, :foo),

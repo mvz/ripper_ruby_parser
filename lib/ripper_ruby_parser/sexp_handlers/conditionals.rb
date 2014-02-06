@@ -51,6 +51,7 @@ module RipperRubyParser
             falsepart = s(falsepart)
           end
         end
+        falsepart = [nil] if falsepart.empty?
 
         values = handle_array_elements values
 
