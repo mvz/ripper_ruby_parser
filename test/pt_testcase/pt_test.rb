@@ -13,7 +13,12 @@ class RubyParserTestCase < ParseTreeTestCase
   end
 
   def self.generate_test klass, node, data, input_name, output_name
-    return if Array === data['Ruby']
+    if data['Ruby'].is_a? Array
+      klass.send :define_method, "test_#{node}" do
+        skip "Not a parser test"
+      end
+      return
+    end
 
     output_name = "ParseTree"
 
