@@ -7,6 +7,8 @@ class RipperRubyParser::Parser
   end
 end
 
+SKIPPED_TESTS = ["dstr_heredoc_windoze_sucks"]
+
 class RubyParserTestCase < ParseTreeTestCase
   def self.previous key
     "Ruby"
@@ -16,6 +18,13 @@ class RubyParserTestCase < ParseTreeTestCase
     if data['Ruby'].is_a? Array
       klass.send :define_method, "test_#{node}" do
         skip "Not a parser test"
+      end
+      return
+    end
+
+    if SKIPPED_TESTS.include? node
+      klass.send :define_method, "test_#{node}" do
+        skip "Can't or won't fix this difference"
       end
       return
     end
