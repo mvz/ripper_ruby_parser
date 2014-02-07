@@ -21,8 +21,11 @@ module RipperRubyParser
       def process_string_embexpr exp
         _, list = exp.shift 2
         val = process(list.first)
-        if val.sexp_type == :str
+        case val.sexp_type
+        when :str
           val
+        when :void_stmt
+          s(:dstr, "", s(:evstr))
         else
           s(:dstr, "", s(:evstr, val))
         end

@@ -103,6 +103,14 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:call, nil, :bar)))
         end
 
+        it "works with an empty interpolation" do
+          '/foo#{}bar/'.
+            must_be_parsed_as s(:dregx,
+                                "foo",
+                                s(:evstr),
+                                s(:str, "bar"))
+        end
+
         describe "containing just a literal string" do
           it "performs the interpolation when it is at the end" do
             '/foo#{"bar"}/'.must_be_parsed_as s(:lit, /foobar/)
@@ -277,6 +285,14 @@ describe RipperRubyParser::Parser do
                                    "",
                                    s(:evstr, s(:call, nil, :foo)),
                                    s(:str, "\n"))
+          end
+
+          it "works with an empty interpolation" do
+            "\"foo\#{}bar\"".
+              must_be_parsed_as s(:dstr,
+                                  "foo",
+                                  s(:evstr),
+                                  s(:str, "bar"))
           end
         end
       end
