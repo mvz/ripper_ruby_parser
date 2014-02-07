@@ -31,7 +31,7 @@ module RipperRubyParser
       def process_string_dvar exp
         _, list = exp.shift 2
         val = process(list)
-        s(:evstr, val)
+        s(:dstr, "", s(:evstr, val))
       end
 
       def process_string_concat exp
