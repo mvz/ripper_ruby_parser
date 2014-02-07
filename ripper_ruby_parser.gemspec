@@ -11,10 +11,10 @@ Gem::Specification.new do |s|
   s.email = ["matijs@matijs.net"]
   s.homepage = "http://www.github.com/mvz/ripper_ruby_parser"
 
-  s.rdoc_options = ["--main", "README.rdoc"]
+  s.rdoc_options = ["--main", "README.md"]
 
-  s.files = Dir['{lib,test}/**/*', "*.rdoc", "Rakefile"] & `git ls-files -z`.split("\0")
-  s.extra_rdoc_files = ["README.rdoc"]
+  s.files = Dir['{lib,test}/**/*', "*.md", "Rakefile"] & `git ls-files -z`.split("\0")
+  s.extra_rdoc_files = ["README.md"]
   s.test_files = `git ls-files -z -- test`.split("\0")
 
   s.add_dependency('sexp_processor', ["~> 4.4.1"])
