@@ -4,6 +4,41 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 describe RipperRubyParser::Parser do
   describe "#parse" do
     describe "for regexp literals" do
+      it "works for a simple regex literal" do
+        "/foo/".
+          must_be_parsed_as s(:lit, /foo/)
+      end
+
+      it "works for regex literals with escaped right bracket" do
+        '/\\)/'.
+          must_be_parsed_as s(:lit, /\)/)
+      end
+
+      it "works for regex literals with escape sequences" do
+        '/\\)\\n\\\\/'.
+          must_be_parsed_as s(:lit, /\)\n\\/)
+      end
+
+      it "works for a regex literal with the multiline flag" do
+        "/foo/m".
+          must_be_parsed_as s(:lit, /foo/m)
+      end
+
+      it "works for a regex literal with the extended flag" do
+        "/foo/x".
+          must_be_parsed_as s(:lit, /foo/x)
+      end
+
+      it "works for a regex literal with the ignorecase flag" do
+        "/foo/i".
+          must_be_parsed_as s(:lit, /foo/i)
+      end
+
+      it "works for a regex literal with a combination of flags" do
+        "/foo/ixm".
+          must_be_parsed_as s(:lit, /foo/ixm)
+      end
+
       it "works with the no-encoding flag" do
         parser = RipperRubyParser::Parser.new
         result = parser.parse "/foo/n"
@@ -13,6 +48,22 @@ describe RipperRubyParser::Parser do
       end
 
       describe "with interpolations" do
+        it "works for a simple interpolation" do
+          '/foo#{bar}baz/'.
+            must_be_parsed_as s(:dregx,
+                                "foo",
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "baz"))
+        end
+
+        it "works for a regex literal with flags and interpolation" do
+          '/foo#{bar}/ixm'.
+            must_be_parsed_as s(:dregx,
+                                "foo",
+                                s(:evstr, s(:call, nil, :bar)),
+                                7)
+        end
+
         it "works with the no-encoding flag" do
           '/foo#{bar}/n'.
             must_be_parsed_as s(:dregx,
@@ -45,6 +96,13 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :bar)), 16)
         end
 
+        it "works for a regex literal with interpolate-once flag" do
+          '/foo#{bar}/o'.
+            must_be_parsed_as s(:dregx_once,
+                                "foo",
+                                s(:evstr, s(:call, nil, :bar)))
+        end
+
         describe "containing just a literal string" do
           it "performs the interpolation when it is at the end" do
             '/foo#{"bar"}/'.must_be_parsed_as s(:lit, /foobar/)
@@ -62,7 +120,42 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for string literals" do
+      it "works for empty strings" do
+        "''".
+          must_be_parsed_as s(:str, "")
+      end
+
       describe "with escape sequences" do
+        it "works for strings with escape sequences" do
+          "\"\\n\"".
+            must_be_parsed_as s(:str, "\n")
+        end
+
+        it "works for strings with useless escape sequences" do
+          "\"F\\OO\"".
+            must_be_parsed_as s(:str, "FOO")
+        end
+
+        it "works for strings with escaped backslashes" do
+          "\"\\\\n\"".
+            must_be_parsed_as s(:str, "\\n")
+        end
+
+        it "works for a double-quoted string representing a regex literal with escaped right bracket" do
+          "\"/\\\\)/\"".
+            must_be_parsed_as s(:str, "/\\)/")
+        end
+
+        it "works for a double-quoted string containing a uselessly escaped right bracket" do
+          "\"/\\)/\"".
+            must_be_parsed_as s(:str, "/)/")
+        end
+
+        it "works for a string containing escaped quotes" do
+          "\"\\\"\"".
+            must_be_parsed_as s(:str, "\"")
+        end
+
         it "works with hex escapes" do
           "\"\\x36\"".must_be_parsed_as s(:str, "6")
           "\"\\x4a\"".must_be_parsed_as s(:str, "J")
@@ -145,12 +238,45 @@ describe RipperRubyParser::Parser do
         end
 
         describe "with braces" do
+          it "works for trivial interpolated strings" do
+            '"#{foo}"'.
+              must_be_parsed_as s(:dstr,
+                                  "",
+                                  s(:evstr,
+                                    s(:call, nil, :foo)))
+          end
+
+          it "works for basic interpolated strings" do
+            '"foo#{bar}"'.
+              must_be_parsed_as s(:dstr,
+                                  "foo",
+                                  s(:evstr,
+                                    s(:call, nil, :bar)))
+          end
+
+          it "works for strings with several interpolations" do
+            '"foo#{bar}baz#{qux}"'.
+              must_be_parsed_as s(:dstr,
+                                  "foo",
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:str, "baz"),
+                                  s(:evstr, s(:call, nil, :qux)))
+          end
+
           it "correctly handles two interpolations in a row" do
             "\"\#{bar}\#{qux}\"".
               must_be_parsed_as s(:dstr,
                                   "",
                                   s(:evstr, s(:call, nil, :bar)),
                                   s(:evstr, s(:call, nil, :qux)))
+          end
+
+          it "works for strings with interpolations followed by escape sequences" do
+            '"#{foo}\\n"'.
+              must_be_parsed_as  s(:dstr,
+                                   "",
+                                   s(:evstr, s(:call, nil, :foo)),
+                                   s(:str, "\n"))
           end
         end
       end
@@ -253,5 +379,118 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:str, "\x81".force_encoding("ascii-8bit"))
       end
     end
+
+    describe "for symbol literals" do
+      it "works for simple symbols" do
+        ":foo".
+          must_be_parsed_as s(:lit, :foo)
+      end
+
+      it "works for symbols that look like instance variable names" do
+        ":@foo".
+          must_be_parsed_as s(:lit, :@foo)
+      end
+
+      it "works for simple dsyms" do
+        ':"foo"'.
+          must_be_parsed_as s(:lit, :foo)
+      end
+
+      it "works for dsyms with interpolations" do
+        ':"foo#{bar}"'.
+          must_be_parsed_as s(:dsym,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)))
+      end
+    end
+
+    describe "for backtick string literals" do
+      it "works for basic backtick strings" do
+        '`foo`'.
+          must_be_parsed_as s(:xstr, "foo")
+      end
+
+      it "works for interpolated backtick strings" do
+        '`foo#{bar}`'.
+          must_be_parsed_as s(:dxstr,
+                              "foo",
+                              s(:evstr, s(:call, nil, :bar)))
+      end
+
+      it "works for backtick strings with escape sequences" do
+        '`foo\\n`'.
+          must_be_parsed_as s(:xstr, "foo\n")
+      end
+    end
+
+    describe "for array literals" do
+      it "works for an empty array" do
+        "[]".
+          must_be_parsed_as s(:array)
+      end
+
+      it "works for a simple case with splat" do
+        "[*foo]".
+          must_be_parsed_as s(:array,
+                              s(:splat, s(:call, nil, :foo)))
+      end
+
+      it "works for a multi-element case with splat" do
+        "[foo, *bar]".
+          must_be_parsed_as s(:array,
+                              s(:call, nil, :foo),
+                              s(:splat, s(:call, nil, :bar)))
+      end
+
+      it "works for an array created with %W" do
+        "%W(foo bar)".
+          must_be_parsed_as s(:array, s(:str, "foo"), s(:str, "bar"))
+      end
+    end
+
+    describe "for hash literals" do
+      it "works for an empty hash" do
+        "{}".
+          must_be_parsed_as s(:hash)
+      end
+
+      it "works for a hash with one pair" do
+        "{foo => bar}".
+          must_be_parsed_as s(:hash,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it "works for a hash with multiple pairs" do
+        "{foo => bar, baz => qux}".
+          must_be_parsed_as s(:hash,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux))
+      end
+
+      it "works for a hash with label keys (Ruby 1.9 only)" do
+        "{foo: bar, baz: qux}".
+          must_be_parsed_as s(:hash,
+                              s(:lit, :foo),
+                              s(:call, nil, :bar),
+                              s(:lit, :baz),
+                              s(:call, nil, :qux))
+      end
+    end
+
+    describe "for number literals" do
+      it "works for floats" do
+        "3.14".
+          must_be_parsed_as s(:lit, 3.14)
+      end
+
+      it "works for octal integer literals" do
+        "0700".
+          must_be_parsed_as s(:lit, 448)
+      end
+    end
+
   end
 end

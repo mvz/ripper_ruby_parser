@@ -3,6 +3,61 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 describe RipperRubyParser::Parser do
   describe "#parse" do
     describe "for regular if" do
+      it "works with a single statement" do
+        "if foo; bar; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+
+      it "works with multiple statements" do
+        "if foo; bar; baz; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:block,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)),
+                              nil)
+      end
+
+      it "works with an else clause" do
+        "if foo; bar; else; baz; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
+
+      it "works with an elsif clause" do
+        "if foo; bar; elsif baz; qux; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                nil))
+      end
+
+      it "handles a negative condition correctly" do
+        "if not foo; bar; end".
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :!),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+
+      it "handles a negative condition in elsif correctly" do
+        "if foo; bar; elsif not baz; qux; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, s(:call, nil, :baz), :!),
+                                s(:call, nil, :qux), nil))
+      end
+
       it "handles bare regex literal in condition" do
         "if /foo/; bar; end".
           must_be_parsed_as s(:if,
@@ -37,6 +92,14 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for postfix if" do
+      it "works with a simple condition" do
+        "foo if bar".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo),
+                              nil)
+      end
+
       it "handles negative conditions" do
         "foo if not bar".
           must_be_parsed_as s(:if,
@@ -63,6 +126,21 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for regular unless" do
+      it "works with a single statement" do
+        "unless bar; foo; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              nil,
+                              s(:call, nil, :foo))
+      end
+
+      it "works with an else clause" do
+        "unless foo; bar; else; baz; end".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :bar))
+      end
       it "handles bare regex literal in condition" do
         "unless /foo/; bar; end".
           must_be_parsed_as s(:if,
@@ -81,6 +159,14 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for postfix unless" do
+      it "works with a simple condition" do
+        "foo unless bar".
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              nil,
+                              s(:call, nil, :foo))
+      end
+
       it "handles bare regex literal in condition" do
         "foo unless /bar/".
           must_be_parsed_as s(:if,
