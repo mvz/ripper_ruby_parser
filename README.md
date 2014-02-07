@@ -1,38 +1,38 @@
-= RipperRubyParser
+# RipperRubyParser
 
 by Matijs van Zuijlen
 
 http://www.github.com/mvz/ripper_ruby_parser
 
-== Description
+## Description
 
 Parse with Ripper, produce sexps that are compatible with RubyParser.
 
-== Features/Notes
+## Features/Notes
 
 * Drop-in replacement for RubyParser.
 * Should handle 1.9 syntax gracefully.
 * Needs MRI 1.9.3.
 
-== Install
+## Install
 
 * gem install ripper_ruby_parser
 
-== Synopsis
+## Synopsis
 
-  require 'ripper_ruby_parser'
+    require 'ripper_ruby_parser'
 
-  parser = RipperRubyParser::Parser.new
-  result = parser.parse "puts 'Hello World'"
-  p result
-  # => s(:call, nil, :puts, s(:arglist, s(:str, "Hello World!")))
+    parser = RipperRubyParser::Parser.new
+    result = parser.parse "puts 'Hello World'"
+    p result
+    # => s(:call, nil, :puts, s(:arglist, s(:str, "Hello World!")))
 
-== Requirements
+## Requirements
 
 * Ruby 1.9.3.
 * sexp_processor
 
-== Hacking and contributing
+## Hacking and contributing
 
 If you want to send pull requests or patches, please:
 
@@ -45,7 +45,7 @@ If you want to send pull requests or patches, please:
 * Try not to include changes that are irrelevant to your feature in the
   same commit.
 
-== License
+## License
 
 (The MIT License)
 
