@@ -8,12 +8,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
   def empty_params_list
     @empty_params_list ||= begin
-                             num_params = case RUBY_VERSION
-                                          when "2.0.0"
-                                            7
-                                          else
-                                            5
-                                          end
+                             num_params = RUBY_VERSION < "2.0.0" ? 5 : 7
                              s(:params, *([nil] * num_params))
                            end
 
