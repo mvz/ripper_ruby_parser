@@ -19,7 +19,11 @@ module RipperRubyParser
       end
 
       def process_params exp
-        _, normal, defaults, splat, rest, block = exp.shift 6
+        if exp.size == 6
+          _, normal, defaults, splat, rest, block = exp.shift 6
+        else
+          _, normal, defaults, splat, rest, _, _, block = exp.shift 8
+        end
 
         args = [*normal].map do |id|
           process(id)
@@ -31,7 +35,7 @@ module RipperRubyParser
           args << s(:lasgn, sym[1], val)
         end
 
-        args << process(splat) unless splat.nil?
+        args << process(splat) unless splat.nil? || splat == 0
         [*rest].each {|arg| args << process(arg)}
         args << process(block) unless block.nil?
 

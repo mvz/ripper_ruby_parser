@@ -6,6 +6,19 @@ describe RipperRubyParser::CommentingRipperParser do
     builder.parse
   end
 
+  def empty_params_list
+    @empty_params_list ||= begin
+                             num_params = case RUBY_VERSION
+                                          when "2.0.0"
+                                            7
+                                          else
+                                            5
+                                          end
+                             s(:params, *([nil] * num_params))
+                           end
+
+  end
+
   describe "handling comments" do
     it "produces a comment node surrounding a commented def" do
       result = parse_with_builder "# Foo\ndef foo; end"
@@ -14,7 +27,7 @@ describe RipperRubyParser::CommentingRipperParser do
                            "# Foo\n",
                            s(:def,
                             s(:@ident, "foo", s(2, 4)),
-                            s(:params, nil, nil, nil, nil, nil),
+                            empty_params_list,
                             s(:bodystmt, s(s(:void_stmt)), nil, nil, nil)))))
     end
 
@@ -25,7 +38,7 @@ describe RipperRubyParser::CommentingRipperParser do
                            "",
                            s(:def,
                            s(:@ident, "foo", s(1, 4)),
-                           s(:params, nil, nil, nil, nil, nil),
+                           empty_params_list,
                            s(:bodystmt, s(s(:void_stmt)), nil, nil, nil)))))
     end
 
@@ -79,7 +92,7 @@ describe RipperRubyParser::CommentingRipperParser do
                            "",
                            s(:def,
                             s(:@ident, "foo", s(1, 12)),
-                            s(:params, nil, nil, nil, nil, nil),
+                            empty_params_list,
                             s(:bodystmt, s(s(:void_stmt)), nil, nil, nil)))))
     end
 
@@ -91,7 +104,7 @@ describe RipperRubyParser::CommentingRipperParser do
                            "",
                            s(:def,
                             s(:@ident, "bar", s(1, 12)),
-                            s(:params, nil, nil, nil, nil, nil),
+                            empty_params_list,
                             s(:bodystmt, s(s(:void_stmt)), nil, nil, nil)))))
     end
 
