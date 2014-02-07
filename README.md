@@ -11,8 +11,8 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 ## Features/Notes
 
 * Drop-in replacement for RubyParser.
-* Should handle 1.9 syntax gracefully.
-* Needs MRI 1.9.3.
+* Should handle 1.9 and later syntax gracefully.
+* Needs MRI 1.9.3 or higher
 
 ## Install
 
@@ -29,7 +29,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 ## Requirements
 
-* Ruby 1.9.3.
+* Ruby 1.9.3 or higher
 * sexp_processor
 
 ## Hacking and contributing
@@ -49,7 +49,7 @@ If you want to send pull requests or patches, please:
 
 (The MIT License)
 
-Copyright (c) 2012 Matijs van Zuijlen
+Copyright (c) 2012, 2014 Matijs van Zuijlen
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
