@@ -77,6 +77,8 @@ module RipperRubyParser
           cond = s(:match, cond)
         elsif cond.sexp_type == :dot2
           cond = s(:flip2, *cond[1..-1])
+        elsif cond.sexp_type == :dot3
+          cond = s(:flip3, *cond[1..-1])
         end
         return cond
       end
