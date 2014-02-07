@@ -237,7 +237,7 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for lists of consecutive statments" do
-      it "works with statements grouped through parentheses" do
+      it "removes extra blocks for grouped statements at the start of the list" do
         "(foo; bar); baz".
           must_be_parsed_as s(:block,
                               s(:call, nil, :foo),
@@ -245,12 +245,13 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz))
       end
 
-      it "works with statements grouped through parentheses 2" do
+      it "keeps extra blocks for grouped statements at the end of the list" do
         "foo; (bar; baz)".
           must_be_parsed_as s(:block,
                               s(:call, nil, :foo),
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz))
+                              s(:block,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
       end
     end
 

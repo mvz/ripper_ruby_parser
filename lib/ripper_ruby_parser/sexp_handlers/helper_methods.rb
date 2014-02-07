@@ -77,14 +77,13 @@ module RipperRubyParser
         when 1
           statements.first
         else
-          statements = statements.flat_map {|exp|
-            if exp.sexp_type == :block
-              exp[1..-1]
-            else
-              [exp]
-            end
-          }
-          s(:block, *statements)
+          first = statements.shift
+          if first.sexp_type == :block
+            first.shift
+            s(:block, *first, *statements)
+          else
+            s(:block, first, *statements)
+          end
         end
       end
 
