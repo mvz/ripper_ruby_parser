@@ -11,6 +11,13 @@ Gem::Specification.new do |s|
   s.email = ["matijs@matijs.net"]
   s.homepage = "http://www.github.com/mvz/ripper_ruby_parser"
 
+  s.license = "MIT"
+
+  s.description = <<-DESC
+    RipperRubyParser is a parser for Ruby based on Ripper that aims to be a
+    drop-in replacement for RubyParser.
+  DESC
+
   s.rdoc_options = ["--main", "README.md"]
 
   s.files = Dir['{lib,test}/**/*', "*.md", "Rakefile"] & `git ls-files -z`.split("\0")
