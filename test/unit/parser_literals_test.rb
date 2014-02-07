@@ -194,6 +194,16 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for word list literals" do
+      it "correctly handles interpolation" do
+        "%W(foo \#{bar} baz)".
+          must_be_parsed_as  s(:array,
+                               s(:str, "foo"),
+                               s(:dstr, "", s(:evstr, s(:call, nil, :bar))),
+                               s(:str, "baz"))
+      end
+    end
+
     describe "for character literals" do
       it "works for simple character literals" do
         "?a".

@@ -24,7 +24,7 @@ module RipperRubyParser
         if val.sexp_type == :str
           val
         else
-          s(:evstr, val)
+          s(:dstr, "", s(:evstr, val))
         end
       end
 
@@ -121,6 +121,8 @@ module RipperRubyParser
           str = rest.shift
           string += str[1]
         end
+
+        rest = rest.map { |se| se.sexp_type == :dstr ? se.last : se }
 
         return string, rest
       end
