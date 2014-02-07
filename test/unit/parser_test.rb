@@ -685,6 +685,20 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the END keyword" do
+      it "converts to a :postexe iterator" do
+        "END { foo }".
+          must_be_parsed_as s(:iter, s(:postexe), s(:args), s(:call, nil, :foo))
+      end
+    end
+
+    describe "for the BEGIN keyword" do
+      it "converts to a :preexe iterator" do
+        "BEGIN { foo }".
+          must_be_parsed_as s(:iter, s(:preexe), s(:args), s(:call, nil, :foo))
+      end
+    end
+
     describe "for constant lookups" do
       it "works when explicitely starting from the root namespace" do
         "::Foo".

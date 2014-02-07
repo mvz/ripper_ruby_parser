@@ -129,6 +129,16 @@ module RipperRubyParser
       sexp
     end
 
+    def process_BEGIN exp
+      _, body = exp.shift 2
+      s(:iter, s(:preexe), s(:args), *map_body(body))
+    end
+
+    def process_END exp
+      _, body = exp.shift 2
+      s(:iter, s(:postexe), s(:args), *map_body(body))
+    end
+
     # number literals
     def process_at_int exp
       make_literal(exp) {|val| Integer(val) }
