@@ -133,6 +133,13 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:str, "")
       end
 
+      it "sets the encoding for literal strings to utf8 even if ascii would do" do
+        parser = RipperRubyParser::Parser.new
+        result = parser.parse "\"foo\""
+        result.must_equal s(:str, "foo")
+        result[1].encoding.to_s.must_equal "UTF-8"
+      end
+
       describe "with escape sequences" do
         it "works for strings with escape sequences" do
           "\"\\n\"".

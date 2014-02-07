@@ -127,6 +127,7 @@ module RipperRubyParser
 
         rest = rest.map { |se| se.sexp_type == :dstr ? se.last : se }
 
+        string.force_encoding "UTF-8"
         return string, rest
       end
 
