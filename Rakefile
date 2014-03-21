@@ -22,6 +22,7 @@ namespace :test do
     t.warning = true
   end
 
+  desc "Run all three test suites"
   task :run => [:unit, :end_to_end, :pt_testcase]
 end
 
