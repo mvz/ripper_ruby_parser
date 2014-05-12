@@ -71,16 +71,15 @@ module RipperRubyParser
 
       private
 
-      def handle_condition(cond)
+      def handle_condition cond
         cond = process(cond)
         if (cond.sexp_type == :lit) && cond[1].is_a?(Regexp)
-          cond = s(:match, cond)
+          s(:match, cond)
         elsif cond.sexp_type == :dot2
-          cond = s(:flip2, *cond[1..-1])
+          s(:flip2, *cond[1..-1])
         elsif cond.sexp_type == :dot3
-          cond = s(:flip3, *cond[1..-1])
+          s(:flip3, *cond[1..-1])
         end
-        return cond
       end
     end
   end
