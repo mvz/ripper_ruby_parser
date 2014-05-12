@@ -1,5 +1,3 @@
 module RipperRubyParser
-  class SyntaxError < RuntimeError
-
-  end
+  class SyntaxError < RuntimeError; end
 end

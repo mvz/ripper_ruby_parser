@@ -82,8 +82,6 @@ module RipperRubyParser
         end
         return cond
       end
-
     end
   end
 end
-
