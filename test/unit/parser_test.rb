@@ -364,7 +364,7 @@ describe RipperRubyParser::Parser do
                               s(:nil))
       end
 
-      it "works with a argument with default value plus explicit block parameter" do
+      it "works with a default value plus explicit block parameter" do
         "def foo bar=1, &baz; end".
           must_be_parsed_as s(:defn,
                               :foo,
@@ -374,7 +374,7 @@ describe RipperRubyParser::Parser do
                                 s(:nil))
       end
 
-      it "works with a argument with default value followed by a mandatory argument" do
+      it "works with a default value plus mandatory argument" do
         "def foo bar=1, baz; end".
           must_be_parsed_as s(:defn,
                               :foo,
@@ -392,7 +392,7 @@ describe RipperRubyParser::Parser do
                               s(:nil))
       end
 
-      it "works with an argument with default value plus splat" do
+      it "works with a default value plus splat" do
         "def foo bar=1, *baz; end".
           must_be_parsed_as s(:defn,
                               :foo,
@@ -402,7 +402,7 @@ describe RipperRubyParser::Parser do
                                 s(:nil))
       end
 
-      it "works with an argument with default value plus splat plus final mandatory arguments" do
+      it "works with a default value, splat, plus final mandatory arguments" do
         "def foo bar=1, *baz, qux, quuz; end".
           must_be_parsed_as s(:defn,
                               :foo,
@@ -1251,7 +1251,7 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
-      it "assigns line numbers to nested sexps that don't generate their own line numbers" do
+      it "assigns line numbers to nested sexps without their own line numbers" do
         result = parser.parse "foo(bar) do\nnext baz\nend\n"
         result.must_equal s(:iter,
                             s(:call, nil, :foo, s(:call, nil, :bar)),
