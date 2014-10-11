@@ -154,7 +154,7 @@ module RipperRubyParser
         "r" => "\r",
         "s" => "\s",
         "t" => "\t",
-        "v" => "\v",
+        "v" => "\v"
       }
 
       SINGLE_LETTER_ESCAPES_REGEXP =

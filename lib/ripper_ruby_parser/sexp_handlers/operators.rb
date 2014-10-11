@@ -13,7 +13,7 @@ module RipperRubyParser
       }
 
       NEGATED_BINARY_OPERATOR_MAP = {
-        :"!~" => :=~,
+        :"!~" => :=~
       }
 
       def process_binary exp
