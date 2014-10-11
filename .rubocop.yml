@@ -8,9 +8,9 @@ AllCops:
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
 
-# Require lines to fit in pull requests.
+# Set a lenient line length limit
 Metrics/LineLength:
-  Max: 92
+  Max: 95
 
 # Allow multi-line blocks of all sorts
 Style/Blocks:
