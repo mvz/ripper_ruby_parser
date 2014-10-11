@@ -1,0 +1,37 @@
+AllCops:
+  Exclude:
+    - 'test/samples/*'
+  Include:
+    - Rakefile
+
+# Allow if (foo = get_foo) style
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: true
+
+# Require lines to fit in pull requests.
+Metrics/LineLength:
+  Max: 92
+
+# Allow multi-line blocks of all sorts
+Style/Blocks:
+  Enabled: false
+
+# Dot at end of line makes it clearer that the line is not done
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+# Prefer no parentheses in method definitions
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
+
+# Always use raise to raise exceptions
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+# Allow non-interpolated strings with double quotes
+Style/StringLiterals:
+  Enabled: false
+
+# Allow explicit return with multiple return values
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
