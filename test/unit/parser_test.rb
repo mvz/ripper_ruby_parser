@@ -1259,7 +1259,7 @@ describe RipperRubyParser::Parser do
                             s(:next, s(:call, nil, :baz)))
         arglist = result[1][3]
         block = result[3]
-        nums = [ arglist.line, block.line ]
+        nums = [arglist.line, block.line]
         nums.must_equal [1, 2]
       end
 

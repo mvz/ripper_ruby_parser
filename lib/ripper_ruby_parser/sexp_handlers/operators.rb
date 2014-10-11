@@ -9,7 +9,7 @@ module RipperRubyParser
       }
 
       UNARY_OPERATOR_MAP = {
-        :not => :!
+        not: :!
       }
 
       NEGATED_BINARY_OPERATOR_MAP = {
@@ -30,7 +30,7 @@ module RipperRubyParser
         end
       end
 
-      def make_boolean_operator(op, left, right)
+      def make_boolean_operator op, left, right
         if left.first == :paren
           s(op, process(left), process(right))
         else
@@ -38,7 +38,7 @@ module RipperRubyParser
         end
       end
 
-      def make_regexp_match_operator(op, left, right)
+      def make_regexp_match_operator op, left, right
         if left.sexp_type == :regexp_literal
           s(:match2, process(left), process(right))
         elsif right.sexp_type == :regexp_literal

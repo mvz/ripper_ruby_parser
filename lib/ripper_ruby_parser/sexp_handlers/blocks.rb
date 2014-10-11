@@ -36,7 +36,7 @@ module RipperRubyParser
         end
 
         args << process(splat) unless splat.nil? || splat == 0
-        [*rest].each {|arg| args << process(arg)}
+        [*rest].each { |arg| args << process(arg) }
         args << process(block) unless block.nil?
 
         s(:args, *args)
@@ -165,7 +165,7 @@ module RipperRubyParser
         s(:block, args, s(wrap_in_block(map_body(stmts))))
       end
 
-      def strip_typeless_sexp(block)
+      def strip_typeless_sexp block
         case block.length
         when 0
           s(:nil)

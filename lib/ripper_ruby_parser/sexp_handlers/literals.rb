@@ -76,7 +76,7 @@ module RipperRubyParser
         else
           rest << numflags if numflags > 0
           sexp_type = if flags =~ /o/
-                     :dregx_once
+                        :dregx_once
                    else
                      :dregx
                    end
@@ -91,7 +91,7 @@ module RipperRubyParser
 
       def process_symbol exp
         _, node = exp.shift 2
-        with_position_from_node_symbol(node) {|sym| s(:lit, sym) }
+        with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
       end
 
       def process_dyna_symbol exp
@@ -116,7 +116,7 @@ module RipperRubyParser
         string = ""
         rest = []
 
-        until exp.empty? do
+        until exp.empty?
           result = process(exp.shift)
           rest << result
         end

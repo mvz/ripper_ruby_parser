@@ -148,4 +148,3 @@ describe RipperRubyParser::Parser do
     end
   end
 end
-

@@ -146,4 +146,3 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 end
-

@@ -53,4 +53,3 @@ module MiniTest::Expectations
   infect_an_assertion :assert_parsed_as, :must_be_parsed_as
   infect_an_assertion :assert_parsed_as_before, :must_be_parsed_as_before, :unary
 end
-

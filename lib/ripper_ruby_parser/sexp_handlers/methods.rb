@@ -81,7 +81,7 @@ module RipperRubyParser
       end
 
       def make_method_name_literal exp
-        process(exp).tap {|it| it[0] = :lit}
+        process(exp).tap { |it| it[0] = :lit }
       end
 
       def method_body exp
@@ -99,8 +99,8 @@ module RipperRubyParser
       end
 
       SPECIAL_ARG_MARKER = {
-        :splat => "*",
-        :blockarg => "&"
+        splat: "*",
+        blockarg: "&"
       }
 
       def convert_special_args args

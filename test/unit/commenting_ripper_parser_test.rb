@@ -118,4 +118,3 @@ describe RipperRubyParser::CommentingRipperParser do
     end
   end
 end
-

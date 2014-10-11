@@ -35,4 +35,3 @@ module RipperRubyParser
     end
   end
 end
-

@@ -77,31 +77,14 @@ Style/EmptyLinesAroundBody:
 Style/GuardClause:
   Enabled: false
 
-# Offense count: 12
-# Cop supports --auto-correct.
-# Configuration parameters: SupportedStyles.
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
-
 # Offense count: 8
 # Configuration parameters: MaxLineLength.
 Style/IfUnlessModifier:
   Enabled: false
 
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/IndentationWidth:
-  Enabled: false
-
 # Offense count: 9
 # Cop supports --auto-correct.
 Style/MethodCallParentheses:
-  Enabled: false
-
-# Offense count: 6
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/MethodDefParentheses:
   Enabled: false
 
 # Offense count: 3
@@ -134,35 +117,6 @@ Style/PredicateName:
 Style/RaiseArgs:
   Enabled: false
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Enabled: false
-
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: SupportedStyles.
-Style/SpaceAroundEqualsInParameterDefault:
-  EnforcedStyle: no_space
-
-# Offense count: 11
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, EnforcedStyleForEmptyBraces, SpaceBeforeBlockParameters.
-Style/SpaceInsideBlockBraces:
-  Enabled: false
-
-# Offense count: 2
-# Cop supports --auto-correct.
-Style/SpaceInsideBrackets:
-  Enabled: false
-
-# Offense count: 9
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/TrailingBlankLines:
-  Enabled: false
-
 # Offense count: 2
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyleForMultiline, SupportedStyles.
@@ -172,11 +126,6 @@ Style/TrailingComma:
 # Offense count: 2
 # Cop supports --auto-correct.
 Style/TrailingWhitespace:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/WhileUntilDo:
   Enabled: false
 
 # Offense count: 1

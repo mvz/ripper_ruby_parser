@@ -37,7 +37,7 @@ module RipperRubyParser
         ident.to_sym
       end
 
-      def with_position pos, exp=nil
+      def with_position pos, exp = nil
         (line, _) = pos
         exp = yield if exp.nil?
         with_line_number line, exp
