@@ -174,7 +174,7 @@ module RipperRubyParser
           M-.               | # meta
           .                   # single-character
         )/x) do
-          bare = $1
+          bare = Regexp.last_match[1]
           case bare
           when SINGLE_LETTER_ESCAPES_REGEXP
             SINGLE_LETTER_ESCAPES[bare]
@@ -183,11 +183,11 @@ module RipperRubyParser
           when /^u/
             bare[1..-1].to_i(16).chr(Encoding::UTF_8)
           when /^(?:c|C-)(.)$/
-            ($1.ord & 0b1001_1111).chr
+            (Regexp.last_match[1].ord & 0b1001_1111).chr
           when /^M-(.)$/
-            ($1.ord | 0b1000_0000).chr
+            (Regexp.last_match[1].ord | 0b1000_0000).chr
           when /^(?:M-\\C-|C-\\M-|M-\\c|c\\M-)(.)$/
-            ($1.ord & 0b1001_1111 | 0b1000_0000).chr
+            (Regexp.last_match[1].ord & 0b1001_1111 | 0b1000_0000).chr
           when /^[0-7]+/
             bare.to_i(8).chr
           else
