@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'pt_testcase'
 
-class RipperRubyParser::Parser
+class TestParser < RipperRubyParser::Parser
   def process input
     parse input
   end
@@ -39,6 +39,6 @@ class TestRuby19Parser < RubyParserTestCase
   def setup
     super
 
-    self.processor = RipperRubyParser::Parser.new
+    self.processor = TestParser.new
   end
 end
