@@ -40,6 +40,11 @@ Style/MethodCallParentheses:
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 
+# Allow process_BEGIN and friends
+# FIXME: Should be able to disable this inline!
+Style/MethodName:
+  Enabled: false
+
 # Allow explicit return with multiple return values
 Style/RedundantReturn:
   AllowMultipleReturnValues: true
