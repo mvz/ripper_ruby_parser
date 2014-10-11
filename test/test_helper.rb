@@ -1,9 +1,6 @@
-begin
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter "/test/"
-  end
-rescue LoadError
+require 'simplecov'
+SimpleCov.start do
+  add_filter "/test/"
 end
 
 require 'minitest/autorun'
