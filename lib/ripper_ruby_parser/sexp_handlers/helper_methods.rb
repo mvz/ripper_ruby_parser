@@ -57,9 +57,7 @@ module RipperRubyParser
         _, args, splatarg = exp.shift 3
         items = handle_potentially_typeless_sexp args
         items << s(:splat, process(splatarg))
-        until exp.empty?
-          items << process(exp.shift)
-        end
+        items << process(exp.shift) until exp.empty?
         items
       end
 
