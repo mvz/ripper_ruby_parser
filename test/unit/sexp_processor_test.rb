@@ -55,7 +55,6 @@ describe RipperRubyParser::SexpProcessor do
       end
     end
 
-    if false
     describe "for an :args_add_block sexp" do
       it "transforms a one-argument sexp to an :arglist" do
         sexp = s(:args_add_block, s(s(:foo)), false)
@@ -68,7 +67,6 @@ describe RipperRubyParser::SexpProcessor do
         result = processor.process sexp
         result.must_equal s(:arglist, s(:foo_p), s(:bar_p))
       end
-    end
     end
 
     describe "for a :command sexp" do

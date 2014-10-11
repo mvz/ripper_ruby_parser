@@ -117,7 +117,7 @@ module RipperRubyParser
       elsif body.first.is_a? Symbol
         process body
       else
-        body.map! {|it| convert_void_stmt_to_nil process it }
+        body.map! { |it| convert_void_stmt_to_nil process it }
         safe_wrap_in_block body
       end
     end
@@ -141,11 +141,11 @@ module RipperRubyParser
 
     # number literals
     def process_at_int exp
-      make_literal(exp) {|val| Integer(val) }
+      make_literal(exp) { |val| Integer(val) }
     end
 
     def process_at_float exp
-      make_literal(exp) {|val| val.to_f }
+      make_literal(exp) { |val| val.to_f }
     end
 
     # character literals
@@ -155,7 +155,7 @@ module RipperRubyParser
     end
 
     def process_at_label exp
-      make_literal(exp) {|val| val.chop.to_sym }
+      make_literal(exp) { |val| val.chop.to_sym }
     end
 
     # symbol-like sexps
@@ -213,9 +213,7 @@ module RipperRubyParser
     def const_ref_to_const_with_line_number const_ref
       const = process(const_ref)
       line = const.line
-      if const.sexp_type == :const
-        const = const[1]
-      end
+      const = const[1] if const.sexp_type == :const
       return const, line
     end
 
@@ -230,9 +228,10 @@ module RipperRubyParser
       body
     end
 
-    def make_identifier(type, exp)
+    def make_identifier type, exp
       with_position_from_node_symbol(exp) {|ident|
-        s(type, ident) }
+        s(type, ident)
+      }
     end
 
     def make_literal exp

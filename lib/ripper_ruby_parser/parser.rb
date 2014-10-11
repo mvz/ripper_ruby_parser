@@ -7,12 +7,12 @@ module RipperRubyParser
   class Parser
     attr_accessor :extra_compatible
 
-    def initialize processor=SexpProcessor.new
+    def initialize processor = SexpProcessor.new
       @processor = processor
       @extra_compatible = false
     end
 
-    def parse source, filename='(string)', lineno=1
+    def parse source, filename = '(string)', lineno = 1
       parser = CommentingRipperParser.new(source, filename, lineno)
       exp = parser.parse
 

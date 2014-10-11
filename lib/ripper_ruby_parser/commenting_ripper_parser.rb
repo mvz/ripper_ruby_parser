@@ -77,23 +77,23 @@ module RipperRubyParser
     end
 
     def on_parse_error *args
-      raise SyntaxError.new(*args)
+      raise SyntaxError, *args
     end
 
     def on_class_name_error *args
-      raise SyntaxError.new(*args)
+      raise SyntaxError, *args
     end
 
     def on_alias_error *args
-      raise SyntaxError.new(*args)
+      raise SyntaxError, *args
     end
 
     def on_assign_error *args
-      raise SyntaxError.new(*args)
+      raise SyntaxError, *args
     end
 
     def on_param_error *args
-      raise SyntaxError.new(*args)
+      raise SyntaxError, *args
     end
 
     private

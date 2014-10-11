@@ -23,10 +23,10 @@ namespace :test do
   end
 
   desc "Run all three test suites"
-  task :run => [:unit, :end_to_end, :pt_testcase]
+  task run: [:unit, :end_to_end, :pt_testcase]
 end
 
 desc 'Alias to test:run'
-task :test => 'test:run'
+task test: 'test:run'
 
-task :default => :test
+task default: :test

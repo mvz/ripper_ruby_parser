@@ -9,11 +9,11 @@ module RipperRubyParser
       }
 
       UNARY_OPERATOR_MAP = {
-        :not => :!
+        not: :!
       }
 
       NEGATED_BINARY_OPERATOR_MAP = {
-        :"!~" => :=~,
+        :"!~" => :=~
       }
 
       def process_binary exp
@@ -30,7 +30,7 @@ module RipperRubyParser
         end
       end
 
-      def make_boolean_operator(op, left, right)
+      def make_boolean_operator op, left, right
         if left.first == :paren
           s(op, process(left), process(right))
         else
@@ -38,7 +38,7 @@ module RipperRubyParser
         end
       end
 
-      def make_regexp_match_operator(op, left, right)
+      def make_regexp_match_operator op, left, right
         if left.sexp_type == :regexp_literal
           s(:match2, process(left), process(right))
         elsif right.sexp_type == :regexp_literal
@@ -52,7 +52,7 @@ module RipperRubyParser
         _, op, arg = exp.shift 3
         arg = process(arg)
         op = UNARY_OPERATOR_MAP[op] || op
-        if is_literal?(arg) && op != :!
+        if literal?(arg) && op != :!
           s(:lit, arg[1].send(op))
         else
           s(:call, arg, op)
@@ -63,7 +63,7 @@ module RipperRubyParser
         _, left, right = exp.shift 3
         left = process(left)
         right = process(right)
-        if is_literal?(left) && is_literal?(right)
+        if literal?(left) && literal?(right)
           s(:lit, Range.new(left[1], right[1]))
         else
           s(:dot2, left, right)
@@ -74,7 +74,7 @@ module RipperRubyParser
         _, left, right = exp.shift 3
         left = process(left)
         right = process(right)
-        if is_literal?(left) && is_literal?(right)
+        if literal?(left) && literal?(right)
           s(:lit, Range.new(left[1], right[1], true))
         else
           s(:dot3, left, right)

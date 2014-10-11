@@ -140,7 +140,7 @@ describe RipperRubyParser::Parser do
         result[1].encoding.to_s.must_equal "UTF-8"
       end
 
-      describe "with escape sequences" do
+      describe "with double-quoted strings with escape sequences" do
         it "works for strings with escape sequences" do
           "\"\\n\"".
             must_be_parsed_as s(:str, "\n")
@@ -156,12 +156,12 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "\\n")
         end
 
-        it "works for a double-quoted string representing a regex literal with escaped right bracket" do
+        it "works for a representation of a regex literal with escaped right bracket" do
           "\"/\\\\)/\"".
             must_be_parsed_as s(:str, "/\\)/")
         end
 
-        it "works for a double-quoted string containing a uselessly escaped right bracket" do
+        it "works for a uselessly escaped right bracket" do
           "\"/\\)/\"".
             must_be_parsed_as s(:str, "/)/")
         end
@@ -247,8 +247,8 @@ describe RipperRubyParser::Parser do
 
           it "works for cvars" do
             "\"foo\#@@bar\"".must_be_parsed_as s(:dstr,
-                                                "foo",
-                                                s(:evstr, s(:cvar, :@@bar)))
+                                                 "foo",
+                                                 s(:evstr, s(:cvar, :@@bar)))
           end
         end
 
@@ -324,21 +324,23 @@ describe RipperRubyParser::Parser do
                                 s(:str, "baz"))
         end
 
-        it "performs the concatenation when both strings have interpolations" do
-          "\"foo\#{bar}\" \"baz\#{qux}\"".
-            must_be_parsed_as s(:dstr,
-                                "foo",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "baz"),
-                                s(:evstr, s(:call, nil, :qux)))
-        end
+        describe "when both strings have interpolations" do
+          it "performs the concatenation" do
+            "\"foo\#{bar}\" \"baz\#{qux}\"".
+              must_be_parsed_as s(:dstr,
+                                  "foo",
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:str, "baz"),
+                                  s(:evstr, s(:call, nil, :qux)))
+          end
 
-        it "removes empty substrings from the concatenation when both strings have interpolations" do
-          "\"foo\#{bar}\" \"\#{qux}\"".
-            must_be_parsed_as s(:dstr,
-                                "foo",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:evstr, s(:call, nil, :qux)))
+          it "removes empty substrings from the concatenation" do
+            "\"foo\#{bar}\" \"\#{qux}\"".
+              must_be_parsed_as s(:dstr,
+                                  "foo",
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:evstr, s(:call, nil, :qux)))
+          end
         end
       end
     end

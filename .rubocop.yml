@@ -1,0 +1,60 @@
+AllCops:
+  Exclude:
+    - 'test/samples/*'
+  Include:
+    - Rakefile
+
+# Allow if (foo = get_foo) style
+Lint/AssignmentInCondition:
+  AllowSafeAssignment: true
+
+# Set a lenient line length limit
+Metrics/LineLength:
+  Max: 95
+
+# Support use of and and or for control flow.
+Style/AndOr:
+  Enabled: false
+
+# Allow multi-line blocks of all sorts
+Style/Blocks:
+  Enabled: false
+
+# Dot at end of line makes it clearer that the line is not done
+Style/DotPosition:
+  EnforcedStyle: trailing
+
+# Require at least two dependent lines before suggesting a guard clause
+Style/GuardClause:
+  MinBodyLength: 2
+
+# Don't use if or unless as modifier if the line gets too long
+Style/IfUnlessModifier:
+  MaxLineLength: 60
+
+# Allow s() as a special case
+Style/MethodCallParentheses:
+  Enabled: false
+
+# Prefer no parentheses in method definitions
+Style/MethodDefParentheses:
+  EnforcedStyle: require_no_parentheses
+
+# Allow process_BEGIN and friends
+# FIXME: Should be able to disable this inline!
+Style/MethodName:
+  Enabled: false
+
+# Allow explicit return with multiple return values
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+# Always use raise to raise exceptions
+Style/SignalException:
+  EnforcedStyle: only_raise
+
+# Allow non-interpolated strings with double quotes
+Style/StringLiterals:
+  Enabled: false
+
+inherit_from: .rubocop_todo.yml

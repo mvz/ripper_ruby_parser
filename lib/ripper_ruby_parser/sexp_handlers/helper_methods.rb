@@ -37,7 +37,7 @@ module RipperRubyParser
         ident.to_sym
       end
 
-      def with_position pos, exp=nil
+      def with_position pos, exp = nil
         (line, _) = pos
         exp = yield if exp.nil?
         with_line_number line, exp
@@ -57,13 +57,11 @@ module RipperRubyParser
         _, args, splatarg = exp.shift 3
         items = handle_potentially_typeless_sexp args
         items << s(:splat, process(splatarg))
-        until exp.empty?
-          items << process(exp.shift)
-        end
+        items << process(exp.shift) until exp.empty?
         items
       end
 
-      def is_literal? exp
+      def literal? exp
         exp.sexp_type == :lit
       end
 

@@ -45,7 +45,7 @@ module RipperRubyParser
 
       def process_mrhs_new_from_args exp
         _, inner, last = exp.shift 3
-        inner.map! {|item| process(item)}
+        inner.map! { |item| process(item) }
         inner.push process(last) unless last.nil?
         s(:fake_array, *inner)
       end
@@ -100,11 +100,11 @@ module RipperRubyParser
         end
       end
 
-      def create_valueless_assignment_sub_type(item)
+      def create_valueless_assignment_sub_type item
         item = with_line_number(item.line,
                                 create_regular_assignment_sub_type(item, nil))
         item.pop
-        return item
+        item
       end
 
       OPERATOR_ASSIGNMENT_MAP = {
@@ -146,15 +146,15 @@ module RipperRubyParser
       end
 
       ASSIGNMENT_SUB_TYPE_MAP = {
-        :ivar => :iasgn,
-        :const => :cdecl,
-        :lvar => :lasgn,
-        :cvar => :cvdecl,
-        :gvar => :gasgn
+        ivar: :iasgn,
+        const: :cdecl,
+        lvar: :lasgn,
+        cvar: :cvdecl,
+        gvar: :gasgn
       }
 
       ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP = {
-        :cvar => :cvasgn
+        cvar: :cvasgn
       }
 
       def create_assignment_sub_type lvalue, value

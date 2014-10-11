@@ -31,7 +31,7 @@ module RipperRubyParser
 
       private
 
-      def check_at_start?(block)
+      def check_at_start? block
         block.sexp_type != :begin
       end
 
@@ -48,8 +48,6 @@ module RipperRubyParser
 
         s(type, process(cond), process(block), check_at_start)
       end
-
     end
   end
 end
-

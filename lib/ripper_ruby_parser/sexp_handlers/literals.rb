@@ -76,10 +76,10 @@ module RipperRubyParser
         else
           rest << numflags if numflags > 0
           sexp_type = if flags =~ /o/
-                     :dregx_once
-                   else
-                     :dregx
-                   end
+                        :dregx_once
+                      else
+                        :dregx
+                      end
           s(sexp_type, string, *rest)
         end
       end
@@ -91,7 +91,7 @@ module RipperRubyParser
 
       def process_symbol exp
         _, node = exp.shift 2
-        with_position_from_node_symbol(node) {|sym| s(:lit, sym) }
+        with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
       end
 
       def process_dyna_symbol exp
@@ -116,12 +116,12 @@ module RipperRubyParser
         string = ""
         rest = []
 
-        until exp.empty? do
+        until exp.empty?
           result = process(exp.shift)
           rest << result
         end
 
-        while not(rest.empty?) and rest.first.sexp_type == :str
+        while !rest.empty? && rest.first.sexp_type == :str
           str = rest.shift
           string += str[1]
         end
@@ -154,7 +154,7 @@ module RipperRubyParser
         "r" => "\r",
         "s" => "\s",
         "t" => "\t",
-        "v" => "\v",
+        "v" => "\v"
       }
 
       SINGLE_LETTER_ESCAPES_REGEXP =
@@ -174,7 +174,7 @@ module RipperRubyParser
           M-.               | # meta
           .                   # single-character
         )/x) do
-          bare = $1
+          bare = Regexp.last_match[1]
           case bare
           when SINGLE_LETTER_ESCAPES_REGEXP
             SINGLE_LETTER_ESCAPES[bare]
@@ -183,11 +183,11 @@ module RipperRubyParser
           when /^u/
             bare[1..-1].to_i(16).chr(Encoding::UTF_8)
           when /^(?:c|C-)(.)$/
-            ($1.ord & 0b1001_1111).chr
+            (Regexp.last_match[1].ord & 0b1001_1111).chr
           when /^M-(.)$/
-            ($1.ord | 0b1000_0000).chr
+            (Regexp.last_match[1].ord | 0b1000_0000).chr
           when /^(?:M-\\C-|C-\\M-|M-\\c|c\\M-)(.)$/
-            ($1.ord & 0b1001_1111 | 0b1000_0000).chr
+            (Regexp.last_match[1].ord & 0b1001_1111 | 0b1000_0000).chr
           when /^[0-7]+/
             bare.to_i(8).chr
           else
@@ -208,7 +208,6 @@ module RipperRubyParser
 
         numflags
       end
-
     end
   end
 end
