@@ -121,7 +121,7 @@ module RipperRubyParser
           rest << result
         end
 
-        while not(rest.empty?) && rest.first.sexp_type == :str
+        while !rest.empty? && rest.first.sexp_type == :str
           str = rest.shift
           string += str[1]
         end
