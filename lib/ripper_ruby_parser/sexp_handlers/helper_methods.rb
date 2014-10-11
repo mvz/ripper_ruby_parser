@@ -63,7 +63,7 @@ module RipperRubyParser
         items
       end
 
-      def is_literal? exp
+      def literal? exp
         exp.sexp_type == :lit
       end
 
