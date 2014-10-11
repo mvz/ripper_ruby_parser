@@ -77,9 +77,9 @@ module RipperRubyParser
           rest << numflags if numflags > 0
           sexp_type = if flags =~ /o/
                         :dregx_once
-                   else
-                     :dregx
-                   end
+                      else
+                        :dregx
+                      end
           s(sexp_type, string, *rest)
         end
       end
