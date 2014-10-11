@@ -4,9 +4,7 @@ module RipperRubyParser
       def process_args_add_block exp
         _, regular, block = exp.shift 3
         args = handle_potentially_typeless_sexp(regular)
-        if block
-          args << s(:block_pass, process(block))
-        end
+        args << s(:block_pass, process(block)) if block
         s(:arglist, *args)
       end
 
@@ -17,9 +15,7 @@ module RipperRubyParser
       def process_arg_paren exp
         _, args = exp.shift 2
         args = s() if args.nil?
-        unless args.first.is_a? Symbol
-          args.unshift :arglist
-        end
+        args.unshift :arglist unless args.first.is_a? Symbol
         process(args)
       end
 

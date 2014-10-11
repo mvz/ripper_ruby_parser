@@ -213,9 +213,7 @@ module RipperRubyParser
     def const_ref_to_const_with_line_number const_ref
       const = process(const_ref)
       line = const.line
-      if const.sexp_type == :const
-        const = const[1]
-      end
+      const = const[1] if const.sexp_type == :const
       return const, line
     end
 

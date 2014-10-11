@@ -12,6 +12,10 @@ Lint/AssignmentInCondition:
 Metrics/LineLength:
   Max: 95
 
+# Support use of and and or for control flow.
+Style/AndOr:
+  Enabled: false
+
 # Allow multi-line blocks of all sorts
 Style/Blocks:
   Enabled: false
@@ -19,6 +23,14 @@ Style/Blocks:
 # Dot at end of line makes it clearer that the line is not done
 Style/DotPosition:
   EnforcedStyle: trailing
+
+# Require at least two dependent lines before suggesting a guard clause
+Style/GuardClause:
+  MinBodyLength: 2
+
+# Don't use if or unless as modifier if the line gets too long
+Style/IfUnlessModifier:
+  MaxLineLength: 60
 
 # Allow s() as a special case
 Style/MethodCallParentheses:
