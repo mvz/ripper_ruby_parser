@@ -36,8 +36,3 @@ Style/MethodName:
 # Cop supports --auto-correct.
 Style/PerlBackrefs:
   Enabled: false
-
-# Offense count: 5
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/RaiseArgs:
-  Enabled: false
