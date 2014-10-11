@@ -247,8 +247,8 @@ describe RipperRubyParser::Parser do
 
           it "works for cvars" do
             "\"foo\#@@bar\"".must_be_parsed_as s(:dstr,
-                                                "foo",
-                                                s(:evstr, s(:cvar, :@@bar)))
+                                                 "foo",
+                                                 s(:evstr, s(:cvar, :@@bar)))
           end
         end
 

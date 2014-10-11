@@ -10,7 +10,7 @@ end
 SKIPPED_TESTS = ["dstr_heredoc_windoze_sucks"]
 
 class RubyParserTestCase < ParseTreeTestCase
-  def self.previous key
+  def self.previous _key
     "Ruby"
   end
 

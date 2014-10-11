@@ -17,7 +17,8 @@ module RipperRubyParser
       def process_call exp
         _, receiver, _, ident = exp.shift 4
         with_position_from_node_symbol(ident) {|method|
-          s(:call, process(receiver), method) }
+          s(:call, process(receiver), method)
+        }
       end
 
       def process_command exp
@@ -41,13 +42,15 @@ module RipperRubyParser
       def process_vcall exp
         _, ident = exp.shift 2
         with_position_from_node_symbol(ident) {|method|
-          s(:call, nil, method) }
+          s(:call, nil, method)
+        }
       end
 
       def process_fcall exp
         _, ident = exp.shift 2
         with_position_from_node_symbol(ident) {|method|
-          s(:call, nil, method) }
+          s(:call, nil, method)
+        }
       end
 
       def process_super exp

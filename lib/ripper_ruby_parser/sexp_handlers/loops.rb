@@ -48,7 +48,6 @@ module RipperRubyParser
 
         s(type, process(cond), process(block), check_at_start)
       end
-
     end
   end
 end

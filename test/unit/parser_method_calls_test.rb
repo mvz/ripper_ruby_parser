@@ -103,8 +103,8 @@ describe RipperRubyParser::Parser do
                                 s(:call,
                                   s(:call, nil, :foo),
                                   :bar),
-                                  s(:args),
-                                  s(:call, nil, :baz))
+                                s(:args),
+                                s(:call, nil, :baz))
         end
 
         it "works for a do block with several statements" do
@@ -113,33 +113,38 @@ describe RipperRubyParser::Parser do
                                 s(:call,
                                   s(:call, nil, :foo),
                                   :bar),
-                                  s(:args),
-                                  s(:block,
-                                    s(:call, nil, :baz),
-                                    s(:call, nil, :qux)))
+                                s(:args),
+                                s(:block,
+                                  s(:call, nil, :baz),
+                                  s(:call, nil, :qux)))
         end
       end
     end
 
     describe "for calls to super" do
       specify { "super".must_be_parsed_as s(:zsuper) }
-      specify { "super foo".must_be_parsed_as s(:super,
-                                                s(:call, nil, :foo)) }
+      specify {
+        "super foo".must_be_parsed_as s(:super,
+                                        s(:call, nil, :foo))
+      }
       specify {
         "super foo, bar".must_be_parsed_as s(:super,
                                              s(:call, nil, :foo),
-                                             s(:call, nil, :bar)) }
+                                             s(:call, nil, :bar))
+      }
       specify {
         "super foo, *bar".must_be_parsed_as s(:super,
                                               s(:call, nil, :foo),
                                               s(:splat,
-                                                s(:call, nil, :bar))) }
+                                                s(:call, nil, :bar)))
+      }
       specify {
         "super foo, *bar, &baz".
           must_be_parsed_as s(:super,
                               s(:call, nil, :foo),
                               s(:splat, s(:call, nil, :bar)),
-                              s(:block_pass, s(:call, nil, :baz))) }
+                              s(:block_pass, s(:call, nil, :baz)))
+      }
     end
 
     it "handles calling a proc" do

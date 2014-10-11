@@ -208,7 +208,6 @@ module RipperRubyParser
 
         numflags
       end
-
     end
   end
 end

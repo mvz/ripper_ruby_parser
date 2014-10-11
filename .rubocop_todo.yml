@@ -19,11 +19,6 @@ Lint/LiteralInCondition:
   Enabled: false
 
 # Offense count: 1
-# Cop supports --auto-correct.
-Lint/UnusedMethodArgument:
-  Enabled: false
-
-# Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
   Max: 207
@@ -41,21 +36,10 @@ Metrics/MethodLength:
 Metrics/PerceivedComplexity:
   Max: 10
 
-# Offense count: 67
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-Style/AlignParameters:
-  Enabled: false
-
 # Offense count: 6
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/AndOr:
-  Enabled: false
-
-# Offense count: 8
-# Cop supports --auto-correct.
-Style/BlockEndNewline:
   Enabled: false
 
 # Offense count: 3
@@ -65,11 +49,6 @@ Style/ClassAndModuleChildren:
 
 # Offense count: 21
 Style/Documentation:
-  Enabled: false
-
-# Offense count: 3
-# Cop supports --auto-correct.
-Style/EmptyLinesAroundBody:
   Enabled: false
 
 # Offense count: 1
@@ -90,11 +69,6 @@ Style/MethodCallParentheses:
 # Offense count: 3
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 Style/MethodName:
-  Enabled: false
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Style/MultilineBlockLayout:
   Enabled: false
 
 # Offense count: 1

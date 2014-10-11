@@ -371,7 +371,7 @@ describe RipperRubyParser::Parser do
                               s(:args,
                                 s(:lasgn, :bar, s(:lit, 1)),
                                 :"&baz"),
-                                s(:nil))
+                              s(:nil))
       end
 
       it "works with a default value plus mandatory argument" do
@@ -381,7 +381,7 @@ describe RipperRubyParser::Parser do
                               s(:args,
                                 s(:lasgn, :bar, s(:lit, 1)),
                                 :baz),
-                                s(:nil))
+                              s(:nil))
       end
 
       it "works with a splat plus explicit block parameter" do
@@ -399,7 +399,7 @@ describe RipperRubyParser::Parser do
                               s(:args,
                                 s(:lasgn, :bar, s(:lit, 1)),
                                 :"*baz"),
-                                s(:nil))
+                              s(:nil))
       end
 
       it "works with a default value, splat, plus final mandatory arguments" do
@@ -409,7 +409,7 @@ describe RipperRubyParser::Parser do
                               s(:args,
                                 s(:lasgn, :bar, s(:lit, 1)),
                                 :"*baz", :qux, :quuz),
-                                s(:nil))
+                              s(:nil))
       end
 
       it "works when the method name is an operator" do
