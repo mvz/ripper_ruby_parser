@@ -62,7 +62,7 @@ describe RipperRubyParser::SexpProcessor do
           result = processor.process sexp
           result.must_equal s(:arglist, s(:foo_p))
         end
-  
+
         it "transforms a multi-argument sexp to an :arglist" do
           sexp = s(:args_add_block, s(s(:foo), s(:bar)), false)
           result = processor.process sexp
