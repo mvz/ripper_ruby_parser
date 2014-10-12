@@ -182,12 +182,12 @@ module RipperRubyParser
             bare[1..-1].to_i(16).chr
           when /^u/
             bare[1..-1].to_i(16).chr(Encoding::UTF_8)
-          when /^(?:c|C-)(.)$/
-            (Regexp.last_match[1].ord & 0b1001_1111).chr
-          when /^M-(.)$/
-            (Regexp.last_match[1].ord | 0b1000_0000).chr
-          when /^(?:M-\\C-|C-\\M-|M-\\c|c\\M-)(.)$/
-            (Regexp.last_match[1].ord & 0b1001_1111 | 0b1000_0000).chr
+          when /^(c|C-).$/
+            (bare[-1].ord & 0b1001_1111).chr
+          when /^M-.$/
+            (bare[-1].ord | 0b1000_0000).chr
+          when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
+            (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
           when /^[0-7]+/
             bare.to_i(8).chr
           else
