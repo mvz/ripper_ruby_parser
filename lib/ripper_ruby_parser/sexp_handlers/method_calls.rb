@@ -24,8 +24,7 @@ module RipperRubyParser
       def process_command exp
         _, ident, arglist = exp.shift 3
         with_position_from_node_symbol(ident) {|method|
-          args = handle_potentially_typeless_sexp_with_fallback_type(:arglist, arglist)
-          args.shift
+          args = handle_argument_list(arglist)
           s(:call, nil, method, *args)
         }
       end
@@ -33,8 +32,7 @@ module RipperRubyParser
       def process_command_call exp
         _, receiver, _, ident, arguments = exp.shift 5
         with_position_from_node_symbol(ident) {|method|
-          args = handle_potentially_typeless_sexp_with_fallback_type(:arglist, arguments)
-          args.shift
+          args = handle_argument_list(arguments)
           s(:call, process(receiver), method, *args)
         }
       end

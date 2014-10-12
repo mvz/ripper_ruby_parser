@@ -11,15 +11,13 @@ module RipperRubyParser
         end
       end
 
-      def handle_potentially_typeless_sexp_with_fallback_type type, exp
+      def handle_argument_list exp
         if exp.nil?
-          s(type)
+          s()
         elsif exp.first.is_a? Symbol
-          process(exp)
+          process(exp).tap(&:shift)
         else
           exp.map! { |sub_exp| process(sub_exp) }
-          exp.unshift type
-          exp
         end
       end
 
