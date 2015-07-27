@@ -117,7 +117,12 @@ module RipperRubyParser
         rest = []
 
         until exp.empty?
-          result = process(exp.shift)
+          part = exp.shift
+          if part.is_a? String
+            result = s(:str, part)
+          else
+            result = process(part)
+          end
           rest << result
         end
 
