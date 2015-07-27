@@ -132,7 +132,8 @@ module RipperRubyParser
         until exp.empty?
           part = exp.shift
           if part.is_a? String
-            result = s(:str, part)
+            # FIXME: Extract escaping into separate method
+            result = s(:str, part.inspect[1..-2])
           else
             result = process(part)
           end
