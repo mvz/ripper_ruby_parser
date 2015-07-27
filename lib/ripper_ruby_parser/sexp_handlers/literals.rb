@@ -113,7 +113,20 @@ module RipperRubyParser
       private
 
       def extract_string_parts exp
+        parts = internal_process_string_parts(exp)
+
         string = ""
+        while !parts.empty? && parts.first.sexp_type == :str
+          str = parts.shift
+          string += str[1]
+        end
+
+        rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
+
+        return string, rest
+      end
+
+      def internal_process_string_parts(exp)
         rest = []
 
         until exp.empty?
@@ -125,15 +138,7 @@ module RipperRubyParser
           end
           rest << result
         end
-
-        while !rest.empty? && rest.first.sexp_type == :str
-          str = rest.shift
-          string += str[1]
-        end
-
-        rest = rest.map { |se| se.sexp_type == :dstr ? se.last : se }
-
-        return string, rest
+        rest
       end
 
       def extract_unescaped_string_parts exp
