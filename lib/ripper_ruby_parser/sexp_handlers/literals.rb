@@ -113,22 +113,33 @@ module RipperRubyParser
       private
 
       def extract_string_parts exp
+        parts = internal_process_string_parts(exp)
+
         string = ""
-        rest = []
-
-        until exp.empty?
-          result = process(exp.shift)
-          rest << result
-        end
-
-        while !rest.empty? && rest.first.sexp_type == :str
-          str = rest.shift
+        while !parts.empty? && parts.first.sexp_type == :str
+          str = parts.shift
           string += str[1]
         end
 
-        rest = rest.map { |se| se.sexp_type == :dstr ? se.last : se }
+        rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
 
         return string, rest
+      end
+
+      def internal_process_string_parts(exp)
+        rest = []
+
+        until exp.empty?
+          part = exp.shift
+          if part.is_a? String
+            # FIXME: Extract escaping into separate method
+            result = s(:str, part.inspect[1..-2])
+          else
+            result = process(part)
+          end
+          rest << result
+        end
+        rest
       end
 
       def extract_unescaped_string_parts exp
