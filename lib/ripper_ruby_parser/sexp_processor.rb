@@ -136,7 +136,7 @@ module RipperRubyParser
 
     def process_END exp
       _, body = exp.shift 2
-      s(:iter, s(:postexe), s(:args), *map_body(body))
+      s(:iter, s(:postexe), 0, *map_body(body))
     end
 
     # number literals

@@ -598,7 +598,7 @@ describe RipperRubyParser::Parser do
     describe "for the END keyword" do
       it "converts to a :postexe iterator" do
         "END { foo }".
-          must_be_parsed_as s(:iter, s(:postexe), s(:args), s(:call, nil, :foo))
+          must_be_parsed_as s(:iter, s(:postexe), 0, s(:call, nil, :foo))
       end
     end
 
