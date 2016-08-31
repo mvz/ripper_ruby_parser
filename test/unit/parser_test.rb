@@ -294,7 +294,8 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:defs,
                               s(:call, nil, :foo),
                               :bar,
-                              s(:args))
+                              s(:args),
+                              s(:nil))
       end
 
       it "works with def with receiver and multiple statements" do
@@ -1066,7 +1067,8 @@ describe RipperRubyParser::Parser do
         result.must_equal s(:defs,
                             s(:call, nil, :foo),
                             :bar,
-                            s(:args))
+                            s(:args),
+                            s(:nil))
         result.comments.must_equal "# Foo\n"
       end
 

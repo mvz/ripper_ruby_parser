@@ -13,19 +13,10 @@ module RipperRubyParser
         _, receiver, _, method, params, body = exp.shift 6
         params = convert_special_args(process(params))
 
-        body = in_method do
-          process(body)
-        end
-
-        if body.length == 1 && body.first.sexp_type == :block
-          body = body.first
-          body.shift
-        end
-
         s(:defs,
           process(receiver),
           extract_node_symbol(method),
-          params, *body)
+          params, *method_body(body))
       end
 
       def process_return exp
