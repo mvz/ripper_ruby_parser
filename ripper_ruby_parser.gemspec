@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   s.add_dependency('sexp_processor', ["~> 4.7.0"])
 
   s.add_development_dependency('minitest', ["~> 5.2"])
-  s.add_development_dependency('rake', ["~> 10.0"])
-  s.add_development_dependency('ruby_parser', ["~> 3.7.1"])
+  s.add_development_dependency('rake', ["~> 11.2"])
+  s.add_development_dependency('ruby_parser', ["~> 3.8.2"])
   s.add_development_dependency('simplecov')
   s.add_development_dependency('pry')
 
