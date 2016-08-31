@@ -33,11 +33,19 @@ describe RipperRubyParser::Parser do
                               s(:args, :bar, :"&baz"))
       end
 
+      it "handles absent parameter specs" do
+        "foo do; bar; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:call, nil, :bar))
+      end
+
       it "handles empty parameter specs" do
         "foo do ||; bar; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              0,
+                              s(:args),
                               s(:call, nil, :bar))
       end
 

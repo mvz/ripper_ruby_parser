@@ -103,7 +103,7 @@ describe RipperRubyParser::Parser do
                                 s(:call,
                                   s(:call, nil, :foo),
                                   :bar),
-                                s(:args),
+                                0,
                                 s(:call, nil, :baz))
         end
 
@@ -113,7 +113,7 @@ describe RipperRubyParser::Parser do
                                 s(:call,
                                   s(:call, nil, :foo),
                                   :bar),
-                                s(:args),
+                                0,
                                 s(:block,
                                   s(:call, nil, :baz),
                                   s(:call, nil, :qux)))

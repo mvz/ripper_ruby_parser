@@ -160,7 +160,6 @@ module RipperRubyParser
       def handle_generic_block exp
         _, args, stmts = exp.shift 3
         args = process(args)
-        args = 0 if args == s(:args)
         # FIXME: Symbol :block is irrelevant.
         s(:block, args, s(wrap_in_block(map_body(stmts))))
       end
@@ -177,7 +176,7 @@ module RipperRubyParser
       end
 
       def make_iter call, args, stmt
-        args = s(:args) unless args
+        args = 0 unless args
         if stmt.nil?
           s(:iter, call, args)
         else

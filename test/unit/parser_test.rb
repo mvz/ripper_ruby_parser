@@ -424,14 +424,14 @@ describe RipperRubyParser::Parser do
         "foo do; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args))
+                              0)
       end
 
       it "works with next with no arguments" do
         "foo do; next; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:next))
       end
 
@@ -439,7 +439,7 @@ describe RipperRubyParser::Parser do
         "foo do; next bar; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:next, s(:call, nil, :bar)))
       end
 
@@ -447,7 +447,7 @@ describe RipperRubyParser::Parser do
         "foo do; next bar, baz; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:next,
                                 s(:array,
                                   s(:call, nil, :bar),
@@ -458,7 +458,7 @@ describe RipperRubyParser::Parser do
         "foo do; break; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:break))
       end
 
@@ -466,7 +466,7 @@ describe RipperRubyParser::Parser do
         "foo do; break bar; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:break, s(:call, nil, :bar)))
       end
 
@@ -474,7 +474,7 @@ describe RipperRubyParser::Parser do
         "foo do; break bar, baz; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:break,
                                 s(:array,
                                   s(:call, nil, :bar),
@@ -485,8 +485,15 @@ describe RipperRubyParser::Parser do
         "foo do; redo; end".
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args),
+                              0,
                               s(:redo))
+      end
+
+      it "works with zero arguments" do
+        "foo do ||; end".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args))
       end
 
       it "works with one argument" do
@@ -1255,7 +1262,7 @@ describe RipperRubyParser::Parser do
         result = parser.parse "foo(bar) do\nnext baz\nend\n"
         result.must_equal s(:iter,
                             s(:call, nil, :foo, s(:call, nil, :bar)),
-                            s(:args),
+                            0,
                             s(:next, s(:call, nil, :baz)))
         arglist = result[1][3]
         block = result[3]

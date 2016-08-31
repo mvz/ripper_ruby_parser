@@ -215,7 +215,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:brace_block, nil, s(s(:bar))))
         result = processor.process sexp
         result.must_equal s(:iter,
-                            s(:call, s(:foo_p), :baz), s(:args),
+                            s(:call, s(:foo_p), :baz), 0,
                             s(:bar_p))
       end
 
