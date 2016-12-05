@@ -35,7 +35,11 @@ module MiniTest
     def assert_parsed_as sexp, code
       parser = RipperRubyParser::Parser.new
       result = parser.parse code
-      assert_equal sexp, result
+      if sexp.nil?
+        assert_nil result
+      else
+        assert_equal sexp, result
+      end
     end
 
     def assert_parsed_as_before code
