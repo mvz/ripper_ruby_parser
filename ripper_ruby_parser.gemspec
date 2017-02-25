@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README.md"]
   s.test_files = `git ls-files -z -- test`.split("\0")
 
-  s.add_dependency('sexp_processor', ["~> 4.7.0"])
+  s.add_dependency('sexp_processor', ["~> 4.8.0"])
 
   s.add_development_dependency('minitest', ["~> 5.2"])
   s.add_development_dependency('rake', ["~> 12.0"])
