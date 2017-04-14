@@ -25,11 +25,11 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["README.md"]
   s.test_files = `git ls-files -z -- test`.split("\0")
 
-  s.add_dependency('sexp_processor', ["~> 4.8.0"])
+  s.add_dependency('sexp_processor', ["~> 4.9.0"])
 
   s.add_development_dependency('minitest', ["~> 5.2"])
   s.add_development_dependency('rake', ["~> 12.0"])
-  s.add_development_dependency('ruby_parser', ["~> 3.8.2"])
+  s.add_development_dependency('ruby_parser', ["~> 3.9.0"])
   s.add_development_dependency('simplecov')
   s.add_development_dependency('pry')
 
