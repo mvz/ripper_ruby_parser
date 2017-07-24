@@ -23,16 +23,6 @@ describe RipperRubyParser::SexpProcessor do
   end
 
   describe "#process" do
-    it "can handle s(s()) constructs" do
-      sexp = s(s())
-      processor.process sexp
-    end
-
-    it "can handle line number information constructs" do
-      sexp = s(1, 6)
-      processor.process sexp
-    end
-
     describe "for a :program sexp" do
       it "strips off the outer :program node" do
         sexp = s(:program, s(s(:foo)))
