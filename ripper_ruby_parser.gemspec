@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency('minitest', ["~> 5.2"])
   s.add_development_dependency('rake', ["~> 12.0"])
-  s.add_development_dependency('ruby_parser', ["~> 3.9.0"])
+  s.add_development_dependency('ruby_parser', ["~> 3.10.1"])
   s.add_development_dependency('simplecov')
   s.add_development_dependency('pry')
 
