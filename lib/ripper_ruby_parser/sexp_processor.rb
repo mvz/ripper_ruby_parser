@@ -143,7 +143,7 @@ module RipperRubyParser
     end
 
     def process_at_float exp
-      make_literal(exp) { |val| val.to_f }
+      make_literal(exp, &:to_f)
     end
 
     # character literals
