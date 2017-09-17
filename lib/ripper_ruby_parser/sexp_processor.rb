@@ -1,6 +1,5 @@
 require 'sexp_processor'
 require 'ripper_ruby_parser/sexp_handlers'
-require 'ripper_ruby_parser/sexp_ext'
 
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
@@ -36,7 +35,6 @@ module RipperRubyParser
 
     def process exp
       return nil if exp.nil?
-      exp.fix_empty_type
 
       result = super
       trickle_up_line_numbers result
