@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 require File.join(File.dirname(__FILE__), 'lib/ripper_ruby_parser/version.rb')
 
 Gem::Specification.new do |s|
