@@ -123,28 +123,28 @@ describe RipperRubyParser::Parser do
 
     describe "for calls to super" do
       specify { "super".must_be_parsed_as s(:zsuper) }
-      specify {
+      specify do
         "super foo".must_be_parsed_as s(:super,
                                         s(:call, nil, :foo))
-      }
-      specify {
+      end
+      specify do
         "super foo, bar".must_be_parsed_as s(:super,
                                              s(:call, nil, :foo),
                                              s(:call, nil, :bar))
-      }
-      specify {
+      end
+      specify do
         "super foo, *bar".must_be_parsed_as s(:super,
                                               s(:call, nil, :foo),
                                               s(:splat,
                                                 s(:call, nil, :bar)))
-      }
-      specify {
+      end
+      specify do
         "super foo, *bar, &baz".
           must_be_parsed_as s(:super,
                               s(:call, nil, :foo),
                               s(:splat, s(:call, nil, :bar)),
                               s(:block_pass, s(:call, nil, :baz)))
-      }
+      end
     end
 
     it "handles calling a proc" do

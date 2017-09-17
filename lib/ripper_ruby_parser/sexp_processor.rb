@@ -227,9 +227,9 @@ module RipperRubyParser
     end
 
     def make_identifier type, exp
-      with_position_from_node_symbol(exp) { |ident|
+      with_position_from_node_symbol(exp) do |ident|
         s(type, ident)
-      }
+      end
     end
 
     def make_literal exp
