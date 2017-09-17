@@ -25,8 +25,8 @@ module RipperRubyParser
 
       def make_hash_items elems
         result = s()
-        elems.each {|sub_exp|
-          process(sub_exp).each {|elm|
+        elems.each { |sub_exp|
+          process(sub_exp).each { |elm|
             result << elm
           }
         }
