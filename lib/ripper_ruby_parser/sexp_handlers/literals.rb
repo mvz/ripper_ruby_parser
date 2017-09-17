@@ -166,7 +166,7 @@ module RipperRubyParser
         "s" => "\s",
         "t" => "\t",
         "v" => "\v"
-      }
+      }.freeze
 
       SINGLE_LETTER_ESCAPES_REGEXP =
         Regexp.new("^[#{SINGLE_LETTER_ESCAPES.keys.join}]$")

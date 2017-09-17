@@ -7,7 +7,7 @@ class TestParser < RipperRubyParser::Parser
   end
 end
 
-SKIPPED_TESTS = ["dstr_heredoc_windoze_sucks"]
+SKIPPED_TESTS = ["dstr_heredoc_windoze_sucks"].freeze
 
 class RubyParserTestCase < ParseTreeTestCase
   def self.previous _key

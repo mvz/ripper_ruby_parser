@@ -92,7 +92,7 @@ module RipperRubyParser
       SPECIAL_ARG_MARKER = {
         splat: "*",
         blockarg: "&"
-      }
+      }.freeze
 
       def convert_special_args args
         args.map! do |item|

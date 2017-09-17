@@ -110,7 +110,7 @@ module RipperRubyParser
       OPERATOR_ASSIGNMENT_MAP = {
         :"||" => :op_asgn_or,
         :"&&" => :op_asgn_and
-      }
+      }.freeze
 
       def create_operator_assignment_sub_type lvalue, value, operator
         case lvalue.sexp_type
@@ -151,11 +151,11 @@ module RipperRubyParser
         lvar: :lasgn,
         cvar: :cvdecl,
         gvar: :gasgn
-      }
+      }.freeze
 
       ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP = {
         cvar: :cvasgn
-      }
+      }.freeze
 
       def create_assignment_sub_type lvalue, value
         s(map_assignment_lvalue_type(lvalue.sexp_type), lvalue[1], value)
