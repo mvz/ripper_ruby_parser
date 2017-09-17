@@ -12,9 +12,24 @@ Layout/DotPosition:
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
 
+# These test files contain many literal strings that represent Ruby source with
+# interpolation.
+Lint/InterpolationCheck:
+  Exclude:
+    - 'test/unit/*.rb'
+
+# Test describe blocks can be any size
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*'
+
 # Set a lenient line length limit
 Metrics/LineLength:
   Max: 95
+
+# Allow any name: It's just a string
+Naming/HeredocDelimiterNaming:
+  Enabled: false
 
 # Allow process_BEGIN and friends
 # FIXME: Should be able to disable this inline!
