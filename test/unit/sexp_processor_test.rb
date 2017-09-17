@@ -166,7 +166,6 @@ describe RipperRubyParser::SexpProcessor do
                  s(:bodystmt, s(s(:void_stmt)), nil, nil, nil))
         result = processor.process sexp
         result.must_equal s(:defn, :foo, s(:args), s(:nil))
-
       end
     end
 

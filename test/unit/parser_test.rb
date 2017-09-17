@@ -523,7 +523,6 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:args, :bar, :"*baz"))
       end
-
     end
 
     describe "for yield" do

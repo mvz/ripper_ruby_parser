@@ -515,6 +515,5 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, 448)
       end
     end
-
   end
 end
