@@ -288,9 +288,9 @@ describe RipperRubyParser::Parser do
           it "works for strings with interpolations followed by escape sequences" do
             '"#{foo}\\n"'.
               must_be_parsed_as s(:dstr,
-                                   "",
-                                   s(:evstr, s(:call, nil, :foo)),
-                                   s(:str, "\n"))
+                                  "",
+                                  s(:evstr, s(:call, nil, :foo)),
+                                  s(:str, "\n"))
           end
 
           it "works with an empty interpolation" do
