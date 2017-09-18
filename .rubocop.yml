@@ -48,6 +48,11 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   MaxLineLength: 60
 
+# Avoid offenses on s().
+# See https://github.com/bbatsov/rubocop/issues/4753
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: false
+
 # Prefer no parentheses in method definitions
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
