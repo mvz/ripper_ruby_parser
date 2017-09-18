@@ -69,4 +69,9 @@ Style/SignalException:
 Style/StringLiterals:
   Enabled: false
 
+# This cop doesn't handle complex destructuring assignments at the moment.
+# See https://github.com/bbatsov/rubocop/issues/4757
+Style/TrailingUnderscoreVariable:
+  Enabled: false
+
 inherit_from: .rubocop_todo.yml
