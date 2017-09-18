@@ -108,8 +108,6 @@ module RipperRubyParser
       [:comment, comment || "", exp]
     end
 
-    private
-
     def suppress_warnings
       old_verbose = $VERBOSE
       $VERBOSE = nil
