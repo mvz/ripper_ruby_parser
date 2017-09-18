@@ -86,6 +86,10 @@ Style/SignalException:
 Style/StringLiterals:
   Enabled: false
 
+# Prefer symbols to look like symbols
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
 # This cop doesn't handle complex destructuring assignments at the moment.
 # See https://github.com/bbatsov/rubocop/issues/4757
 Style/TrailingUnderscoreVariable:
