@@ -74,6 +74,10 @@ Style/MethodCallWithoutArgsParentheses:
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 
+# This cop gives confusing results for objects that may not be numbers.
+Style/NumericPredicate:
+  Enabled: false
+
 # Allow explicit return with multiple return values
 Style/RedundantReturn:
   AllowMultipleReturnValues: true
