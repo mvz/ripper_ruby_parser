@@ -110,7 +110,7 @@ module RipperRubyParser
 
     def process_paren exp
       _, body = exp.shift 2
-      if body.size == 0
+      if body.empty?
         s()
       elsif body.first.is_a? Symbol
         process body
