@@ -1,4 +1,3 @@
-# coding: utf-8
 module RipperRubyParser
   module SexpHandlers
     module Literals
@@ -126,17 +125,17 @@ module RipperRubyParser
         return string, rest
       end
 
-      def internal_process_string_parts(exp)
+      def internal_process_string_parts exp
         rest = []
 
         until exp.empty?
           part = exp.shift
-          if part.is_a? String
-            # FIXME: Extract escaping into separate method
-            result = s(:str, part.inspect[1..-2])
-          else
-            result = process(part)
-          end
+          result = if part.is_a? String
+                     # FIXME: Extract escaping into separate method
+                     s(:str, part.inspect[1..-2])
+                   else
+                     process(part)
+                   end
           rest << result
         end
         rest
@@ -166,7 +165,7 @@ module RipperRubyParser
         "s" => "\s",
         "t" => "\t",
         "v" => "\v"
-      }
+      }.freeze
 
       SINGLE_LETTER_ESCAPES_REGEXP =
         Regexp.new("^[#{SINGLE_LETTER_ESCAPES.keys.join}]$")

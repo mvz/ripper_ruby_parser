@@ -3,26 +3,59 @@ AllCops:
     - 'test/samples/*'
   Include:
     - Rakefile
+    - Gemfile
+
+# Dot at end of line makes it clearer that the line is not done
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+# Don't force lonely closing parentheses
+Layout/MultilineMethodCallBraceLayout:
+  EnforcedStyle: same_line
 
 # Allow if (foo = get_foo) style
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
 
+# These test files contain many literal strings that represent Ruby source with
+# interpolation.
+Lint/InterpolationCheck:
+  Exclude:
+    - 'test/**/*.rb'
+
+# TODO: Re-enable and fix offenses
+Metrics/AbcSize:
+  Enabled: false
+
+# Test describe blocks can be any size
+Metrics/BlockLength:
+  Exclude:
+    - 'test/**/*'
+
+# TODO: Re-enable and fix offenses
+Metrics/ClassLength:
+  Enabled: false
+
 # Set a lenient line length limit
 Metrics/LineLength:
   Max: 95
 
+# TODO: Re-enable and fix offenses
+Metrics/ModuleLength:
+  Enabled: false
+
+# Allow any name: It's just a string
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+# Allow process_BEGIN and friends
+# FIXME: Should be able to disable this inline!
+Naming/MethodName:
+  Enabled: false
+
 # Support use of and and or for control flow.
 Style/AndOr:
   Enabled: false
-
-# Allow multi-line blocks of all sorts
-Style/Blocks:
-  Enabled: false
-
-# Dot at end of line makes it clearer that the line is not done
-Style/DotPosition:
-  EnforcedStyle: trailing
 
 # Require at least two dependent lines before suggesting a guard clause
 Style/GuardClause:
@@ -32,17 +65,17 @@ Style/GuardClause:
 Style/IfUnlessModifier:
   MaxLineLength: 60
 
-# Allow s() as a special case
-Style/MethodCallParentheses:
+# Avoid offenses on s().
+# See https://github.com/bbatsov/rubocop/issues/4753
+Style/MethodCallWithoutArgsParentheses:
   Enabled: false
 
 # Prefer no parentheses in method definitions
 Style/MethodDefParentheses:
   EnforcedStyle: require_no_parentheses
 
-# Allow process_BEGIN and friends
-# FIXME: Should be able to disable this inline!
-Style/MethodName:
+# This cop gives confusing results for objects that may not be numbers.
+Style/NumericPredicate:
   Enabled: false
 
 # Allow explicit return with multiple return values
@@ -55,6 +88,15 @@ Style/SignalException:
 
 # Allow non-interpolated strings with double quotes
 Style/StringLiterals:
+  Enabled: false
+
+# Prefer symbols to look like symbols
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+# This cop doesn't handle complex destructuring assignments at the moment.
+# See https://github.com/bbatsov/rubocop/issues/4757
+Style/TrailingUnderscoreVariable:
   Enabled: false
 
 inherit_from: .rubocop_todo.yml

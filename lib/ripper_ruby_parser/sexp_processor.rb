@@ -110,7 +110,7 @@ module RipperRubyParser
 
     def process_paren exp
       _, body = exp.shift 2
-      if body.size == 0
+      if body.empty?
         s()
       elsif body.first.is_a? Symbol
         process body
@@ -143,7 +143,7 @@ module RipperRubyParser
     end
 
     def process_at_float exp
-      make_literal(exp) { |val| val.to_f }
+      make_literal(exp, &:to_f)
     end
 
     # character literals
@@ -227,9 +227,9 @@ module RipperRubyParser
     end
 
     def make_identifier type, exp
-      with_position_from_node_symbol(exp) {|ident|
+      with_position_from_node_symbol(exp) do |ident|
         s(type, ident)
-      }
+      end
     end
 
     def make_literal exp

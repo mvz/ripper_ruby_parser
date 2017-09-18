@@ -1,4 +1,3 @@
-# coding: utf-8
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
@@ -288,10 +287,10 @@ describe RipperRubyParser::Parser do
 
           it "works for strings with interpolations followed by escape sequences" do
             '"#{foo}\\n"'.
-              must_be_parsed_as  s(:dstr,
-                                   "",
-                                   s(:evstr, s(:call, nil, :foo)),
-                                   s(:str, "\n"))
+              must_be_parsed_as s(:dstr,
+                                  "",
+                                  s(:evstr, s(:call, nil, :foo)),
+                                  s(:str, "\n"))
           end
 
           it "works with an empty interpolation" do
@@ -516,6 +515,5 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, 448)
       end
     end
-
   end
 end

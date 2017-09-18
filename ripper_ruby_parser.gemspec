@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 require File.join(File.dirname(__FILE__), 'lib/ripper_ruby_parser/version.rb')
 
 Gem::Specification.new do |s|
@@ -6,7 +5,7 @@ Gem::Specification.new do |s|
   s.version = RipperRubyParser::VERSION
 
   s.summary = "Parse with Ripper, produce sexps that are compatible with RubyParser."
-  s.required_ruby_version = %q{>= 2.0.0}
+  s.required_ruby_version = '>= 2.0.0'
 
   s.authors = ["Matijs van Zuijlen"]
   s.email = ["matijs@matijs.net"]

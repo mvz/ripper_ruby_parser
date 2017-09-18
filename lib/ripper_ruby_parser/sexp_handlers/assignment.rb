@@ -35,7 +35,7 @@ module RipperRubyParser
         when :fake_array
           right[0] = :array
         when :splat
-          # Do nothing
+          nil # Do nothing
         else
           right = s(:to_ary, right)
         end
@@ -79,7 +79,7 @@ module RipperRubyParser
 
         lvalue = process(lvalue)
         value = process(value)
-        operator = operator[1].gsub(/=/, '').to_sym
+        operator = operator[1].delete('=').to_sym
 
         create_operator_assignment_sub_type lvalue, value, operator
       end
@@ -110,7 +110,7 @@ module RipperRubyParser
       OPERATOR_ASSIGNMENT_MAP = {
         :"||" => :op_asgn_or,
         :"&&" => :op_asgn_and
-      }
+      }.freeze
 
       def create_operator_assignment_sub_type lvalue, value, operator
         case lvalue.sexp_type
@@ -151,11 +151,11 @@ module RipperRubyParser
         lvar: :lasgn,
         cvar: :cvdecl,
         gvar: :gasgn
-      }
+      }.freeze
 
       ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP = {
         cvar: :cvasgn
-      }
+      }.freeze
 
       def create_assignment_sub_type lvalue, value
         s(map_assignment_lvalue_type(lvalue.sexp_type), lvalue[1], value)
@@ -163,8 +163,8 @@ module RipperRubyParser
 
       def map_assignment_lvalue_type type
         @in_method_body && ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP[type] ||
-        ASSIGNMENT_SUB_TYPE_MAP[type] ||
-        type
+          ASSIGNMENT_SUB_TYPE_MAP[type] ||
+          type
       end
     end
   end

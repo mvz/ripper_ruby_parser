@@ -1,4 +1,3 @@
-# coding: utf-8
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
@@ -524,7 +523,6 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:args, :bar, :"*baz"))
       end
-
     end
 
     describe "for yield" do

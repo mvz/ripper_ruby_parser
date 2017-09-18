@@ -264,7 +264,6 @@ describe RipperRubyParser::Parser do
                                   s(:splat, s(:call, nil, :bar))),
                                 s(:call, nil, :baz)),
                               nil)
-
       end
     end
   end

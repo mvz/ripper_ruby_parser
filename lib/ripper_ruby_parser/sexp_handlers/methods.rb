@@ -92,7 +92,7 @@ module RipperRubyParser
       SPECIAL_ARG_MARKER = {
         splat: "*",
         blockarg: "&"
-      }
+      }.freeze
 
       def convert_special_args args
         args.map! do |item|
@@ -100,10 +100,6 @@ module RipperRubyParser
             item
           else
             case item.sexp_type
-            when *SPECIAL_ARG_MARKER.keys
-              marker = SPECIAL_ARG_MARKER[item.sexp_type]
-              name = extract_node_symbol item[1]
-              :"#{marker}#{name}"
             when :lvar
               item[1]
             when :masgn
@@ -116,6 +112,10 @@ module RipperRubyParser
               else
                 item
               end
+            when *SPECIAL_ARG_MARKER.keys
+              marker = SPECIAL_ARG_MARKER[item.sexp_type]
+              name = extract_node_symbol item[1]
+              :"#{marker}#{name}"
             else
               item
             end

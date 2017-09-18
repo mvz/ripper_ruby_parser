@@ -177,7 +177,7 @@ module RipperRubyParser
       end
 
       def make_iter call, args, stmt
-        args = 0 unless args
+        args ||= 0
         if stmt.nil?
           s(:iter, call, args)
         else

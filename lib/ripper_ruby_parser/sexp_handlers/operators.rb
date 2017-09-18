@@ -6,15 +6,15 @@ module RipperRubyParser
         :"||" => :or,
         :and => :and,
         :or => :or
-      }
+      }.freeze
 
       UNARY_OPERATOR_MAP = {
         not: :!
-      }
+      }.freeze
 
       NEGATED_BINARY_OPERATOR_MAP = {
         :"!~" => :=~
-      }
+      }.freeze
 
       def process_binary exp
         _, left, op, right = exp.shift 4
