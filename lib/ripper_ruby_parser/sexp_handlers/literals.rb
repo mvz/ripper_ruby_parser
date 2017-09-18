@@ -125,7 +125,7 @@ module RipperRubyParser
         return string, rest
       end
 
-      def internal_process_string_parts(exp)
+      def internal_process_string_parts exp
         rest = []
 
         until exp.empty?
