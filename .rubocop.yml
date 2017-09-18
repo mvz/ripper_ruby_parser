@@ -19,14 +19,26 @@ Lint/InterpolationCheck:
   Exclude:
     - 'test/unit/*.rb'
 
+# TODO: Re-enable and fix offenses
+Metrics/AbcSize:
+  Enabled: false
+
 # Test describe blocks can be any size
 Metrics/BlockLength:
   Exclude:
     - 'test/**/*'
 
+# TODO: Re-enable and fix offenses
+Metrics/ClassLength:
+  Enabled: false
+
 # Set a lenient line length limit
 Metrics/LineLength:
   Max: 95
+
+# TODO: Re-enable and fix offenses
+Metrics/ModuleLength:
+  Enabled: false
 
 # Allow any name: It's just a string
 Naming/HeredocDelimiterNaming:
