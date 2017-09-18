@@ -21,7 +21,7 @@ Lint/AssignmentInCondition:
 # interpolation.
 Lint/InterpolationCheck:
   Exclude:
-    - 'test/unit/*.rb'
+    - 'test/**/*.rb'
 
 # TODO: Re-enable and fix offenses
 Metrics/AbcSize:
