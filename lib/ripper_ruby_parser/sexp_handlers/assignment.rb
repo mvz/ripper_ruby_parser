@@ -163,8 +163,8 @@ module RipperRubyParser
 
       def map_assignment_lvalue_type type
         @in_method_body && ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP[type] ||
-        ASSIGNMENT_SUB_TYPE_MAP[type] ||
-        type
+          ASSIGNMENT_SUB_TYPE_MAP[type] ||
+          type
       end
     end
   end
