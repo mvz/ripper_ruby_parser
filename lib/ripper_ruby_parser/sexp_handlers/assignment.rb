@@ -35,7 +35,7 @@ module RipperRubyParser
         when :fake_array
           right[0] = :array
         when :splat
-          # Do nothing
+          nil # Do nothing
         else
           right = s(:to_ary, right)
         end
