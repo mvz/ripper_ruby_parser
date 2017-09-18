@@ -9,6 +9,10 @@ AllCops:
 Layout/DotPosition:
   EnforcedStyle: trailing
 
+# Don't force lonely closing parentheses
+Layout/MultilineMethodCallBraceLayout:
+  EnforcedStyle: same_line
+
 # Allow if (foo = get_foo) style
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
