@@ -22,21 +22,16 @@ module RipperRubyParser
         if exp.size == 6
           _, normal, defaults, splat, rest, block = exp.shift 6
         else
-          _, normal, defaults, splat, rest, _, _, block = exp.shift 8
+          _, normal, defaults, splat, rest, kwargs, _, block = exp.shift 8
         end
 
-        args = [*normal].map do |id|
-          process(id)
-        end
-
-        [*defaults].each do |pair|
-          sym = process(pair[0])
-          val = process(pair[1])
-          args << s(:lasgn, sym[1], val)
-        end
+        args = []
+        args += normal.map { |id| process(id) } if normal
+        args += defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) } if defaults
 
         args << process(splat) unless splat.nil? || splat == 0
-        [*rest].each { |arg| args << process(arg) }
+        args += rest.map { |it| process(it) } if rest
+        args += kwargs.map { |sym, val| s(:kwarg, process(sym)[1], process(val)) } if kwargs
         args << process(block) unless block.nil?
 
         s(:args, *args)

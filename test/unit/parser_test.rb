@@ -412,6 +412,15 @@ describe RipperRubyParser::Parser do
                               s(:nil))
       end
 
+      it 'works with a named argument with a default value' do
+        'def foo bar: 1; end'.
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args,
+                                s(:kwarg, :bar, s(:lit, 1))),
+                              s(:nil))
+      end
+
       it 'works when the method name is an operator' do
         'def +; end'.
           must_be_parsed_as s(:defn, :+, s(:args),
