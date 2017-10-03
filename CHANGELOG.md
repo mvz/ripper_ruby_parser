@@ -1,5 +1,9 @@
 # Change log
 
+## 1.1.1 / 2017-10-03
+
+* Fix handling of non-final splats in LHS
+
 ## 1.1.0 / 2017-10-02
 
 * Compatible with RubyParser 3.10.x
