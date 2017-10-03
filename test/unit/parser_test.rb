@@ -430,6 +430,14 @@ describe RipperRubyParser::Parser do
                               s(:nil))
       end
 
+      it 'works with a double splat' do
+        'def foo **bar; end'.
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args, :'**bar'),
+                              s(:nil))
+      end
+
       it 'works when the method name is an operator' do
         'def +; end'.
           must_be_parsed_as s(:defn, :+, s(:args),

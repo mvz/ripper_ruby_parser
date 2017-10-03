@@ -22,7 +22,7 @@ module RipperRubyParser
         if exp.size == 6
           _, normal, defaults, splat, rest, block = exp.shift 6
         else
-          _, normal, defaults, splat, rest, kwargs, _, block = exp.shift 8
+          _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
         end
 
         args = []
@@ -32,6 +32,7 @@ module RipperRubyParser
         args << process(splat) unless splat.nil? || splat == 0
         args += rest.map { |it| process(it) } if rest
         args += handle_kwargs kwargs if kwargs
+        args << s(:dsplat, process(doublesplat)) if doublesplat
         args << process(block) unless block.nil?
 
         s(:args, *args)

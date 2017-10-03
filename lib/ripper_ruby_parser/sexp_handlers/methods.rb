@@ -91,6 +91,7 @@ module RipperRubyParser
 
       SPECIAL_ARG_MARKER = {
         splat: '*',
+        dsplat: '**',
         blockarg: '&'
       }.freeze
 
