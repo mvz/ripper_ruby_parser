@@ -75,6 +75,15 @@ describe RipperRubyParser::Parser do
                                 s(:splat, s(:lasgn, :bar))),
                               s(:to_ary, s(:call, nil, :baz)))
       end
+
+      specify do
+        "*foo, bar = baz".
+          must_be_parsed_as s(:masgn,
+                              s(:array,
+                                s(:splat, s(:lasgn, :foo)),
+                                s(:lasgn, :bar)),
+                              s(:to_ary, s(:call, nil, :baz)))
+      end
     end
 
     describe "for assignment to a collection element" do
