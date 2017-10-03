@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'ruby_parser'
 
-describe "Using RipperRubyParser and RubyParser" do
+describe 'Using RipperRubyParser and RubyParser' do
   let :newparser do
     RipperRubyParser::Parser.new
   end
@@ -10,12 +10,12 @@ describe "Using RipperRubyParser and RubyParser" do
     RubyParser.new
   end
 
-  describe "for a simple well known program" do
+  describe 'for a simple well known program' do
     let :program do
       "puts 'Hello World'"
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       original = oldparser.parse program
       imitation = newparser.parse program
 
@@ -23,7 +23,7 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for a more complex program" do
+  describe 'for a more complex program' do
     let :program do
       <<-END
       module Quux
@@ -44,7 +44,7 @@ describe "Using RipperRubyParser and RubyParser" do
       END
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       original = oldparser.parse program
       imitation = newparser.parse program
 
@@ -52,12 +52,12 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for an example with yield from Reek" do
+  describe 'for an example with yield from Reek' do
     let :program do
       'def fred() yield(3) if block_given?; end'
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       original = oldparser.parse program
       imitation = newparser.parse program
 
@@ -65,7 +65,7 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for an example with floats from Reek" do
+  describe 'for an example with floats from Reek' do
     let :program do
       <<-END
         def total_envy
@@ -78,7 +78,7 @@ describe "Using RipperRubyParser and RubyParser" do
       END
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       original = oldparser.parse program
       imitation = newparser.parse program
 
@@ -86,7 +86,7 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for an example with operators and explicit block parameter from Reek" do
+  describe 'for an example with operators and explicit block parameter from Reek' do
     let :program do
       <<-END
         def parse(arg, argv, &error)
@@ -105,7 +105,7 @@ describe "Using RipperRubyParser and RubyParser" do
       END
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       original = oldparser.parse program
       imitation = newparser.parse program
 
@@ -113,12 +113,12 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for an example of a complex regular expression from Reek" do
+  describe 'for an example of a complex regular expression from Reek' do
     let :program do
       "/(\#{@types})\\s*(\\w+)\\s*\\(([^)]*)\\)/"
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       original = oldparser.parse program
       imitation = newparser.parse program
 
@@ -126,8 +126,8 @@ describe "Using RipperRubyParser and RubyParser" do
     end
   end
 
-  describe "for an example with regular expressions with different encoding flags" do
-    it "gives the same result" do
+  describe 'for an example with regular expressions with different encoding flags' do
+    it 'gives the same result' do
       program = <<-END
         regular = /foo/
         noenc = /foo/n

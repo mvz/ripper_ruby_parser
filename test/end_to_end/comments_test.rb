@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'ruby_parser'
 
-describe "Using RipperRubyParser and RubyParser" do
+describe 'Using RipperRubyParser and RubyParser' do
   let :newparser do
     RipperRubyParser::Parser.new
   end
@@ -10,7 +10,7 @@ describe "Using RipperRubyParser and RubyParser" do
     RubyParser.new
   end
 
-  describe "for a program with quite some comments" do
+  describe 'for a program with quite some comments' do
     let :program do
       <<-END
       # Foo
@@ -46,11 +46,11 @@ describe "Using RipperRubyParser and RubyParser" do
       newparser.parse program
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       imitation.must_equal original
     end
 
-    it "gives the same result with comments" do
+    it 'gives the same result with comments' do
       to_comments(imitation).must_equal to_comments(original)
     end
   end

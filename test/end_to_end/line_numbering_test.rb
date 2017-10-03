@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'ruby_parser'
 
-describe "Using RipperRubyParser and RubyParser" do
+describe 'Using RipperRubyParser and RubyParser' do
   def to_line_numbers exp
     exp.map! do |sub_exp|
       if sub_exp.is_a? Sexp
@@ -26,7 +26,7 @@ describe "Using RipperRubyParser and RubyParser" do
     RubyParser.new
   end
 
-  describe "for a multi-line program" do
+  describe 'for a multi-line program' do
     let :program do
       <<-END
       class Foo
@@ -50,11 +50,11 @@ describe "Using RipperRubyParser and RubyParser" do
       newparser.parse program
     end
 
-    it "gives the same result" do
+    it 'gives the same result' do
       imitation.must_equal original
     end
 
-    it "gives the same result with line numbers" do
+    it 'gives the same result with line numbers' do
       formatted(to_line_numbers(imitation)).
         must_equal formatted(to_line_numbers(original))
     end

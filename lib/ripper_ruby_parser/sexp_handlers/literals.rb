@@ -25,16 +25,16 @@ module RipperRubyParser
         when :str
           val
         when :void_stmt
-          s(:dstr, "", s(:evstr))
+          s(:dstr, '', s(:evstr))
         else
-          s(:dstr, "", s(:evstr, val))
+          s(:dstr, '', s(:evstr, val))
         end
       end
 
       def process_string_dvar exp
         _, list = exp.shift 2
         val = process(list)
-        s(:dstr, "", s(:evstr, val))
+        s(:dstr, '', s(:evstr, val))
       end
 
       def process_string_concat exp
@@ -114,7 +114,7 @@ module RipperRubyParser
       def extract_string_parts exp
         parts = internal_process_string_parts(exp)
 
-        string = ""
+        string = ''
         while !parts.empty? && parts.first.sexp_type == :str
           str = parts.shift
           string += str[1]
@@ -156,15 +156,15 @@ module RipperRubyParser
       end
 
       SINGLE_LETTER_ESCAPES = {
-        "a" => "\a",
-        "b" => "\b",
-        "e" => "\e",
-        "f" => "\f",
-        "n" => "\n",
-        "r" => "\r",
-        "s" => "\s",
-        "t" => "\t",
-        "v" => "\v"
+        'a' => "\a",
+        'b' => "\b",
+        'e' => "\e",
+        'f' => "\f",
+        'n' => "\n",
+        'r' => "\r",
+        's' => "\s",
+        't' => "\t",
+        'v' => "\v"
       }.freeze
 
       SINGLE_LETTER_ESCAPES_REGEXP =

@@ -14,20 +14,20 @@ module RipperRubyParser
 
     def parse
       result = suppress_warnings { super }
-      raise "Ripper parse failed." unless result
+      raise 'Ripper parse failed.' unless result
 
       Sexp.from_array(result)
     end
 
     def on_comment tok
-      @comment ||= ""
+      @comment ||= ''
       @comment += tok
       super
     end
 
     def on_kw tok
       case tok
-      when "class", "def", "module"
+      when 'class', 'def', 'module'
         unless @in_symbol
           @comment_stack.push [tok.to_sym, @comment]
           @comment = nil
@@ -105,7 +105,7 @@ module RipperRubyParser
       unless tok == name
         raise "Expected on_#{tok} event, got on_#{name}"
       end
-      [:comment, comment || "", exp]
+      [:comment, comment || '', exp]
     end
 
     def suppress_warnings

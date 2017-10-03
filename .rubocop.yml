@@ -86,10 +86,6 @@ Style/RedundantReturn:
 Style/SignalException:
   EnforcedStyle: only_raise
 
-# Allow non-interpolated strings with double quotes
-Style/StringLiterals:
-  Enabled: false
-
 # Prefer symbols to look like symbols
 Style/SymbolArray:
   EnforcedStyle: brackets

@@ -7,17 +7,17 @@ class TestParser < RipperRubyParser::Parser
   end
 end
 
-SKIPPED_TESTS = ["dstr_heredoc_windoze_sucks"].freeze
+SKIPPED_TESTS = ['dstr_heredoc_windoze_sucks'].freeze
 
 class RubyParserTestCase < ParseTreeTestCase
   def self.previous _key
-    "Ruby"
+    'Ruby'
   end
 
   def self.generate_test klass, node, data, input_name, output_name
     if data['Ruby'].is_a? Array
       klass.send :define_method, "test_#{node}" do
-        skip "Not a parser test"
+        skip 'Not a parser test'
       end
       return
     end
@@ -29,7 +29,7 @@ class RubyParserTestCase < ParseTreeTestCase
       return
     end
 
-    output_name = "ParseTree"
+    output_name = 'ParseTree'
 
     super
   end

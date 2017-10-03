@@ -1,5 +1,5 @@
 require 'rake/clean'
-require "bundler/gem_tasks"
+require 'bundler/gem_tasks'
 require 'rake/testtask'
 
 namespace :test do
@@ -21,7 +21,7 @@ namespace :test do
     t.warning = true
   end
 
-  desc "Run all three test suites"
+  desc 'Run all three test suites'
   task run: [:unit, :end_to_end, :pt_testcase]
 end
 
