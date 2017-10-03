@@ -4,11 +4,11 @@ require 'ripper_ruby_parser/sexp_handlers'
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
   class SexpProcessor < ::SexpProcessor
-    attr_accessor :filename
-    attr_accessor :extra_compatible
+    attr_reader :filename
+    attr_reader :extra_compatible
 
-    def initialize
-      super
+    def initialize(filename: nil, extra_compatible: nil)
+      super()
 
       # TODO: Find these automatically
 
@@ -27,6 +27,9 @@ module RipperRubyParser
       @processors[:@backref] = :process_at_backref
 
       @processors[:@tstring_content] = :process_at_tstring_content
+
+      @filename = filename
+      @extra_compatible = extra_compatible
 
       @errors = []
 
