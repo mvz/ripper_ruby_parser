@@ -31,7 +31,7 @@ module RipperRubyParser
 
         args << process(splat) unless splat.nil? || splat == 0
         args += rest.map { |it| process(it) } if rest
-        args += kwargs.map { |sym, val| s(:kwarg, process(sym)[1], process(val)) } if kwargs
+        args += handle_kwargs kwargs if kwargs
         args << process(block) unless block.nil?
 
         s(:args, *args)
@@ -158,6 +158,17 @@ module RipperRubyParser
         args = process(args)
         # FIXME: Symbol :block is irrelevant.
         s(:block, args, s(wrap_in_block(map_body(stmts))))
+      end
+
+      def handle_kwargs(kwargs)
+        kwargs.map do |sym, val|
+          symbol = process(sym)[1]
+          if val
+            s(:kwarg, symbol, process(val))
+          else
+            s(:kwarg, symbol)
+          end
+        end
       end
 
       def strip_typeless_sexp block
