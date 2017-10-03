@@ -61,7 +61,11 @@ module RipperRubyParser
       end
 
       def process_mlhs_add_star exp
-        generic_add_star exp
+        _, args, splatarg, rest = exp.shift 4
+        items = handle_potentially_typeless_sexp args
+        items << s(:splat, process(splatarg))
+        rest.each { |arg| items << process(arg) } if rest
+        items
       end
 
       def process_mlhs_paren exp
