@@ -620,6 +620,20 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:splat, s(:call, nil, :bar)))
       end
+
+      it 'works with a function call with parentheses' do
+        'yield foo(bar)'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a function call without parentheses' do
+        'yield foo bar'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
     end
 
     describe 'for the __FILE__ keyword' do
