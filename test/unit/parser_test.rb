@@ -90,6 +90,20 @@ describe RipperRubyParser::Parser do
                                 s(:splat,
                                   s(:call, nil, :bar))))
       end
+
+      it 'works with a function call with parentheses' do
+        'return foo(bar)'.
+          must_be_parsed_as s(:return,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a function call without parentheses' do
+        'return foo bar'.
+          must_be_parsed_as s(:return,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
     end
 
     describe 'for the until statement' do
@@ -454,6 +468,26 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :baz))))
       end
 
+      it 'works with next with a function call with parentheses' do
+        'foo do; next foo(bar); end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
+      end
+
+      it 'works with next with a function call without parentheses' do
+        'foo do; next foo bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
+      end
+
       it 'works with break with no arguments' do
         'foo do; break; end'.
           must_be_parsed_as s(:iter,
@@ -479,6 +513,26 @@ describe RipperRubyParser::Parser do
                                 s(:array,
                                   s(:call, nil, :bar),
                                   s(:call, nil, :baz))))
+      end
+
+      it 'works with break with a function call with parentheses' do
+        'foo do; break foo(bar); end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
+      end
+
+      it 'works with break with a function call without parentheses' do
+        'foo do; break foo bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
       end
 
       it 'works with redo' do

@@ -92,8 +92,10 @@ module RipperRubyParser
       end
 
       def handle_return_argument_list arglist
-        arglist = process(arglist)
-        args = arglist[1..-1]
+        args = handle_potentially_typeless_sexp(arglist)
+        if args.sexp_type == :arglist
+          args = args[1..-1]
+        end
 
         if args.length == 1
           arg = args[0]
