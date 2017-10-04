@@ -22,21 +22,17 @@ module RipperRubyParser
         if exp.size == 6
           _, normal, defaults, splat, rest, block = exp.shift 6
         else
-          _, normal, defaults, splat, rest, _, _, block = exp.shift 8
+          _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
         end
 
-        args = [*normal].map do |id|
-          process(id)
-        end
-
-        [*defaults].each do |pair|
-          sym = process(pair[0])
-          val = process(pair[1])
-          args << s(:lasgn, sym[1], val)
-        end
+        args = []
+        args += normal.map { |id| process(id) } if normal
+        args += defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) } if defaults
 
         args << process(splat) unless splat.nil? || splat == 0
-        [*rest].each { |arg| args << process(arg) }
+        args += rest.map { |it| process(it) } if rest
+        args += handle_kwargs kwargs if kwargs
+        args << s(:dsplat, process(doublesplat)) if doublesplat
         args << process(block) unless block.nil?
 
         s(:args, *args)
@@ -163,6 +159,17 @@ module RipperRubyParser
         args = process(args)
         # FIXME: Symbol :block is irrelevant.
         s(:block, args, s(wrap_in_block(map_body(stmts))))
+      end
+
+      def handle_kwargs(kwargs)
+        kwargs.map do |sym, val|
+          symbol = process(sym)[1]
+          if val
+            s(:kwarg, symbol, process(val))
+          else
+            s(:kwarg, symbol)
+          end
+        end
       end
 
       def strip_typeless_sexp block
