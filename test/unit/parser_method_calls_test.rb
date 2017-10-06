@@ -58,6 +58,47 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux),
                                 s(:call, nil, :quuz))
         end
+
+        it 'works with a named argument' do
+          'foo(bar, baz: qux)'.
+            must_be_parsed_as s(:call,
+                                nil,
+                                :foo,
+                                s(:call, nil, :bar),
+                                s(:hash, s(:lit, :baz), s(:call, nil, :qux)))
+        end
+
+        it 'works with several named arguments' do
+          'foo(bar, baz: qux, quux: quuz)'.
+            must_be_parsed_as s(:call,
+                                nil,
+                                :foo,
+                                s(:call, nil, :bar),
+                                s(:hash,
+                                  s(:lit, :baz), s(:call, nil, :qux),
+                                  s(:lit, :quux), s(:call, nil, :quuz)))
+        end
+
+        it 'works with a double splat argument' do
+          'foo(bar, **baz)'.
+            must_be_parsed_as s(:call,
+                                nil,
+                                :foo,
+                                s(:call, nil, :bar),
+                                s(:hash,
+                                  s(:kwsplat, s(:call, nil, :baz))))
+        end
+
+        it 'works with a named argument followed by a double splat argument' do
+          'foo(bar, baz: qux, **quuz)'.
+            must_be_parsed_as s(:call,
+                                nil,
+                                :foo,
+                                s(:call, nil, :bar),
+                                s(:hash,
+                                  s(:lit, :baz), s(:call, nil, :qux),
+                                  s(:kwsplat, s(:call, nil, :quuz))))
+        end
       end
 
       describe 'with a receiver' do

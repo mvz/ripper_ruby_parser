@@ -494,13 +494,21 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :qux))
       end
 
-      it 'works for a hash with label keys (Ruby 1.9 only)' do
+      it 'works for a hash with label keys' do
         '{foo: bar, baz: qux}'.
           must_be_parsed_as s(:hash,
                               s(:lit, :foo),
                               s(:call, nil, :bar),
                               s(:lit, :baz),
                               s(:call, nil, :qux))
+      end
+
+      it 'works for a hash with splat' do
+        '{foo: bar, baz: qux, **quux}'.
+          must_be_parsed_as s(:hash,
+                              s(:lit, :foo), s(:call, nil, :bar),
+                              s(:lit, :baz), s(:call, nil, :qux),
+                              s(:kwsplat, s(:call, nil, :quux)))
       end
     end
 
