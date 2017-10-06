@@ -6,7 +6,7 @@ module RipperRubyParser
       end
 
       def process_until_mod exp
-        handle_conditional_loop_mod(:until, exp)
+        handle_conditional_loop_mod :until, :while, exp
       end
 
       def process_while exp
@@ -14,7 +14,7 @@ module RipperRubyParser
       end
 
       def process_while_mod exp
-        handle_conditional_loop_mod(:while, exp)
+        handle_conditional_loop_mod :while, :until, exp
       end
 
       def process_for exp
@@ -36,25 +36,31 @@ module RipperRubyParser
       end
 
       def handle_conditional_loop type, negated_type, exp
-        _, cond, block = exp.shift 3
+        _, cond, body = exp.shift 3
 
-        cond = process(cond)
-        body = wrap_in_block(map_body(block))
-
-        if cond.sexp_type == :not
-          _, inner = cond
-          s(negated_type, inner, body, true)
-        else
-          s(type, cond, body, true)
-        end
+        construct_conditional_loop(type, negated_type,
+                                   process(cond),
+                                   wrap_in_block(map_body(body)),
+                                   true)
       end
 
-      def handle_conditional_loop_mod type, exp
-        _, cond, block = exp.shift 3
+      def handle_conditional_loop_mod type, negated_type, exp
+        _, cond, body = exp.shift 3
 
-        check_at_start = check_at_start?(block)
+        check_at_start = check_at_start?(body)
+        construct_conditional_loop(type, negated_type,
+                                   process(cond),
+                                   process(body),
+                                   check_at_start)
+      end
 
-        s(type, process(cond), process(block), check_at_start)
+      def construct_conditional_loop(type, negated_type, cond, body, check_at_start)
+        if cond.sexp_type == :not
+          _, inner = cond
+          s(negated_type, inner, body, check_at_start)
+        else
+          s(type, cond, body, check_at_start)
+        end
       end
     end
   end
