@@ -56,6 +56,15 @@ module RipperRubyParser
       commentize(:def, super)
     end
 
+    def on_qsymbols_add list, elem
+      type, value, lines = elem
+      if type == :@tstring_content
+        super list, [:symbol, [:@ident, value, lines]]
+      else
+        super list, elem
+      end
+    end
+
     def on_symbeg *args
       @in_symbol = true
       super

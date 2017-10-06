@@ -470,6 +470,11 @@ describe RipperRubyParser::Parser do
         '%W(foo bar)'.
           must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
       end
+
+      it 'works for an array created with %i' do
+        '%i(foo bar)'.
+          must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
+      end
     end
 
     describe 'for hash literals' do
