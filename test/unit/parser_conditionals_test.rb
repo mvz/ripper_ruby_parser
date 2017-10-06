@@ -214,6 +214,14 @@ describe RipperRubyParser::Parser do
                               nil,
                               s(:call, nil, :foo))
       end
+
+      it 'handles negative match operator' do
+        'baz unless foo !~ bar'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              nil)
+      end
     end
 
     describe 'for case block' do

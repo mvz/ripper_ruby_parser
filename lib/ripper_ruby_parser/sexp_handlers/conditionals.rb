@@ -25,17 +25,20 @@ module RipperRubyParser
                               nil)
       end
 
-      def process_unless_mod exp
-        _, cond, truepart = exp.shift 3
-        s(:if, handle_condition(cond), nil, process(truepart))
-      end
-
       def process_unless exp
         _, cond, truepart, falsepart = exp.shift 4
 
         construct_conditional(handle_condition(cond),
                               process(falsepart),
                               wrap_in_block(map_body(truepart)))
+      end
+
+      def process_unless_mod exp
+        _, cond, truepart = exp.shift 3
+
+        construct_conditional(handle_condition(cond),
+                              nil,
+                              process(truepart))
       end
 
       def process_case exp
