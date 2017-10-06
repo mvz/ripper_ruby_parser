@@ -508,6 +508,13 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :qux))
       end
 
+      it 'works for a hash with dynamic label keys' do
+        "{'foo': bar}".
+          must_be_parsed_as s(:hash,
+                              s(:lit, :foo),
+                              s(:call, nil, :bar))
+      end
+
       it 'works for a hash with splat' do
         '{foo: bar, baz: qux, **quux}'.
           must_be_parsed_as s(:hash,
