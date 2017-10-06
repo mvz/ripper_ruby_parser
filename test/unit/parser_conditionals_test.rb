@@ -98,7 +98,7 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
-      it 'converts negative match operator by swapping effects' do
+      it 'handles negative match operator' do
         'if foo !~ bar; baz; else; qux; end'.
           must_be_parsed_as s(:if,
                               s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
@@ -139,6 +139,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               nil)
       end
+
+      it 'handles negative match operator' do
+        'baz if foo !~ bar'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              nil,
+                              s(:call, nil, :baz))
+      end
     end
 
     describe 'for regular unless' do
@@ -173,7 +181,7 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar))
       end
 
-      it 'converts negative match operator by swapping effects' do
+      it 'handles negative match operator' do
         'unless foo !~ bar; baz; else; qux; end'.
           must_be_parsed_as s(:if,
                               s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),

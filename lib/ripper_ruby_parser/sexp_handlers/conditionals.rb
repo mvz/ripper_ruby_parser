@@ -4,11 +4,9 @@ module RipperRubyParser
       def process_if exp
         _, cond, truepart, falsepart = exp.shift 4
 
-        cond = handle_condition(cond)
-        truepart = wrap_in_block(map_body(truepart))
-        falsepart = process(falsepart)
-
-        construct_conditional(cond, truepart, falsepart)
+        construct_conditional(handle_condition(cond),
+                              wrap_in_block(map_body(truepart)),
+                              process(falsepart))
       end
 
       def process_elsif exp
@@ -21,7 +19,10 @@ module RipperRubyParser
 
       def process_if_mod exp
         _, cond, truepart = exp.shift 3
-        s(:if, handle_condition(cond), process(truepart), nil)
+
+        construct_conditional(handle_condition(cond),
+                              process(truepart),
+                              nil)
       end
 
       def process_unless_mod exp
@@ -32,11 +33,9 @@ module RipperRubyParser
       def process_unless exp
         _, cond, truepart, falsepart = exp.shift 4
 
-        cond = handle_condition(cond)
-        truepart = wrap_in_block(map_body(truepart))
-        falsepart = process(falsepart)
-
-        construct_conditional(cond, falsepart, truepart)
+        construct_conditional(handle_condition(cond),
+                              process(falsepart),
+                              wrap_in_block(map_body(truepart)))
       end
 
       def process_case exp
