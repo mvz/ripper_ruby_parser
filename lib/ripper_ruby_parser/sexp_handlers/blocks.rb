@@ -121,7 +121,7 @@ module RipperRubyParser
 
       def process_ensure exp
         _, block = exp.shift 2
-        strip_typeless_sexp safe_wrap_in_block s(*map_body(block))
+        strip_typeless_sexp safe_wrap_in_block map_body(block)
       end
 
       def process_next exp
@@ -149,7 +149,7 @@ module RipperRubyParser
         args = 0 if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
-                  *handle_potentially_typeless_sexp(statements))
+                  wrap_in_block(map_body(statements)))
       end
 
       private
