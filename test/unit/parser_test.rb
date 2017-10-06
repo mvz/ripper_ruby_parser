@@ -106,52 +106,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for the until statement' do
-      it 'works in the prefix block case with do' do
-        'until foo do; bar; end'.
-          must_be_parsed_as s(:until,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar), true)
-      end
-
-      it 'works in the prefix block case without do' do
-        'until foo; bar; end'.
-          must_be_parsed_as s(:until,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar), true)
-      end
-
-      it 'works in the single-line postfix case' do
-        'foo until bar'.
-          must_be_parsed_as s(:until,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :foo), true)
-      end
-
-      it 'works in the block postfix case' do
-        'begin; foo; end until bar'.
-          must_be_parsed_as s(:until,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :foo), false)
-      end
-    end
-
-    describe 'for the while statement' do
-      it 'works with do' do
-        'while foo do; bar; end'.
-          must_be_parsed_as s(:while,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar), true)
-      end
-
-      it 'works without do' do
-        'while foo; bar; end'.
-          must_be_parsed_as s(:while,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar), true)
-      end
-    end
-
     describe 'for the for statement' do
       it 'works with do' do
         'for foo in bar do; baz; end'.

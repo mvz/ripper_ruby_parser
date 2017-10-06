@@ -97,6 +97,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz),
                               nil)
       end
+
+      it 'handles negative match operator' do
+        'if foo !~ bar; baz; else; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              s(:call, nil, :qux),
+                              s(:call, nil, :baz))
+      end
     end
 
     describe 'for postfix if' do
@@ -131,6 +139,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               nil)
       end
+
+      it 'handles negative match operator' do
+        'baz if foo !~ bar'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              nil,
+                              s(:call, nil, :baz))
+      end
     end
 
     describe 'for regular unless' do
@@ -164,6 +180,14 @@ describe RipperRubyParser::Parser do
                               nil,
                               s(:call, nil, :bar))
       end
+
+      it 'handles negative match operator' do
+        'unless foo !~ bar; baz; else; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux))
+      end
     end
 
     describe 'for postfix unless' do
@@ -189,6 +213,14 @@ describe RipperRubyParser::Parser do
                               s(:dregx, '', s(:evstr, s(:call, nil, :bar))),
                               nil,
                               s(:call, nil, :foo))
+      end
+
+      it 'handles negative match operator' do
+        'baz unless foo !~ bar'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              nil)
       end
     end
 
