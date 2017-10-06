@@ -4,9 +4,16 @@ module RipperRubyParser
       def process_if exp
         _, cond, truepart, falsepart = exp.shift 4
 
-        s(:if, handle_condition(cond),
-          wrap_in_block(map_body(truepart)),
-          process(falsepart))
+        cond = handle_condition(cond)
+        truepart = wrap_in_block(map_body(truepart))
+        falsepart = process(falsepart)
+
+        if cond.sexp_type == :not
+          _, inner = cond
+          s(:if, inner, falsepart, truepart)
+        else
+          s(:if, cond, truepart, falsepart)
+        end
       end
 
       def process_elsif exp

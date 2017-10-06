@@ -97,6 +97,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz),
                               nil)
       end
+
+      it 'converts negative match operator by swapping effects' do
+        'if foo !~ bar; baz; else; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              s(:call, nil, :qux),
+                              s(:call, nil, :baz))
+      end
     end
 
     describe 'for postfix if' do
