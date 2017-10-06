@@ -11,9 +11,11 @@ module RipperRubyParser
         make_hash_items elems
       end
 
-      def process_assoc_new exp
-        _, left, right = exp.shift 3
-        s(process(left), process(right))
+      # @example
+      #   s(:assoc_splat, s(:vcall, s(:@ident, "bar")))
+      def process_assoc_splat exp
+        _, param = exp.shift 2
+        s(:kwsplat, process(param))
       end
 
       def process_bare_assoc_hash exp
@@ -23,11 +25,18 @@ module RipperRubyParser
 
       private
 
+      # Process list of items that can be either :assoc_new or :assoc_splat
       def make_hash_items elems
         result = s()
         elems.each do |sub_exp|
-          process(sub_exp).each do |elm|
-            result << elm
+          pr = process(sub_exp)
+          case pr.sexp_type
+          when :assoc_new
+            pr.sexp_body.each { |elem| result << elem }
+          when :kwsplat
+            result << pr
+          else
+            raise ArgumentError, pr.sexp_type
           end
         end
         result
