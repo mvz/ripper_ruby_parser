@@ -149,7 +149,7 @@ module RipperRubyParser
         args = 0 if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
-                  *handle_potentially_typeless_sexp(statements))
+                  wrap_in_block(map_body(statements)))
       end
 
       private

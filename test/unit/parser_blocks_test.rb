@@ -287,6 +287,24 @@ describe RipperRubyParser::Parser do
                               0,
                               s(:call, nil, :bar))
       end
+
+      it 'works when there are no statements in the body' do
+        '->(foo) { }'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              s(:args, :foo))
+      end
+
+      it 'works when there are several statements in the body' do
+        '->(foo) { bar; baz }'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              s(:args, :foo),
+                              s(:block,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
+      end
+
     end
   end
 end
