@@ -10,7 +10,17 @@ module RipperRubyParser
       end
 
       def process_while exp
-        handle_conditional_loop(:while, exp)
+        _, cond, block = exp.shift 3
+
+        cond = process(cond)
+        body = wrap_in_block(map_body(block))
+
+        if cond.sexp_type == :not
+          _, inner = cond
+          s(:until, inner, body, true)
+        else
+          s(:while, cond, body, true)
+        end
       end
 
       def process_while_mod exp

@@ -44,6 +44,13 @@ describe RipperRubyParser::Parser do
                               s(:call, s(:call, nil, :bar), :!),
                               s(:call, nil, :foo), true)
       end
+
+      it 'converts a negated match condition to :until' do
+        'while foo !~ bar; baz; end'.
+          must_be_parsed_as s(:until,
+                              s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
+                              s(:call, nil, :baz), true)
+      end
     end
 
     describe 'for the until statement' do
