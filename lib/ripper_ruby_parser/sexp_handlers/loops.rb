@@ -2,7 +2,7 @@ module RipperRubyParser
   module SexpHandlers
     module Loops
       def process_until exp
-        handle_conditional_loop(:until, exp)
+        handle_conditional_loop :until, :while, exp
       end
 
       def process_until_mod exp
@@ -10,17 +10,7 @@ module RipperRubyParser
       end
 
       def process_while exp
-        _, cond, block = exp.shift 3
-
-        cond = process(cond)
-        body = wrap_in_block(map_body(block))
-
-        if cond.sexp_type == :not
-          _, inner = cond
-          s(:until, inner, body, true)
-        else
-          s(:while, cond, body, true)
-        end
+        handle_conditional_loop :while, :until, exp
       end
 
       def process_while_mod exp
@@ -45,10 +35,18 @@ module RipperRubyParser
         block.sexp_type != :begin
       end
 
-      def handle_conditional_loop type, exp
+      def handle_conditional_loop type, negated_type, exp
         _, cond, block = exp.shift 3
 
-        s(type, process(cond), wrap_in_block(map_body(block)), true)
+        cond = process(cond)
+        body = wrap_in_block(map_body(block))
+
+        if cond.sexp_type == :not
+          _, inner = cond
+          s(negated_type, inner, body, true)
+        else
+          s(type, cond, body, true)
+        end
       end
 
       def handle_conditional_loop_mod type, exp
