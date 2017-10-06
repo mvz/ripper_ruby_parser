@@ -96,7 +96,11 @@ module RipperRubyParser
       def process_dyna_symbol exp
         _, list = exp.shift 2
 
-        string, rest = extract_unescaped_string_parts list
+        if list.sexp_type == :string_content
+          string, rest = extract_unescaped_string_parts list.sexp_body
+        else
+          string, rest = extract_unescaped_string_parts list
+        end
         if rest.empty?
           s(:lit, string.to_sym)
         else
