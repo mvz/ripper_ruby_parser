@@ -57,11 +57,18 @@ module RipperRubyParser
     end
 
     def on_qsymbols_add list, elem
-      type, value, lines = elem
-      if type == :@tstring_content
-        super list, [:symbol, [:@ident, value, lines]]
+      super list, [:dyna_symbol, [elem]]
+    end
+
+    def on_symbols_add list, elem
+      super list, [:dyna_symbol, elem]
+    end
+
+    def on_words_add list, elem
+      if elem.count == 1
+        super
       else
-        super list, elem
+        super list, [:string_content, *elem]
       end
     end
 
