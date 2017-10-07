@@ -115,5 +115,21 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :qux))))
       end
     end
+
+    describe 'for unary numerical operators' do
+      it 'handles unary minus with a non-literal' do
+        '-foo'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :-@)
+      end
+
+      it 'handles unary plus with a non-literal' do
+        '+foo'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :+@)
+      end
+    end
   end
 end

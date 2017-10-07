@@ -983,30 +983,6 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo))
       end
 
-      it 'handles unary minus with a number literal' do
-        '-1'.
-          must_be_parsed_as s(:lit, -1)
-      end
-
-      it 'handles unary minus with a non-literal' do
-        '-foo'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :-@)
-      end
-
-      it 'handles unary plus with a number literal' do
-        '+ 1'.
-          must_be_parsed_as s(:lit, 1)
-      end
-
-      it 'handles unary plus with a non-literal' do
-        '+ foo'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :+@)
-      end
-
       it 'handles unary !' do
         '!foo'.
           must_be_parsed_as s(:call, s(:call, nil, :foo), :!)

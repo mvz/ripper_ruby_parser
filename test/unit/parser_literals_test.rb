@@ -575,6 +575,16 @@ describe RipperRubyParser::Parser do
         '0700'.
           must_be_parsed_as s(:lit, 448)
       end
+
+      it 'handles negative sign' do
+        '-1'.
+          must_be_parsed_as s(:lit, -1)
+      end
+
+      it 'handles positive sign' do
+        '+1'.
+          must_be_parsed_as s(:lit, 1)
+      end
     end
   end
 end
