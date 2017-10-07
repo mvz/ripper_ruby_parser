@@ -72,6 +72,41 @@ module RipperRubyParser
       end
     end
 
+    def on_op(token)
+      @seen_space = false
+      super
+    end
+
+    def on_sp(_token)
+      @seen_space = true
+      super
+    end
+
+    def on_int(_token)
+      @space_before = @seen_space
+      super
+    end
+
+    def on_float(_token)
+      @space_before = @seen_space
+      super
+    end
+
+    NUMBER_LITERAL_TYPES = [:@int, :@float]
+
+    def on_unary(op, value)
+      if !@space_before && op == :-@ && NUMBER_LITERAL_TYPES.include?(value.first)
+        type, literal, lines = value
+        if literal[0] == '-'
+          super
+        else
+          [type, "-#{literal}", lines]
+        end
+      else
+        super
+      end
+    end
+
     def on_symbeg *args
       @in_symbol = true
       super

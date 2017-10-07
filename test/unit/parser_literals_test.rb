@@ -575,6 +575,31 @@ describe RipperRubyParser::Parser do
         '0700'.
           must_be_parsed_as s(:lit, 448)
       end
+
+      it 'handles negative sign for integers' do
+        '-1'.
+          must_be_parsed_as s(:lit, -1)
+      end
+
+      it 'handles space after negative sign for integers' do
+        '-1 '.
+          must_be_parsed_as s(:lit, -1)
+      end
+
+      it 'handles negative sign for floats' do
+        '-3.14'.
+          must_be_parsed_as s(:lit, -3.14)
+      end
+
+      it 'handles space after negative sign for floats' do
+        '-3.14 '.
+          must_be_parsed_as s(:lit, -3.14)
+      end
+
+      it 'handles positive sign' do
+        '+1'.
+          must_be_parsed_as s(:lit, 1)
+      end
     end
   end
 end
