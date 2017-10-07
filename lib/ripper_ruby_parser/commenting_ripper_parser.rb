@@ -85,7 +85,11 @@ module RipperRubyParser
     def on_unary(op, value)
       if !@seen_space && op == :-@ && value.first == :@int
         _, literal, lines = value
-        [:@int, "-#{literal}", lines]
+        if literal[0] == '-'
+          super
+        else
+          [:@int, "-#{literal}", lines]
+        end
       else
         super
       end

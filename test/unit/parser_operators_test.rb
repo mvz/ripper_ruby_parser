@@ -128,6 +128,10 @@ describe RipperRubyParser::Parser do
                               :-@)
       end
 
+      it 'handles unary minus with a negative number literal' do
+        '- -1'.must_be_parsed_as s(:call, s(:lit, -1), :-@)
+      end
+
       it 'handles unary plus with a number literal' do
         '+ 1'.must_be_parsed_as s(:call, s(:lit, 1), :+@)
       end
