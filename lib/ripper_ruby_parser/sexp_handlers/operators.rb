@@ -52,11 +52,7 @@ module RipperRubyParser
         _, op, arg = exp.shift 3
         arg = process(arg)
         op = UNARY_OPERATOR_MAP[op] || op
-        if literal?(arg) && op != :!
-          s(:lit, arg[1].send(op))
-        else
-          s(:call, arg, op)
-        end
+        s(:call, arg, op)
       end
 
       def process_dot2 exp
