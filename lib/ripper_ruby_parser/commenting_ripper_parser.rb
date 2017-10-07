@@ -57,12 +57,9 @@ module RipperRubyParser
     end
 
     def on_qsymbols_add list, elem
-      type, value, lines = elem
-      if type == :@tstring_content
-        super list, [:symbol, [:@ident, value, lines]]
-      else
-        super list, elem
-      end
+      # Assumes element has type :@tstring_content
+      _type, value, lines = elem
+      super list, [:symbol, [:@ident, value, lines]]
     end
 
     def on_symbeg *args
