@@ -345,6 +345,16 @@ describe RipperRubyParser::Parser do
     end
 
     describe 'for word list literals' do
+      it 'works for the simle case with %w' do
+        '%W(foo bar)'.
+          must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
+      end
+
+      it 'works for the simle case with %W' do
+        '%W(foo bar)'.
+          must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
+      end
+
       it 'correctly handles interpolation' do
         "%W(foo \#{bar} baz)".
           must_be_parsed_as  s(:array,
@@ -369,6 +379,13 @@ describe RipperRubyParser::Parser do
                                 '',
                                 s(:evstr, s(:call, nil, :bar)),
                                 s(:str, 'baz')))
+      end
+    end
+
+    describe 'for symbol list literals' do
+      it 'works for an array created with %i' do
+        '%i(foo bar)'.
+          must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
       end
     end
 
@@ -474,16 +491,6 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:array,
                               s(:call, nil, :foo),
                               s(:splat, s(:call, nil, :bar)))
-      end
-
-      it 'works for an array created with %W' do
-        '%W(foo bar)'.
-          must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
-      end
-
-      it 'works for an array created with %i' do
-        '%i(foo bar)'.
-          must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
       end
     end
 
