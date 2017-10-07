@@ -63,9 +63,12 @@ module RipperRubyParser
     end
 
     def on_symbols_add list, elem
-      elem = elem.first
-      _type, value, lines = elem
-      super list, [:symbol, [:@ident, value, lines]]
+      if elem.count == 1 && elem.first.first == :@tstring_content
+        _, value, lines = elem.first
+        super list, [:symbol, [:@ident, value, lines]]
+      else
+        super list, [:dyna_symbol, elem]
+      end
     end
 
     def on_words_add list, elem

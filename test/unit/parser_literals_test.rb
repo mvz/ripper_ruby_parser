@@ -392,6 +392,24 @@ describe RipperRubyParser::Parser do
         '%I(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
       end
+
+      it 'correctly handles interpolation' do
+        "%I(foo \#{bar} baz)".
+          must_be_parsed_as s(:array,
+                              s(:lit, :foo),
+                              s(:dsym, "", s(:evstr, s(:call, nil, :bar))),
+                              s(:lit, :baz))
+      end
+
+      it 'correctly handles in-word interpolation' do
+        "%I(foo \#{bar}baz)".
+          must_be_parsed_as s(:array,
+                              s(:lit, :foo),
+                              s(:dsym,
+                                "",
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "baz")))
+      end
     end
 
     describe 'for character literals' do
