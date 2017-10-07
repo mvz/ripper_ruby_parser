@@ -117,8 +117,12 @@ describe RipperRubyParser::Parser do
     end
 
     describe 'for unary numerical operators' do
-      it 'handles unary minus with a number literal' do
+      it 'handles unary minus with an integer literal' do
         '- 1'.must_be_parsed_as s(:call, s(:lit, 1), :-@)
+      end
+
+      it 'handles unary minus with a float literal' do
+        '- 3.14'.must_be_parsed_as s(:call, s(:lit, 3.14), :-@)
       end
 
       it 'handles unary minus with a non-literal' do
