@@ -82,10 +82,20 @@ module RipperRubyParser
       super
     end
 
+    def on_int(_token)
+      @space_before = @seen_space
+      super
+    end
+
+    def on_float(_token)
+      @space_before = @seen_space
+      super
+    end
+
     NUMBER_LITERAL_TYPES = [:@int, :@float]
 
     def on_unary(op, value)
-      if !@seen_space && op == :-@ && NUMBER_LITERAL_TYPES.include?(value.first)
+      if !@space_before && op == :-@ && NUMBER_LITERAL_TYPES.include?(value.first)
         type, literal, lines = value
         if literal[0] == '-'
           super
