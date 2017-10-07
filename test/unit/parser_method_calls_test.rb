@@ -137,6 +137,24 @@ describe RipperRubyParser::Parser do
         end
       end
 
+      describe 'safe call' do
+        before do
+          skip 'This is not valid syntax below Ruby 2.3' if RUBY_VERSION < '2.3.0'
+        end
+
+        it 'works without arguments' do
+          'foo&.bar'.must_be_parsed_as s(:safe_call, s(:call, nil, :foo), :bar)
+        end
+
+        it 'works with arguments' do
+          'foo&.bar baz'.
+            must_be_parsed_as s(:safe_call,
+                                s(:call, nil, :foo),
+                                :bar,
+                                s(:call, nil, :baz))
+        end
+      end
+
       describe 'with blocks' do
         it 'works for a do block' do
           'foo.bar do baz; end'.
