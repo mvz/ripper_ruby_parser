@@ -387,6 +387,11 @@ describe RipperRubyParser::Parser do
         '%i(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
       end
+
+      it 'works for an array created with %I' do
+        '%I(foo bar)'.
+          must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
+      end
     end
 
     describe 'for character literals' do

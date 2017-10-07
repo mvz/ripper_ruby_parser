@@ -62,6 +62,12 @@ module RipperRubyParser
       super list, [:symbol, [:@ident, value, lines]]
     end
 
+    def on_symbols_add list, elem
+      elem = elem.first
+      _type, value, lines = elem
+      super list, [:symbol, [:@ident, value, lines]]
+    end
+
     def on_words_add list, elem
       if elem.count == 1
         super
