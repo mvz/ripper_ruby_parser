@@ -1,5 +1,24 @@
 # Change log
 
+## 1.1.2 / 2017-10-07
+
+* Fix support for newer Ruby syntax
+  - Handle optional keyword arguments
+  - Handle mandatory keyword arguments (Ruby 2.1 and up)
+  - Handle double splat arguments in function definitions
+  - Handle double splat in hash literals and method calls
+  - Handle symbol arrays with %i and %I
+  - Handle use of dynamic symbols as hash keys (Ruby 2.2 and up)
+  - Handle safe call operator (Ruby 2.3 and up)
+* Other bug fixes
+  - Fix handling of return and yield with a function call without parentheses
+  - Handle stabby lambdas with any number of statements
+  - Handle more complex interpolation in %W word arrays
+  - Distinguish unary minus from negative sign for int and float literals
+* Compatibility improvements
+  - Match RubyParser's rewriting of conditionals with the negative match
+    operator
+
 ## 1.1.1 / 2017-10-03
 
 * Fix handling of non-final splats in LHS
