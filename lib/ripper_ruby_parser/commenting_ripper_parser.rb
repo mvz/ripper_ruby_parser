@@ -82,13 +82,15 @@ module RipperRubyParser
       super
     end
 
+    NUMBER_LITERAL_TYPES = [:@int, :@float]
+
     def on_unary(op, value)
-      if !@seen_space && op == :-@ && value.first == :@int
-        _, literal, lines = value
+      if !@seen_space && op == :-@ && NUMBER_LITERAL_TYPES.include?(value.first)
+        type, literal, lines = value
         if literal[0] == '-'
           super
         else
-          [:@int, "-#{literal}", lines]
+          [type, "-#{literal}", lines]
         end
       else
         super
