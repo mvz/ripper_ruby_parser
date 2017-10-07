@@ -315,12 +315,22 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:call, nil, :baz)))
         end
 
-        it 'performs the concatenation when the left string has interpolations' do
-          "\"foo\#{bar}\" \"baz\"".
-            must_be_parsed_as s(:dstr,
-                                'foo',
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, 'baz'))
+        describe 'when the left string has interpolations' do
+          it 'performs the concatenation' do
+            "\"foo\#{bar}\" \"baz\"".
+              must_be_parsed_as s(:dstr,
+                                  'foo',
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:str, 'baz'))
+          end
+
+          it 'performs the concatenation with an empty string' do
+            "\"foo\#{bar}\" \"\"".
+              must_be_parsed_as s(:dstr,
+                                  'foo',
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:str, ''))
+          end
         end
 
         describe 'when both strings have interpolations' do
