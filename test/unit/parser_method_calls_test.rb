@@ -141,6 +141,14 @@ describe RipperRubyParser::Parser do
         it 'works without arguments' do
           'foo&.bar'.must_be_parsed_as s(:safe_call, s(:call, nil, :foo), :bar)
         end
+
+        it 'works with arguments' do
+          'foo&.bar baz'.
+            must_be_parsed_as s(:safe_call,
+                                s(:call, nil, :foo),
+                                :bar,
+                                s(:call, nil, :baz))
+        end
       end
 
       describe 'with blocks' do

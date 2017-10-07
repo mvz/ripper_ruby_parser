@@ -37,10 +37,11 @@ module RipperRubyParser
       end
 
       def process_command_call exp
-        _, receiver, _, ident, arguments = exp.shift 5
+        _, receiver, op, ident, arguments = exp.shift 5
+        type = CALL_OP_MAP.fetch op
         with_position_from_node_symbol(ident) do |method|
           args = handle_argument_list(arguments)
-          s(:call, process(receiver), method, *args)
+          s(type, process(receiver), method, *args)
         end
       end
 
