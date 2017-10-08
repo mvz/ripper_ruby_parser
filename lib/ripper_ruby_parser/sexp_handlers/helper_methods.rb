@@ -77,14 +77,13 @@ module RipperRubyParser
       end
 
       def handle_return_argument_list(arglist)
-        args = process(arglist)
-        args.shift if [:arglist, :args].include? args.sexp_type
+        args = handle_argument_list(arglist)
 
         case args.length
         when 0
-          s()
+          args
         when 1
-          arg = args[0]
+          arg = args.first
           if arg.sexp_type == :splat
             s(:svalue, arg)
           else
