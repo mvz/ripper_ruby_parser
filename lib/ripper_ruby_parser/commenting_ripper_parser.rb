@@ -83,7 +83,7 @@ module RipperRubyParser
     end
 
     def on_qsymbols_new
-      [:symbols]
+      [:qsymbols]
     end
 
     def on_qsymbols_add(list, elem)
