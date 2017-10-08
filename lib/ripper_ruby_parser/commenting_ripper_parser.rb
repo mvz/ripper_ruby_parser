@@ -98,6 +98,14 @@ module RipperRubyParser
       list << [:dyna_symbol, elem]
     end
 
+    def on_word_new
+      [:word]
+    end
+
+    def on_word_add(list, elem)
+      list << elem
+    end
+
     def on_words_new
       [:words]
     end

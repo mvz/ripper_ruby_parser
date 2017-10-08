@@ -134,16 +134,18 @@ module RipperRubyParser
 
       def internal_process_string_parts(exp)
         if exp.first == :xstring
-          process(exp).sexp_body
-        else
-          rest = []
-
-          until exp.empty?
-            part = exp.shift
-            rest << process(part)
-          end
-          rest
+          exp.shift
+        elsif exp.first == :word
+          exp.shift
         end
+
+        rest = []
+
+        until exp.empty?
+          part = exp.shift
+          rest << process(part)
+        end
+        rest
       end
 
       def extract_unescaped_string_parts(exp)

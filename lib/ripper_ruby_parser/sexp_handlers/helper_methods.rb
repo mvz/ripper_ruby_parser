@@ -113,13 +113,7 @@ module RipperRubyParser
       def handle_array_elements(elems)
         elems = handle_potentially_typeless_sexp(elems)
         elems.shift if [:arglist, :args].include? elems.sexp_type
-        elems.map do |elem|
-          if elem.first.is_a? Symbol
-            elem
-          else
-            elem.first
-          end
-        end
+        elems
       end
     end
   end
