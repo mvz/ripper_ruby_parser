@@ -27,7 +27,9 @@ module RipperRubyParser
 
         args = []
         args += normal.map { |id| process(id) } if normal
-        args += defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) } if defaults
+        if defaults
+          args += defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
+        end
 
         args << process(splat) unless splat.nil? || splat == 0
         args += rest.map { |it| process(it) } if rest
