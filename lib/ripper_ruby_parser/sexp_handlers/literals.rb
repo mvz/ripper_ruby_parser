@@ -137,6 +137,8 @@ module RipperRubyParser
           exp.shift
         elsif exp.first == :word
           exp.shift
+        elsif exp.first == :regexp
+          exp.shift
         end
 
         rest = []

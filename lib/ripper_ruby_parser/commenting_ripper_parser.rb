@@ -82,6 +82,14 @@ module RipperRubyParser
       list << [:dyna_symbol, [elem]]
     end
 
+    def on_regexp_new
+      [:regexp]
+    end
+
+    def on_regexp_add(list, elem)
+      list << elem
+    end
+
     def on_stmts_new
       [:stmts]
     end
