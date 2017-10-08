@@ -18,7 +18,7 @@ module RipperRubyParser
         :'.'  => :call,
         :'::' => :call,
         :'&.' => :safe_call
-      }
+      }.freeze
 
       def process_call(exp)
         _, receiver, op, ident = exp.shift 4

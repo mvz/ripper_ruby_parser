@@ -92,7 +92,7 @@ module RipperRubyParser
       super
     end
 
-    NUMBER_LITERAL_TYPES = [:@int, :@float]
+    NUMBER_LITERAL_TYPES = [:@int, :@float].freeze
 
     def on_unary(op, value)
       if !@space_before && op == :-@ && NUMBER_LITERAL_TYPES.include?(value.first)
