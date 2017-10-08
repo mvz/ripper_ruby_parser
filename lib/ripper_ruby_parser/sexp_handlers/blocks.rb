@@ -76,15 +76,7 @@ module RipperRubyParser
       def process_bodystmt(exp)
         _, body, rescue_block, else_block, ensure_block = exp.shift 5
 
-        body = map_body body
-
-        body = wrap_in_block(body)
-
-        body = if body.nil?
-                 s()
-               else
-                 s(body)
-               end
+        body = body_wrap_in_block map_body(body)
 
         if rescue_block
           body.push(*process(rescue_block))
@@ -99,15 +91,7 @@ module RipperRubyParser
           body = s(s(:ensure, *body))
         end
 
-        body = wrap_in_block(body)
-
-        body = if body.nil?
-                 s()
-               else
-                 s(body)
-               end
-
-        body
+        body_wrap_in_block body
       end
 
       def process_rescue_mod(exp)
@@ -189,6 +173,17 @@ module RipperRubyParser
           s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
+        end
+      end
+
+      def body_wrap_in_block(statements)
+        case statements.length
+        when 0
+          s()
+        when 1
+          s(statements.first)
+        else
+          s(s(:block, *statements))
         end
       end
     end
