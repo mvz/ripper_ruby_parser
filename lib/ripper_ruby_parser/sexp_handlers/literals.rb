@@ -133,13 +133,17 @@ module RipperRubyParser
       end
 
       def internal_process_string_parts(exp)
-        rest = []
+        if exp.first == :xstring
+          process(exp).sexp_body
+        else
+          rest = []
 
-        until exp.empty?
-          part = exp.shift
-          rest << process(part)
+          until exp.empty?
+            part = exp.shift
+            rest << process(part)
+          end
+          rest
         end
-        rest
       end
 
       def extract_unescaped_string_parts(exp)

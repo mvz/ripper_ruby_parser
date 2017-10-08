@@ -98,7 +98,8 @@ describe RipperRubyParser::CommentingRipperParser do
       result = parse_with_builder ":'foo'; def bar; end"
       result.must_equal s(:program,
                           s(:stmts,
-                            s(:dyna_symbol, s(s(:@tstring_content, 'foo', s(1, 2)))),
+                            s(:dyna_symbol,
+                              s(:xstring, s(:@tstring_content, 'foo', s(1, 2)))),
                             s(:comment,
                               '',
                               s(:def,
@@ -112,7 +113,7 @@ describe RipperRubyParser::CommentingRipperParser do
       result.must_equal s(:program,
                           s(:stmts,
                             s(:dyna_symbol,
-                              s(
+                              s(:xstring,
                                 s(:@tstring_content, 'foo', s(1, 2)),
                                 s(:string_embexpr,
                                   s(:stmts,

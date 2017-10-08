@@ -102,6 +102,14 @@ module RipperRubyParser
       end
     end
 
+    def on_xstring_new
+      [:xstring]
+    end
+
+    def on_xstring_add(list, elem)
+      list << elem
+    end
+
     def on_op(token)
       @seen_space = false
       super
