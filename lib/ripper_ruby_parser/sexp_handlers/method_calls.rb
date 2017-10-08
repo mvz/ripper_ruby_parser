@@ -24,8 +24,13 @@ module RipperRubyParser
       def process_call(exp)
         _, receiver, op, ident = exp.shift 4
         type = CALL_OP_MAP.fetch op
-        with_position_from_node_symbol(ident) do |method|
-          s(type, process(receiver), method)
+        case ident
+        when :call
+          s(type, process(receiver), :call)
+        else
+          with_position_from_node_symbol(ident) do |method|
+            s(type, process(receiver), method)
+          end
         end
       end
 
