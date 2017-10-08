@@ -6,7 +6,7 @@ module RipperRubyParser
         _, elems = exp.shift 2
         return s(:array) if elems.nil?
         case elems.sexp_type
-        when :words, :symbols, :args
+        when :words, :symbols, :args, :qwords
           s(:array, *handle_array_elements(elems.sexp_body))
         else
           s(:array, *handle_array_elements(elems))

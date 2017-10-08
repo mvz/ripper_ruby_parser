@@ -354,12 +354,12 @@ describe RipperRubyParser::Parser do
     end
 
     describe 'for word list literals' do
-      it 'works for the simle case with %w' do
-        '%W(foo bar)'.
+      it 'works for the simple case with %w' do
+        '%w(foo bar)'.
           must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
       end
 
-      it 'works for the simle case with %W' do
+      it 'works for the simple case with %W' do
         '%W(foo bar)'.
           must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
       end
