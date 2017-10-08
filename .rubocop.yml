@@ -23,38 +23,14 @@ Lint/InterpolationCheck:
   Exclude:
     - 'test/**/*.rb'
 
-# TODO: Re-enable and fix offenses
-Metrics/AbcSize:
-  Enabled: false
-
 # Test describe blocks can be any size
 Metrics/BlockLength:
   Exclude:
     - 'test/**/*'
 
-# TODO: Re-enable and fix offenses
-Metrics/ClassLength:
-  Enabled: false
-
-# TODO: Lower Max and fix offenses
-Metrics/CyclomaticComplexity:
-  Max: 10
-
 # Set a lenient line length limit
 Metrics/LineLength:
   Max: 95
-
-# TODO: Lower Max and fix offenses
-Metrics/MethodLength:
-  Max: 33
-
-# TODO: Re-enable and fix offenses
-Metrics/ModuleLength:
-  Enabled: false
-
-# TODO: Lower Max and fix offenses
-Metrics/PerceivedComplexity:
-  Max: 11
 
 # Allow any name: It's just a string
 Naming/HeredocDelimiterNaming:
@@ -102,3 +78,5 @@ Style/SymbolArray:
 # See https://github.com/bbatsov/rubocop/issues/4757
 Style/TrailingUnderscoreVariable:
   Enabled: false
+
+inherit_from: .rubocop_todo.yml
