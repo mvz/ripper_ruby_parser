@@ -106,19 +106,21 @@ module RipperRubyParser
 
       def process_next(exp)
         _, args = exp.shift 2
+        args = handle_return_argument_list(args)
         if args.empty?
           s(:next)
         else
-          s(:next, handle_return_argument_list(args))
+          s(:next, args)
         end
       end
 
       def process_break(exp)
         _, args = exp.shift 2
+        args = handle_return_argument_list(args)
         if args.empty?
           s(:break)
         else
-          s(:break, handle_return_argument_list(args))
+          s(:break, args)
         end
       end
 

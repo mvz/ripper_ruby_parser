@@ -33,7 +33,11 @@ module RipperRubyParser
       def process_yield(exp)
         _, arglist = exp.shift 2
         args = handle_potentially_typeless_sexp(arglist)
-        args.shift if args.sexp_type == :arglist
+        if args.sexp_type == :arglist
+          args.shift
+        elsif args.sexp_type == :args
+          args.shift
+        end
         s(:yield, *args)
       end
 

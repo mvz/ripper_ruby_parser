@@ -58,6 +58,14 @@ module RipperRubyParser
       commentize(:def, super)
     end
 
+    def on_args_new
+      [:args]
+    end
+
+    def on_args_add(list, elem)
+      list << elem
+    end
+
     def on_qsymbols_new
       [:symbols]
     end

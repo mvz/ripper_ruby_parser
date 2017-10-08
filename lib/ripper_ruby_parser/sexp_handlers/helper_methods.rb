@@ -11,11 +11,7 @@ module RipperRubyParser
       end
 
       def handle_argument_list(exp)
-        if exp.first.is_a? Symbol
-          process(exp).tap(&:shift)
-        else
-          map_process exp
-        end
+        process(exp).tap(&:shift)
       end
 
       def extract_node_symbol_with_position(exp)
@@ -67,6 +63,8 @@ module RipperRubyParser
       def map_process(list)
         if list.sexp_type == :stmts
           list.sexp_body.map { |exp| process(exp) }
+        elsif list.sexp_type == :args
+          list.sexp_body.map { |exp| process(exp) }
         else
           list.map  { |exp| process(exp) }
         end
@@ -96,7 +94,7 @@ module RipperRubyParser
 
       def handle_return_argument_list(arglist)
         args = handle_potentially_typeless_sexp(arglist)
-        args.shift if args.sexp_type == :arglist
+        args.shift if [:arglist, :args].include? args.sexp_type
 
         if args.length == 1
           arg = args[0]
@@ -105,6 +103,8 @@ module RipperRubyParser
           else
             arg
           end
+        elsif args.length == 0
+          s()
         else
           s(:array, *args)
         end
@@ -112,6 +112,7 @@ module RipperRubyParser
 
       def handle_array_elements(elems)
         elems = handle_potentially_typeless_sexp(elems)
+        elems.shift if [:arglist, :args].include? elems.sexp_type
         elems.map do |elem|
           if elem.first.is_a? Symbol
             elem

@@ -122,11 +122,7 @@ module RipperRubyParser
 
     def process_paren(exp)
       _, body = exp.shift 2
-      if body.empty?
-        s()
-      else
-        process body
-      end
+      process body
     end
 
     def process_comment(exp)
