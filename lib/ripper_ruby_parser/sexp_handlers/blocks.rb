@@ -19,11 +19,7 @@ module RipperRubyParser
       end
 
       def process_params(exp)
-        if exp.size == 6
-          _, normal, defaults, splat, rest, block = exp.shift 6
-        else
-          _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
-        end
+        _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
         args = []
         args += normal.map { |id| process(id) } if normal

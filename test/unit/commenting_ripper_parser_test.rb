@@ -7,10 +7,7 @@ describe RipperRubyParser::CommentingRipperParser do
   end
 
   def empty_params_list
-    @empty_params_list ||= begin
-                             num_params = RUBY_VERSION < '2.0.0' ? 5 : 7
-                             s(:params, *([nil] * num_params))
-                           end
+    @empty_params_list ||= s(:params, *([nil] * 7))
   end
 
   describe 'handling comments' do
