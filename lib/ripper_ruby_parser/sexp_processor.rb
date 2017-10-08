@@ -221,9 +221,9 @@ module RipperRubyParser
     def class_or_module_body(exp)
       body = process(exp)
 
-      if body.length == 1 && body.first.sexp_type == :block
-        body = body.first
-        body.shift
+      if body.length == 1 && (inner = body.first).sexp_type == :block
+        inner.shift
+        return inner
       end
 
       body
