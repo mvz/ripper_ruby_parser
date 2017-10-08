@@ -5,12 +5,7 @@ module RipperRubyParser
       def process_array(exp)
         _, elems = exp.shift 2
         return s(:array) if elems.nil?
-        case elems.sexp_type
-        when :words, :symbols, :args, :qwords, :qsymbols
-          s(:array, *handle_array_elements(elems.sexp_body))
-        else
-          s(:array, *handle_array_elements(elems))
-        end
+        s(:array, *handle_array_elements(elems))
       end
 
       def process_aref(exp)

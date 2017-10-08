@@ -21,7 +21,7 @@ module RipperRubyParser
       def process_massign(exp)
         _, left, right = exp.shift 3
 
-        left = handle_potentially_typeless_sexp left
+        left = process left
 
         if left.first == :masgn
           left = left[1]
@@ -60,7 +60,7 @@ module RipperRubyParser
 
       def process_mlhs_add_star(exp)
         _, args, splatarg, rest = exp.shift 4
-        items = handle_potentially_typeless_sexp args
+        items = process args
         items << s(:splat, process(splatarg))
         rest.sexp_body.each { |arg| items << process(arg) } if rest
         items
@@ -69,7 +69,7 @@ module RipperRubyParser
       def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
-        items = handle_potentially_typeless_sexp(contents)
+        items = process(contents)
 
         if items.first == :mlhs
           items.shift

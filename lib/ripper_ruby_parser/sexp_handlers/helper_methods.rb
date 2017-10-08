@@ -2,14 +2,6 @@ module RipperRubyParser
   module SexpHandlers
     # Utility methods used in several of the sexp handler modules
     module HelperMethods
-      def handle_potentially_typeless_sexp(exp)
-        if exp.first.is_a? Symbol
-          process(exp)
-        else
-          exp.map! { |sub_exp| handle_potentially_typeless_sexp(sub_exp) }
-        end
-      end
-
       def handle_argument_list(exp)
         process(exp).tap(&:shift)
       end
@@ -46,7 +38,7 @@ module RipperRubyParser
 
       def generic_add_star(exp)
         _, args, splatarg = exp.shift 3
-        items = handle_potentially_typeless_sexp args
+        items = process args
         items << s(:splat, process(splatarg))
         items << process(exp.shift) until exp.empty?
         items
@@ -93,7 +85,7 @@ module RipperRubyParser
       end
 
       def handle_return_argument_list(arglist)
-        args = handle_potentially_typeless_sexp(arglist)
+        args = process(arglist)
         args.shift if [:arglist, :args].include? args.sexp_type
 
         if args.length == 1
@@ -111,9 +103,7 @@ module RipperRubyParser
       end
 
       def handle_array_elements(elems)
-        elems = handle_potentially_typeless_sexp(elems)
-        elems.shift if [:arglist, :args].include? elems.sexp_type
-        elems
+        process(elems).sexp_body
       end
     end
   end

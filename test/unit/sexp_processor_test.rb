@@ -246,7 +246,7 @@ describe RipperRubyParser::SexpProcessor do
 
     describe 'for an :array sexp' do
       it 'pulls up the element sexps' do
-        sexp = s(:array, s(s(:foo), s(:bar), s(:baz)))
+        sexp = s(:array, s(:words, s(:foo), s(:bar), s(:baz)))
         result = processor.process sexp
         result.must_equal s(:array, s(:foo_p), s(:bar_p), s(:baz_p))
       end
@@ -264,9 +264,9 @@ describe RipperRubyParser::SexpProcessor do
 
     describe 'for a :when sexp' do
       it 'turns nested :when clauses into a list' do
-        sexp = s(:when, s(s(:foo)), s(s(:bar)),
-                 s(:when, s(s(:foo)), s(s(:bar)),
-                   s(:when, s(s(:foo)), s(s(:bar)), nil)))
+        sexp = s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)),
+                 s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)),
+                   s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)), nil)))
         result = processor.process sexp
         result.must_equal s(s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                             s(:when, s(:array, s(:foo_p)), s(:bar_p)),
