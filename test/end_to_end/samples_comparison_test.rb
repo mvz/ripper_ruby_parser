@@ -21,7 +21,6 @@ describe 'Using RipperRubyParser and RubyParser' do
       end
 
       let :imitation do
-        newparser.extra_compatible = true
         newparser.parse program
       end
 

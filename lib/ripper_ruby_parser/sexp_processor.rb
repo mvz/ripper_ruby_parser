@@ -7,9 +7,8 @@ module RipperRubyParser
   # @api private
   class SexpProcessor < ::SexpProcessor
     attr_reader :filename
-    attr_reader :extra_compatible
 
-    def initialize(filename: nil, extra_compatible: nil)
+    def initialize(filename: nil)
       super()
 
       # TODO: Find these automatically
@@ -31,7 +30,6 @@ module RipperRubyParser
       @processors[:@tstring_content] = :process_at_tstring_content
 
       @filename = filename
-      @extra_compatible = extra_compatible
 
       @errors = []
 

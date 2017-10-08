@@ -210,7 +210,6 @@ describe RipperRubyParser::Parser do
 
         # TODO: Implement remaining escape sequence cases.
 
-        # TODO: Behave differently in extra_compatible mode.
         it 'works with unicode escapes (unlike RubyParser)' do
           '"foo\\u273bbar"'.must_be_parsed_as s(:str, 'foo✻bar')
         end
