@@ -65,9 +65,9 @@ Naming/HeredocDelimiterNaming:
 Naming/MethodName:
   Enabled: false
 
-# Support use of and and or for control flow.
+# Allow and/or for control flow only
 Style/AndOr:
-  Enabled: false
+  EnforcedStyle: conditionals
 
 # TODO: Re-enable and fix offenses
 Style/Documentation:
