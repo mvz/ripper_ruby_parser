@@ -36,13 +36,25 @@ Metrics/BlockLength:
 Metrics/ClassLength:
   Enabled: false
 
+# TODO: Lower Max and fix offenses
+Metrics/CyclomaticComplexity:
+  Max: 10
+
 # Set a lenient line length limit
 Metrics/LineLength:
   Max: 95
 
+# TODO: Lower Max and fix offenses
+Metrics/MethodLength:
+  Max: 33
+
 # TODO: Re-enable and fix offenses
 Metrics/ModuleLength:
   Enabled: false
+
+# TODO: Lower Max and fix offenses
+Metrics/PerceivedComplexity:
+  Max: 11
 
 # Allow any name: It's just a string
 Naming/HeredocDelimiterNaming:
@@ -55,6 +67,10 @@ Naming/MethodName:
 
 # Support use of and and or for control flow.
 Style/AndOr:
+  Enabled: false
+
+# TODO: Re-enable and fix offenses
+Style/Documentation:
   Enabled: false
 
 # Require at least two dependent lines before suggesting a guard clause
@@ -90,5 +106,3 @@ Style/SymbolArray:
 # See https://github.com/bbatsov/rubocop/issues/4757
 Style/TrailingUnderscoreVariable:
   Enabled: false
-
-inherit_from: .rubocop_todo.yml
