@@ -4,7 +4,13 @@ module RipperRubyParser
     module Arrays
       def process_array(exp)
         _, elems = exp.shift 2
-        s(:array, *handle_array_elements(elems))
+        if elems.nil?
+          s(:array)
+        elsif elems.sexp_type == :words
+          s(:array, *handle_array_elements(elems.sexp_body))
+        else
+          s(:array, *handle_array_elements(elems))
+        end
       end
 
       def process_aref(exp)

@@ -66,11 +66,15 @@ module RipperRubyParser
       super list, [:dyna_symbol, elem]
     end
 
+    def on_words_new
+      [:words]
+    end
+
     def on_words_add(list, elem)
       if elem.count == 1
-        super
+        list << elem
       else
-        super list, [:string_content, *elem]
+        list << [:string_content, *elem]
       end
     end
 
