@@ -58,8 +58,12 @@ module RipperRubyParser
       commentize(:def, super)
     end
 
+    def on_qsymbols_new
+      [:symbols]
+    end
+
     def on_qsymbols_add(list, elem)
-      super list, [:dyna_symbol, [elem]]
+      list << [:dyna_symbol, [elem]]
     end
 
     def on_symbols_new
