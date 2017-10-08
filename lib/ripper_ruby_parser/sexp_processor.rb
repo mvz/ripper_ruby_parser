@@ -124,11 +124,8 @@ module RipperRubyParser
       _, body = exp.shift 2
       if body.empty?
         s()
-      elsif body.first.is_a? Symbol
-        process body
       else
-        body.map! { |it| convert_void_stmt_to_nil process it }
-        safe_wrap_in_block body
+        process body
       end
     end
 
@@ -264,14 +261,6 @@ module RipperRubyParser
           sub_exp.line ||= exp.line
           trickle_down_line_numbers sub_exp
         end
-      end
-    end
-
-    def convert_void_stmt_to_nil(sexp)
-      if sexp == s(:void_stmt)
-        s(:nil)
-      else
-        sexp
       end
     end
   end

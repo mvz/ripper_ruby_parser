@@ -3,9 +3,7 @@ module RipperRubyParser
     # Utility methods used in several of the sexp handler modules
     module HelperMethods
       def handle_potentially_typeless_sexp(exp)
-        if exp.nil?
-          s()
-        elsif exp.first.is_a? Symbol
+        if exp.first.is_a? Symbol
           process(exp)
         else
           exp.map! { |sub_exp| handle_potentially_typeless_sexp(sub_exp) }

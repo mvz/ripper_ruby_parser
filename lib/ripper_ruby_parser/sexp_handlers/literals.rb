@@ -22,11 +22,7 @@ module RipperRubyParser
       def process_string_embexpr(exp)
         _, list = exp.shift 2
 
-        if list.sexp_type == :stmts
-          val = process(list.sexp_body.first)
-        else
-          val = process(list.first)
-        end
+        val = process(list.sexp_body.first)
 
         case val.sexp_type
         when :str
