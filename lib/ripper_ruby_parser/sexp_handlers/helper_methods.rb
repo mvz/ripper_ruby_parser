@@ -18,7 +18,7 @@ module RipperRubyParser
         elsif exp.first.is_a? Symbol
           process(exp).tap(&:shift)
         else
-          exp.map! { |sub_exp| process(sub_exp) }
+          map_process exp
         end
       end
 
@@ -65,9 +65,11 @@ module RipperRubyParser
       end
 
       def map_body(body)
-        body.
-          map { |sub_exp| process(sub_exp) }.
-          reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
+        map_process(body).reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
+      end
+
+      def map_process(list)
+        list.map { |exp| process(exp) }
       end
 
       def wrap_in_block(statements)

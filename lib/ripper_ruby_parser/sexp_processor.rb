@@ -49,7 +49,7 @@ module RipperRubyParser
     def process_program(exp)
       _, content = exp.shift 2
 
-      statements = content.map { |sub_exp| process(sub_exp) }
+      statements = map_process(content)
       safe_wrap_in_block statements
     end
 

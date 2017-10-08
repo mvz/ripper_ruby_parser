@@ -46,7 +46,7 @@ module RipperRubyParser
 
       def process_mrhs_new_from_args(exp)
         _, inner, last = exp.shift 3
-        inner.map! { |item| process(item) }
+        inner = map_body inner
         inner.push process(last) unless last.nil?
         s(:fake_array, *inner)
       end

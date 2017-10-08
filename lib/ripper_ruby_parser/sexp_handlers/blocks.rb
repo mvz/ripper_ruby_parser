@@ -23,10 +23,10 @@ module RipperRubyParser
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
         args = []
-        args += normal.map { |id| process(id) } if normal
-        args += map_default_arguments defaults if defaults
+        args += map_process normal if normal
+        args += handle_default_arguments defaults if defaults
         args << process(splat) unless splat.nil? || splat == 0
-        args += rest.map { |it| process(it) } if rest
+        args += map_process rest if rest
         args += handle_kwargs kwargs if kwargs
         args << s(:dsplat, process(doublesplat)) if doublesplat
         args << process(block) unless block.nil?
@@ -157,6 +157,10 @@ module RipperRubyParser
         s(:block, args, s(wrap_in_block(map_body(stmts))))
       end
 
+      def handle_default_arguments(defaults)
+        defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
+      end
+
       def handle_kwargs(kwargs)
         kwargs.map do |sym, val|
           symbol = process(sym)[1]
@@ -186,10 +190,6 @@ module RipperRubyParser
         else
           s(:iter, call, args, stmt)
         end
-      end
-
-      def map_default_arguments(defaults)
-        defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
       end
     end
   end
