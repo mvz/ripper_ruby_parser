@@ -1,7 +1,8 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for conditionals
     module Conditionals
-      def process_if exp
+      def process_if(exp)
         _, cond, truepart, falsepart = exp.shift 4
 
         construct_conditional(handle_condition(cond),
@@ -9,7 +10,7 @@ module RipperRubyParser
                               process(falsepart))
       end
 
-      def process_elsif exp
+      def process_elsif(exp)
         _, cond, truepart, falsepart = exp.shift 4
 
         s(:if, process(cond),
@@ -17,7 +18,7 @@ module RipperRubyParser
           process(falsepart))
       end
 
-      def process_if_mod exp
+      def process_if_mod(exp)
         _, cond, truepart = exp.shift 3
 
         construct_conditional(handle_condition(cond),
@@ -25,7 +26,7 @@ module RipperRubyParser
                               nil)
       end
 
-      def process_unless exp
+      def process_unless(exp)
         _, cond, truepart, falsepart = exp.shift 4
 
         construct_conditional(handle_condition(cond),
@@ -33,7 +34,7 @@ module RipperRubyParser
                               wrap_in_block(map_body(truepart)))
       end
 
-      def process_unless_mod exp
+      def process_unless_mod(exp)
         _, cond, truepart = exp.shift 3
 
         construct_conditional(handle_condition(cond),
@@ -41,12 +42,12 @@ module RipperRubyParser
                               process(truepart))
       end
 
-      def process_case exp
+      def process_case(exp)
         _, expr, clauses = exp.shift 3
         s(:case, process(expr), *process(clauses))
       end
 
-      def process_when exp
+      def process_when(exp)
         _, values, truepart, falsepart = exp.shift 4
 
         if falsepart.nil?
@@ -70,14 +71,14 @@ module RipperRubyParser
           *falsepart)
       end
 
-      def process_else exp
+      def process_else(exp)
         _, body = exp.shift 2
         safe_wrap_in_block(map_body(body))
       end
 
       private
 
-      def handle_condition cond
+      def handle_condition(cond)
         cond = process(cond)
         if (cond.sexp_type == :lit) && cond[1].is_a?(Regexp)
           s(:match, cond)

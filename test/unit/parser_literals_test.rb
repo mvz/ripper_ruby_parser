@@ -407,7 +407,7 @@ describe RipperRubyParser::Parser do
         "%I(foo \#{bar} baz)".
           must_be_parsed_as s(:array,
                               s(:lit, :foo),
-                              s(:dsym, "", s(:evstr, s(:call, nil, :bar))),
+                              s(:dsym, '', s(:evstr, s(:call, nil, :bar))),
                               s(:lit, :baz))
       end
 
@@ -416,9 +416,9 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:array,
                               s(:lit, :foo),
                               s(:dsym,
-                                "",
+                                '',
                                 s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "baz")))
+                                s(:str, 'baz')))
       end
     end
 

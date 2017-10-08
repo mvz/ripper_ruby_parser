@@ -1,7 +1,8 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for assignments
     module Assignment
-      def process_assign exp
+      def process_assign(exp)
         _, lvalue, value = exp.shift 3
         lvalue = process(lvalue)
         value = process(value)
@@ -17,7 +18,7 @@ module RipperRubyParser
                          create_regular_assignment_sub_type(lvalue, value))
       end
 
-      def process_massign exp
+      def process_massign(exp)
         _, left, right = exp.shift 3
 
         left = handle_potentially_typeless_sexp left
@@ -43,14 +44,14 @@ module RipperRubyParser
         s(:masgn, s(:array, *left), right)
       end
 
-      def process_mrhs_new_from_args exp
+      def process_mrhs_new_from_args(exp)
         _, inner, last = exp.shift 3
-        inner.map! { |item| process(item) }
+        inner = map_body inner
         inner.push process(last) unless last.nil?
         s(:fake_array, *inner)
       end
 
-      def process_mrhs_add_star exp
+      def process_mrhs_add_star(exp)
         exp = generic_add_star exp
 
         if exp.first.is_a? Symbol
@@ -60,7 +61,7 @@ module RipperRubyParser
         end
       end
 
-      def process_mlhs_add_star exp
+      def process_mlhs_add_star(exp)
         _, args, splatarg, rest = exp.shift 4
         items = handle_potentially_typeless_sexp args
         items << s(:splat, process(splatarg))
@@ -68,7 +69,7 @@ module RipperRubyParser
         items
       end
 
-      def process_mlhs_paren exp
+      def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
         items = handle_potentially_typeless_sexp(contents)
@@ -78,7 +79,7 @@ module RipperRubyParser
         s(:masgn, s(:array, *create_multiple_assignment_sub_types(items)))
       end
 
-      def process_opassign exp
+      def process_opassign(exp)
         _, lvalue, operator, value = exp.shift 4
 
         lvalue = process(lvalue)
@@ -90,7 +91,7 @@ module RipperRubyParser
 
       private
 
-      def create_multiple_assignment_sub_types sexp_list
+      def create_multiple_assignment_sub_types(sexp_list)
         sexp_list.map! do |item|
           if item.sexp_type == :splat
             if item[1].nil?
@@ -104,7 +105,7 @@ module RipperRubyParser
         end
       end
 
-      def create_valueless_assignment_sub_type item
+      def create_valueless_assignment_sub_type(item)
         item = with_line_number(item.line,
                                 create_regular_assignment_sub_type(item, nil))
         item.pop
@@ -116,7 +117,7 @@ module RipperRubyParser
         :"&&" => :op_asgn_and
       }.freeze
 
-      def create_operator_assignment_sub_type lvalue, value, operator
+      def create_operator_assignment_sub_type(lvalue, value, operator)
         case lvalue.sexp_type
         when :aref_field
           _, arr, arglist = lvalue
@@ -134,7 +135,7 @@ module RipperRubyParser
         end
       end
 
-      def create_regular_assignment_sub_type lvalue, value
+      def create_regular_assignment_sub_type(lvalue, value)
         case lvalue.sexp_type
         when :aref_field
           _, arr, arglist = lvalue
@@ -161,11 +162,11 @@ module RipperRubyParser
         cvar: :cvasgn
       }.freeze
 
-      def create_assignment_sub_type lvalue, value
+      def create_assignment_sub_type(lvalue, value)
         s(map_assignment_lvalue_type(lvalue.sexp_type), lvalue[1], value)
       end
 
-      def map_assignment_lvalue_type type
+      def map_assignment_lvalue_type(type)
         @in_method_body && ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP[type] ||
           ASSIGNMENT_SUB_TYPE_MAP[type] ||
           type

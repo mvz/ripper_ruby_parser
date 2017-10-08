@@ -11,11 +11,11 @@ require 'ripper_ruby_parser'
 
 module MiniTest
   class Spec
-    def formatted exp
+    def formatted(exp)
       exp.to_s.gsub(/\), /, "),\n")
     end
 
-    def to_comments exp
+    def to_comments(exp)
       inner = exp.map do |sub_exp|
         if sub_exp.is_a? Sexp
           to_comments sub_exp
@@ -32,7 +32,7 @@ module MiniTest
       end
     end
 
-    def assert_parsed_as sexp, code
+    def assert_parsed_as(sexp, code)
       parser = RipperRubyParser::Parser.new
       result = parser.parse code
       if sexp.nil?
@@ -42,7 +42,7 @@ module MiniTest
       end
     end
 
-    def assert_parsed_as_before code
+    def assert_parsed_as_before(code)
       oldparser = RubyParser.new
       newparser = RipperRubyParser::Parser.new
       expected = oldparser.parse code.dup

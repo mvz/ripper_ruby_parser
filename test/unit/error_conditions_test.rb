@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
-describe 'Handling errors' do
-  describe 'RipperRubyParser::Parser#parse' do
+describe RipperRubyParser::Parser do
+  describe '#parse' do
     let :newparser do
       RipperRubyParser::Parser.new
     end

@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for hash literals
     module Hashes
       # Handle hash literals sexps. These can be either empty, or contain a
       # nested :assoclist_from_args Sexp.
@@ -8,7 +9,7 @@ module RipperRubyParser
       #   s(:hash, nil)
       # @example Hash with contents
       #   s(:hash, s(:assoclist_from_args, ...))
-      def process_hash exp
+      def process_hash(exp)
         _, body = exp.shift 2
         return s(:hash) unless body
         _, elems = body
@@ -17,13 +18,13 @@ module RipperRubyParser
 
       # @example
       #   s(:assoc_splat, s(:vcall, s(:@ident, "bar")))
-      def process_assoc_splat exp
+      def process_assoc_splat(exp)
         _, param = exp.shift 2
         s(:kwsplat, process(param))
       end
 
       # Handle implied hashes, such as at the end of argument lists.
-      def process_bare_assoc_hash exp
+      def process_bare_assoc_hash(exp)
         _, elems = exp.shift 2
         s(:hash, *make_hash_items(elems))
       end
@@ -31,16 +32,13 @@ module RipperRubyParser
       private
 
       # Process list of items that can be either :assoc_new or :assoc_splat
-      def make_hash_items elems
+      def make_hash_items(elems)
         result = s()
         elems.each do |sub_exp|
-          case sub_exp.sexp_type
-          when :assoc_new
+          if sub_exp.sexp_type == :assoc_new
             sub_exp.sexp_body.each { |elem| result << process(elem) }
-          when :assoc_splat
+          else # :assoc_splat
             result << process(sub_exp)
-          else
-            raise ArgumentError
           end
         end
         result

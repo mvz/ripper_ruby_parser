@@ -1,16 +1,13 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::CommentingRipperParser do
-  def parse_with_builder str
+  def parse_with_builder(str)
     builder = RipperRubyParser::CommentingRipperParser.new str
     builder.parse
   end
 
   def empty_params_list
-    @empty_params_list ||= begin
-                             num_params = RUBY_VERSION < '2.0.0' ? 5 : 7
-                             s(:params, *([nil] * num_params))
-                           end
+    @empty_params_list ||= s(:params, *([nil] * 7))
   end
 
   describe 'handling comments' do

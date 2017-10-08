@@ -1,12 +1,13 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for literals, except hash and array literals
     module Literals
-      def process_string_literal exp
+      def process_string_literal(exp)
         _, content = exp.shift 2
         process(content)
       end
 
-      def process_string_content exp
+      def process_string_content(exp)
         exp.shift
 
         string, rest = extract_unescaped_string_parts exp
@@ -18,7 +19,7 @@ module RipperRubyParser
         end
       end
 
-      def process_string_embexpr exp
+      def process_string_embexpr(exp)
         _, list = exp.shift 2
         val = process(list.first)
         case val.sexp_type
@@ -31,13 +32,13 @@ module RipperRubyParser
         end
       end
 
-      def process_string_dvar exp
+      def process_string_dvar(exp)
         _, list = exp.shift 2
         val = process(list)
         s(:dstr, '', s(:evstr, val))
       end
 
-      def process_string_concat exp
+      def process_string_concat(exp)
         _, left, right = exp.shift 3
 
         left = process(left)
@@ -54,7 +55,7 @@ module RipperRubyParser
         end
       end
 
-      def process_xstring_literal exp
+      def process_xstring_literal(exp)
         _, content = exp.shift 2
         string, rest = extract_unescaped_string_parts content
         if rest.empty?
@@ -64,7 +65,7 @@ module RipperRubyParser
         end
       end
 
-      def process_regexp_literal exp
+      def process_regexp_literal(exp)
         _, content, (_, flags, _) = exp.shift 3
 
         string, rest = extract_string_parts content
@@ -83,17 +84,17 @@ module RipperRubyParser
         end
       end
 
-      def process_symbol_literal exp
+      def process_symbol_literal(exp)
         _, symbol = exp.shift 2
         process(symbol)
       end
 
-      def process_symbol exp
+      def process_symbol(exp)
         _, node = exp.shift 2
         with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
       end
 
-      def process_dyna_symbol exp
+      def process_dyna_symbol(exp)
         _, list = exp.shift 2
 
         if list.sexp_type == :string_content
@@ -108,14 +109,14 @@ module RipperRubyParser
         end
       end
 
-      def process_at_tstring_content exp
+      def process_at_tstring_content(exp)
         _, string, _ = exp.shift 3
         s(:str, string)
       end
 
       private
 
-      def extract_string_parts exp
+      def extract_string_parts(exp)
         parts = internal_process_string_parts(exp)
 
         string = ''
@@ -129,23 +130,17 @@ module RipperRubyParser
         return string, rest
       end
 
-      def internal_process_string_parts exp
+      def internal_process_string_parts(exp)
         rest = []
 
         until exp.empty?
           part = exp.shift
-          result = if part.is_a? String
-                     # FIXME: Extract escaping into separate method
-                     s(:str, part.inspect[1..-2])
-                   else
-                     process(part)
-                   end
-          rest << result
+          rest << process(part)
         end
         rest
       end
 
-      def extract_unescaped_string_parts exp
+      def extract_unescaped_string_parts(exp)
         string, rest = extract_string_parts exp
 
         string = unescape(string)
@@ -174,7 +169,7 @@ module RipperRubyParser
       SINGLE_LETTER_ESCAPES_REGEXP =
         Regexp.new("^[#{SINGLE_LETTER_ESCAPES.keys.join}]$")
 
-      def unescape string
+      def unescape(string)
         string.gsub(/\\(
           [0-7]{1,3}        | # octal character
           x[0-9a-fA-F]{1,2} | # hex byte
@@ -210,7 +205,7 @@ module RipperRubyParser
         end
       end
 
-      def character_flags_to_numerical flags
+      def character_flags_to_numerical(flags)
         numflags = 0
 
         flags =~ /m/ and numflags |= Regexp::MULTILINE

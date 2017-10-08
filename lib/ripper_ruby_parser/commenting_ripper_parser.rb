@@ -5,7 +5,7 @@ module RipperRubyParser
   # Variant of Ripper's SexpBuilderPP parser class that inserts comments as
   # Sexps into the built parse tree.
   class CommentingRipperParser < Ripper::SexpBuilderPP
-    def initialize *args
+    def initialize(*args)
       super
       @comment = nil
       @comment_stack = []
@@ -19,13 +19,13 @@ module RipperRubyParser
       Sexp.from_array(result)
     end
 
-    def on_comment tok
+    def on_comment(tok)
       @comment ||= ''
       @comment += tok
       super
     end
 
-    def on_kw tok
+    def on_kw(tok)
       case tok
       when 'class', 'def', 'module'
         unless @in_symbol
@@ -36,35 +36,35 @@ module RipperRubyParser
       super
     end
 
-    def on_module *args
+    def on_module(*args)
       commentize(:module, super)
     end
 
-    def on_class *args
+    def on_class(*args)
       commentize(:class, super)
     end
 
-    def on_sclass *args
+    def on_sclass(*args)
       commentize(:class, super)
     end
 
-    def on_def *args
+    def on_def(*args)
       commentize(:def, super)
     end
 
-    def on_defs *args
+    def on_defs(*args)
       commentize(:def, super)
     end
 
-    def on_qsymbols_add list, elem
+    def on_qsymbols_add(list, elem)
       super list, [:dyna_symbol, [elem]]
     end
 
-    def on_symbols_add list, elem
+    def on_symbols_add(list, elem)
       super list, [:dyna_symbol, elem]
     end
 
-    def on_words_add list, elem
+    def on_words_add(list, elem)
       if elem.count == 1
         super
       else
@@ -92,7 +92,7 @@ module RipperRubyParser
       super
     end
 
-    NUMBER_LITERAL_TYPES = [:@int, :@float]
+    NUMBER_LITERAL_TYPES = [:@int, :@float].freeze
 
     def on_unary(op, value)
       if !@space_before && op == :-@ && NUMBER_LITERAL_TYPES.include?(value.first)
@@ -107,49 +107,49 @@ module RipperRubyParser
       end
     end
 
-    def on_symbeg *args
+    def on_symbeg(*args)
       @in_symbol = true
       super
     end
 
-    def on_symbol *args
+    def on_symbol(*args)
       @in_symbol = false
       super
     end
 
-    def on_embexpr_beg *args
+    def on_embexpr_beg(*args)
       @in_symbol = false
       super
     end
 
-    def on_dyna_symbol *args
+    def on_dyna_symbol(*args)
       @in_symbol = false
       super
     end
 
-    def on_parse_error *args
+    def on_parse_error(*args)
       raise SyntaxError, *args
     end
 
-    def on_class_name_error *args
+    def on_class_name_error(*args)
       raise SyntaxError, *args
     end
 
-    def on_alias_error *args
+    def on_alias_error(*args)
       raise SyntaxError, *args
     end
 
-    def on_assign_error *args
+    def on_assign_error(*args)
       raise SyntaxError, *args
     end
 
-    def on_param_error *args
+    def on_param_error(*args)
       raise SyntaxError, *args
     end
 
     private
 
-    def commentize name, exp
+    def commentize(name, exp)
       raise "Comment stack empty in #{name} event" if @comment_stack.empty?
       tok, comment = @comment_stack.pop
       @comment = nil

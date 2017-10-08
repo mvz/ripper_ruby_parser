@@ -1,12 +1,13 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for array literals
     module Arrays
-      def process_array exp
+      def process_array(exp)
         _, elems = exp.shift 2
         s(:array, *handle_array_elements(elems))
       end
 
-      def process_aref exp
+      def process_aref(exp)
         _, coll, idx = exp.shift 3
 
         coll = process(coll)
