@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for argument lists
     module Arguments
       def process_args_add_block(exp)
         _, regular, block = exp.shift 3

@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handers for method definitions and related constructs
     module Methods
       def process_def(exp)
         _, ident, params, body = exp.shift 4

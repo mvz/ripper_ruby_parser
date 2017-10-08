@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for operators
     module Operators
       BINARY_OPERATOR_MAP = {
         :"&&" => :and,

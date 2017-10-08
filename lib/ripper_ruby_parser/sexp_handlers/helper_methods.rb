@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Utility methods used in several of the sexp handler modules
     module HelperMethods
       def handle_potentially_typeless_sexp(exp)
         if exp.nil?

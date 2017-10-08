@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for assignments
     module Assignment
       def process_assign(exp)
         _, lvalue, value = exp.shift 3

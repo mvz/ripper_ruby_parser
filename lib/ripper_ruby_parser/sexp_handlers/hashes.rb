@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for hash literals
     module Hashes
       # Handle hash literals sexps. These can be either empty, or contain a
       # nested :assoclist_from_args Sexp.

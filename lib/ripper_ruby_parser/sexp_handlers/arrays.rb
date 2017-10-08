@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for array literals
     module Arrays
       def process_array(exp)
         _, elems = exp.shift 2

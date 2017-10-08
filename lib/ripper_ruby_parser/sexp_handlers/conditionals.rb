@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for conditionals
     module Conditionals
       def process_if(exp)
         _, cond, truepart, falsepart = exp.shift 4

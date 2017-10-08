@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for literals, except hash and array literals
     module Literals
       def process_string_literal(exp)
         _, content = exp.shift 2

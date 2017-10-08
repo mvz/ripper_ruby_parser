@@ -13,6 +13,7 @@ require 'ripper_ruby_parser/sexp_handlers/methods'
 require 'ripper_ruby_parser/sexp_handlers/operators'
 
 module RipperRubyParser
+  # Umbrella module for handlers of particular sexp types
   module SexpHandlers
     def self.included(base)
       base.class_eval do

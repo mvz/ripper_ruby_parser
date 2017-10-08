@@ -69,10 +69,6 @@ Naming/MethodName:
 Style/AndOr:
   EnforcedStyle: conditionals
 
-# TODO: Re-enable and fix offenses
-Style/Documentation:
-  Enabled: false
-
 # Require at least two dependent lines before suggesting a guard clause
 Style/GuardClause:
   MinBodyLength: 2

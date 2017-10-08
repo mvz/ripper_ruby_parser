@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for blocks and related constructs
     module Blocks
       def process_method_add_block(exp)
         _, call, block = exp.shift 3

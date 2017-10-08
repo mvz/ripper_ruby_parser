@@ -1,5 +1,6 @@
 module RipperRubyParser
   module SexpHandlers
+    # Sexp handlers for method calls
     module MethodCalls
       def process_method_add_arg(exp)
         _, call, parens = exp.shift 3
