@@ -28,6 +28,9 @@ module RipperRubyParser
           left.shift
         end
 
+        if left.first == :mlhs
+          left.shift
+        end
         left = create_multiple_assignment_sub_types left
 
         right = process(right)
@@ -65,7 +68,7 @@ module RipperRubyParser
         _, args, splatarg, rest = exp.shift 4
         items = handle_potentially_typeless_sexp args
         items << s(:splat, process(splatarg))
-        rest.each { |arg| items << process(arg) } if rest
+        rest.sexp_body.each { |arg| items << process(arg) } if rest
         items
       end
 
@@ -74,7 +77,13 @@ module RipperRubyParser
 
         items = handle_potentially_typeless_sexp(contents)
 
-        return items if items.first.is_a? Symbol
+        if items.first == :mlhs
+          items.shift
+        end
+
+        if items.first.is_a? Symbol
+          return items
+        end
 
         s(:masgn, s(:array, *create_multiple_assignment_sub_types(items)))
       end
