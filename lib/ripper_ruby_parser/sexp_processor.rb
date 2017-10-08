@@ -36,14 +36,6 @@ module RipperRubyParser
       @in_method_body = false
     end
 
-    def process(exp)
-      return nil if exp.nil?
-
-      result = super
-      trickle_up_line_numbers result
-      trickle_down_line_numbers result
-    end
-
     include SexpHandlers
 
     def process_program(exp)
