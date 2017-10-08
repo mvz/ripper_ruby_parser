@@ -62,8 +62,12 @@ module RipperRubyParser
       super list, [:dyna_symbol, [elem]]
     end
 
+    def on_symbols_new
+      [:symbols]
+    end
+
     def on_symbols_add(list, elem)
-      super list, [:dyna_symbol, elem]
+      list << [:dyna_symbol, elem]
     end
 
     def on_words_new
