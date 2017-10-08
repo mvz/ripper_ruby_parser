@@ -1,7 +1,7 @@
 module RipperRubyParser
   module SexpHandlers
     module Methods
-      def process_def exp
+      def process_def(exp)
         _, ident, params, body = exp.shift 4
         ident, pos = extract_node_symbol_with_position ident
         params = convert_special_args(process(params))
@@ -9,7 +9,7 @@ module RipperRubyParser
                       s(:defn, ident, params, *method_body(body)))
       end
 
-      def process_defs exp
+      def process_defs(exp)
         _, receiver, _, method, params, body = exp.shift 6
         params = convert_special_args(process(params))
 
@@ -19,17 +19,17 @@ module RipperRubyParser
           params, *method_body(body))
       end
 
-      def process_return exp
+      def process_return(exp)
         _, arglist = exp.shift 2
         s(:return, handle_return_argument_list(arglist))
       end
 
-      def process_return0 exp
+      def process_return0(exp)
         _ = exp.shift
         s(:return)
       end
 
-      def process_yield exp
+      def process_yield(exp)
         _, arglist = exp.shift 2
         args = handle_potentially_typeless_sexp(arglist)
         if args.sexp_type == :arglist
@@ -38,12 +38,12 @@ module RipperRubyParser
         s(:yield, *args)
       end
 
-      def process_yield0 exp
+      def process_yield0(exp)
         _ = exp.shift
         s(:yield)
       end
 
-      def process_undef exp
+      def process_undef(exp)
         _, args = exp.shift 2
 
         args.map! do |sub_exp|
@@ -57,7 +57,7 @@ module RipperRubyParser
         end
       end
 
-      def process_alias exp
+      def process_alias(exp)
         _, left, right = exp.shift 3
 
         s(:alias,
@@ -74,11 +74,11 @@ module RipperRubyParser
         result
       end
 
-      def make_method_name_literal exp
+      def make_method_name_literal(exp)
         process(exp).tap { |it| it[0] = :lit }
       end
 
-      def method_body exp
+      def method_body(exp)
         block = in_method { process exp }
         case block.length
         when 0
@@ -98,7 +98,7 @@ module RipperRubyParser
         blockarg: '&'
       }.freeze
 
-      def convert_special_args args
+      def convert_special_args(args)
         args.map! do |item|
           if item.is_a? Symbol
             item

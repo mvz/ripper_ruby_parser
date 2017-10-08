@@ -1,17 +1,17 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 class TestProcessor < RipperRubyParser::SexpProcessor
-  def process_foo exp
+  def process_foo(exp)
     exp.shift
     s(:foo_p)
   end
 
-  def process_bar exp
+  def process_bar(exp)
     exp.shift
     s(:bar_p)
   end
 
-  def process_baz exp
+  def process_baz(exp)
     exp.shift
     s(:baz_p)
   end

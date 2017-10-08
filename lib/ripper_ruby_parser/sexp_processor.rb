@@ -36,7 +36,7 @@ module RipperRubyParser
       @in_method_body = false
     end
 
-    def process exp
+    def process(exp)
       return nil if exp.nil?
 
       result = super
@@ -46,21 +46,21 @@ module RipperRubyParser
 
     include SexpHandlers
 
-    def process_program exp
+    def process_program(exp)
       _, content = exp.shift 2
 
       statements = content.map { |sub_exp| process(sub_exp) }
       safe_wrap_in_block statements
     end
 
-    def process_module exp
+    def process_module(exp)
       _, const_ref, body = exp.shift 3
       const, line = const_ref_to_const_with_line_number const_ref
       with_line_number(line,
                        s(:module, const, *class_or_module_body(body)))
     end
 
-    def process_class exp
+    def process_class(exp)
       _, const_ref, parent, body = exp.shift 4
       const, line = const_ref_to_const_with_line_number const_ref
       parent = process(parent)
@@ -68,50 +68,50 @@ module RipperRubyParser
                        s(:class, const, parent, *class_or_module_body(body)))
     end
 
-    def process_sclass exp
+    def process_sclass(exp)
       _, klass, block = exp.shift 3
       s(:sclass, process(klass), *class_or_module_body(block))
     end
 
-    def process_var_ref exp
+    def process_var_ref(exp)
       _, contents = exp.shift 2
       process(contents)
     end
 
-    def process_var_field exp
+    def process_var_field(exp)
       _, contents = exp.shift 2
       process(contents)
     end
 
-    def process_var_alias exp
+    def process_var_alias(exp)
       _, left, right = exp.shift 3
       s(:valias, left[1].to_sym, right[1].to_sym)
     end
 
-    def process_const_path_ref exp
+    def process_const_path_ref(exp)
       _, left, right = exp.shift 3
       s(:colon2, process(left), extract_node_symbol(right))
     end
 
-    def process_const_path_field exp
+    def process_const_path_field(exp)
       s(:const, process_const_path_ref(exp))
     end
 
-    def process_const_ref exp
+    def process_const_ref(exp)
       _, ref = exp.shift 3
       process(ref)
     end
 
-    def process_top_const_ref exp
+    def process_top_const_ref(exp)
       _, ref = exp.shift 2
       s(:colon3, extract_node_symbol(ref))
     end
 
-    def process_top_const_field exp
+    def process_top_const_field(exp)
       s(:const, process_top_const_ref(exp))
     end
 
-    def process_paren exp
+    def process_paren(exp)
       _, body = exp.shift 2
       if body.empty?
         s()
@@ -123,68 +123,68 @@ module RipperRubyParser
       end
     end
 
-    def process_comment exp
+    def process_comment(exp)
       _, comment, inner = exp.shift 3
       sexp = process(inner)
       sexp.comments = comment
       sexp
     end
 
-    def process_BEGIN exp
+    def process_BEGIN(exp)
       _, body = exp.shift 2
       s(:iter, s(:preexe), s(:args), *map_body(body))
     end
 
-    def process_END exp
+    def process_END(exp)
       _, body = exp.shift 2
       s(:iter, s(:postexe), 0, *map_body(body))
     end
 
     # number literals
-    def process_at_int exp
+    def process_at_int(exp)
       make_literal(exp) { |val| Integer(val) }
     end
 
-    def process_at_float exp
+    def process_at_float(exp)
       make_literal(exp, &:to_f)
     end
 
     # character literals
-    def process_at_CHAR exp
+    def process_at_CHAR(exp)
       _, val, pos = exp.shift 3
       with_position(pos, s(:str, unescape(val[1..-1])))
     end
 
-    def process_at_label exp
+    def process_at_label(exp)
       make_literal(exp) { |val| val.chop.to_sym }
     end
 
     # symbol-like sexps
-    def process_at_const exp
+    def process_at_const(exp)
       make_identifier(:const, exp)
     end
 
-    def process_at_cvar exp
+    def process_at_cvar(exp)
       make_identifier(:cvar, exp)
     end
 
-    def process_at_gvar exp
+    def process_at_gvar(exp)
       make_identifier(:gvar, exp)
     end
 
-    def process_at_ivar exp
+    def process_at_ivar(exp)
       make_identifier(:ivar, exp)
     end
 
-    def process_at_ident exp
+    def process_at_ident(exp)
       make_identifier(:lvar, exp)
     end
 
-    def process_at_op exp
+    def process_at_op(exp)
       make_identifier(:op, exp)
     end
 
-    def process_at_kw exp
+    def process_at_kw(exp)
       sym, pos = extract_node_symbol_with_position(exp)
       result = case sym
                when :__FILE__
@@ -197,7 +197,7 @@ module RipperRubyParser
       with_position(pos, result)
     end
 
-    def process_at_backref exp
+    def process_at_backref(exp)
       _, str, pos = exp.shift 3
       name = str[1..-1]
       with_position pos do
@@ -211,14 +211,14 @@ module RipperRubyParser
 
     private
 
-    def const_ref_to_const_with_line_number const_ref
+    def const_ref_to_const_with_line_number(const_ref)
       const = process(const_ref)
       line = const.line
       const = const[1] if const.sexp_type == :const
       return const, line
     end
 
-    def class_or_module_body exp
+    def class_or_module_body(exp)
       body = process(exp)
 
       if body.length == 1 && body.first.sexp_type == :block
@@ -229,18 +229,18 @@ module RipperRubyParser
       body
     end
 
-    def make_identifier type, exp
+    def make_identifier(type, exp)
       with_position_from_node_symbol(exp) do |ident|
         s(type, ident)
       end
     end
 
-    def make_literal exp
+    def make_literal(exp)
       _, val, pos = exp.shift 3
       with_position(pos, s(:lit, yield(val)))
     end
 
-    def trickle_up_line_numbers exp
+    def trickle_up_line_numbers(exp)
       exp.each do |sub_exp|
         if sub_exp.is_a? Sexp
           trickle_up_line_numbers sub_exp
@@ -249,7 +249,7 @@ module RipperRubyParser
       end
     end
 
-    def trickle_down_line_numbers exp
+    def trickle_down_line_numbers(exp)
       exp.each do |sub_exp|
         if sub_exp.is_a? Sexp
           sub_exp.line ||= exp.line
@@ -258,7 +258,7 @@ module RipperRubyParser
       end
     end
 
-    def convert_void_stmt_to_nil sexp
+    def convert_void_stmt_to_nil(sexp)
       if sexp == s(:void_stmt)
         s(:nil)
       else

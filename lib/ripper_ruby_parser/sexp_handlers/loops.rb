@@ -1,23 +1,23 @@
 module RipperRubyParser
   module SexpHandlers
     module Loops
-      def process_until exp
+      def process_until(exp)
         handle_conditional_loop :until, :while, exp
       end
 
-      def process_until_mod exp
+      def process_until_mod(exp)
         handle_conditional_loop_mod :until, :while, exp
       end
 
-      def process_while exp
+      def process_while(exp)
         handle_conditional_loop :while, :until, exp
       end
 
-      def process_while_mod exp
+      def process_while_mod(exp)
         handle_conditional_loop_mod :while, :until, exp
       end
 
-      def process_for exp
+      def process_for(exp)
         _, var, coll, block = exp.shift 4
         coll = process(coll)
         assgn = s(:lasgn, process(var)[1])
@@ -31,11 +31,11 @@ module RipperRubyParser
 
       private
 
-      def check_at_start? block
+      def check_at_start?(block)
         block.sexp_type != :begin
       end
 
-      def handle_conditional_loop type, negated_type, exp
+      def handle_conditional_loop(type, negated_type, exp)
         _, cond, body = exp.shift 3
 
         construct_conditional_loop(type, negated_type,
@@ -44,7 +44,7 @@ module RipperRubyParser
                                    true)
       end
 
-      def handle_conditional_loop_mod type, negated_type, exp
+      def handle_conditional_loop_mod(type, negated_type, exp)
         _, cond, body = exp.shift 3
 
         check_at_start = check_at_start?(body)

@@ -1,7 +1,7 @@
 module RipperRubyParser
   module SexpHandlers
     module Blocks
-      def process_method_add_block exp
+      def process_method_add_block(exp)
         _, call, block = exp.shift 3
         block = process(block)
         args = block[1]
@@ -10,15 +10,15 @@ module RipperRubyParser
         make_iter call, args, stmt
       end
 
-      def process_brace_block exp
+      def process_brace_block(exp)
         handle_generic_block exp
       end
 
-      def process_do_block exp
+      def process_do_block(exp)
         handle_generic_block exp
       end
 
-      def process_params exp
+      def process_params(exp)
         if exp.size == 6
           _, normal, defaults, splat, rest, block = exp.shift 6
         else
@@ -38,7 +38,7 @@ module RipperRubyParser
         s(:args, *args)
       end
 
-      def process_block_var exp
+      def process_block_var(exp)
         _, args, _ = exp.shift 3
 
         names = process(args)
@@ -46,14 +46,14 @@ module RipperRubyParser
         convert_special_args names
       end
 
-      def process_begin exp
+      def process_begin(exp)
         _, body = exp.shift 2
 
         body = process(body)
         strip_typeless_sexp(body)
       end
 
-      def process_rescue exp
+      def process_rescue(exp)
         _, eclass, evar, block, after = exp.shift 5
         rescue_block = map_body(block)
         rescue_block << nil if rescue_block.empty?
@@ -77,7 +77,7 @@ module RipperRubyParser
           *process(after))
       end
 
-      def process_bodystmt exp
+      def process_bodystmt(exp)
         _, body, rescue_block, else_block, ensure_block = exp.shift 5
 
         body = map_body body
@@ -114,17 +114,17 @@ module RipperRubyParser
         body
       end
 
-      def process_rescue_mod exp
+      def process_rescue_mod(exp)
         _, scary, safe = exp.shift 3
         s(:rescue, process(scary), s(:resbody, s(:array), process(safe)))
       end
 
-      def process_ensure exp
+      def process_ensure(exp)
         _, block = exp.shift 2
         strip_typeless_sexp safe_wrap_in_block map_body(block)
       end
 
-      def process_next exp
+      def process_next(exp)
         _, args = exp.shift 2
         if args.empty?
           s(:next)
@@ -133,7 +133,7 @@ module RipperRubyParser
         end
       end
 
-      def process_break exp
+      def process_break(exp)
         _, args = exp.shift 2
         if args.empty?
           s(:break)
@@ -142,7 +142,7 @@ module RipperRubyParser
         end
       end
 
-      def process_lambda exp
+      def process_lambda(exp)
         _, args, statements = exp.shift 3
         old_type = args.sexp_type
         args = convert_special_args(process(args))
@@ -154,7 +154,7 @@ module RipperRubyParser
 
       private
 
-      def handle_generic_block exp
+      def handle_generic_block(exp)
         _, args, stmts = exp.shift 3
         args = process(args)
         # FIXME: Symbol :block is irrelevant.
@@ -172,7 +172,7 @@ module RipperRubyParser
         end
       end
 
-      def strip_typeless_sexp block
+      def strip_typeless_sexp(block)
         case block.length
         when 0
           s(:nil)
@@ -183,7 +183,7 @@ module RipperRubyParser
         end
       end
 
-      def make_iter call, args, stmt
+      def make_iter(call, args, stmt)
         args ||= 0
         if stmt.nil?
           s(:iter, call, args)

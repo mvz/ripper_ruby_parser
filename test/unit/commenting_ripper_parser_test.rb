@@ -1,7 +1,7 @@
 require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::CommentingRipperParser do
-  def parse_with_builder str
+  def parse_with_builder(str)
     builder = RipperRubyParser::CommentingRipperParser.new str
     builder.parse
   end

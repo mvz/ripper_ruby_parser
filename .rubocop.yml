@@ -70,10 +70,6 @@ Style/IfUnlessModifier:
 Style/MethodCallWithoutArgsParentheses:
   Enabled: false
 
-# Prefer no parentheses in method definitions
-Style/MethodDefParentheses:
-  EnforcedStyle: require_no_parentheses
-
 # This cop gives confusing results for objects that may not be numbers.
 Style/NumericPredicate:
   Enabled: false

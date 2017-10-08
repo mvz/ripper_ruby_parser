@@ -1,7 +1,7 @@
 module RipperRubyParser
   module SexpHandlers
     module HelperMethods
-      def handle_potentially_typeless_sexp exp
+      def handle_potentially_typeless_sexp(exp)
         if exp.nil?
           s()
         elsif exp.first.is_a? Symbol
@@ -11,7 +11,7 @@ module RipperRubyParser
         end
       end
 
-      def handle_argument_list exp
+      def handle_argument_list(exp)
         if exp.nil?
           s()
         elsif exp.first.is_a? Symbol
@@ -21,7 +21,7 @@ module RipperRubyParser
         end
       end
 
-      def extract_node_symbol_with_position exp
+      def extract_node_symbol_with_position(exp)
         return nil if exp.nil?
         return exp if exp.is_a? Symbol
 
@@ -29,29 +29,29 @@ module RipperRubyParser
         return ident.to_sym, pos
       end
 
-      def extract_node_symbol exp
+      def extract_node_symbol(exp)
         return nil if exp.nil?
         _, ident, _ = exp.shift 3
         ident.to_sym
       end
 
-      def with_position pos, exp = nil
+      def with_position(pos, exp = nil)
         (line, _) = pos
         exp = yield if exp.nil?
         with_line_number line, exp
       end
 
-      def with_line_number line, exp
+      def with_line_number(line, exp)
         exp.line = line
         exp
       end
 
-      def with_position_from_node_symbol exp
+      def with_position_from_node_symbol(exp)
         sym, pos = extract_node_symbol_with_position exp
         with_position(pos, yield(sym))
       end
 
-      def generic_add_star exp
+      def generic_add_star(exp)
         _, args, splatarg = exp.shift 3
         items = handle_potentially_typeless_sexp args
         items << s(:splat, process(splatarg))
@@ -59,17 +59,17 @@ module RipperRubyParser
         items
       end
 
-      def literal? exp
+      def literal?(exp)
         exp.sexp_type == :lit
       end
 
-      def map_body body
+      def map_body(body)
         body.
           map { |sub_exp| process(sub_exp) }.
           reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
       end
 
-      def wrap_in_block statements
+      def wrap_in_block(statements)
         case statements.length
         when 0
           nil
@@ -86,12 +86,12 @@ module RipperRubyParser
         end
       end
 
-      def safe_wrap_in_block statements
+      def safe_wrap_in_block(statements)
         result = wrap_in_block statements
         result ? result : s()
       end
 
-      def handle_return_argument_list arglist
+      def handle_return_argument_list(arglist)
         args = handle_potentially_typeless_sexp(arglist)
         if args.sexp_type == :arglist
           args = args[1..-1]
@@ -109,7 +109,7 @@ module RipperRubyParser
         end
       end
 
-      def handle_array_elements elems
+      def handle_array_elements(elems)
         elems = handle_potentially_typeless_sexp(elems)
         elems.map do |elem|
           if elem.first.is_a? Symbol

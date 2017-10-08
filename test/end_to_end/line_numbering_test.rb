@@ -2,7 +2,7 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'ruby_parser'
 
 describe 'Using RipperRubyParser and RubyParser' do
-  def to_line_numbers exp
+  def to_line_numbers(exp)
     exp.map! do |sub_exp|
       if sub_exp.is_a? Sexp
         to_line_numbers sub_exp

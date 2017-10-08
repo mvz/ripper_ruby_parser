@@ -14,7 +14,7 @@ require 'ripper_ruby_parser/sexp_handlers/operators'
 
 module RipperRubyParser
   module SexpHandlers
-    def self.included base
+    def self.included(base)
       base.class_eval do
         include HelperMethods
 

@@ -11,7 +11,7 @@ module RipperRubyParser
       @extra_compatible = false
     end
 
-    def parse source, filename = '(string)', lineno = 1
+    def parse(source, filename = '(string)', lineno = 1)
       parser = CommentingRipperParser.new(source, filename, lineno)
       exp = parser.parse
 
