@@ -304,7 +304,6 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :bar),
                                 s(:call, nil, :baz)))
       end
-
     end
   end
 end
