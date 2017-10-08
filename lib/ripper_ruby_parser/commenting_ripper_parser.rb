@@ -74,6 +74,14 @@ module RipperRubyParser
       list << elem
     end
 
+    def on_mrhs_new
+      [:mrhs]
+    end
+
+    def on_mrhs_add(list, elem)
+      list << elem
+    end
+
     def on_qsymbols_new
       [:symbols]
     end

@@ -8,8 +8,8 @@ module RipperRubyParser
         value = process(value)
 
         case value.sexp_type
-        when :splat
-          value = s(:svalue, value)
+        when :mrhs
+          value.sexp_type = :svalue
         when :fake_array
           value = s(:svalue, s(:array, *value.sexp_body))
         end
@@ -38,8 +38,8 @@ module RipperRubyParser
         case right.sexp_type
         when :fake_array
           right[0] = :array
-        when :splat
-          nil # Do nothing
+        when :mrhs
+          right = right[1]
         else
           right = s(:to_ary, right)
         end
@@ -55,13 +55,7 @@ module RipperRubyParser
       end
 
       def process_mrhs_add_star(exp)
-        exp = generic_add_star exp
-
-        if exp.first.is_a? Symbol
-          exp
-        else
-          exp.first
-        end
+        generic_add_star exp
       end
 
       def process_mlhs_add_star(exp)
