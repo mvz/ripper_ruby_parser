@@ -7,7 +7,6 @@ module RipperRubyParser
       end
 
       def extract_node_symbol_with_position(exp)
-        return nil if exp.nil?
         return exp if exp.is_a? Symbol
 
         _, ident, pos = exp.shift 3
