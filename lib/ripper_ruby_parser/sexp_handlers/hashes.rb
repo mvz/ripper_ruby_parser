@@ -35,13 +35,10 @@ module RipperRubyParser
       def make_hash_items(elems)
         result = s()
         elems.each do |sub_exp|
-          case sub_exp.sexp_type
-          when :assoc_new
+          if sub_exp.sexp_type == :assoc_new
             sub_exp.sexp_body.each { |elem| result << process(elem) }
-          when :assoc_splat
+          else # :assoc_splat
             result << process(sub_exp)
-          else
-            raise ArgumentError
           end
         end
         result

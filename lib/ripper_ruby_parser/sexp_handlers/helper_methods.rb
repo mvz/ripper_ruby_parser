@@ -13,9 +13,7 @@ module RipperRubyParser
       end
 
       def handle_argument_list(exp)
-        if exp.nil?
-          s()
-        elsif exp.first.is_a? Symbol
+        if exp.first.is_a? Symbol
           process(exp).tap(&:shift)
         else
           map_process exp
