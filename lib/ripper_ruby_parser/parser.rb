@@ -5,6 +5,8 @@ module RipperRubyParser
   # Main parser class. Brings together Ripper and our
   # RipperRubyParser::SexpProcessor.
   class Parser
+
+    # @api private
     attr_accessor :extra_compatible
 
     def initialize

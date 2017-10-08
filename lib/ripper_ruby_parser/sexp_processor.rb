@@ -3,6 +3,8 @@ require 'ripper_ruby_parser/sexp_handlers'
 
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
+  #
+  # @api private
   class SexpProcessor < ::SexpProcessor
     attr_reader :filename
     attr_reader :extra_compatible
