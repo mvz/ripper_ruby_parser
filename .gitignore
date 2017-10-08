@@ -3,4 +3,7 @@ ripper_ruby_parser-*.gem
 coverage/
 .bundle/
 bin/
+.yardoc/
+doc/*
+!doc/dependency_decisions.yml
 tmp/
