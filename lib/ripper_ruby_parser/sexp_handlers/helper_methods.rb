@@ -67,7 +67,11 @@ module RipperRubyParser
       end
 
       def map_process(list)
-        list.map { |exp| process(exp) }
+        if list.sexp_type == :stmts
+          list.sexp_body.map { |exp| process(exp) }
+        else
+          list.map  { |exp| process(exp) }
+        end
       end
 
       def wrap_in_block(statements)

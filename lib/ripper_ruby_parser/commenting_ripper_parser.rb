@@ -66,6 +66,14 @@ module RipperRubyParser
       list << [:dyna_symbol, [elem]]
     end
 
+    def on_stmts_new
+      [:stmts]
+    end
+
+    def on_stmts_add(list, elem)
+      list << elem
+    end
+
     def on_symbols_new
       [:symbols]
     end

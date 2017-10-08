@@ -65,6 +65,23 @@ module RipperRubyParser
       s(:sclass, process(klass), *class_or_module_body(block))
     end
 
+    def process_stmts(exp)
+      exp.shift
+      statements = []
+      statements << process(exp.shift) until exp.empty?
+      case statements.count
+      when 1
+        first = statements.first
+        if first.sexp_type == :void_stmt
+          s(:nil)
+        else
+          first
+        end
+      else
+        s(:block, *statements)
+      end
+    end
+
     def process_var_ref(exp)
       _, contents = exp.shift 2
       process(contents)
