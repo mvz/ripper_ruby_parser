@@ -8,8 +8,16 @@ module RipperRubyParser
       end
 
       def process_string_content(exp)
-        exp.shift
+        string, rest = extract_unescaped_string_parts exp
 
+        if rest.empty?
+          s(:str, string)
+        else
+          s(:dstr, string, *rest)
+        end
+      end
+
+      def process_word(exp)
         string, rest = extract_unescaped_string_parts exp
 
         if rest.empty?
@@ -138,6 +146,8 @@ module RipperRubyParser
         elsif exp.first == :word
           exp.shift
         elsif exp.first == :regexp
+          exp.shift
+        elsif exp.first == :string_content
           exp.shift
         end
 
