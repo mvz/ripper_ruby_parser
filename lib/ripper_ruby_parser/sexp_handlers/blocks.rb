@@ -100,7 +100,7 @@ module RipperRubyParser
 
       def process_ensure(exp)
         _, block = exp.shift 2
-        strip_typeless_sexp safe_wrap_in_block map_process_sexp_body_compact(block)
+        strip_typeless_sexp safe_unwrap_void_stmt process(block)
       end
 
       def process_next(exp)
@@ -130,7 +130,7 @@ module RipperRubyParser
         args = 0 if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
-                  wrap_in_block(map_process_sexp_body_compact(statements)))
+                  unwrap_nil(process(statements)))
       end
 
       private
@@ -138,7 +138,7 @@ module RipperRubyParser
       def handle_generic_block(exp)
         type, args, stmts = exp.shift 3
         args = process(args)
-        s(type, args, s(wrap_in_block(map_process_sexp_body_compact(stmts))))
+        s(type, args, s(unwrap_nil process(stmts)))
       end
 
       def handle_default_arguments(defaults)

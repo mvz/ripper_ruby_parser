@@ -12,7 +12,7 @@ module RipperRubyParser
       processor = SexpProcessor.new(filename: filename)
       result = processor.process exp
 
-      if result == s(:void_stmt)
+      if result.sexp_type == :void_stmt
         nil
       else
         trickle_up_line_numbers result

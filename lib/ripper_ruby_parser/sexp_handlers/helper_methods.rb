@@ -64,26 +64,16 @@ module RipperRubyParser
         list.map { |exp| process(exp) }
       end
 
-      def wrap_in_block(statements)
-        case statements.length
-        when 0
+      def unwrap_nil(exp)
+        if exp.sexp_type == :void_stmt
           nil
-        when 1
-          statements.first
         else
-          first = statements.shift
-          if first.sexp_type == :block
-            first.shift
-            s(:block, *first, *statements)
-          else
-            s(:block, first, *statements)
-          end
+          exp
         end
       end
 
-      def safe_wrap_in_block(statements)
-        result = wrap_in_block statements
-        result ? result : s()
+      def safe_unwrap_void_stmt(exp)
+        unwrap_nil(exp) || s()
       end
 
       def handle_return_argument_list(arglist)
