@@ -21,7 +21,9 @@ module RipperRubyParser
 
       def process_string_embexpr(exp)
         _, list = exp.shift 2
-        val = process(list.first)
+
+        val = process(list.sexp_body.first)
+
         case val.sexp_type
         when :str
           val
@@ -131,6 +133,14 @@ module RipperRubyParser
       end
 
       def internal_process_string_parts(exp)
+        if exp.first == :xstring
+          exp.shift
+        elsif exp.first == :word
+          exp.shift
+        elsif exp.first == :regexp
+          exp.shift
+        end
+
         rest = []
 
         until exp.empty?

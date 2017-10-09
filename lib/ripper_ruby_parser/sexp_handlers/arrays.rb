@@ -4,6 +4,7 @@ module RipperRubyParser
     module Arrays
       def process_array(exp)
         _, elems = exp.shift 2
+        return s(:array) if elems.nil?
         s(:array, *handle_array_elements(elems))
       end
 

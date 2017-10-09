@@ -65,6 +65,23 @@ module RipperRubyParser
       s(:sclass, process(klass), *class_or_module_body(block))
     end
 
+    def process_stmts(exp)
+      exp.shift
+      statements = []
+      statements << process(exp.shift) until exp.empty?
+      case statements.count
+      when 1
+        first = statements.first
+        if first.sexp_type == :void_stmt
+          s(:nil)
+        else
+          first
+        end
+      else
+        s(:block, *statements)
+      end
+    end
+
     def process_var_ref(exp)
       _, contents = exp.shift 2
       process(contents)
@@ -105,14 +122,7 @@ module RipperRubyParser
 
     def process_paren(exp)
       _, body = exp.shift 2
-      if body.empty?
-        s()
-      elsif body.first.is_a? Symbol
-        process body
-      else
-        body.map! { |it| convert_void_stmt_to_nil process it }
-        safe_wrap_in_block body
-      end
+      process body
     end
 
     def process_comment(exp)
@@ -247,14 +257,6 @@ module RipperRubyParser
           sub_exp.line ||= exp.line
           trickle_down_line_numbers sub_exp
         end
-      end
-    end
-
-    def convert_void_stmt_to_nil(sexp)
-      if sexp == s(:void_stmt)
-        s(:nil)
-      else
-        sexp
       end
     end
   end

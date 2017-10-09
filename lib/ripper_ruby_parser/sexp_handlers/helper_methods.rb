@@ -2,22 +2,8 @@ module RipperRubyParser
   module SexpHandlers
     # Utility methods used in several of the sexp handler modules
     module HelperMethods
-      def handle_potentially_typeless_sexp(exp)
-        if exp.nil?
-          s()
-        elsif exp.first.is_a? Symbol
-          process(exp)
-        else
-          exp.map! { |sub_exp| handle_potentially_typeless_sexp(sub_exp) }
-        end
-      end
-
       def handle_argument_list(exp)
-        if exp.first.is_a? Symbol
-          process(exp).tap(&:shift)
-        else
-          map_process exp
-        end
+        process(exp).tap(&:shift)
       end
 
       def extract_node_symbol_with_position(exp)
@@ -52,7 +38,7 @@ module RipperRubyParser
 
       def generic_add_star(exp)
         _, args, splatarg = exp.shift 3
-        items = handle_potentially_typeless_sexp args
+        items = process args
         items << s(:splat, process(splatarg))
         items << process(exp.shift) until exp.empty?
         items
@@ -67,7 +53,13 @@ module RipperRubyParser
       end
 
       def map_process(list)
-        list.map { |exp| process(exp) }
+        if list.sexp_type == :stmts
+          list.sexp_body.map { |exp| process(exp) }
+        elsif list.sexp_type == :args
+          list.sexp_body.map { |exp| process(exp) }
+        else
+          list.map  { |exp| process(exp) }
+        end
       end
 
       def wrap_in_block(statements)
@@ -93,8 +85,8 @@ module RipperRubyParser
       end
 
       def handle_return_argument_list(arglist)
-        args = handle_potentially_typeless_sexp(arglist)
-        args.shift if args.sexp_type == :arglist
+        args = process(arglist)
+        args.shift if [:arglist, :args].include? args.sexp_type
 
         if args.length == 1
           arg = args[0]
@@ -103,20 +95,15 @@ module RipperRubyParser
           else
             arg
           end
+        elsif args.length == 0
+          s()
         else
           s(:array, *args)
         end
       end
 
       def handle_array_elements(elems)
-        elems = handle_potentially_typeless_sexp(elems)
-        elems.map do |elem|
-          if elem.first.is_a? Symbol
-            elem
-          else
-            elem.first
-          end
-        end
+        process(elems).sexp_body
       end
     end
   end

@@ -58,20 +58,105 @@ module RipperRubyParser
       commentize(:def, super)
     end
 
+    def on_args_new
+      [:args]
+    end
+
+    def on_args_add(list, elem)
+      list << elem
+    end
+
+    def on_mlhs_new
+      [:mlhs]
+    end
+
+    def on_mlhs_add(list, elem)
+      list << elem
+    end
+
+    def on_mrhs_new
+      [:mrhs]
+    end
+
+    def on_mrhs_add(list, elem)
+      list << elem
+    end
+
+    def on_qsymbols_new
+      [:qsymbols]
+    end
+
     def on_qsymbols_add(list, elem)
-      super list, [:dyna_symbol, [elem]]
+      list << [:dyna_symbol, [elem]]
+    end
+
+    def on_qwords_new
+      [:qwords]
+    end
+
+    def on_qwords_add(list, elem)
+      list << elem
+    end
+
+    def on_regexp_new
+
+      [:regexp]
+    end
+
+    def on_regexp_add(list, elem)
+      list << elem
+    end
+
+    def on_stmts_new
+      [:stmts]
+    end
+
+    def on_stmts_add(list, elem)
+      list << elem
+    end
+
+    def on_string_new
+      [:string]
+    end
+
+    def on_string_add(list, elem)
+      list << elem
+    end
+
+    def on_symbols_new
+      [:symbols]
     end
 
     def on_symbols_add(list, elem)
-      super list, [:dyna_symbol, elem]
+      list << [:dyna_symbol, elem]
+    end
+
+    def on_word_new
+      [:word]
+    end
+
+    def on_word_add(list, elem)
+      list << elem
+    end
+
+    def on_words_new
+      [:words]
     end
 
     def on_words_add(list, elem)
       if elem.count == 1
-        super
+        list << elem
       else
-        super list, [:string_content, *elem]
+        list << [:string_content, *elem]
       end
+    end
+
+    def on_xstring_new
+      [:xstring]
+    end
+
+    def on_xstring_add(list, elem)
+      list << elem
     end
 
     def on_op(token)

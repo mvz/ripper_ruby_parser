@@ -8,8 +8,8 @@ module RipperRubyParser
         value = process(value)
 
         case value.sexp_type
-        when :splat
-          value = s(:svalue, value)
+        when :mrhs
+          value.sexp_type = :svalue
         when :fake_array
           value = s(:svalue, s(:array, *value.sexp_body))
         end
@@ -21,13 +21,16 @@ module RipperRubyParser
       def process_massign(exp)
         _, left, right = exp.shift 3
 
-        left = handle_potentially_typeless_sexp left
+        left = process left
 
         if left.first == :masgn
           left = left[1]
           left.shift
         end
 
+        if left.first == :mlhs
+          left.shift
+        end
         left = create_multiple_assignment_sub_types left
 
         right = process(right)
@@ -35,8 +38,8 @@ module RipperRubyParser
         case right.sexp_type
         when :fake_array
           right[0] = :array
-        when :splat
-          nil # Do nothing
+        when :mrhs
+          right = right[1]
         else
           right = s(:to_ary, right)
         end
@@ -52,29 +55,29 @@ module RipperRubyParser
       end
 
       def process_mrhs_add_star(exp)
-        exp = generic_add_star exp
-
-        if exp.first.is_a? Symbol
-          exp
-        else
-          exp.first
-        end
+        generic_add_star exp
       end
 
       def process_mlhs_add_star(exp)
         _, args, splatarg, rest = exp.shift 4
-        items = handle_potentially_typeless_sexp args
+        items = process args
         items << s(:splat, process(splatarg))
-        rest.each { |arg| items << process(arg) } if rest
+        rest.sexp_body.each { |arg| items << process(arg) } if rest
         items
       end
 
       def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
-        items = handle_potentially_typeless_sexp(contents)
+        items = process(contents)
 
-        return items if items.first.is_a? Symbol
+        if items.first == :mlhs
+          items.shift
+        end
+
+        if items.first.is_a? Symbol
+          return items
+        end
 
         s(:masgn, s(:array, *create_multiple_assignment_sub_types(items)))
       end

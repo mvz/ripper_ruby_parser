@@ -56,11 +56,10 @@ module RipperRubyParser
 
         arr = []
         if eclass
-          eclass = handle_potentially_typeless_sexp eclass
           if eclass.first.is_a? Symbol
-            arr += eclass[1..-1]
+            arr += process(eclass).sexp_body
           else
-            arr << eclass[0]
+            arr << process(eclass[0])
           end
         end
 
@@ -106,19 +105,21 @@ module RipperRubyParser
 
       def process_next(exp)
         _, args = exp.shift 2
+        args = handle_return_argument_list(args)
         if args.empty?
           s(:next)
         else
-          s(:next, handle_return_argument_list(args))
+          s(:next, args)
         end
       end
 
       def process_break(exp)
         _, args = exp.shift 2
+        args = handle_return_argument_list(args)
         if args.empty?
           s(:break)
         else
-          s(:break, handle_return_argument_list(args))
+          s(:break, args)
         end
       end
 
