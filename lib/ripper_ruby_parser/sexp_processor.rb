@@ -134,12 +134,12 @@ module RipperRubyParser
 
     def process_BEGIN(exp)
       _, body = exp.shift 2
-      s(:iter, s(:preexe), s(:args), *map_body(body))
+      s(:iter, s(:preexe), s(:args), *map_process_sexp_body_compact(body))
     end
 
     def process_END(exp)
       _, body = exp.shift 2
-      s(:iter, s(:postexe), 0, *map_body(body))
+      s(:iter, s(:postexe), 0, *map_process_sexp_body_compact(body))
     end
 
     # number literals

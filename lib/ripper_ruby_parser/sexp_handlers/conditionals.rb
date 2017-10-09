@@ -6,7 +6,7 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         construct_conditional(handle_condition(cond),
-                              wrap_in_block(map_body(truepart)),
+                              wrap_in_block(map_process_sexp_body_compact(truepart)),
                               process(falsepart))
       end
 
@@ -14,7 +14,7 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         s(:if, process(cond),
-          wrap_in_block(map_body(truepart)),
+          wrap_in_block(map_process_sexp_body_compact(truepart)),
           process(falsepart))
       end
 
@@ -31,7 +31,7 @@ module RipperRubyParser
 
         construct_conditional(handle_condition(cond),
                               process(falsepart),
-                              wrap_in_block(map_body(truepart)))
+                              wrap_in_block(map_process_sexp_body_compact(truepart)))
       end
 
       def process_unless_mod(exp)
@@ -62,7 +62,7 @@ module RipperRubyParser
 
         values = handle_argument_list values
 
-        truepart = map_body(truepart)
+        truepart = map_process_sexp_body_compact(truepart)
         truepart = [nil] if truepart.empty?
 
         s(s(:when,
@@ -73,7 +73,7 @@ module RipperRubyParser
 
       def process_else(exp)
         _, body = exp.shift 2
-        safe_wrap_in_block(map_body(body))
+        safe_wrap_in_block(map_process_sexp_body_compact(body))
       end
 
       private

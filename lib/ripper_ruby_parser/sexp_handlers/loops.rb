@@ -22,7 +22,7 @@ module RipperRubyParser
         _, var, coll, block = exp.shift 4
         coll = process(coll)
         assgn = s(:lasgn, process(var)[1])
-        block = wrap_in_block(map_body(block))
+        block = wrap_in_block(map_process_sexp_body_compact(block))
         if block.nil?
           s(:for, coll, assgn)
         else
@@ -41,7 +41,7 @@ module RipperRubyParser
 
         construct_conditional_loop(type, negated_type,
                                    process(cond),
-                                   wrap_in_block(map_body(body)),
+                                   wrap_in_block(map_process_sexp_body_compact(body)),
                                    true)
       end
 

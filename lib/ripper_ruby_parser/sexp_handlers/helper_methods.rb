@@ -48,19 +48,16 @@ module RipperRubyParser
         exp.sexp_type == :lit
       end
 
-      def map_body(body)
-        body = if body.sexp_type == :stmts
-                 map_process_sexp_body body
-               elsif body.sexp_type == :args
-                 map_process_sexp_body body
-               else
-                 map_process_list body
-               end
+      def reject_void_stmt(body)
         body.reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
       end
 
+      def map_process_sexp_body_compact(list)
+        reject_void_stmt map_process_sexp_body list
+      end
+
       def map_process_sexp_body(list)
-        list.sexp_body.map { |exp| process(exp) }
+        map_process_list(list.sexp_body)
       end
 
       def map_process_list(list)
