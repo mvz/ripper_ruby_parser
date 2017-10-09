@@ -87,7 +87,7 @@ module RipperRubyParser
     end
 
     def on_qsymbols_add(list, elem)
-      list << [:dyna_symbol, [elem]]
+      list << elem
     end
 
     def on_qwords_new
@@ -128,7 +128,7 @@ module RipperRubyParser
     end
 
     def on_symbols_add(list, elem)
-      list << [:dyna_symbol, elem]
+      list << elem
     end
 
     def on_word_new
