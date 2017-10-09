@@ -143,22 +143,10 @@ module RipperRubyParser
       end
 
       def internal_process_string_parts(exp)
-        if exp.first == :xstring
-          exp.shift
-        elsif exp.first == :word
-          exp.shift
-        elsif exp.first == :regexp
-          exp.shift
-        elsif exp.first == :string_content
-          exp.shift
-        end
+        exp.shift
 
         rest = []
-
-        until exp.empty?
-          part = exp.shift
-          rest << process(part)
-        end
+        rest << process(exp.shift) until exp.empty?
         rest
       end
 
@@ -241,11 +229,7 @@ module RipperRubyParser
       end
 
       def handle_dyna_symbol_content(list)
-        if list.sexp_type == :string_content
-          string, rest = extract_unescaped_string_parts list.sexp_body
-        else
-          string, rest = extract_unescaped_string_parts list
-        end
+        string, rest = extract_unescaped_string_parts list
         if rest.empty?
           s(:lit, string.to_sym)
         else
