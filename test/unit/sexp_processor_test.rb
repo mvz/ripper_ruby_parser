@@ -25,13 +25,13 @@ describe RipperRubyParser::SexpProcessor do
   describe '#process' do
     describe 'for a :program sexp' do
       it 'strips off the outer :program node' do
-        sexp = s(:program, s(s(:foo)))
+        sexp = s(:program, s(:stmts, s(:foo)))
         result = processor.process sexp
         result.must_equal s(:foo_p)
       end
 
       it 'transforms a multi-statement :program into a :block sexp' do
-        sexp = s(:program, s(s(:foo), s(:bar)))
+        sexp = s(:program, s(:stmts, s(:foo), s(:bar)))
         result = processor.process sexp
         result.must_equal s(:block, s(:foo_p), s(:bar_p))
       end

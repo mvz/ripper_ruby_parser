@@ -23,10 +23,10 @@ module RipperRubyParser
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
         args = []
-        args += map_process normal if normal
+        args += map_process_list normal if normal
         args += handle_default_arguments defaults if defaults
         args << process(splat) unless splat.nil? || splat == 0
-        args += map_process rest if rest
+        args += map_process_list rest if rest
         args += handle_kwargs kwargs if kwargs
         args << s(:dsplat, process(doublesplat)) if doublesplat
         args << process(block) unless block.nil?
