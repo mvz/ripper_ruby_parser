@@ -60,7 +60,7 @@ module RipperRubyParser
         end
         falsepart = [nil] if falsepart.empty?
 
-        values = handle_array_elements values
+        values = handle_argument_list values
 
         truepart = map_body(truepart)
         truepart = [nil] if truepart.empty?

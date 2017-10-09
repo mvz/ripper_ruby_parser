@@ -8,8 +8,16 @@ module RipperRubyParser
       end
 
       def process_string_content(exp)
-        exp.shift
+        string, rest = extract_unescaped_string_parts exp
 
+        if rest.empty?
+          s(:str, string)
+        else
+          s(:dstr, string, *rest)
+        end
+      end
+
+      def process_word(exp)
         string, rest = extract_unescaped_string_parts exp
 
         if rest.empty?
@@ -93,22 +101,24 @@ module RipperRubyParser
 
       def process_symbol(exp)
         _, node = exp.shift 2
-        with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
+        handle_symbol_content(node)
       end
 
       def process_dyna_symbol(exp)
-        _, list = exp.shift 2
+        _, node = exp.shift 2
+        handle_dyna_symbol_content(node)
+      end
 
-        if list.sexp_type == :string_content
-          string, rest = extract_unescaped_string_parts list.sexp_body
-        else
-          string, rest = extract_unescaped_string_parts list
-        end
-        if rest.empty?
-          s(:lit, string.to_sym)
-        else
-          s(:dsym, string, *rest)
-        end
+      def process_qsymbols(exp)
+        result = s(exp.shift)
+        result << handle_symbol_content(exp.shift) until exp.empty?
+        result
+      end
+
+      def process_symbols(exp)
+        result = s(exp.shift)
+        result << handle_dyna_symbol_content(exp.shift) until exp.empty?
+        result
       end
 
       def process_at_tstring_content(exp)
@@ -133,20 +143,10 @@ module RipperRubyParser
       end
 
       def internal_process_string_parts(exp)
-        if exp.first == :xstring
-          exp.shift
-        elsif exp.first == :word
-          exp.shift
-        elsif exp.first == :regexp
-          exp.shift
-        end
+        exp.shift
 
         rest = []
-
-        until exp.empty?
-          part = exp.shift
-          rest << process(part)
-        end
+        rest << process(exp.shift) until exp.empty?
         rest
       end
 
@@ -226,6 +226,19 @@ module RipperRubyParser
         flags =~ /[ues]/ and numflags |= Regexp::FIXEDENCODING
 
         numflags
+      end
+
+      def handle_dyna_symbol_content(list)
+        string, rest = extract_unescaped_string_parts list
+        if rest.empty?
+          s(:lit, string.to_sym)
+        else
+          s(:dsym, string, *rest)
+        end
+      end
+
+      def handle_symbol_content(node)
+        with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
       end
     end
   end

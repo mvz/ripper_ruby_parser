@@ -49,17 +49,22 @@ module RipperRubyParser
       end
 
       def map_body(body)
-        map_process(body).reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
+        body = if body.sexp_type == :stmts
+                 map_process_sexp_body body
+               elsif body.sexp_type == :args
+                 map_process_sexp_body body
+               else
+                 map_process_list body
+               end
+        body.reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
       end
 
-      def map_process(list)
-        if list.sexp_type == :stmts
-          list.sexp_body.map { |exp| process(exp) }
-        elsif list.sexp_type == :args
-          list.sexp_body.map { |exp| process(exp) }
-        else
-          list.map  { |exp| process(exp) }
-        end
+      def map_process_sexp_body(list)
+        list.sexp_body.map { |exp| process(exp) }
+      end
+
+      def map_process_list(list)
+        list.map { |exp| process(exp) }
       end
 
       def wrap_in_block(statements)
