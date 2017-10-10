@@ -122,7 +122,11 @@ describe RipperRubyParser::CommentingRipperParser do
                                       s(:class,
                                         s(:const_ref, s(:@const, 'Bar', s(1, 13))),
                                         nil,
-                                        s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))))))
+                                        s(:bodystmt,
+                                          s(:stmts, s(:void_stmt)),
+                                          nil,
+                                          nil,
+                                          nil)))))))))
     end
   end
 end
