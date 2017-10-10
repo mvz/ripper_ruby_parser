@@ -23,15 +23,8 @@ module RipperRubyParser
 
         left = process left
 
-        if left.first == :masgn
-          left = left[1]
-          left.shift
-        end
-
-        if left.first == :mlhs
-          left.shift
-        end
-        left = create_multiple_assignment_sub_types left
+        left = left[1] if left.sexp_type == :masgn
+        left = create_multiple_assignment_sub_types left.sexp_body
 
         right = process(right)
 
@@ -71,15 +64,11 @@ module RipperRubyParser
 
         items = process(contents)
 
-        if items.first == :mlhs
-          items.shift
+        if items.sexp_type == :mlhs
+          s(:masgn, s(:array, *create_multiple_assignment_sub_types(items.sexp_body)))
+        else
+          items
         end
-
-        if items.first.is_a? Symbol
-          return items
-        end
-
-        s(:masgn, s(:array, *create_multiple_assignment_sub_types(items)))
       end
 
       def process_opassign(exp)
