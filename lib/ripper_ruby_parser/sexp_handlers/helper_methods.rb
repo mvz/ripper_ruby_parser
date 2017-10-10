@@ -80,15 +80,16 @@ module RipperRubyParser
         args = process(arglist)
         args.shift if [:arglist, :args].include? args.sexp_type
 
-        if args.length == 1
+        case args.length
+        when 0
+          s()
+        when 1
           arg = args[0]
           if arg.sexp_type == :splat
             s(:svalue, arg)
           else
             arg
           end
-        elsif args.length == 0
-          s()
         else
           s(:array, *args)
         end

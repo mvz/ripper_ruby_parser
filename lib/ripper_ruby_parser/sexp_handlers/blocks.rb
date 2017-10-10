@@ -138,7 +138,7 @@ module RipperRubyParser
       def handle_generic_block(exp)
         type, args, stmts = exp.shift 3
         args = process(args)
-        s(type, args, s(unwrap_nil process(stmts)))
+        s(type, args, s(unwrap_nil(process(stmts))))
       end
 
       def handle_default_arguments(defaults)

@@ -99,7 +99,6 @@ module RipperRubyParser
     end
 
     def on_regexp_new
-
       [:regexp]
     end
 
