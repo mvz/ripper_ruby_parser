@@ -41,8 +41,7 @@ module RipperRubyParser
     def process_program(exp)
       _, content = exp.shift 2
 
-      statements = map_process_sexp_body(content)
-      safe_wrap_in_block statements
+      process content
     end
 
     def process_module(exp)
@@ -69,16 +68,20 @@ module RipperRubyParser
       exp.shift
       statements = []
       statements << process(exp.shift) until exp.empty?
+      statements = reject_void_stmt statements
       case statements.count
+      when 0
+        s(:void_stmt)
       when 1
-        first = statements.first
-        if first.sexp_type == :void_stmt
-          s(:nil)
-        else
-          first
-        end
+        statements.first
       else
-        s(:block, *statements)
+        first = statements.shift
+        if first.sexp_type == :block
+          first.shift
+          s(:block, *first, *statements)
+        else
+          s(:block, first, *statements)
+        end
       end
     end
 
@@ -122,7 +125,12 @@ module RipperRubyParser
 
     def process_paren(exp)
       _, body = exp.shift 2
-      process body
+      result = process body
+      if result.sexp_type == :void_stmt
+        s(:nil)
+      else
+        result
+      end
     end
 
     def process_comment(exp)
@@ -134,12 +142,12 @@ module RipperRubyParser
 
     def process_BEGIN(exp)
       _, body = exp.shift 2
-      s(:iter, s(:preexe), s(:args), *map_body(body))
+      s(:iter, s(:preexe), s(:args), *map_process_sexp_body_compact(body))
     end
 
     def process_END(exp)
       _, body = exp.shift 2
-      s(:iter, s(:postexe), 0, *map_body(body))
+      s(:iter, s(:postexe), 0, *map_process_sexp_body_compact(body))
     end
 
     # number literals

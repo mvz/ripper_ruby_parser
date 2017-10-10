@@ -51,7 +51,7 @@ module RipperRubyParser
 
       def process_rescue(exp)
         _, eclass, evar, block, after = exp.shift 5
-        rescue_block = map_body(block)
+        rescue_block = map_process_sexp_body_compact(block)
         rescue_block << nil if rescue_block.empty?
 
         arr = []
@@ -75,7 +75,7 @@ module RipperRubyParser
       def process_bodystmt(exp)
         _, body, rescue_block, else_block, ensure_block = exp.shift 5
 
-        body = body_wrap_in_block map_body(body)
+        body = body_wrap_in_block map_process_sexp_body_compact(body)
 
         if rescue_block
           body.push(*process(rescue_block))
@@ -100,7 +100,7 @@ module RipperRubyParser
 
       def process_ensure(exp)
         _, block = exp.shift 2
-        strip_typeless_sexp safe_wrap_in_block map_body(block)
+        strip_typeless_sexp safe_unwrap_void_stmt process(block)
       end
 
       def process_next(exp)
@@ -130,16 +130,15 @@ module RipperRubyParser
         args = 0 if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
-                  wrap_in_block(map_body(statements)))
+                  unwrap_nil(process(statements)))
       end
 
       private
 
       def handle_generic_block(exp)
-        _, args, stmts = exp.shift 3
+        type, args, stmts = exp.shift 3
         args = process(args)
-        # FIXME: Symbol :block is irrelevant.
-        s(:block, args, s(wrap_in_block(map_body(stmts))))
+        s(type, args, s(unwrap_nil process(stmts)))
       end
 
       def handle_default_arguments(defaults)
