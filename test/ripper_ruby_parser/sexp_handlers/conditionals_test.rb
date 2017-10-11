@@ -322,7 +322,11 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:call, nil, :bar),
                               s(:if,
-                                s(:not, s(:call, s(:call, nil, :baz), :=~, s(:call, nil, :qux))),
+                                s(:not,
+                                  s(:call,
+                                    s(:call, nil, :baz),
+                                    :=~,
+                                    s(:call, nil, :qux))),
                                 s(:call, nil, :quuz),
                                 nil))
       end
