@@ -5,10 +5,9 @@ module RipperRubyParser
       def process_method_add_block(exp)
         _, call, block = exp.shift 3
         block = process(block)
-        args = block[1]
-        stmt = block[2].first
+        _, args, stmt = block
         call = process(call)
-        make_iter call, args, stmt
+        make_iter call, args, stmt.first
       end
 
       def process_brace_block(exp)

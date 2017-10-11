@@ -2,6 +2,23 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   describe '#parse' do
+    describe 'for blocks' do
+      it 'works with no statements in the block body' do
+        'foo do; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0)
+      end
+
+      it 'works with redo' do
+        'foo do; redo; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:redo))
+      end
+    end
+
     describe 'for block parameters' do
       specify do
         'foo do |(bar, baz)| end'.
@@ -85,6 +102,41 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:block,
                               s(:call, nil, :foo),
                               s(:call, nil, :bar))
+      end
+
+      it 'works with zero arguments' do
+        'foo do ||; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args))
+      end
+
+      it 'works with one argument' do
+        'foo do |bar|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar))
+      end
+
+      it 'works with multiple arguments' do
+        'foo do |bar, baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar, :baz))
+      end
+
+      it 'works with a single splat argument' do
+        'foo do |*bar|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :"*bar"))
+      end
+
+      it 'works with a combination of regular arguments and a splat argument' do
+        'foo do |bar, *baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar, :"*baz"))
       end
     end
 
@@ -241,6 +293,126 @@ describe RipperRubyParser::Parser do
       it 'works with empty main and ensure bodies' do
         'begin; ensure; end'.
           must_be_parsed_as s(:ensure, s(:nil))
+      end
+    end
+
+    describe 'for the next statement' do
+      it 'works with no arguments' do
+        'foo do; next; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next))
+      end
+
+      it 'works with one argument' do
+        'foo do; next bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next, s(:call, nil, :bar)))
+      end
+
+      it 'works with a splat argument' do
+        'foo do; next *bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next,
+                                s(:svalue,
+                                  s(:splat,
+                                    s(:call, nil, :bar)))))
+      end
+
+      it 'works with several arguments' do
+        'foo do; next bar, baz; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next,
+                                s(:array,
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz))))
+      end
+
+      it 'works with a function call with parentheses' do
+        'foo do; next foo(bar); end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
+      end
+
+      it 'works with a function call without parentheses' do
+        'foo do; next foo bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:next,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
+      end
+    end
+
+    describe 'for the break statement' do
+      it 'works with break with no arguments' do
+        'foo do; break; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break))
+      end
+
+      it 'works with break with one argument' do
+        'foo do; break bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break, s(:call, nil, :bar)))
+      end
+
+      it 'works with a splat argument' do
+        'foo do; break *bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break,
+                                s(:svalue,
+                                  s(:splat,
+                                    s(:call, nil, :bar)))))
+      end
+
+      it 'works with break with several arguments' do
+        'foo do; break bar, baz; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break,
+                                s(:array,
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz))))
+      end
+
+      it 'works with break with a function call with parentheses' do
+        'foo do; break foo(bar); end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
+      end
+
+      it 'works with break with a function call without parentheses' do
+        'foo do; break foo bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:break,
+                                s(:call, nil, :foo,
+                                  s(:call, nil, :bar))))
       end
     end
 

@@ -7,9 +7,6 @@ module RipperRubyParser
       end
 
       def extract_node_symbol_with_position(exp)
-        return nil if exp.nil?
-        return exp if exp.is_a? Symbol
-
         _, ident, pos = exp.shift 3
         return ident.to_sym, pos
       end
@@ -77,14 +74,13 @@ module RipperRubyParser
       end
 
       def handle_return_argument_list(arglist)
-        args = process(arglist)
-        args.shift if [:arglist, :args].include? args.sexp_type
+        args = handle_argument_list(arglist)
 
         case args.length
         when 0
-          s()
+          args
         when 1
-          arg = args[0]
+          arg = args.first
           if arg.sexp_type == :splat
             s(:svalue, arg)
           else
