@@ -5,7 +5,7 @@ require 'rake/testtask'
 namespace :test do
   Rake::TestTask.new(:unit) do |t|
     t.libs = ['lib']
-    t.test_files = FileList['test/unit/*_test.rb']
+    t.test_files = FileList['test/ripper_ruby_parser/**/*_test.rb']
     t.warning = true
   end
 
