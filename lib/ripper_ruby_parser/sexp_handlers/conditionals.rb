@@ -6,16 +6,17 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         construct_conditional(handle_condition(cond),
-                              process(truepart),
-                              process(falsepart))
+                              handle_consequent(truepart),
+                              handle_consequent(falsepart))
       end
 
       def process_elsif(exp)
         _, cond, truepart, falsepart = exp.shift 4
 
-        truepart = unwrap_nil process(truepart) if truepart
-        falsepart = unwrap_nil process(falsepart) if falsepart
-        s(:if, process(cond), truepart, falsepart)
+        s(:if,
+          process(cond),
+          handle_consequent(truepart),
+          handle_consequent(falsepart))
       end
 
       def process_if_mod(exp)
@@ -30,8 +31,8 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         construct_conditional(handle_condition(cond),
-                              process(falsepart),
-                              process(truepart))
+                              handle_consequent(falsepart),
+                              handle_consequent(truepart))
       end
 
       def process_unless_mod(exp)
@@ -93,9 +94,11 @@ module RipperRubyParser
         end
       end
 
+      def handle_consequent(exp)
+        unwrap_nil process(exp) if exp
+      end
+
       def construct_conditional(cond, truepart, falsepart)
-        truepart = unwrap_nil truepart if truepart
-        falsepart = unwrap_nil falsepart if falsepart
         if cond.sexp_type == :not
           _, inner = cond
           s(:if, inner, falsepart, truepart)
