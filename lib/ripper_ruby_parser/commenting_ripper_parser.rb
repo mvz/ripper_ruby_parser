@@ -114,10 +114,6 @@ module RipperRubyParser
       list << elem
     end
 
-    def on_string_new
-      [:string]
-    end
-
     def on_string_add(list, elem)
       list << elem
     end
