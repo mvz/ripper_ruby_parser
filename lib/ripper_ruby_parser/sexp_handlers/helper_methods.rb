@@ -2,10 +2,6 @@ module RipperRubyParser
   module SexpHandlers
     # Utility methods used in several of the sexp handler modules
     module HelperMethods
-      def handle_argument_list(exp)
-        process(exp).tap(&:shift)
-      end
-
       def extract_node_symbol_with_position(exp)
         _, ident, pos = exp.shift 3
         return ident.to_sym, pos
@@ -71,6 +67,10 @@ module RipperRubyParser
 
       def safe_unwrap_void_stmt(exp)
         unwrap_nil(exp) || s()
+      end
+
+      def handle_argument_list(exp)
+        process(exp).tap(&:shift)
       end
 
       def handle_return_argument_list(arglist)
