@@ -65,10 +65,8 @@ module RipperRubyParser
     end
 
     def process_stmts(exp)
-      exp.shift
-      statements = []
-      statements << process(exp.shift) until exp.empty?
-      statements = reject_void_stmt statements
+      _, *statements = shift_all(exp)
+      statements = reject_void_stmt map_process_list statements
       case statements.count
       when 0
         s(:void_stmt)

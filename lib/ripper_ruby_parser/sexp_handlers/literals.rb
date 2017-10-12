@@ -102,15 +102,15 @@ module RipperRubyParser
       end
 
       def process_qsymbols(exp)
-        result = s(exp.shift)
-        result << handle_symbol_content(exp.shift) until exp.empty?
-        result
+        _, *items = shift_all(exp)
+        items = items.map { |item| handle_symbol_content(item) }
+        s(:qsymbols, *items)
       end
 
       def process_symbols(exp)
-        result = s(exp.shift)
-        result << handle_dyna_symbol_content(exp.shift) until exp.empty?
-        result
+        _, *items = shift_all(exp)
+        items = items.map { |item| handle_dyna_symbol_content(item) }
+        s(:symbols, *items)
       end
 
       def process_at_tstring_content(exp)
@@ -135,11 +135,8 @@ module RipperRubyParser
       end
 
       def internal_process_string_parts(exp)
-        exp.shift
-
-        rest = []
-        rest << process(exp.shift) until exp.empty?
-        rest
+        _, *rest = shift_all exp
+        map_process_list rest
       end
 
       def extract_unescaped_string_parts(exp)
