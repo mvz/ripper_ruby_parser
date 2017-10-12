@@ -1,4 +1,4 @@
-require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
+require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   describe '#parse' do
@@ -21,6 +21,14 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
+      it 'works with zero statements' do
+        'if foo; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              nil,
+                              nil)
+      end
+
       it 'works with an else clause' do
         'if foo; bar; else; baz; end'.
           must_be_parsed_as s(:if,
@@ -29,15 +37,20 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz))
       end
 
-      it 'works with an elsif clause' do
-        'if foo; bar; elsif baz; qux; end'.
+      it 'works with an empty main clause' do
+        'if foo; else; bar; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              nil,
+                              s(:call, nil, :bar))
+      end
+
+      it 'works with an empty else clause' do
+        'if foo; bar; else; end'.
           must_be_parsed_as s(:if,
                               s(:call, nil, :foo),
                               s(:call, nil, :bar),
-                              s(:if,
-                                s(:call, nil, :baz),
-                                s(:call, nil, :qux),
-                                nil))
+                              nil)
       end
 
       it 'handles a negative condition correctly' do
@@ -46,16 +59,6 @@ describe RipperRubyParser::Parser do
                               s(:call, s(:call, nil, :foo), :!),
                               s(:call, nil, :bar),
                               nil)
-      end
-
-      it 'handles a negative condition in elsif correctly' do
-        'if foo; bar; elsif not baz; qux; end'.
-          must_be_parsed_as s(:if,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar),
-                              s(:if,
-                                s(:call, s(:call, nil, :baz), :!),
-                                s(:call, nil, :qux), nil))
       end
 
       it 'handles bare regex literal in condition' do
@@ -158,6 +161,24 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo))
       end
 
+      it 'works with multiple statements' do
+        'unless foo; bar; baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              nil,
+                              s(:block,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
+      end
+
+      it 'works with zero statements' do
+        'unless foo; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              nil,
+                              nil)
+      end
+
       it 'works with an else clause' do
         'unless foo; bar; else; baz; end'.
           must_be_parsed_as s(:if,
@@ -165,6 +186,23 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz),
                               s(:call, nil, :bar))
       end
+
+      it 'works with an empty main clause' do
+        'unless foo; else; bar; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+
+      it 'works with an empty else block' do
+        'unless foo; bar; else; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              nil,
+                              s(:call, nil, :bar))
+      end
+
       it 'handles bare regex literal in condition' do
         'unless /foo/; bar; end'.
           must_be_parsed_as s(:if,
@@ -221,6 +259,72 @@ describe RipperRubyParser::Parser do
                               s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
                               s(:call, nil, :baz),
                               nil)
+      end
+    end
+
+    describe 'for elsif' do
+      it 'works with a single statement' do
+        'if foo; bar; elsif baz; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                nil))
+      end
+
+      it 'works with an empty consequesnt' do
+        'if foo; bar; elsif baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                nil,
+                                nil))
+      end
+
+      it 'works with an empty else' do
+        'if foo; bar; elsif baz; qux; else; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                nil))
+      end
+
+      it 'handles a negative condition correctly' do
+        'if foo; bar; elsif not baz; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, s(:call, nil, :baz), :!),
+                                s(:call, nil, :qux), nil))
+      end
+
+      it 'does not replace :dot2 with :flip2' do
+        'if foo; bar; elsif baz..qux; quuz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:dot2, s(:call, nil, :baz), s(:call, nil, :qux)),
+                                s(:call, nil, :quuz), nil))
+      end
+
+      it 'does not rewrite the negative match operator' do
+        'if foo; bar; elsif baz !~ qux; quuz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:not, s(:call, s(:call, nil, :baz), :=~, s(:call, nil, :qux))),
+                                s(:call, nil, :quuz),
+                                nil))
       end
     end
 

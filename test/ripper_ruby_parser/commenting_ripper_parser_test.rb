@@ -129,4 +129,48 @@ describe RipperRubyParser::CommentingRipperParser do
                                           nil)))))))))
     end
   end
+
+  describe 'handling syntax errors' do
+    it 'raises an error for an incomplete source' do
+      proc {
+        parse_with_builder 'def foo'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it 'raises an error for an invalid class name' do
+      proc {
+        parse_with_builder 'class foo; end'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it 'raises an error aliasing $1 as foo' do
+      proc {
+        parse_with_builder 'alias foo $1'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it 'raises an error aliasing foo as $1' do
+      proc {
+        parse_with_builder 'alias $1 foo'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it 'raises an error aliasing $2 as $1' do
+      proc {
+        parse_with_builder 'alias $1 $2'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it 'raises an error assigning to $1' do
+      proc {
+        parse_with_builder '$1 = foo'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+
+    it 'raises an error using an invalid parameter name' do
+      proc {
+        parse_with_builder 'def foo(BAR); end'
+      }.must_raise RipperRubyParser::SyntaxError
+    end
+  end
 end
