@@ -17,15 +17,7 @@ module RipperRubyParser
         end
       end
 
-      def process_word(exp)
-        string, rest = extract_unescaped_string_parts exp
-
-        if rest.empty?
-          s(:str, string)
-        else
-          s(:dstr, string, *rest)
-        end
-      end
+      alias process_word process_string_content
 
       def process_string_embexpr(exp)
         _, list = exp.shift 2
