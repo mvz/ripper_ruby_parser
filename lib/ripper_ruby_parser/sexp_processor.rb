@@ -247,23 +247,5 @@ module RipperRubyParser
       _, val, pos = exp.shift 3
       with_position(pos, s(:lit, yield(val)))
     end
-
-    def trickle_up_line_numbers(exp)
-      exp.each do |sub_exp|
-        if sub_exp.is_a? Sexp
-          trickle_up_line_numbers sub_exp
-          exp.line ||= sub_exp.line
-        end
-      end
-    end
-
-    def trickle_down_line_numbers(exp)
-      exp.each do |sub_exp|
-        if sub_exp.is_a? Sexp
-          sub_exp.line ||= exp.line
-          trickle_down_line_numbers sub_exp
-        end
-      end
-    end
   end
 end
