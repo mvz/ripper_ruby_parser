@@ -47,13 +47,9 @@ module RipperRubyParser
         right = process(right)
 
         if left.sexp_type == :str
-          right[1] = left[1] + right[1]
-          right
-        else # Expecting left.sexp_type == :dstr
-          _, first, *rest = right
-          left.push s(:str, first) if !first.empty? || rest.empty?
-          left.push(*rest)
-          left
+          merge_left_into_right(left, right)
+        else
+          merge_right_into_left(left, right)
         end
       end
 
@@ -228,6 +224,21 @@ module RipperRubyParser
 
       def handle_symbol_content(node)
         with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
+      end
+
+      def merge_left_into_right(left, right)
+        right[1] = left[1] + right[1]
+        right
+      end
+
+      def merge_right_into_left(left, right)
+        if right.sexp_type == :str
+          left.push right
+        else
+          _, first, *rest = right
+          left.push s(:str, first) unless first.empty?
+          left.push(*rest)
+        end
       end
     end
   end
