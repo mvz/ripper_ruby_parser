@@ -72,37 +72,6 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:args, :bar))
       end
-    end
-
-    describe 'for rescue/else' do
-      it 'works for a block with multiple rescue statements' do
-        'begin foo; rescue; bar; rescue; baz; end'.
-          must_be_parsed_as s(:rescue,
-                              s(:call, nil, :foo),
-                              s(:resbody,
-                                s(:array),
-                                s(:call, nil, :bar)),
-                              s(:resbody,
-                                s(:array),
-                                s(:call, nil, :baz)))
-      end
-
-      it 'works for a block with rescue and else' do
-        'begin; foo; rescue; bar; else; baz; end'.
-          must_be_parsed_as s(:rescue,
-                              s(:call, nil, :foo),
-                              s(:resbody,
-                                s(:array),
-                                s(:call, nil, :bar)),
-                              s(:call, nil, :baz))
-      end
-
-      it 'works for a block with only else' do
-        'begin; foo; else; bar; end'.
-          must_be_parsed_as s(:block,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
-      end
 
       it 'works with zero arguments' do
         'foo do ||; end'.
@@ -137,6 +106,37 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
                               s(:args, :bar, :"*baz"))
+      end
+    end
+
+    describe 'for rescue/else' do
+      it 'works for a block with multiple rescue statements' do
+        'begin foo; rescue; bar; rescue; baz; end'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar)),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :baz)))
+      end
+
+      it 'works for a block with rescue and else' do
+        'begin; foo; rescue; bar; else; baz; end'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
+      end
+
+      it 'works for a block with only else' do
+        'begin; foo; else; bar; end'.
+          must_be_parsed_as s(:block,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
       end
     end
 
