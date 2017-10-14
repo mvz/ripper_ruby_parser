@@ -22,13 +22,13 @@ module RipperRubyParser
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
         args = []
-        args += map_process_list normal if normal
-        args += handle_default_arguments defaults if defaults
-        args << process(splat) unless splat.nil? || splat == 0
-        args += map_process_list rest if rest
-        args += handle_kwargs kwargs if kwargs
-        args << s(:dsplat, process(doublesplat)) if doublesplat
-        args << process(block) unless block.nil?
+        args += handle_normal_arguments normal
+        args += handle_default_arguments defaults
+        args += handle_splat splat
+        args += handle_normal_arguments rest
+        args += handle_kwargs kwargs
+        args += handle_double_splat doublesplat
+        args += handle_block_argument block
 
         s(:args, *args)
       end
@@ -140,11 +140,26 @@ module RipperRubyParser
         s(type, args, s(unwrap_nil(process(stmts))))
       end
 
+      def handle_normal_arguments(normal)
+        return [] unless normal
+        map_process_list normal
+      end
+
       def handle_default_arguments(defaults)
+        return [] unless defaults
         defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
       end
 
+      def handle_splat(splat)
+        if splat && splat != 0
+          [process(splat)]
+        else
+          []
+        end
+      end
+
       def handle_kwargs(kwargs)
+        return [] unless kwargs
         kwargs.map do |sym, val|
           symbol = process(sym)[1]
           if val
@@ -153,6 +168,16 @@ module RipperRubyParser
             s(:kwarg, symbol)
           end
         end
+      end
+
+      def handle_double_splat(doublesplat)
+        return [] unless doublesplat
+        [s(:dsplat, process(doublesplat))]
+      end
+
+      def handle_block_argument(block)
+        return [] unless block
+        [process(block)]
       end
 
       def strip_typeless_sexp(block)

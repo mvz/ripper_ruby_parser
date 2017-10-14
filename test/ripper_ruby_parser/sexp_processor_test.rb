@@ -289,24 +289,4 @@ describe RipperRubyParser::SexpProcessor do
       result.must_equal :Foo
     end
   end
-
-  describe '#trickle_up_line_numbers' do
-    it 'works through several nested levels' do
-      inner = s(:foo)
-      outer = s(:bar, s(:baz, s(:qux, inner)))
-      outer.line = 42
-      processor.send :trickle_down_line_numbers, outer
-      inner.line.must_equal 42
-    end
-  end
-
-  describe '#trickle_down_line_numbers' do
-    it 'works through several nested levels' do
-      inner = s(:foo)
-      inner.line = 42
-      outer = s(:bar, s(:baz, s(:qux, inner)))
-      processor.send :trickle_up_line_numbers, outer
-      outer.line.must_equal 42
-    end
-  end
 end

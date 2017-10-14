@@ -56,10 +56,8 @@ module RipperRubyParser
 
         if falsepart.nil?
           falsepart = [nil]
-        else
-          if falsepart.first.is_a? Symbol
-            falsepart = s(falsepart)
-          end
+        elsif falsepart.first.is_a? Symbol
+          falsepart = s(falsepart)
         end
         falsepart = [nil] if falsepart.empty?
 

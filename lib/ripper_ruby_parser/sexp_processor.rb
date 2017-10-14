@@ -65,10 +65,8 @@ module RipperRubyParser
     end
 
     def process_stmts(exp)
-      exp.shift
-      statements = []
-      statements << process(exp.shift) until exp.empty?
-      statements = reject_void_stmt statements
+      _, *statements = shift_all(exp)
+      statements = reject_void_stmt map_process_list statements
       case statements.count
       when 0
         s(:void_stmt)
@@ -248,24 +246,6 @@ module RipperRubyParser
     def make_literal(exp)
       _, val, pos = exp.shift 3
       with_position(pos, s(:lit, yield(val)))
-    end
-
-    def trickle_up_line_numbers(exp)
-      exp.each do |sub_exp|
-        if sub_exp.is_a? Sexp
-          trickle_up_line_numbers sub_exp
-          exp.line ||= sub_exp.line
-        end
-      end
-    end
-
-    def trickle_down_line_numbers(exp)
-      exp.each do |sub_exp|
-        if sub_exp.is_a? Sexp
-          sub_exp.line ||= exp.line
-          trickle_down_line_numbers sub_exp
-        end
-      end
     end
   end
 end

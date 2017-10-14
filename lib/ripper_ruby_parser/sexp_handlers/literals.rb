@@ -17,15 +17,7 @@ module RipperRubyParser
         end
       end
 
-      def process_word(exp)
-        string, rest = extract_unescaped_string_parts exp
-
-        if rest.empty?
-          s(:str, string)
-        else
-          s(:dstr, string, *rest)
-        end
-      end
+      alias process_word process_string_content
 
       def process_string_embexpr(exp)
         _, list = exp.shift 2
@@ -55,13 +47,9 @@ module RipperRubyParser
         right = process(right)
 
         if left.sexp_type == :str
-          right[1] = left[1] + right[1]
-          right
-        else # Expecting left.sexp_type == :dstr
-          _, first, *rest = right
-          left.push s(:str, first) if !first.empty? || rest.empty?
-          left.push(*rest)
-          left
+          merge_left_into_right(left, right)
+        else
+          merge_right_into_left(left, right)
         end
       end
 
@@ -110,15 +98,15 @@ module RipperRubyParser
       end
 
       def process_qsymbols(exp)
-        result = s(exp.shift)
-        result << handle_symbol_content(exp.shift) until exp.empty?
-        result
+        _, *items = shift_all(exp)
+        items = items.map { |item| handle_symbol_content(item) }
+        s(:qsymbols, *items)
       end
 
       def process_symbols(exp)
-        result = s(exp.shift)
-        result << handle_dyna_symbol_content(exp.shift) until exp.empty?
-        result
+        _, *items = shift_all(exp)
+        items = items.map { |item| handle_dyna_symbol_content(item) }
+        s(:symbols, *items)
       end
 
       def process_at_tstring_content(exp)
@@ -143,11 +131,8 @@ module RipperRubyParser
       end
 
       def internal_process_string_parts(exp)
-        exp.shift
-
-        rest = []
-        rest << process(exp.shift) until exp.empty?
-        rest
+        _, *rest = shift_all exp
+        map_process_list rest
       end
 
       def extract_unescaped_string_parts(exp)
@@ -239,6 +224,21 @@ module RipperRubyParser
 
       def handle_symbol_content(node)
         with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
+      end
+
+      def merge_left_into_right(left, right)
+        right[1] = left[1] + right[1]
+        right
+      end
+
+      def merge_right_into_left(left, right)
+        if right.sexp_type == :str
+          left.push right
+        else
+          _, first, *rest = right
+          left.push s(:str, first) unless first.empty?
+          left.push(*rest)
+        end
       end
     end
   end

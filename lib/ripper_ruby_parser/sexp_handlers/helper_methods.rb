@@ -2,10 +2,6 @@ module RipperRubyParser
   module SexpHandlers
     # Utility methods used in several of the sexp handler modules
     module HelperMethods
-      def handle_argument_list(exp)
-        process(exp).tap(&:shift)
-      end
-
       def extract_node_symbol_with_position(exp)
         _, ident, pos = exp.shift 3
         return ident.to_sym, pos
@@ -34,11 +30,10 @@ module RipperRubyParser
       end
 
       def generic_add_star(exp)
-        _, args, splatarg = exp.shift 3
+        _, args, splatarg, *rest = shift_all exp
         items = process args
-        items << s(:splat, process(splatarg))
-        items << process(exp.shift) until exp.empty?
-        items
+        items.push s(:splat, process(splatarg))
+        items.push(*map_process_list(rest))
       end
 
       def literal?(exp)
@@ -73,6 +68,10 @@ module RipperRubyParser
         unwrap_nil(exp) || s()
       end
 
+      def handle_argument_list(exp)
+        process(exp).tap(&:shift)
+      end
+
       def handle_return_argument_list(arglist)
         args = handle_argument_list(arglist)
 
@@ -93,6 +92,12 @@ module RipperRubyParser
 
       def handle_array_elements(elems)
         process(elems).sexp_body
+      end
+
+      def shift_all(exp)
+        [].tap do |result|
+          result << exp.shift until exp.empty?
+        end
       end
     end
   end
