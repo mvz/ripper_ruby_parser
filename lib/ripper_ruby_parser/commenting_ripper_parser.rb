@@ -2,11 +2,11 @@ require 'ripper'
 require 'ripper_ruby_parser/syntax_error'
 
 module RipperRubyParser
-  # Variant of Ripper's SexpBuilderPP parser class that inserts comments as
+  # Variant of Ripper's SexpBuilder parser class that inserts comments as
   # Sexps into the built parse tree.
   #
   # @api private
-  class CommentingRipperParser < Ripper::SexpBuilderPP
+  class CommentingRipperParser < Ripper::SexpBuilder
     def initialize(*args)
       super
       @comment = nil
