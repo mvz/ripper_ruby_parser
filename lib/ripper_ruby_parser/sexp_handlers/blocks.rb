@@ -45,7 +45,7 @@ module RipperRubyParser
         _, body = exp.shift 2
 
         body = process(body)
-        strip_typeless_sexp(body)
+        convert_empty_to_nil_symbol(body)
       end
 
       def process_rescue(exp)
@@ -72,9 +72,12 @@ module RipperRubyParser
       end
 
       def process_bodystmt(exp)
-        _, body, rescue_block, else_block, ensure_block = exp.shift 5
+        _, main, rescue_block, else_block, ensure_block = exp.shift 5
 
-        body = body_wrap_in_block map_process_sexp_body_compact(body)
+        body = s()
+
+        main = wrap_in_block map_process_sexp_body_compact(main)
+        body << main if main
 
         if rescue_block
           body.push(*process(rescue_block))
@@ -89,7 +92,7 @@ module RipperRubyParser
           body = s(s(:ensure, *body))
         end
 
-        body_wrap_in_block body
+        wrap_in_block(body) || s()
       end
 
       def process_rescue_mod(exp)
@@ -99,7 +102,7 @@ module RipperRubyParser
 
       def process_ensure(exp)
         _, block = exp.shift 2
-        strip_typeless_sexp safe_unwrap_void_stmt process(block)
+        convert_empty_to_nil_symbol safe_unwrap_void_stmt process(block)
       end
 
       def process_next(exp)
@@ -180,12 +183,10 @@ module RipperRubyParser
         [process(block)]
       end
 
-      def strip_typeless_sexp(block)
+      def convert_empty_to_nil_symbol(block)
         case block.length
         when 0
           s(:nil)
-        when 1
-          block[0]
         else
           block
         end
@@ -200,14 +201,14 @@ module RipperRubyParser
         end
       end
 
-      def body_wrap_in_block(statements)
+      def wrap_in_block(statements)
         case statements.length
         when 0
-          s()
+          nil
         when 1
-          s(statements.first)
+          statements.first
         else
-          s(s(:block, *statements))
+          s(:block, *statements)
         end
       end
     end
