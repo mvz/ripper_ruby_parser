@@ -59,6 +59,11 @@ module RipperRubyParser
         items
       end
 
+      def process_mlhs_add_post(exp)
+        _, base, rest = exp.shift 3
+        process(base).push(*process(rest).sexp_body)
+      end
+
       def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
