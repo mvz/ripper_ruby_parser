@@ -196,6 +196,8 @@ module RipperRubyParser
         args ||= 0
         if stmt.nil?
           s(:iter, call, args)
+        elsif stmt.empty?
+          s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
         end
