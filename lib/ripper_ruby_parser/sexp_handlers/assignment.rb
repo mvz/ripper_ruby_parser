@@ -52,11 +52,9 @@ module RipperRubyParser
       end
 
       def process_mlhs_add_star(exp)
-        _, args, splatarg, rest = exp.shift 4
+        _, args, splatarg = exp.shift 3
         items = process args
         items << s(:splat, process(splatarg))
-        rest.sexp_body.each { |arg| items << process(arg) } if rest
-        items
       end
 
       def process_mlhs_add_post(exp)
