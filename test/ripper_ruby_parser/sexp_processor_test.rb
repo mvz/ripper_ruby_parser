@@ -145,16 +145,16 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe 'for a :bodystmt sexp' do
-      it 'creates a :scope sexp with nested :block' do
+      it 'creates a :block sexp when multiple statements are present' do
         sexp = s(:bodystmt, s(:stmts, s(:foo), s(:bar)), nil, nil, nil)
         result = processor.process sexp
-        result.must_equal s(s(:block, s(:foo_p), s(:bar_p)))
+        result.must_equal s(:block, s(:foo_p), s(:bar_p))
       end
 
       it 'removes nested :void_stmt sexps' do
         sexp = s(:bodystmt, s(:stmts, s(:void_stmt), s(:foo)), nil, nil, nil)
         result = processor.process sexp
-        result.must_equal s(s(:foo_p))
+        result.must_equal s(:foo_p)
       end
     end
 
@@ -175,6 +175,27 @@ describe RipperRubyParser::SexpProcessor do
           sexp =  s(:params, s(s(:@ident, 'bar', s(1, 8))), nil, nil, nil, nil)
           result = processor.process sexp
           result.must_equal s(:args, s(:lvar, :bar))
+        end
+      end
+
+      describe 'with a ruby 2.4-style doublesplat argument' do
+        it 'creates :lvar sexps' do
+          sexp =  s(:params,
+                    nil, nil, nil, nil, nil,
+                    s(:@ident, 'bar', s(1, 8)),
+                    nil)
+          result = processor.process sexp
+          result.must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
+        end
+      end
+      describe 'with a ruby 2.5-style kwrest argument' do
+        it 'creates :lvar sexps' do
+          sexp =  s(:params,
+                    nil, nil, nil, nil, nil,
+                    s(:kwrest_param, s(:@ident, 'bar', s(1, 8))),
+                    nil)
+          result = processor.process sexp
+          result.must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
         end
       end
     end

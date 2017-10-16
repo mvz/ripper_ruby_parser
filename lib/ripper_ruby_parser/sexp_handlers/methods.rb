@@ -79,14 +79,14 @@ module RipperRubyParser
         block = in_method { process exp }
         case block.length
         when 0
-          block.push s(:nil)
-        when 1
-          if block.first.sexp_type == :block
-            block = block.first
-            block.shift
+          [s(:nil)]
+        else
+          if block.sexp_type == :block
+            block.sexp_body
+          else
+            [block]
           end
         end
-        block
       end
 
       SPECIAL_ARG_MARKER = {

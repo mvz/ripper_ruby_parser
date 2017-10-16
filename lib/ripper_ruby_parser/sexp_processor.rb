@@ -229,12 +229,12 @@ module RipperRubyParser
     def class_or_module_body(exp)
       body = process(exp)
 
-      if body.length == 1 && (inner = body.first).sexp_type == :block
-        inner.shift
-        return inner
+      return body if body.empty?
+      if body.sexp_type == :block
+        body.sexp_body
+      else
+        [body]
       end
-
-      body
     end
 
     def make_identifier(type, exp)
