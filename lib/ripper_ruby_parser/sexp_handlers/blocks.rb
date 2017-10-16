@@ -7,7 +7,8 @@ module RipperRubyParser
         block = process(block)
         _, args, stmt = block
         call = process(call)
-        make_iter call, args, stmt.first
+        stmts = stmt.first || s()
+        make_iter call, args, stmts
       end
 
       def process_brace_block(exp)
@@ -137,7 +138,7 @@ module RipperRubyParser
         args = 0 if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
-                  unwrap_nil(process(statements)))
+                  safe_unwrap_void_stmt(process(statements)))
       end
 
       private
@@ -199,9 +200,7 @@ module RipperRubyParser
 
       def make_iter(call, args, stmt)
         args ||= 0
-        if stmt.nil?
-          s(:iter, call, args)
-        elsif stmt.empty?
+        if stmt.empty?
           s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
