@@ -177,6 +177,27 @@ describe RipperRubyParser::SexpProcessor do
           result.must_equal s(:args, s(:lvar, :bar))
         end
       end
+
+      describe 'with a ruby 2.4-style doublesplat argument' do
+        it 'creates :lvar sexps' do
+          sexp =  s(:params,
+                    nil, nil, nil, nil, nil,
+                    s(:@ident, 'bar', s(1, 8)),
+                    nil)
+          result = processor.process sexp
+          result.must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
+        end
+      end
+      describe 'with a ruby 2.5-style kwrest argument' do
+        it 'creates :lvar sexps' do
+          sexp =  s(:params,
+                    nil, nil, nil, nil, nil,
+                    s(:kwrest_param, s(:@ident, 'bar', s(1, 8))),
+                    nil)
+          result = processor.process sexp
+          result.must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
+        end
+      end
     end
 
     describe 'for an :assign sexp' do
