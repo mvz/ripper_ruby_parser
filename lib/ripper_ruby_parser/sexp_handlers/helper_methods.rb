@@ -9,12 +9,12 @@ module RipperRubyParser
 
       def extract_node_symbol(exp)
         return nil if exp.nil?
-        _, ident, _ = exp.shift 3
+        _, ident, = exp.shift 3
         ident.to_sym
       end
 
       def with_position(pos, exp = nil)
-        (line, _) = pos
+        (line,) = pos
         exp = yield if exp.nil?
         with_line_number line, exp
       end

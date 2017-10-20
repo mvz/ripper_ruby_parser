@@ -64,7 +64,7 @@ module RipperRubyParser
       end
 
       def process_regexp_literal(exp)
-        _, content, (_, flags, _) = exp.shift 3
+        _, content, (_, flags,) = exp.shift 3
 
         string, rest = extract_string_parts content
         numflags = character_flags_to_numerical flags
@@ -110,7 +110,7 @@ module RipperRubyParser
       end
 
       def process_at_tstring_content(exp)
-        _, string, _ = exp.shift 3
+        _, string, = exp.shift 3
         s(:str, string)
       end
 
