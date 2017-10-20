@@ -29,9 +29,7 @@ class RubyParserTestCase < ParseTreeTestCase
       return
     end
 
-    output_name = 'ParseTree'
-
-    super
+    super klass, node, data, input_name, 'ParseTree'
   end
 end
 
