@@ -35,12 +35,12 @@ module RipperRubyParser
       end
 
       def process_kwrest_param(exp)
-        _, sym, _ = exp.shift 3
+        _, sym, = exp.shift 3
         process(sym)
       end
 
       def process_block_var(exp)
-        _, args, _ = exp.shift 3
+        _, args, = exp.shift 3
 
         names = process(args)
 
