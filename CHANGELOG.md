@@ -1,5 +1,19 @@
 # Change log
 
+## Unreleased
+
+* Improve code quality
+* Document public API
+* Speed improvements
+  - Process line numbers only once per parse run
+  - Reduce arbitrary conditionals
+  - Use deconstruction to split up block
+* Improve intermediate s-expressions, reducing the number of typeless
+  expressions.
+* Use SexpBuilder base class, giving more low-level access to the structure
+  created by Ripper.
+* Support Ruby 2.5
+
 ## 1.1.2 / 2017-10-07
 
 * Fix support for newer Ruby syntax
