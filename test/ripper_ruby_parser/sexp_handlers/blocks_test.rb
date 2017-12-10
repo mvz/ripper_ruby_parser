@@ -148,6 +148,20 @@ describe RipperRubyParser::Parser do
                               s(:begin, s(:call, nil, :bar)))
       end
 
+      it 'works for the first argument of a boolean operator' do
+        'begin; bar; end and foo'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo))
+      end
+
+      it 'works for the second argument of a boolean operator' do
+        'foo and begin; bar; end'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:begin, s(:call, nil, :bar)))
+      end
+
       it 'works for the first argument of a ternary operator' do
         'begin; foo; end ? bar : baz'.
           must_be_parsed_as s(:if,

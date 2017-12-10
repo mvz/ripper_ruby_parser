@@ -69,7 +69,7 @@ module RipperRubyParser
 
       def make_boolean_operator(op, left, right)
         _, left, _, right = rebalance_binary(s(:binary, left, op, right))
-        s(op, process(left), process(right))
+        s(op, process(left), handle_operator_argument(right))
       end
 
       def make_regexp_match_operator(op, left, right)
