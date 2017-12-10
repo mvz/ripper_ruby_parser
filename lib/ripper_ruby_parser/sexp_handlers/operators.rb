@@ -27,13 +27,13 @@ module RipperRubyParser
         elsif (mapped = BINARY_OPERATOR_MAP[op])
           make_boolean_operator(mapped, left, right)
         else
-          s(:call, process(left), op, process(right))
+          s(:call, handle_operator_argument(left), op, handle_operator_argument(right))
         end
       end
 
       def process_unary(exp)
         _, op, arg = exp.shift 3
-        arg = process(arg)
+        arg = handle_operator_argument(arg)
         op = UNARY_OPERATOR_MAP[op] || op
         s(:call, arg, op)
       end
@@ -62,7 +62,7 @@ module RipperRubyParser
 
       def process_ifop(exp)
         _, cond, truepart, falsepart = exp.shift 4
-        s(:if, process(cond), process(truepart), process(falsepart))
+        s(:if, handle_operator_argument(cond), handle_operator_argument(truepart), handle_operator_argument(falsepart))
       end
 
       private
@@ -89,6 +89,14 @@ module RipperRubyParser
           right = rebalance_binary(s(:binary, middle, op, right))
         end
         s(:binary, left, op, right)
+      end
+
+      def handle_operator_argument(exp)
+        if exp.sexp_type == :begin
+          s(:begin, process(exp))
+        else
+          process(exp)
+        end
       end
     end
   end
