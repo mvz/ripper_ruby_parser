@@ -123,6 +123,17 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :baz),
                                   s(:call, nil, :qux))))
       end
+
+      it 'handles triple :&&' do
+        'foo && bar && baz && qux'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:and,
+                                s(:call, nil, :bar),
+                                s(:and,
+                                  s(:call, nil, :baz),
+                                  s(:call, nil, :qux))))
+      end
     end
 
     describe 'for unary numerical operators' do
