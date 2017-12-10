@@ -88,13 +88,22 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz)))
       end
 
-      it 'handles bracketed :||' do
+      it 'handles :|| with parentheses' do
         '(foo || bar) || baz'.
           must_be_parsed_as s(:or,
                               s(:or,
                                 s(:call, nil, :foo),
                                 s(:call, nil, :bar)),
                               s(:call, nil, :baz))
+      end
+
+      it 'handles nested :|| with parentheses' do
+        'foo || (bar || baz) || qux'.
+          must_be_parsed_as  s(:or,
+                               s(:call, nil, :foo),
+                               s(:or,
+                                 s(:or, s(:call, nil, :bar), s(:call, nil, :baz)),
+                                 s(:call, nil, :qux)))
       end
 
       it 'converts :|| to :or' do
@@ -106,6 +115,17 @@ describe RipperRubyParser::Parser do
 
       it 'handles triple :and' do
         'foo and bar and baz and qux'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:and,
+                                s(:call, nil, :bar),
+                                s(:and,
+                                  s(:call, nil, :baz),
+                                  s(:call, nil, :qux))))
+      end
+
+      it 'handles triple :&&' do
+        'foo && bar && baz && qux'.
           must_be_parsed_as s(:and,
                               s(:call, nil, :foo),
                               s(:and,

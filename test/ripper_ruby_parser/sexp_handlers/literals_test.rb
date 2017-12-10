@@ -8,7 +8,7 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, /foo/)
       end
 
-      it 'works for regex literals with escaped right bracket' do
+      it 'works for regex literals with escaped right parenthesis' do
         '/\\)/'.
           must_be_parsed_as s(:lit, /\)/)
       end
@@ -155,12 +155,12 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, '\\n')
         end
 
-        it 'works for a representation of a regex literal with escaped right bracket' do
+        it 'works for a representation of a regex literal with escaped right parenthesis' do
           '"/\\\\)/"'.
             must_be_parsed_as s(:str, '/\\)/')
         end
 
-        it 'works for a uselessly escaped right bracket' do
+        it 'works for a uselessly escaped right parenthesis' do
           '"/\\)/"'.
             must_be_parsed_as s(:str, '/)/')
         end
