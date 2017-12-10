@@ -31,24 +31,6 @@ module RipperRubyParser
         end
       end
 
-      def make_boolean_operator(op, left, right)
-        if left.first == :paren
-          s(op, process(left), process(right))
-        else
-          rebalance_binary(s(op, process(left), process(right)))
-        end
-      end
-
-      def make_regexp_match_operator(op, left, right)
-        if left.sexp_type == :regexp_literal
-          s(:match2, process(left), process(right))
-        elsif right.sexp_type == :regexp_literal
-          s(:match3, process(right), process(left))
-        else
-          s(:call, process(left), op, process(right))
-        end
-      end
-
       def process_unary(exp)
         _, op, arg = exp.shift 3
         arg = process(arg)
@@ -84,6 +66,24 @@ module RipperRubyParser
       end
 
       private
+
+      def make_boolean_operator(op, left, right)
+        if left.sexp_type == :paren
+          s(op, process(left), process(right))
+        else
+          rebalance_binary(s(op, process(left), process(right)))
+        end
+      end
+
+      def make_regexp_match_operator(op, left, right)
+        if left.sexp_type == :regexp_literal
+          s(:match2, process(left), process(right))
+        elsif right.sexp_type == :regexp_literal
+          s(:match3, process(right), process(left))
+        else
+          s(:call, process(left), op, process(right))
+        end
+      end
 
       def rebalance_binary(exp)
         op, left, right = exp
