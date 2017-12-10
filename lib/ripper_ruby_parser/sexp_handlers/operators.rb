@@ -71,7 +71,7 @@ module RipperRubyParser
         if left.sexp_type == :paren
           s(op, process(left), process(right))
         else
-          _, left, _, right = rebalance_binary(op, s(:binary, left, op, right))
+          _, left, _, right = rebalance_binary(s(:binary, left, op, right))
           s(op, process(left), process(right))
         end
       end
@@ -86,11 +86,11 @@ module RipperRubyParser
         end
       end
 
-      def rebalance_binary(op, exp)
-        _, left, _, right = exp
+      def rebalance_binary(exp)
+        _, left, op, right = exp
         if left.sexp_type == :binary && op == BINARY_OPERATOR_MAP[left[2]]
-          _, left, _, middle = rebalance_binary(op, left)
-          right = rebalance_binary(op, s(:binary, middle, op, right))
+          _, left, _, middle = rebalance_binary(left)
+          right = rebalance_binary(s(:binary, middle, op, right))
           s(:binary, left, op, right)
         else
           s(:binary, left, op, right)
