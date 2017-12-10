@@ -4,24 +4,24 @@ describe RipperRubyParser::Parser do
   describe '#parse' do
     describe 'for method calls' do
       describe 'without a receiver' do
-        it 'works without brackets' do
+        it 'works without parentheses' do
           'foo bar'.
             must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar))
         end
 
-        it 'works with brackets' do
+        it 'works with parentheses' do
           'foo(bar)'.
             must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar))
         end
 
-        it 'works with an empty parameter list and no brackets' do
+        it 'works with an empty parameter list and no parentheses' do
           'foo'.
             must_be_parsed_as s(:call, nil, :foo)
         end
 
-        it 'works with brackets around an empty parameter list' do
+        it 'works with parentheses around an empty parameter list' do
           'foo()'.
             must_be_parsed_as s(:call, nil, :foo)
         end
@@ -31,7 +31,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:call, nil, :foo?)
         end
 
-        it 'works with nested calls without brackets' do
+        it 'works with nested calls without parentheses' do
           'foo bar baz'.
             must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar,
@@ -102,7 +102,7 @@ describe RipperRubyParser::Parser do
       end
 
       describe 'with a receiver' do
-        it 'works without brackets' do
+        it 'works without parentheses' do
           'foo.bar baz'.
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
@@ -110,7 +110,7 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz))
         end
 
-        it 'works with brackets' do
+        it 'works with parentheses' do
           'foo.bar(baz)'.
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
@@ -118,7 +118,7 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz))
         end
 
-        it 'works with brackets around a call with no brackets' do
+        it 'works with parentheses around a call with no parentheses' do
           'foo.bar(baz qux)'.
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
@@ -127,7 +127,7 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :qux)))
         end
 
-        it 'works with nested calls without brackets' do
+        it 'works with nested calls without parentheses' do
           'foo.bar baz qux'.
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),

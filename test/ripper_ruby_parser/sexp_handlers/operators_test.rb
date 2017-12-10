@@ -88,7 +88,7 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz)))
       end
 
-      it 'handles bracketed :||' do
+      it 'handles :|| with parentheses' do
         '(foo || bar) || baz'.
           must_be_parsed_as s(:or,
                               s(:or,
