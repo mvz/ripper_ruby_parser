@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency('sexp_processor', ['~> 4.10.0'])
 
+  s.add_development_dependency('irbtools-more')
   s.add_development_dependency('minitest', ['~> 5.2'])
   s.add_development_dependency('rake', ['~> 12.0'])
   s.add_development_dependency('ruby_parser', ['~> 3.10.1'])
