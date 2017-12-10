@@ -162,6 +162,22 @@ describe RipperRubyParser::Parser do
                               s(:begin, s(:call, nil, :bar)))
       end
 
+      it 'does not keep :begin for the first argument of a shift operator' do
+        'begin; bar; end << foo'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :bar),
+                              :<<,
+                              s(:call, nil, :foo))
+      end
+
+      it 'does not keep :begin for the second argument of a shift operator' do
+        'foo >> begin; bar; end'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :>>,
+                              s(:call, nil, :bar))
+      end
+
       it 'keeps :begin for the first argument of a ternary operator' do
         'begin; foo; end ? bar : baz'.
           must_be_parsed_as s(:if,
