@@ -109,6 +109,100 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe 'for begin' do
+      it 'works for an empty begin..end block' do
+        'begin end'.must_be_parsed_as s(:nil)
+      end
+
+      it 'works for a simple begin..end block' do
+        'begin; foo; end'.must_be_parsed_as s(:call, nil, :foo)
+      end
+
+      it 'works for begin..end block with more than one statement' do
+        'begin; foo; bar; end'.
+          must_be_parsed_as s(:block,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it 'keeps :begin for the argument of a unary operator' do
+        '- begin; foo; end'.
+          must_be_parsed_as s(:call,
+                              s(:begin, s(:call, nil, :foo)),
+                              :-@)
+      end
+
+      it 'keeps :begin for the first argument of a binary operator' do
+        'begin; bar; end + foo'.
+          must_be_parsed_as s(:call,
+                              s(:begin, s(:call, nil, :bar)),
+                              :+,
+                              s(:call, nil, :foo))
+      end
+
+      it 'keeps :begin for the second argument of a binary operator' do
+        'foo + begin; bar; end'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :+,
+                              s(:begin, s(:call, nil, :bar)))
+      end
+
+      it 'does not keep :begin for the first argument of a boolean operator' do
+        'begin; bar; end and foo'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo))
+      end
+
+      it 'keeps :begin for the second argument of a boolean operator' do
+        'foo and begin; bar; end'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:begin, s(:call, nil, :bar)))
+      end
+
+      it 'does not keep :begin for the first argument of a shift operator' do
+        'begin; bar; end << foo'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :bar),
+                              :<<,
+                              s(:call, nil, :foo))
+      end
+
+      it 'does not keep :begin for the second argument of a shift operator' do
+        'foo >> begin; bar; end'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :>>,
+                              s(:call, nil, :bar))
+      end
+
+      it 'keeps :begin for the first argument of a ternary operator' do
+        'begin; foo; end ? bar : baz'.
+          must_be_parsed_as s(:if,
+                              s(:begin, s(:call, nil, :foo)),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
+
+      it 'keeps :begin for the second argument of a ternary operator' do
+        'foo ? begin; bar; end : baz'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:begin, s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
+      end
+
+      it 'keeps :begin for the third argument of a ternary operator' do
+        'foo ? bar : begin; baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:begin, s(:call, nil, :baz)))
+      end
+    end
+
     describe 'for rescue/else' do
       it 'works for a block with multiple rescue statements' do
         'begin foo; rescue; bar; rescue; baz; end'.

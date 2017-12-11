@@ -35,7 +35,7 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for empty brackets' do
+    describe 'for empty parentheses' do
       it 'works with lone ()' do
         '()'.must_be_parsed_as s(:nil)
       end
@@ -280,7 +280,7 @@ describe RipperRubyParser::Parser do
                               s(:nil))
       end
 
-      it 'works with brackets around the parameter list' do
+      it 'works with parentheses around the parameter list' do
         'def foo(bar); end'.
           must_be_parsed_as s(:defn, :foo, s(:args, :bar), s(:nil))
       end
@@ -402,34 +402,34 @@ describe RipperRubyParser::Parser do
     end
 
     describe 'for yield' do
-      it 'works with no arguments and no brackets' do
+      it 'works with no arguments and no parentheses' do
         'yield'.
           must_be_parsed_as s(:yield)
       end
 
-      it 'works with brackets but no arguments' do
+      it 'works with parentheses but no arguments' do
         'yield()'.
           must_be_parsed_as s(:yield)
       end
 
-      it 'works with one argument and no brackets' do
+      it 'works with one argument and no parentheses' do
         'yield foo'.
           must_be_parsed_as s(:yield, s(:call, nil, :foo))
       end
 
-      it 'works with one argument and brackets' do
+      it 'works with one argument and parentheses' do
         'yield(foo)'.
           must_be_parsed_as s(:yield, s(:call, nil, :foo))
       end
 
-      it 'works with multiple arguments and no brackets' do
+      it 'works with multiple arguments and no parentheses' do
         'yield foo, bar'.
           must_be_parsed_as s(:yield,
                               s(:call, nil, :foo),
                               s(:call, nil, :bar))
       end
 
-      it 'works with multiple arguments and brackets' do
+      it 'works with multiple arguments and parentheses' do
         'yield(foo, bar)'.
           must_be_parsed_as s(:yield,
                               s(:call, nil, :foo),
@@ -712,7 +712,7 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux)))
       end
 
-      it 'works with brackets around the left-hand side' do
+      it 'works with parentheses around the left-hand side' do
         '(foo, bar) = baz'.
           must_be_parsed_as s(:masgn,
                               s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
@@ -1008,7 +1008,7 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
-      it 'works for a method call with brackets' do
+      it 'works for a method call with parentheses' do
         result = parser.parse 'foo()'
         result.line.must_equal 1
       end
