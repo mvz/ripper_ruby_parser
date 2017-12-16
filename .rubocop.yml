@@ -66,6 +66,11 @@ Style/RedundantReturn:
 Style/SignalException:
   EnforcedStyle: only_raise
 
+
+# This cop gives too many false positives
+Style/FormatStringToken:
+  Enabled: false
+
 # Prefer symbols to look like symbols
 Style/SymbolArray:
   EnforcedStyle: brackets
