@@ -13,6 +13,9 @@
 * Use SexpBuilder base class, giving more low-level access to the structure
   created by Ripper.
 * Support Ruby 2.5
+* Improve handling of boolean operators with parenthes
+* Improve compatibility for begin..end blocks used as method and operator
+  arguments.
 
 ## 1.1.2 / 2017-10-07
 
