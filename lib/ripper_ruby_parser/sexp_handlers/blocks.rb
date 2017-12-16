@@ -68,9 +68,7 @@ module RipperRubyParser
           end
         end
 
-        if evar
-          arr << create_assignment_sub_type(process(evar), s(:gvar, :$!))
-        end
+        arr << create_assignment_sub_type(process(evar), s(:gvar, :$!)) if evar
 
         s(
           s(:resbody, s(:array, *arr), *rescue_block),

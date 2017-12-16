@@ -141,9 +141,7 @@ module RipperRubyParser
         string = unescape(string)
 
         rest.each do |sub_exp|
-          if sub_exp.sexp_type == :str
-            sub_exp[1] = unescape(sub_exp[1])
-          end
+          sub_exp[1] = unescape(sub_exp[1]) if sub_exp.sexp_type == :str
         end
 
         return string, rest
