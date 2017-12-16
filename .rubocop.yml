@@ -5,6 +5,10 @@ AllCops:
     - Rakefile
     - Gemfile
 
+# Allow support of Ruby 2.0
+Gemspec/RequiredRubyVersion:
+  Enabled: false
+
 # Dot at end of line makes it clearer that the line is not done
 Layout/DotPosition:
   EnforcedStyle: trailing
@@ -65,7 +69,6 @@ Style/RedundantReturn:
 # Always use raise to raise exceptions
 Style/SignalException:
   EnforcedStyle: only_raise
-
 
 # This cop gives too many false positives
 Style/FormatStringToken:
