@@ -17,7 +17,7 @@ module RipperRubyParser
         :"!~" => :=~
       }.freeze
 
-      SHIFT_OPERATORS = [:<<, :>>]
+      SHIFT_OPERATORS = [:<<, :>>].freeze
 
       def process_binary(exp)
         _, left, op, right = exp.shift 4
