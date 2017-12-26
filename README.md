@@ -12,7 +12,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 * Drop-in replacement for RubyParser.
 * Should handle 1.9 and later syntax gracefully.
-* Needs MRI 2.0 or higher
+* Requires MRI 2.2 or higher
 
 ## Install
 
@@ -29,7 +29,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 ## Requirements
 
-* Ruby 2.0 or higher
+* Ruby 2.2 or higher
 * sexp_processor
 
 ## Hacking and contributing
