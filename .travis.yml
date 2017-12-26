@@ -5,6 +5,8 @@ rvm:
   - 2.4
   - 2.5
   - ruby-head
+install:
+  - bundle install --without local_development
 matrix:
   allow_failures:
     - rvm: ruby-head
