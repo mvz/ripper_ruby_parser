@@ -377,7 +377,6 @@ describe RipperRubyParser::Parser do
       end
 
       it 'works with a named argument with no default value' do
-        skip 'Default values are required in Ruby 2.0' if RUBY_VERSION < '2.1.0'
         'def foo bar:; end'.
           must_be_parsed_as s(:defn,
                               :foo,

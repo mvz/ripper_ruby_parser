@@ -4,10 +4,7 @@ AllCops:
   Include:
     - Rakefile
     - Gemfile
-
-# Allow support of Ruby 2.0
-Gemspec/RequiredRubyVersion:
-  Enabled: false
+  TargetRubyVersion: 2.2
 
 # Dot at end of line makes it clearer that the line is not done
 Layout/DotPosition:
