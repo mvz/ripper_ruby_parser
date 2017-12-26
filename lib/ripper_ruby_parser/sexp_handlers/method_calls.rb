@@ -16,9 +16,9 @@ module RipperRubyParser
       end
 
       CALL_OP_MAP = {
-        :'.'  => :call,
-        :'::' => :call,
-        :'&.' => :safe_call
+        '.': :call,
+        '::': :call,
+        '&.': :safe_call
       }.freeze
 
       def process_call(exp)
