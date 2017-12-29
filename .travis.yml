@@ -1,12 +1,12 @@
 language: ruby
+before_install: gem update --system
+bundler_args: --without local_development
 rvm:
   - 2.2.9
   - 2.3.6
   - 2.4.3
   - 2.5.0
   - ruby-head
-install:
-  - bundle install --without local_development
 matrix:
   allow_failures:
     - rvm: ruby-head
