@@ -558,7 +558,6 @@ describe RipperRubyParser::Parser do
       end
 
       it 'works for a hash with dynamic label keys' do
-        skip 'This is not valid syntax below Ruby 2.2' if RUBY_VERSION < '2.2.0'
         "{'foo': bar}".
           must_be_parsed_as s(:hash,
                               s(:lit, :foo),

@@ -16,6 +16,7 @@
 * Improve handling of boolean operators with parenthes
 * Improve compatibility for begin..end blocks used as method and operator
   arguments.
+* Drop support for Ruby 2.0 and 2.1
 
 ## 1.1.2 / 2017-10-07
 

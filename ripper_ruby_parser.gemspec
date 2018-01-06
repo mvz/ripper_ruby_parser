@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version = RipperRubyParser::VERSION
 
   s.summary = 'Parse with Ripper, produce sexps that are compatible with RubyParser.'
-  s.required_ruby_version = '>= 2.0.0'
+  s.required_ruby_version = '>= 2.2.0'
 
   s.authors = ['Matijs van Zuijlen']
   s.email = ['matijs@matijs.net']
@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
 
   s.add_dependency('sexp_processor', ['~> 4.10.0'])
 
-  s.add_development_dependency('irbtools-more')
   s.add_development_dependency('minitest', ['~> 5.2'])
   s.add_development_dependency('rake', ['~> 12.0'])
   s.add_development_dependency('ruby_parser', ['~> 3.10.1'])
