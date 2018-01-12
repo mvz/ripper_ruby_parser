@@ -457,6 +457,13 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe 'for the __ENCODING__ keyword' do
+      it 'evaluates to the equivalent of Encoding::UTF_8' do
+        '__ENCODING__'.
+          must_be_parsed_as s(:colon2, s(:const, :Encoding), :UTF_8)
+      end
+    end
+
     describe 'for the __FILE__ keyword' do
       describe 'when not passing a file name' do
         it "creates a string sexp with value '(string)'" do
