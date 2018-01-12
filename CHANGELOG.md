@@ -1,6 +1,6 @@
 # Change log
 
-## Unreleased
+## 1.2.0 / 2018-01-12
 
 * Improve code quality
 * Document public API
@@ -17,6 +17,7 @@
 * Improve compatibility for begin..end blocks used as method and operator
   arguments.
 * Drop support for Ruby 2.0 and 2.1
+* Handle `__ENCODING__` constant.
 
 ## 1.1.2 / 2017-10-07
 
