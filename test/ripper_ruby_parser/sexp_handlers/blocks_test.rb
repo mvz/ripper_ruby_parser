@@ -201,6 +201,22 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar),
                               s(:begin, s(:call, nil, :baz)))
       end
+
+      it 'keeps :begin for the truepart of a postfix if' do
+        'begin; foo; end if bar'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              s(:begin, s(:call, nil, :foo)),
+                              nil)
+      end
+
+      it 'keeps :begin for the falsepart of a postfix unless' do
+        'begin; foo; end unless bar'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              nil,
+                              s(:begin, s(:call, nil, :foo)))
+      end
     end
 
     describe 'for rescue/else' do

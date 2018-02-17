@@ -164,6 +164,8 @@ describe 'Using RipperRubyParser and RubyParser' do
       foo ? bar : begin; baz; end
       begin; bar; end and foo
       foo and begin; bar; end
+      begin; foo; end if bar
+      begin; foo; end unless bar
       END
     end
 
