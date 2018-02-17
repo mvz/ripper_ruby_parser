@@ -236,8 +236,8 @@ describe RipperRubyParser::Parser do
                                     :[])
       end
 
-      it 'drops self from self[]' do
-        'self[foo]'.must_be_parsed_as s(:call, nil, :[],
+      it 'works with self[]' do
+        'self[foo]'.must_be_parsed_as s(:call, s(:self), :[],
                                         s(:call, nil, :foo))
       end
     end
