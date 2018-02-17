@@ -149,4 +149,26 @@ describe 'Using RipperRubyParser and RubyParser' do
       program.must_be_parsed_as_before
     end
   end
+
+  describe 'for an example combining begin..end and diverse operators' do
+    let(:program) do
+      <<-END
+      begin end
+      begin; foo; end
+      begin; foo; bar; end
+      - begin; foo; end
+      begin; bar; end + foo
+      foo + begin; bar; end
+      begin; foo; end ? bar : baz
+      foo ? begin; bar; end : baz
+      foo ? bar : begin; baz; end
+      begin; bar; end and foo
+      foo and begin; bar; end
+      END
+    end
+
+    it 'gives the same result' do
+      program.must_be_parsed_as_before
+    end
+  end
 end
