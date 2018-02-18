@@ -8,7 +8,8 @@ module RipperRubyParser
       end
 
       def process_string_content(exp)
-        string, rest = extract_unescaped_string_parts exp
+        _, *rest = shift_all exp
+        string, rest = extract_string_parts(rest)
 
         if rest.empty?
           s(:str, string)
@@ -55,7 +56,12 @@ module RipperRubyParser
 
       def process_xstring_literal(exp)
         _, content = exp.shift 2
-        string, rest = extract_unescaped_string_parts content
+        process(content)
+      end
+
+      def process_xstring(exp)
+        _, *rest = shift_all exp
+        string, rest = extract_string_parts(rest)
         if rest.empty?
           s(:xstr, string)
         else
@@ -66,7 +72,7 @@ module RipperRubyParser
       def process_regexp_literal(exp)
         _, content, (_, flags,) = exp.shift 3
 
-        string, rest = extract_string_parts content
+        string, rest = process(content).sexp_body
         numflags = character_flags_to_numerical flags
 
         if rest.empty?
@@ -80,6 +86,12 @@ module RipperRubyParser
                       end
           s(sexp_type, string, *rest)
         end
+      end
+
+      def process_regexp(exp)
+        _, *rest = shift_all exp
+        string, rest = extract_string_parts(rest)
+        s(:regexp, string, rest)
       end
 
       def process_symbol_literal(exp)
@@ -116,8 +128,8 @@ module RipperRubyParser
 
       private
 
-      def extract_string_parts(exp)
-        parts = internal_process_string_parts(exp)
+      def extract_string_parts(list)
+        parts = map_process_list list
 
         string = ''
         while !parts.empty? && parts.first.sexp_type == :str
@@ -128,74 +140,6 @@ module RipperRubyParser
         rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
 
         return string, rest
-      end
-
-      def internal_process_string_parts(exp)
-        _, *rest = shift_all exp
-        map_process_list rest
-      end
-
-      def extract_unescaped_string_parts(exp)
-        string, rest = extract_string_parts exp
-
-        string = unescape(string)
-
-        rest.each do |sub_exp|
-          sub_exp[1] = unescape(sub_exp[1]) if sub_exp.sexp_type == :str
-        end
-
-        return string, rest
-      end
-
-      SINGLE_LETTER_ESCAPES = {
-        'a' => "\a",
-        'b' => "\b",
-        'e' => "\e",
-        'f' => "\f",
-        'n' => "\n",
-        'r' => "\r",
-        's' => "\s",
-        't' => "\t",
-        'v' => "\v"
-      }.freeze
-
-      SINGLE_LETTER_ESCAPES_REGEXP =
-        Regexp.new("^[#{SINGLE_LETTER_ESCAPES.keys.join}]$")
-
-      def unescape(string)
-        string.gsub(/\\(
-          [0-7]{1,3}        | # octal character
-          x[0-9a-fA-F]{1,2} | # hex byte
-          u[0-9a-fA-F]{4}   | # unicode character
-          M-\\C-.           | # meta-ctrl
-          C-\\M-.           | # ctrl-meta
-          M-\\c.            | # meta-ctrl (shorthand)
-          c\\M-.            | # ctrl-meta (shorthand)
-          C-.               | # control (regular)
-          c.                | # control (shorthand)
-          M-.               | # meta
-          .                   # single-character
-        )/x) do
-          bare = Regexp.last_match[1]
-          case bare
-          when SINGLE_LETTER_ESCAPES_REGEXP
-            SINGLE_LETTER_ESCAPES[bare]
-          when /^x/
-            bare[1..-1].to_i(16).chr
-          when /^u/
-            bare[1..-1].to_i(16).chr(Encoding::UTF_8)
-          when /^(c|C-).$/
-            (bare[-1].ord & 0b1001_1111).chr
-          when /^M-.$/
-            (bare[-1].ord | 0b1000_0000).chr
-          when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
-            (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
-          when /^[0-7]+/
-            bare.to_i(8).chr
-          else
-            bare
-          end
-        end
       end
 
       def character_flags_to_numerical(flags)
@@ -211,12 +155,15 @@ module RipperRubyParser
         numflags
       end
 
-      def handle_dyna_symbol_content(list)
-        string, rest = extract_unescaped_string_parts list
-        if rest.empty?
-          s(:lit, string.to_sym)
+      def handle_dyna_symbol_content(node)
+        type, *body = *process(node)
+        case type
+        when :str, :xstr
+          s(:lit, body.first.to_sym)
+        when :dstr, :dxstr
+          s(:dsym, *body)
         else
-          s(:dsym, string, *rest)
+          raise type.to_s
         end
       end
 

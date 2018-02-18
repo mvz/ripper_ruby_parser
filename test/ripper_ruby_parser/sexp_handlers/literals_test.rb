@@ -302,6 +302,40 @@ describe RipperRubyParser::Parser do
         end
       end
 
+      describe 'with single quoted strings' do
+        it 'works with escaped single quotes' do
+          "'foo\\'bar'".
+            must_be_parsed_as s(:str, "foo'bar")
+        end
+
+        it 'works with embedded backslashes' do
+          "'foo\\abar'".
+            must_be_parsed_as s(:str, 'foo\abar')
+        end
+
+        it 'works with escaped embedded backslashes' do
+          "'foo\\\\abar'".
+            must_be_parsed_as s(:str, 'foo\abar')
+        end
+
+        it 'works with sequences of backslashes' do
+          "'foo\\\\\\abar'".
+            must_be_parsed_as s(:str, 'foo\\\\abar')
+        end
+      end
+
+      describe 'with %Q-delimited strings' do
+        it 'works for the simple case' do
+          '%Q[bar]'.
+            must_be_parsed_as s(:str, 'bar')
+        end
+
+        it 'works for escape sequences' do
+          '%Q[foo\\nbar]'.
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+      end
+
       describe 'with string concatenation' do
         it 'performs the concatenation in the case of two simple literal strings' do
           '"foo" "bar"'.must_be_parsed_as s(:str, 'foobar')
@@ -351,6 +385,18 @@ describe RipperRubyParser::Parser do
           end
         end
       end
+
+      describe 'for heredocs' do
+        it 'works for the simple case' do
+          "<<FOO\nbar\nFOO".
+            must_be_parsed_as s(:str, "bar\n")
+        end
+
+        it 'works for escape sequences' do
+          "<<FOO\nbar\\tbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\tbaz\n")
+        end
+      end
     end
 
     describe 'for word list literals' do
@@ -389,17 +435,33 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:call, nil, :bar)),
                                 s(:str, 'baz')))
       end
+
+      it 'correctly handles escape sequences' do
+        '%W(foo\nbar baz)'.
+          must_be_parsed_as s(:array,
+                              s(:str, "foo\nbar"),
+                              s(:str, 'baz'))
+      end
     end
 
-    describe 'for symbol list literals' do
-      it 'works for an array created with %i' do
+    describe 'for symbol list literals with %i delimiter' do
+      it 'works for the simple case' do
         '%i(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
       end
+    end
 
-      it 'works for an array created with %I' do
+    describe 'for symbol list literals with %I delimiter' do
+      it 'works for the simple case' do
         '%I(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it 'correctly handles escape sequences' do
+        '%I(foo\nbar baz)'.
+          must_be_parsed_as s(:array,
+                              s(:lit, :"foo\nbar"),
+                              s(:lit, :baz))
       end
 
       it 'correctly handles interpolation' do
@@ -484,6 +546,26 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:dsym,
                               'foo',
                               s(:evstr, s(:call, nil, :bar)))
+      end
+
+      it 'works for dsyms with escape sequences' do
+        ':"foo\nbar"'.
+          must_be_parsed_as s(:lit, :"foo\nbar")
+      end
+
+      it 'works with single quoted dsyms' do
+        ":'foo'".
+          must_be_parsed_as s(:lit, :foo)
+      end
+
+      it 'works with single quoted dsyms with escaped single quotes' do
+        ":'foo\\'bar'".
+          must_be_parsed_as s(:lit, :'foo\'bar')
+      end
+
+      it 'works with single quoted dsyms with embedded backslashes' do
+        ":'foo\\abar'".
+          must_be_parsed_as s(:lit, :"foo\\abar")
       end
     end
 

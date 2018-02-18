@@ -1,5 +1,6 @@
 require 'sexp_processor'
 require 'ripper_ruby_parser/sexp_handlers'
+require 'ripper_ruby_parser/unescape'
 
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.
@@ -160,7 +161,7 @@ module RipperRubyParser
     # character literals
     def process_at_CHAR(exp)
       _, val, pos = exp.shift 3
-      with_position(pos, s(:str, unescape(val[1..-1])))
+      with_position(pos, s(:str, Unescape.unescape(val[1..-1])))
     end
 
     def process_at_label(exp)
