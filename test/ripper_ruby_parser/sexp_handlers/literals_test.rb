@@ -425,6 +425,13 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:call, nil, :bar)),
                                 s(:str, 'baz')))
       end
+
+      it 'correctly handles escape sequences' do
+        '%W(foo\nbar baz)'.
+          must_be_parsed_as s(:array,
+                              s(:str, "foo\nbar"),
+                              s(:str, 'baz'))
+      end
     end
 
     describe 'for symbol list literals with %i delimiter' do
