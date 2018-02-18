@@ -1,5 +1,3 @@
-require 'ripper_ruby_parser/unescape'
-
 module RipperRubyParser
   module SexpHandlers
     # Sexp handlers for literals, except hash and array literals
@@ -11,7 +9,7 @@ module RipperRubyParser
 
       def process_string_content(exp)
         _, *rest = shift_all exp
-        string, rest = extract_unescaped_string_parts(rest)
+        string, rest = extract_string_parts(rest)
 
         if rest.empty?
           s(:str, string)
@@ -63,7 +61,7 @@ module RipperRubyParser
 
       def process_xstring(exp)
         _, *rest = shift_all exp
-        string, rest = extract_unescaped_string_parts(rest)
+        string, rest = extract_string_parts(rest)
         if rest.empty?
           s(:xstr, string)
         else
@@ -140,18 +138,6 @@ module RipperRubyParser
         end
 
         rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
-
-        return string, rest
-      end
-
-      def extract_unescaped_string_parts(list)
-        string, rest = extract_string_parts(list)
-
-        string = Unescape.unescape(string)
-
-        rest.each do |sub_exp|
-          sub_exp[1] = Unescape.unescape(sub_exp[1]) if sub_exp.sexp_type == :str
-        end
 
         return string, rest
       end

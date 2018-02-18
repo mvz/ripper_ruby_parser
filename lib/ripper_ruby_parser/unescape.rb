@@ -20,6 +20,15 @@ module RipperRubyParser
     SINGLE_LETTER_ESCAPES_REGEXP =
       Regexp.new("^[#{SINGLE_LETTER_ESCAPES.keys.join}]$")
 
+    def simple_unescape(string)
+      string.gsub(/\\(
+        '   | # single quote
+        \\    # backslash
+      )/x) do
+        Regexp.last_match[1]
+      end
+    end
+
     def unescape(string)
       string.gsub(/\\(
         [0-7]{1,3}        | # octal character

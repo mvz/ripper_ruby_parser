@@ -1,5 +1,6 @@
 require 'ripper'
 require 'ripper_ruby_parser/syntax_error'
+require 'ripper_ruby_parser/unescape'
 
 module RipperRubyParser
   # Variant of Ripper's SexpBuilder parser class that inserts comments as
@@ -11,6 +12,7 @@ module RipperRubyParser
       super
       @comment = nil
       @comment_stack = []
+      @delimiter_stack = []
       @in_symbol = false
     end
 
@@ -19,6 +21,11 @@ module RipperRubyParser
       raise 'Ripper parse failed.' unless result
 
       Sexp.from_array(result)
+    end
+
+    def on_backtick(delimiter)
+      @delimiter_stack.push delimiter
+      super
     end
 
     def on_comment(tok)
@@ -66,6 +73,16 @@ module RipperRubyParser
       list << elem
     end
 
+    def on_heredoc_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
+    end
+
+    def on_heredoc_end(delimiter)
+      @delimiter_stack.pop
+      super
+    end
+
     def on_mlhs_new
       [:mlhs]
     end
@@ -86,6 +103,11 @@ module RipperRubyParser
       list << elem
     end
 
+    def on_qsymbols_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
+    end
+
     def on_qsymbols_new
       [:qsymbols]
     end
@@ -94,12 +116,27 @@ module RipperRubyParser
       list << elem
     end
 
+    def on_qwords_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
+    end
+
     def on_qwords_new
       [:qwords]
     end
 
     def on_qwords_add(list, elem)
       list << elem
+    end
+
+    def on_regexp_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
+    end
+
+    def on_regexp_end(delimiter)
+      @delimiter_stack.pop
+      super
     end
 
     def on_regexp_new
@@ -122,6 +159,11 @@ module RipperRubyParser
       list << elem
     end
 
+    def on_symbols_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
+    end
+
     def on_symbols_new
       [:symbols]
     end
@@ -130,12 +172,39 @@ module RipperRubyParser
       list << elem
     end
 
+    def on_tstring_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
+    end
+
+    def on_tstring_content(content)
+      content = case @delimiter_stack.last
+                when '"', '`', /^<</
+                  Unescape.unescape(content)
+                when "'"
+                  Unescape.simple_unescape(content)
+                else
+                  content
+                end
+      super(content)
+    end
+
+    def on_tstring_end(delimiter)
+      @delimiter_stack.pop
+      super
+    end
+
     def on_word_new
       [:word]
     end
 
     def on_word_add(list, elem)
       list << elem
+    end
+
+    def on_words_beg(delimiter)
+      @delimiter_stack.push delimiter
+      super
     end
 
     def on_words_new
@@ -189,7 +258,8 @@ module RipperRubyParser
       end
     end
 
-    def on_symbeg(*args)
+    def on_symbeg(delimiter)
+      @delimiter_stack.push delimiter
       @in_symbol = true
       super
     end
@@ -199,7 +269,7 @@ module RipperRubyParser
       super
     end
 
-    def on_embexpr_beg(*args)
+    def on_embexpr_beg(_delimiter)
       @in_symbol = false
       super
     end

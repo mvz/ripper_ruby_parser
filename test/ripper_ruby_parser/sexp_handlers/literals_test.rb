@@ -302,6 +302,18 @@ describe RipperRubyParser::Parser do
         end
       end
 
+      describe 'with single quoted strings' do
+        it 'works with escaped single quotes' do
+          "'foo\\'bar'".
+            must_be_parsed_as s(:str, "foo'bar")
+        end
+
+        it 'works with embedded backslashes' do
+          "'foo\\abar'".
+            must_be_parsed_as s(:str, 'foo\abar')
+        end
+      end
+
       describe 'with string concatenation' do
         it 'performs the concatenation in the case of two simple literal strings' do
           '"foo" "bar"'.must_be_parsed_as s(:str, 'foobar')
@@ -349,6 +361,18 @@ describe RipperRubyParser::Parser do
                                   s(:evstr, s(:call, nil, :bar)),
                                   s(:evstr, s(:call, nil, :qux)))
           end
+        end
+      end
+
+      describe 'for heredocs' do
+        it 'works for the simple case' do
+          "<<FOO\nbar\nFOO".
+            must_be_parsed_as s(:str, "bar\n")
+        end
+
+        it 'works for escape sequences' do
+          "<<FOO\nbar\\tbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\tbaz\n")
         end
       end
     end
