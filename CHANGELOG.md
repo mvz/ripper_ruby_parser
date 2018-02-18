@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Handle begin..end blocks with postfix conditionals
+* Correctly handle string variants that do not allow escape sequences
 
 ## 1.3.0 / 2018-02-17
 
