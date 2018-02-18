@@ -312,6 +312,16 @@ describe RipperRubyParser::Parser do
           "'foo\\abar'".
             must_be_parsed_as s(:str, 'foo\abar')
         end
+
+        it 'works with escaped embedded backslashes' do
+          "'foo\\\\abar'".
+            must_be_parsed_as s(:str, 'foo\abar')
+        end
+
+        it 'works with sequences of backslashes' do
+          "'foo\\\\\\abar'".
+            must_be_parsed_as s(:str, 'foo\\\\abar')
+        end
       end
 
       describe 'with %Q-delimited strings' do
