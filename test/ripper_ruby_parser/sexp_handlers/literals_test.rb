@@ -537,6 +537,11 @@ describe RipperRubyParser::Parser do
                               'foo',
                               s(:evstr, s(:call, nil, :bar)))
       end
+
+      it 'works for dsyms with escape sequences' do
+        ':"foo\nbar"'.
+          must_be_parsed_as s(:lit, :"foo\nbar")
+      end
     end
 
     describe 'for backtick string literals' do
