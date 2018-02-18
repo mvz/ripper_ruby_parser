@@ -427,15 +427,24 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for symbol list literals' do
-      it 'works for an array created with %i' do
+    describe 'for symbol list literals with %i delimiter' do
+      it 'works for the simple case' do
         '%i(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
       end
+    end
 
-      it 'works for an array created with %I' do
+    describe 'for symbol list literals with %I delimiter' do
+      it 'works for the simple case' do
         '%I(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it 'correctly handles escape sequences' do
+        '%I(foo\nbar baz)'.
+          must_be_parsed_as s(:array,
+                              s(:lit, :"foo\nbar"),
+                              s(:lit, :baz))
       end
 
       it 'correctly handles interpolation' do
