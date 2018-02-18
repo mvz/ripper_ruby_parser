@@ -2,24 +2,13 @@ require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
 require 'ruby_parser'
 
 describe 'Using RipperRubyParser and RubyParser' do
-  let :newparser do
-    RipperRubyParser::Parser.new
-  end
-
-  let :oldparser do
-    RubyParser.new
-  end
-
   describe 'for a simple well known program' do
     let :program do
       "puts 'Hello World'"
     end
 
     it 'gives the same result' do
-      original = oldparser.parse program
-      imitation = newparser.parse program
-
-      imitation.must_equal original
+      program.must_be_parsed_as_before
     end
   end
 
@@ -45,10 +34,7 @@ describe 'Using RipperRubyParser and RubyParser' do
     end
 
     it 'gives the same result' do
-      original = oldparser.parse program
-      imitation = newparser.parse program
-
-      imitation.must_equal original
+      program.must_be_parsed_as_before
     end
   end
 
@@ -58,10 +44,7 @@ describe 'Using RipperRubyParser and RubyParser' do
     end
 
     it 'gives the same result' do
-      original = oldparser.parse program
-      imitation = newparser.parse program
-
-      imitation.must_equal original
+      program.must_be_parsed_as_before
     end
   end
 
@@ -79,10 +62,7 @@ describe 'Using RipperRubyParser and RubyParser' do
     end
 
     it 'gives the same result' do
-      original = oldparser.parse program
-      imitation = newparser.parse program
-
-      formatted(imitation).must_equal formatted(original)
+      program.must_be_parsed_as_before
     end
   end
 
@@ -106,10 +86,7 @@ describe 'Using RipperRubyParser and RubyParser' do
     end
 
     it 'gives the same result' do
-      original = oldparser.parse program
-      imitation = newparser.parse program
-
-      formatted(imitation).must_equal formatted(original)
+      program.must_be_parsed_as_before
     end
   end
 
@@ -119,10 +96,7 @@ describe 'Using RipperRubyParser and RubyParser' do
     end
 
     it 'gives the same result' do
-      original = oldparser.parse program
-      imitation = newparser.parse program
-
-      formatted(imitation).must_equal formatted(original)
+      program.must_be_parsed_as_before
     end
   end
 
@@ -142,6 +116,60 @@ describe 'Using RipperRubyParser and RubyParser' do
         sjis = /foo\#{bar}/s
       END
 
+      program.must_be_parsed_as_before
+    end
+  end
+
+  describe 'for an example with __ENCODING__' do
+    it 'gives the same result' do
+      program = 'foo = __ENCODING__'
+      program.must_be_parsed_as_before
+    end
+  end
+
+  describe 'for an example with self[]' do
+    # https://github.com/seattlerb/ruby_parser/issues/250
+    it 'gives the same result' do
+      program = 'self[:foo]'
+      program.must_be_parsed_as_before
+    end
+  end
+
+  describe 'for an example with required keyword arguments and no parentheses' do
+    # https://github.com/seattlerb/ruby_parser/pull/254
+    let(:program) do
+      <<-END
+      def foo a:, b:
+        # body
+      end
+      END
+    end
+
+    it 'gives the same result' do
+      program.must_be_parsed_as_before
+    end
+  end
+
+  describe 'for an example combining begin..end and diverse operators' do
+    let(:program) do
+      <<-END
+      begin end
+      begin; foo; end
+      begin; foo; bar; end
+      - begin; foo; end
+      begin; bar; end + foo
+      foo + begin; bar; end
+      begin; foo; end ? bar : baz
+      foo ? begin; bar; end : baz
+      foo ? bar : begin; baz; end
+      begin; bar; end and foo
+      foo and begin; bar; end
+      begin; foo; end if bar
+      begin; foo; end unless bar
+      END
+    end
+
+    it 'gives the same result' do
       program.must_be_parsed_as_before
     end
   end

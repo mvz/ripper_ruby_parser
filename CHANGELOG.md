@@ -1,5 +1,9 @@
 # Change log
 
+## Unreleased
+
+* Handle begin..end blocks with postfix conditionals
+
 ## 1.3.0 / 2018-02-17
 
 * Change result for `self[:foo]` to match RubyParser 3.11.0.
