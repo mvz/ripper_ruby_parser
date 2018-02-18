@@ -56,18 +56,17 @@ module RipperRubyParser
 
       def process_xstring_literal(exp)
         _, content = exp.shift 2
-        string, rest = process(content).sexp_body
-        if rest.empty?
-          s(:xstr, string)
-        else
-          s(:dxstr, string, *rest)
-        end
+        process(content)
       end
 
       def process_xstring(exp)
         _, *rest = shift_all exp
         string, rest = extract_unescaped_string_parts(rest)
-        s(:xstring, string, rest)
+        if rest.empty?
+          s(:xstr, string)
+        else
+          s(:dxstr, string, *rest)
+        end
       end
 
       def process_regexp_literal(exp)
@@ -219,13 +218,15 @@ module RipperRubyParser
         numflags
       end
 
-      def handle_dyna_symbol_content(list)
-        _, *rest = shift_all list
-        string, rest = extract_unescaped_string_parts(rest)
-        if rest.empty?
-          s(:lit, string.to_sym)
+      def handle_dyna_symbol_content(node)
+        type, *body = *process(node)
+        case type
+        when :str, :xstr
+          s(:lit, body.first.to_sym)
+        when :dstr, :dxstr
+          s(:dsym, *body)
         else
-          s(:dsym, string, *rest)
+          raise type.to_s
         end
       end
 
