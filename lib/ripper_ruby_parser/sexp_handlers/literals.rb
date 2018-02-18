@@ -8,7 +8,8 @@ module RipperRubyParser
       end
 
       def process_string_content(exp)
-        string, rest = extract_unescaped_string_parts exp
+        _, *rest = shift_all exp
+        string, rest = extract_unescaped_string_parts(rest)
 
         if rest.empty?
           s(:str, string)
@@ -55,7 +56,7 @@ module RipperRubyParser
 
       def process_xstring_literal(exp)
         _, content = exp.shift 2
-        string, rest = extract_unescaped_string_parts content
+        string, rest = process(content).sexp_body
         if rest.empty?
           s(:xstr, string)
         else
@@ -63,10 +64,16 @@ module RipperRubyParser
         end
       end
 
+      def process_xstring(exp)
+        _, *rest = shift_all exp
+        string, rest = extract_unescaped_string_parts(rest)
+        s(:xstring, string, rest)
+      end
+
       def process_regexp_literal(exp)
         _, content, (_, flags,) = exp.shift 3
 
-        string, rest = extract_string_parts content
+        string, rest = process(content).sexp_body
         numflags = character_flags_to_numerical flags
 
         if rest.empty?
@@ -80,6 +87,12 @@ module RipperRubyParser
                       end
           s(sexp_type, string, *rest)
         end
+      end
+
+      def process_regexp(exp)
+        _, *rest = shift_all exp
+        string, rest = extract_string_parts(rest)
+        s(:regexp, string, rest)
       end
 
       def process_symbol_literal(exp)
@@ -116,8 +129,8 @@ module RipperRubyParser
 
       private
 
-      def extract_string_parts(exp)
-        parts = internal_process_string_parts(exp)
+      def extract_string_parts(list)
+        parts = map_process_list list
 
         string = ''
         while !parts.empty? && parts.first.sexp_type == :str
@@ -130,13 +143,8 @@ module RipperRubyParser
         return string, rest
       end
 
-      def internal_process_string_parts(exp)
-        _, *rest = shift_all exp
-        map_process_list rest
-      end
-
-      def extract_unescaped_string_parts(exp)
-        string, rest = extract_string_parts exp
+      def extract_unescaped_string_parts(list)
+        string, rest = extract_string_parts(list)
 
         string = unescape(string)
 
@@ -212,7 +220,8 @@ module RipperRubyParser
       end
 
       def handle_dyna_symbol_content(list)
-        string, rest = extract_unescaped_string_parts list
+        _, *rest = shift_all list
+        string, rest = extract_unescaped_string_parts(rest)
         if rest.empty?
           s(:lit, string.to_sym)
         else
