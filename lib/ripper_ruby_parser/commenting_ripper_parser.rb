@@ -181,7 +181,7 @@ module RipperRubyParser
       content = case @delimiter_stack.last
                 when '"', '`', ':"', /^<</, /^%I/, /^%Q/, /^%W/
                   Unescape.unescape(content)
-                when "'"
+                when "'", ":'"
                   Unescape.simple_unescape(content)
                 else
                   content

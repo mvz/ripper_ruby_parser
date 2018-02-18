@@ -542,6 +542,21 @@ describe RipperRubyParser::Parser do
         ':"foo\nbar"'.
           must_be_parsed_as s(:lit, :"foo\nbar")
       end
+
+      it 'works with single quoted dsyms' do
+        ":'foo'".
+          must_be_parsed_as s(:lit, :foo)
+      end
+
+      it 'works with single quoted dsyms with escaped single quotes' do
+        ":'foo\\'bar'".
+          must_be_parsed_as s(:lit, :'foo\'bar')
+      end
+
+      it 'works with single quoted dsyms with embedded backslashes' do
+        ":'foo\\abar'".
+          must_be_parsed_as s(:lit, :"foo\\abar")
+      end
     end
 
     describe 'for backtick string literals' do
