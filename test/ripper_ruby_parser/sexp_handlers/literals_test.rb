@@ -314,6 +314,18 @@ describe RipperRubyParser::Parser do
         end
       end
 
+      describe 'with %Q-delimited strings' do
+        it 'works for the simple case' do
+          '%Q[bar]'.
+            must_be_parsed_as s(:str, 'bar')
+        end
+
+        it 'works for escape sequences' do
+          '%Q[foo\\nbar]'.
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+      end
+
       describe 'with string concatenation' do
         it 'performs the concatenation in the case of two simple literal strings' do
           '"foo" "bar"'.must_be_parsed_as s(:str, 'foobar')
