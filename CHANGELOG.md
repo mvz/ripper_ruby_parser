@@ -1,6 +1,6 @@
-# Change log
+# Changelog
 
-## Unreleased
+## 1.4.0 / 2018-03-30
 
 * Handle begin..end blocks with postfix conditionals
 * Correctly handle string variants that do not allow escape sequences
