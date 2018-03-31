@@ -265,6 +265,7 @@ module RipperRubyParser
     end
 
     def on_symbol(*args)
+      @delimiter_stack.pop
       @in_symbol = false
       super
     end

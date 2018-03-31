@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* Properly pop delimiter stack after parsing a symbol
+
 ## 1.4.0 / 2018-03-30
 
 * Handle begin..end blocks with postfix conditionals

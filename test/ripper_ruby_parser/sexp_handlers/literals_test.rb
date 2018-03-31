@@ -284,14 +284,6 @@ describe RipperRubyParser::Parser do
                                   s(:evstr, s(:call, nil, :qux)))
           end
 
-          it 'works for strings with interpolations followed by escape sequences' do
-            '"#{foo}\\n"'.
-              must_be_parsed_as s(:dstr,
-                                  '',
-                                  s(:evstr, s(:call, nil, :foo)),
-                                  s(:str, "\n"))
-          end
-
           it 'works with an empty interpolation' do
             "\"foo\#{}bar\"".
               must_be_parsed_as s(:dstr,
@@ -299,6 +291,24 @@ describe RipperRubyParser::Parser do
                                   s(:evstr),
                                   s(:str, 'bar'))
           end
+        end
+      end
+
+      describe 'with interpolations and escape sequences' do
+        it 'works when interpolations are followed by escape sequences' do
+          '"#{foo}\\n"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "\n"))
+        end
+
+        it 'works when interpolations contain a mix of other string-like literals' do
+          '"#{[:foo, \'bar\']}\\n"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:array, s(:lit, :foo), s(:str, 'bar'))),
+                                s(:str, "\n"))
         end
       end
 
