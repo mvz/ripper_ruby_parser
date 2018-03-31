@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.4.1 / 2018-03-31
 
 * Properly pop delimiter stack after parsing a symbol
 
