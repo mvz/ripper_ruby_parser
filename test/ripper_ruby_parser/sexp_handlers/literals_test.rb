@@ -46,6 +46,18 @@ describe RipperRubyParser::Parser do
         result.inspect.must_equal s(:lit, /foo/n).inspect
       end
 
+      describe 'for a %r-delimited regex literal' do
+        it 'works for the simple case with escape sequences' do
+          '%r[foo\nbar]'.
+            must_be_parsed_as s(:lit, /foo\nbar/)
+        end
+
+        it 'works with odd delimiters and escape sequences' do
+          '%r_foo\nbar_'.
+            must_be_parsed_as s(:lit, /foo\nbar/)
+        end
+      end
+
       describe 'with interpolations' do
         it 'works for a simple interpolation' do
           '/foo#{bar}baz/'.
@@ -342,6 +354,23 @@ describe RipperRubyParser::Parser do
 
         it 'works for escape sequences' do
           '%Q[foo\\nbar]'.
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+      end
+
+      describe 'with %-delimited strings' do
+        it 'works for the simple case' do
+          '%(bar)'.
+            must_be_parsed_as s(:str, 'bar')
+        end
+
+        it 'works for escape sequences' do
+          '%(foo\nbar)'.
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+
+        it 'works for odd delimiters' do
+          '%!foo\nbar!'.
             must_be_parsed_as s(:str, "foo\nbar")
         end
       end
