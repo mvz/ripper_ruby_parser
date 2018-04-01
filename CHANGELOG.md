@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.2 / Unreleased
+
+* Fix handling of strings delimited by %()
+
 ## 1.4.1 / 2018-03-31
 
 * Properly pop delimiter stack after parsing a symbol
