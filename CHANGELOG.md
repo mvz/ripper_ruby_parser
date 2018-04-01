@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.2 / Unreleased
+## 1.4.2 / 2018-04-03
 
 * Fix handling of strings delimited by %()
 * Handle line continuations in stringlike literals
