@@ -14,7 +14,8 @@
 ## 1.4.0 / 2018-03-30
 
 * Handle begin..end blocks with postfix conditionals
-* Correctly handle string variants that do not allow escape sequences
+* Match RubyParser's handling of string literals that do not allow escape
+  sequences
 
 ## 1.3.0 / 2018-02-17
 
