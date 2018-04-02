@@ -29,6 +29,16 @@ module RipperRubyParser
       end
     end
 
+    def simple_unescape_wordlist_word(string)
+      string.gsub(/\\(
+        '   | # single quote
+        \\  | # backslash
+        \n    # newline
+      )/x) do
+        Regexp.last_match[1]
+      end
+    end
+
     def unescape(string)
       string.gsub(/\\(
         [0-7]{1,3}        | # octal character
@@ -68,6 +78,45 @@ module RipperRubyParser
       end
     end
 
+    def unescape_wordlist_word(string)
+      string.gsub(/\\(
+        [0-7]{1,3}        | # octal character
+        x[0-9a-fA-F]{1,2} | # hex byte
+        u[0-9a-fA-F]{4}   | # unicode character
+        M-\\C-.           | # meta-ctrl
+        C-\\M-.           | # ctrl-meta
+        M-\\c.            | # meta-ctrl (shorthand)
+        c\\M-.            | # ctrl-meta (shorthand)
+        C-.               | # control (regular)
+        c.                | # control (shorthand)
+        M-.               | # meta
+        \n                | # line continuation
+        .                   # single-character
+      )/x) do
+        bare = Regexp.last_match[1]
+        case bare
+        when SINGLE_LETTER_ESCAPES_REGEXP
+          SINGLE_LETTER_ESCAPES[bare]
+        when /^x/
+          bare[1..-1].to_i(16).chr
+        when /^u/
+          bare[1..-1].to_i(16).chr(Encoding::UTF_8)
+        when /^(c|C-).$/
+          (bare[-1].ord & 0b1001_1111).chr
+        when /^M-.$/
+          (bare[-1].ord | 0b1000_0000).chr
+        when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
+          (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
+        when /^[0-7]+/
+          bare.to_i(8).chr
+        when "\n"
+          bare
+        else
+          bare
+        end
+      end
+    end
+
     def fix_encoding(string)
       unless string.encoding == Encoding::UTF_8
         dup = string.dup.force_encoding Encoding::UTF_8
@@ -76,7 +125,7 @@ module RipperRubyParser
       string
     end
 
-    def process_line_continuations(string)
+    def unescape_regexp(string)
       string.gsub(/\\(\n|\\)/) do
         bare = Regexp.last_match[1]
         case bare

@@ -1,4 +1,9 @@
-# Samples of strings demonstrating handling of encoding and line continuations.
+# Samples of strings demonstrating handling of escape sequences, encoding and
+# line continuations.
+
+# Escape sequences
+%W(foo\nbar baz)
+%w(foo\nbar baz)
 
 # Encoding
 "日本語"
@@ -26,7 +31,20 @@ bar
 EOS
 %Q[foo5\
 bar]
+%W[fooa\
+bar baz]
+%I[foob\
+bar baz]
+%q[fooc\
+bar]
+%w[food\
+bar baz]
+%i[fooe\
+bar baz]
+%r[foof\
+bar baz]
 
+# Escaped line continuation
 "foo6\\
 bar"
 'foo7\\
@@ -39,3 +57,15 @@ bar
 EOS
 %Q[foo10\\
 bar]
+%W[foog\\
+bar baz]
+%I[fooh\\
+bar baz]
+%q[fooi\\
+bar]
+%w[fooj\\
+bar baz]
+%i[fook\\
+bar baz]
+%r[fool\\
+bar baz]
