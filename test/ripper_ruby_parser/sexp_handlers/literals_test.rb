@@ -366,9 +366,9 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, 'foo\\\\abar')
         end
 
-        it 'handles line continuation' do
+        it 'does not process line continuation' do
           "'foo\\\nbar'".
-            must_be_parsed_as s(:str, 'foobar')
+            must_be_parsed_as s(:str, "foo\\\nbar")
         end
       end
 
