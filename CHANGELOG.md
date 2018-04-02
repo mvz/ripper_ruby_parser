@@ -5,6 +5,7 @@
 * Fix handling of strings delimited by %()
 * Handle line continuations in string and regexp literals
 * Force encoding of string literals to UTF-8 if the result is valid
+* Fix handling of range operators with float literals
 
 ## 1.4.1 / 2018-03-31
 

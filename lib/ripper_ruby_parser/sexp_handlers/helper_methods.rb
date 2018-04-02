@@ -36,8 +36,8 @@ module RipperRubyParser
         items.push(*map_process_list(rest))
       end
 
-      def literal?(exp)
-        exp.sexp_type == :lit
+      def integer_literal?(exp)
+        exp.sexp_type == :lit && exp[1].is_a?(Integer)
       end
 
       def reject_void_stmt(body)

@@ -136,6 +136,72 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe 'for the range operator' do
+      it 'handles positive number literals' do
+        '1..2'.
+          must_be_parsed_as s(:lit, 1..2)
+      end
+
+      it 'handles negative number literals' do
+        '-1..-2'.
+          must_be_parsed_as s(:lit, -1..-2)
+      end
+
+      it 'handles float literals' do
+        '1.0..2.0'.
+          must_be_parsed_as s(:dot2,
+                              s(:lit, 1.0),
+                              s(:lit, 2.0))
+      end
+
+      it 'handles string literals' do
+        "'a'..'z'".
+          must_be_parsed_as s(:dot2,
+                              s(:str, 'a'),
+                              s(:str, 'z'))
+      end
+
+      it 'handles non-literals' do
+        'foo..bar'.
+          must_be_parsed_as s(:dot2,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
+      end
+    end
+
+    describe 'for the exclusive range operator' do
+      it 'handles positive number literals' do
+        '1...2'.
+          must_be_parsed_as s(:lit, 1...2)
+      end
+
+      it 'handles negative number literals' do
+        '-1...-2'.
+          must_be_parsed_as s(:lit, -1...-2)
+      end
+
+      it 'handles float literals' do
+        '1.0...2.0'.
+          must_be_parsed_as s(:dot3,
+                              s(:lit, 1.0),
+                              s(:lit, 2.0))
+      end
+
+      it 'handles string literals' do
+        "'a'...'z'".
+          must_be_parsed_as s(:dot3,
+                              s(:str, 'a'),
+                              s(:str, 'z'))
+      end
+
+      it 'handles non-literals' do
+        'foo...bar'.
+          must_be_parsed_as s(:dot3,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
+      end
+    end
+
     describe 'for unary numerical operators' do
       it 'handles unary minus with an integer literal' do
         '- 1'.must_be_parsed_as s(:call, s(:lit, 1), :-@)

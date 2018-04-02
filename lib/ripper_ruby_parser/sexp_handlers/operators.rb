@@ -46,7 +46,7 @@ module RipperRubyParser
         _, left, right = exp.shift 3
         left = process(left)
         right = process(right)
-        if literal?(left) && literal?(right)
+        if integer_literal?(left) && integer_literal?(right)
           s(:lit, Range.new(left[1], right[1]))
         else
           s(:dot2, left, right)
@@ -57,7 +57,7 @@ module RipperRubyParser
         _, left, right = exp.shift 3
         left = process(left)
         right = process(right)
-        if literal?(left) && literal?(right)
+        if integer_literal?(left) && integer_literal?(right)
           s(:lit, Range.new(left[1], right[1], true))
         else
           s(:dot3, left, right)

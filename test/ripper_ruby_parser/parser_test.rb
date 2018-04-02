@@ -845,54 +845,6 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:call, s(:lit, 1), :!)
       end
 
-      it 'handles the range operator with positive number literals' do
-        '1..2'.
-          must_be_parsed_as s(:lit, 1..2)
-      end
-
-      it 'handles the range operator with negative number literals' do
-        '-1..-2'.
-          must_be_parsed_as s(:lit, -1..-2)
-      end
-
-      it 'handles the range operator with string literals' do
-        "'a'..'z'".
-          must_be_parsed_as s(:dot2,
-                              s(:str, 'a'),
-                              s(:str, 'z'))
-      end
-
-      it 'handles the range operator with non-literals' do
-        'foo..bar'.
-          must_be_parsed_as s(:dot2,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
-      end
-
-      it 'handles the exclusive range operator with positive number literals' do
-        '1...2'.
-          must_be_parsed_as s(:lit, 1...2)
-      end
-
-      it 'handles the exclusive range operator with negative number literals' do
-        '-1...-2'.
-          must_be_parsed_as s(:lit, -1...-2)
-      end
-
-      it 'handles the exclusive range operator with string literals' do
-        "'a'...'z'".
-          must_be_parsed_as s(:dot3,
-                              s(:str, 'a'),
-                              s(:str, 'z'))
-      end
-
-      it 'handles the exclusive range operator with non-literals' do
-        'foo...bar'.
-          must_be_parsed_as s(:dot3,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
-      end
-
       it 'handles the ternary operator' do
         'foo ? bar : baz'.
           must_be_parsed_as s(:if,
