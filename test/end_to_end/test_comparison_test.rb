@@ -10,7 +10,7 @@ describe 'Using RipperRubyParser and RubyParser' do
     RubyParser.new
   end
 
-  Dir.glob('test/**/*.rb').each do |file|
+  Dir.glob('test/ripper_ruby_parser/**/*.rb').each do |file|
     describe "for #{file}" do
       let :program do
         File.read file
