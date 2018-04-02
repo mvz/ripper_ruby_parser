@@ -5,6 +5,22 @@ module RipperRubyParser
   module Unescape
     module_function
 
+    ESCAPE_SEQUENCE_REGEXP =
+      /\\(
+        [0-7]{1,3}        | # octal character
+        x[0-9a-fA-F]{1,2} | # hex byte
+        u[0-9a-fA-F]{4}   | # unicode character
+        M-\\C-.           | # meta-ctrl
+        C-\\M-.           | # ctrl-meta
+        M-\\c.            | # meta-ctrl (shorthand)
+        c\\M-.            | # ctrl-meta (shorthand)
+        C-.               | # control (regular)
+        c.                | # control (shorthand)
+        M-.               | # meta
+        \n                | # line continuation
+        .                   # single-character
+      )/x
+
     SINGLE_LETTER_ESCAPES = {
       'a' => "\a",
       'b' => "\b",
@@ -40,80 +56,20 @@ module RipperRubyParser
     end
 
     def unescape(string)
-      string.gsub(/\\(
-        [0-7]{1,3}        | # octal character
-        x[0-9a-fA-F]{1,2} | # hex byte
-        u[0-9a-fA-F]{4}   | # unicode character
-        M-\\C-.           | # meta-ctrl
-        C-\\M-.           | # ctrl-meta
-        M-\\c.            | # meta-ctrl (shorthand)
-        c\\M-.            | # ctrl-meta (shorthand)
-        C-.               | # control (regular)
-        c.                | # control (shorthand)
-        M-.               | # meta
-        \n                | # line continuation
-        .                   # single-character
-      )/x) do
+      string.gsub(ESCAPE_SEQUENCE_REGEXP) do
         bare = Regexp.last_match[1]
-        case bare
-        when SINGLE_LETTER_ESCAPES_REGEXP
-          SINGLE_LETTER_ESCAPES[bare]
-        when /^x/
-          bare[1..-1].to_i(16).chr
-        when /^u/
-          bare[1..-1].to_i(16).chr(Encoding::UTF_8)
-        when /^(c|C-).$/
-          (bare[-1].ord & 0b1001_1111).chr
-        when /^M-.$/
-          (bare[-1].ord | 0b1000_0000).chr
-        when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
-          (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
-        when /^[0-7]+/
-          bare.to_i(8).chr
-        when "\n"
+        if bare == "\n"
           ''
         else
-          bare
+          unescaped_value(bare)
         end
       end
     end
 
     def unescape_wordlist_word(string)
-      string.gsub(/\\(
-        [0-7]{1,3}        | # octal character
-        x[0-9a-fA-F]{1,2} | # hex byte
-        u[0-9a-fA-F]{4}   | # unicode character
-        M-\\C-.           | # meta-ctrl
-        C-\\M-.           | # ctrl-meta
-        M-\\c.            | # meta-ctrl (shorthand)
-        c\\M-.            | # ctrl-meta (shorthand)
-        C-.               | # control (regular)
-        c.                | # control (shorthand)
-        M-.               | # meta
-        \n                | # line continuation
-        .                   # single-character
-      )/x) do
+      string.gsub(ESCAPE_SEQUENCE_REGEXP) do
         bare = Regexp.last_match[1]
-        case bare
-        when SINGLE_LETTER_ESCAPES_REGEXP
-          SINGLE_LETTER_ESCAPES[bare]
-        when /^x/
-          bare[1..-1].to_i(16).chr
-        when /^u/
-          bare[1..-1].to_i(16).chr(Encoding::UTF_8)
-        when /^(c|C-).$/
-          (bare[-1].ord & 0b1001_1111).chr
-        when /^M-.$/
-          (bare[-1].ord | 0b1000_0000).chr
-        when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
-          (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
-        when /^[0-7]+/
-          bare.to_i(8).chr
-        when "\n"
-          bare
-        else
-          bare
-        end
+        unescaped_value(bare)
       end
     end
 
@@ -134,6 +90,29 @@ module RipperRubyParser
         else
           '\\\\'
         end
+      end
+    end
+
+    def unescaped_value(bare)
+      case bare
+      when SINGLE_LETTER_ESCAPES_REGEXP
+        SINGLE_LETTER_ESCAPES[bare]
+      when /^x/
+        bare[1..-1].to_i(16).chr
+      when /^u/
+        bare[1..-1].to_i(16).chr(Encoding::UTF_8)
+      when /^(c|C-).$/
+        (bare[-1].ord & 0b1001_1111).chr
+      when /^M-.$/
+        (bare[-1].ord | 0b1000_0000).chr
+      when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
+        (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
+      when /^[0-7]+/
+        bare.to_i(8).chr
+      when "\n"
+        bare
+      else
+        bare
       end
     end
   end
