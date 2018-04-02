@@ -46,6 +46,11 @@ describe RipperRubyParser::Parser do
         result.inspect.must_equal s(:lit, /foo/n).inspect
       end
 
+      it 'works with line continuation' do
+        "/foo\\\nbar/".
+          must_be_parsed_as s(:lit, /foobar/)
+      end
+
       describe 'for a %r-delimited regex literal' do
         it 'works for the simple case with escape sequences' do
           '%r[foo\nbar]'.
@@ -149,6 +154,11 @@ describe RipperRubyParser::Parser do
         result = parser.parse '"foo"'
         result.must_equal s(:str, 'foo')
         result[1].encoding.to_s.must_equal 'UTF-8'
+      end
+
+      it 'handles line continuation with double-quoted strings' do
+        "\"foo\\\nbar\"".
+          must_be_parsed_as s(:str, 'foobar')
       end
 
       describe 'with double-quoted strings with escape sequences' do
@@ -344,6 +354,11 @@ describe RipperRubyParser::Parser do
           "'foo\\\\\\abar'".
             must_be_parsed_as s(:str, 'foo\\\\abar')
         end
+
+        it 'handles line continuation' do
+          "'foo\\\nbar'".
+            must_be_parsed_as s(:str, 'foobar')
+        end
       end
 
       describe 'with %Q-delimited strings' do
@@ -355,6 +370,11 @@ describe RipperRubyParser::Parser do
         it 'works for escape sequences' do
           '%Q[foo\\nbar]'.
             must_be_parsed_as s(:str, "foo\nbar")
+        end
+
+        it 'handles line continuation' do
+          "%Q[foo\\\nbar]".
+            must_be_parsed_as s(:str, 'foobar')
         end
       end
 
@@ -434,6 +454,11 @@ describe RipperRubyParser::Parser do
         it 'works for escape sequences' do
           "<<FOO\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\tbaz\n")
+        end
+
+        it 'handles line continuation' do
+          "<<FOO\nbar\\\nbaz\nFOO".
+            must_be_parsed_as s(:str, "barbaz\n")
         end
       end
     end

@@ -41,7 +41,7 @@ module RipperRubyParser
         C-.               | # control (regular)
         c.                | # control (shorthand)
         M-.               | # meta
-          .                   # single-character
+        .                   # single-character
       )/x) do
         bare = Regexp.last_match[1]
         case bare
@@ -63,6 +63,10 @@ module RipperRubyParser
           bare
         end
       end
+    end
+
+    def process_line_continuations(string)
+      string.gsub(/\\\n/, '')
     end
   end
 end

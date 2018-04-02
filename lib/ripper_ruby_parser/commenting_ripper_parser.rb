@@ -178,6 +178,7 @@ module RipperRubyParser
     end
 
     def on_tstring_content(content)
+      content = Unescape.process_line_continuations(content)
       content = case @delimiter_stack.last
                 when '"', '`', ':"', /^<</, /^%[IQW].$/, /^%.$/
                   Unescape.unescape(content)
