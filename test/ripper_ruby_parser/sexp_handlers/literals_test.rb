@@ -161,6 +161,11 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:str, 'foobar')
       end
 
+      it 'escapes line continuation with double-quoted strings' do
+        "\"foo\\\\\nbar\"".
+          must_be_parsed_as s(:str, "foo\\\nbar")
+      end
+
       describe 'with double-quoted strings with escape sequences' do
         it 'works for strings with escape sequences' do
           '"\\n"'.
@@ -470,6 +475,11 @@ describe RipperRubyParser::Parser do
         it 'handles line continuation' do
           "<<FOO\nbar\\\nbaz\nFOO".
             must_be_parsed_as s(:str, "barbaz\n")
+        end
+
+        it 'escapes line continuation' do
+          "<<FOO\nbar\\\\\nbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\\\nbaz\n")
         end
 
         it 'does not convert to unicode even if possible' do
