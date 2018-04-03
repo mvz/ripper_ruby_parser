@@ -3,7 +3,10 @@
 ## 1.4.2 / Unreleased
 
 * Fix handling of strings delimited by %()
-* Handle line continuations in string and regexp literals
+* Handle line continuations in stringlike literals
+  - Handle line continuations in string and regexp literals
+  - Handle escaped line continuations
+  - Hanlde line continuations in word and symbol list literals
 * Force encoding of string literals to UTF-8 if the result is valid
 * Fix handling of range operators with float literals
 
