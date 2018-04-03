@@ -10,7 +10,7 @@ module RipperRubyParser
   class CommentingRipperParser < Ripper::SexpBuilder
     def initialize(*args)
       super
-      @comment = nil
+      @comment = ''
       @comment_stack = []
       @delimiter_stack = []
       @in_symbol = false
@@ -29,7 +29,21 @@ module RipperRubyParser
     end
 
     def on_comment(tok)
-      @comment ||= ''
+      @comment += tok
+      super
+    end
+
+    def on_embdoc_beg(tok)
+      @comment += tok
+      super
+    end
+
+    def on_embdoc(tok)
+      @comment += tok
+      super
+    end
+
+    def on_embdoc_end(tok)
       @comment += tok
       super
     end
@@ -39,7 +53,7 @@ module RipperRubyParser
       when 'class', 'def', 'module'
         unless @in_symbol
           @comment_stack.push [tok.to_sym, @comment]
-          @comment = nil
+          @comment = ''
         end
       end
       super
@@ -312,8 +326,8 @@ module RipperRubyParser
 
     def commentize(_name, exp)
       _tok, comment = @comment_stack.pop
-      @comment = nil
-      [:comment, comment || '', exp]
+      @comment = ''
+      [:comment, comment, exp]
     end
 
     def suppress_warnings

@@ -128,6 +128,18 @@ describe RipperRubyParser::CommentingRipperParser do
                                           nil,
                                           nil)))))))))
     end
+
+    it 'turns an embedded document into a comment node' do
+      result = parse_with_builder "=begin Hello\nthere\n=end\nclass Foo; end"
+      result.must_equal s(:program,
+                          s(:stmts,
+                            s(:comment,
+                              "=begin Hello\nthere\n=end\n",
+                              s(:class,
+                                s(:const_ref, s(:@const, 'Foo', s(4, 6))),
+                                nil,
+                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+    end
   end
 
   describe 'handling syntax errors' do
