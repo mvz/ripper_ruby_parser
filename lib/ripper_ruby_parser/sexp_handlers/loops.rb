@@ -51,7 +51,7 @@ module RipperRubyParser
         check_at_start = check_at_start?(body)
         construct_conditional_loop(type, negated_type,
                                    process(cond),
-                                   process(body),
+                                   unwrap_begin(process(body)),
                                    check_at_start)
       end
 

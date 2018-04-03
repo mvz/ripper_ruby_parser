@@ -17,6 +17,14 @@ describe RipperRubyParser::Parser do
                               0,
                               s(:redo))
       end
+
+      it 'works with nested begin..end' do
+        'foo do; begin; bar; end; end;'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:call, nil, :bar))
+      end
     end
 
     describe 'for block parameters' do
@@ -357,7 +365,7 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :baz))))
       end
 
-      it 'works in a method body inside begin..end' do
+      it 'works in a method body inside begin..end with rescue' do
         'def foo; bar; begin; baz; rescue; qux; end; quuz; end'.
           must_be_parsed_as s(:defn,
                               :foo,
@@ -367,6 +375,27 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz),
                                 s(:resbody, s(:array), s(:call, nil, :qux))),
                               s(:call, nil, :quuz))
+      end
+
+      it 'works in a method body inside begin..end without rescue' do
+        'def foo; bar; begin; baz; qux; end; quuz; end'.
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args),
+                              s(:call, nil, :bar),
+                              s(:block,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux)),
+                              s(:call, nil, :quuz))
+      end
+
+      it 'works in a method body fully inside begin..end' do
+        'def foo; begin; bar; baz; end; end'.
+          must_be_parsed_as s(:defn,
+                              :foo,
+                              s(:args),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
       end
     end
 
