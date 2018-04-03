@@ -180,15 +180,19 @@ module RipperRubyParser
     def on_tstring_content(content)
       content = case @delimiter_stack.last
                 when /^<</
-                  content = Unescape.process_line_continuations(content)
                   Unescape.unescape(content)
-                when '"', '`', ':"', /^%[IQW].$/, /^%.$/
-                  content = Unescape.process_line_continuations(content)
+                when '"', '`', ':"', /^%Q.$/, /^%.$/
                   Unescape.fix_encoding(Unescape.unescape(content))
-                when "'", ":'"
+                when /^%[WI].$/
+                  Unescape.fix_encoding(Unescape.unescape_wordlist_word(content))
+                when "'", ":'", /^%q.$/
                   Unescape.simple_unescape(content)
+                when '/', /^%r.$/
+                  Unescape.unescape_regexp(content)
+                when /^%[wi].$/
+                  Unescape.simple_unescape_wordlist_word(content)
                 else
-                  Unescape.process_line_continuations(content)
+                  content
                 end
       super(content)
     end

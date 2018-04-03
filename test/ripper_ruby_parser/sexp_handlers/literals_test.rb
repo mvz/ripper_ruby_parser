@@ -161,6 +161,11 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:str, 'foobar')
       end
 
+      it 'escapes line continuation with double-quoted strings' do
+        "\"foo\\\\\nbar\"".
+          must_be_parsed_as s(:str, "foo\\\nbar")
+      end
+
       describe 'with double-quoted strings with escape sequences' do
         it 'works for strings with escape sequences' do
           '"\\n"'.
@@ -472,6 +477,11 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "barbaz\n")
         end
 
+        it 'escapes line continuation' do
+          "<<FOO\nbar\\\\\nbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\\\nbaz\n")
+        end
+
         it 'does not convert to unicode even if possible' do
           parser = RipperRubyParser::Parser.new
           result = parser.parse "<<FOO\n2\\302\\275\nFOO"
@@ -481,13 +491,25 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for word list literals' do
-      it 'works for the simple case with %w' do
+    describe 'for word list literals with %w delimiter' do
+      it 'works for the simple case' do
         '%w(foo bar)'.
           must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
       end
 
-      it 'works for the simple case with %W' do
+      it 'does not perform interpolation' do
+        '%w(foo\\nbar baz)'.
+          must_be_parsed_as s(:array, s(:str, 'foo\\nbar'), s(:str, 'baz'))
+      end
+
+      it 'handles line continuation' do
+        "%w(foo\\\nbar baz)".
+          must_be_parsed_as s(:array, s(:str, "foo\nbar"), s(:str, 'baz'))
+      end
+    end
+
+    describe 'for word list literals with %W delimiter' do
+      it 'works for the simple case' do
         '%W(foo bar)'.
           must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
       end
@@ -524,12 +546,29 @@ describe RipperRubyParser::Parser do
                               s(:str, "foo\nbar"),
                               s(:str, 'baz'))
       end
+
+      it 'correctly handles line continuation' do
+        "%W(foo\\\nbar baz)".
+          must_be_parsed_as s(:array,
+                              s(:str, "foo\nbar"),
+                              s(:str, 'baz'))
+      end
     end
 
     describe 'for symbol list literals with %i delimiter' do
       it 'works for the simple case' do
         '%i(foo bar)'.
           must_be_parsed_as s(:array, s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it 'does not perform interpolation' do
+        '%i(foo\\nbar baz)'.
+          must_be_parsed_as s(:array, s(:lit, :"foo\\nbar"), s(:lit, :baz))
+      end
+
+      it 'handles line continuation' do
+        "%i(foo\\\nbar baz)".
+          must_be_parsed_as s(:array, s(:lit, :"foo\nbar"), s(:lit, :baz))
       end
     end
 
@@ -562,6 +601,13 @@ describe RipperRubyParser::Parser do
                                 '',
                                 s(:evstr, s(:call, nil, :bar)),
                                 s(:str, 'baz')))
+      end
+
+      it 'correctly handles line continuation' do
+        "%I(foo\\\nbar baz)".
+          must_be_parsed_as s(:array,
+                              s(:lit, :"foo\nbar"),
+                              s(:lit, :baz))
       end
     end
 
