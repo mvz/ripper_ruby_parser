@@ -25,27 +25,22 @@ module RipperRubyParser
 
     def on_backtick(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_comment(tok)
       @comment += tok
-      super
     end
 
     def on_embdoc_beg(tok)
       @comment += tok
-      super
     end
 
     def on_embdoc(tok)
       @comment += tok
-      super
     end
 
     def on_embdoc_end(tok)
       @comment += tok
-      super
     end
 
     def on_kw(tok)
@@ -89,12 +84,10 @@ module RipperRubyParser
 
     def on_heredoc_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
-    def on_heredoc_end(delimiter)
+    def on_heredoc_end(_delimiter)
       @delimiter_stack.pop
-      super
     end
 
     def on_mlhs_new
@@ -119,7 +112,6 @@ module RipperRubyParser
 
     def on_qsymbols_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_qsymbols_new
@@ -132,7 +124,6 @@ module RipperRubyParser
 
     def on_qwords_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_qwords_new
@@ -145,7 +136,6 @@ module RipperRubyParser
 
     def on_regexp_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_regexp_end(delimiter)
@@ -175,7 +165,6 @@ module RipperRubyParser
 
     def on_symbols_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_symbols_new
@@ -188,7 +177,6 @@ module RipperRubyParser
 
     def on_tstring_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_tstring_content(content)
@@ -226,7 +214,6 @@ module RipperRubyParser
 
     def on_words_beg(delimiter)
       @delimiter_stack.push delimiter
-      super
     end
 
     def on_words_new
@@ -252,7 +239,6 @@ module RipperRubyParser
 
     def on_sp(_token)
       @seen_space = true
-      super
     end
 
     def on_int(_token)
@@ -283,7 +269,6 @@ module RipperRubyParser
     def on_symbeg(delimiter)
       @delimiter_stack.push delimiter
       @in_symbol = true
-      super
     end
 
     def on_symbol(*args)
@@ -294,7 +279,6 @@ module RipperRubyParser
 
     def on_embexpr_beg(_delimiter)
       @in_symbol = false
-      super
     end
 
     def on_dyna_symbol(*args)
