@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.3 / Unreleased
+
+* Process embedded documents as comments
+
 ## 1.4.2 / 2018-04-03
 
 * Fix handling of strings delimited by %()
