@@ -50,8 +50,8 @@ module RipperRubyParser
       def process_begin(exp)
         _, body = exp.shift 2
 
-        body = process(body)
-        convert_empty_to_nil_symbol(body)
+        body = convert_empty_to_nil_symbol process(body)
+        s(:begin, body)
       end
 
       def process_rescue(exp)
@@ -201,7 +201,7 @@ module RipperRubyParser
         if stmt.empty?
           s(:iter, call, args)
         else
-          s(:iter, call, args, stmt)
+          s(:iter, call, args, unwrap_begin(stmt))
         end
       end
 

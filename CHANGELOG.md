@@ -3,6 +3,8 @@
 ## 1.4.3 / Unreleased
 
 * Process embedded documents as comments
+* Refactor handling of begin..end in order to fix handling of array element
+  operator assignment of such a block.
 
 ## 1.4.2 / 2018-04-03
 

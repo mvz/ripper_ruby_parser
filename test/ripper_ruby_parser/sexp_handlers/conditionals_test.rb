@@ -29,6 +29,14 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
+      it 'works with a begin..end block' do
+        'if foo; begin; bar; end; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+
       it 'works with an else clause' do
         'if foo; bar; else; baz; end'.
           must_be_parsed_as s(:if,

@@ -111,10 +111,22 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux))
         end
 
-        it 'works with &&=' do
+        it 'works with boolean operators' do
           'foo &&= bar'.
             must_be_parsed_as s(:op_asgn_and,
                                 s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
+        end
+
+        it 'works with boolean operators and blocks' do
+          'foo &&= begin; bar; end'.
+            must_be_parsed_as s(:op_asgn_and,
+                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
+        end
+
+        it 'works with arithmetic operators and blocks' do
+          'foo += begin; bar; end'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:call, s(:lvar, :foo), :+, s(:call, nil, :bar)))
         end
       end
     end

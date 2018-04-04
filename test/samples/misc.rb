@@ -30,7 +30,7 @@ class Foo
     puts "A: #{a}, B: #{b}"
   end
 
-# Combinations of begin..end and diverse operators
+  # Combinations of begin..end and diverse operators
   def qux
     begin end
     begin; foo; end
@@ -45,5 +45,8 @@ class Foo
     foo and begin; bar; end
     begin; foo; end if bar
     begin; foo; end unless bar
+    foo ||= begin; bar; end
+    foo += begin; bar; end
+    foo[qux] ||= begin; bar; end
   end
 end

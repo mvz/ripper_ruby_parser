@@ -121,6 +121,7 @@ module RipperRubyParser
           _, obj, _, (_, field) = lvalue
           s(:op_asgn2, obj, :"#{field}=", operator, value)
         else
+          value = unwrap_begin(value)
           if (mapped = OPERATOR_ASSIGNMENT_MAP[operator])
             s(mapped, lvalue, create_assignment_sub_type(lvalue, value))
           else

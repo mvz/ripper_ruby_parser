@@ -23,7 +23,7 @@ module RipperRubyParser
         _, cond, truepart = exp.shift 3
 
         construct_conditional(handle_condition(cond),
-                              handle_operator_argument(truepart),
+                              process(truepart),
                               nil)
       end
 
@@ -40,7 +40,7 @@ module RipperRubyParser
 
         construct_conditional(handle_condition(cond),
                               nil,
-                              handle_operator_argument(truepart))
+                              process(truepart))
       end
 
       def process_case(exp)
@@ -93,7 +93,7 @@ module RipperRubyParser
       end
 
       def handle_consequent(exp)
-        unwrap_nil process(exp) if exp
+        unwrap_nil unwrap_begin process(exp) if exp
       end
 
       def construct_conditional(cond, truepart, falsepart)

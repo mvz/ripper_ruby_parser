@@ -68,6 +68,18 @@ module RipperRubyParser
         unwrap_nil(exp) || s()
       end
 
+      def unwrap_begin(exp)
+        if exp.sexp_type == :begin
+          exp[1]
+        else
+          exp
+        end
+      end
+
+      def map_unwrap_begin_list(list)
+        list.map { |it| unwrap_begin(it) }
+      end
+
       def handle_argument_list(exp)
         process(exp).tap(&:shift)
       end
