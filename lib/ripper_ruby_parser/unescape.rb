@@ -3,8 +3,6 @@ module RipperRubyParser
   #
   # @api private
   module Unescape
-    module_function
-
     ESCAPE_SEQUENCE_REGEXP =
       /\\(
         [0-7]{1,3}        | # octal character
@@ -93,6 +91,8 @@ module RipperRubyParser
         end
       end
     end
+
+    private
 
     def unescaped_value(bare)
       case bare
