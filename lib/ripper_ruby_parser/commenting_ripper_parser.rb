@@ -15,11 +15,13 @@ module RipperRubyParser
       @comment = ''
       @comment_stack = []
       @delimiter_stack = []
+      @space_before = false
+      @seen_space = false
       @in_symbol = false
     end
 
     def parse
-      result = suppress_warnings { super }
+      result = super
       raise 'Ripper parse failed.' unless result
 
       Sexp.from_array(result)
@@ -314,14 +316,6 @@ module RipperRubyParser
       _tok, comment = @comment_stack.pop
       @comment = ''
       [:comment, comment, exp]
-    end
-
-    def suppress_warnings
-      old_verbose = $VERBOSE
-      $VERBOSE = nil
-      result = yield
-      $VERBOSE = old_verbose
-      result
     end
   end
 end
