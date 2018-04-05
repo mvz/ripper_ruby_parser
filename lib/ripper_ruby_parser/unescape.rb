@@ -99,24 +99,38 @@ module RipperRubyParser
       when SINGLE_LETTER_ESCAPES_REGEXP
         SINGLE_LETTER_ESCAPES[bare]
       when /^x/
-        bare[1..-1].to_i(16).chr
+        hex_to_char(bare[1..-1])
       when /^u{/
-        bare[2..-2].to_i(16).chr(Encoding::UTF_8)
+        hex_to_unicode_char(bare[2..-2])
       when /^u/
-        bare[1..-1].to_i(16).chr(Encoding::UTF_8)
+        hex_to_unicode_char(bare[1..-1])
       when /^(c|C-).$/
-        (bare[-1].ord & 0b1001_1111).chr
+        control(bare[-1].ord).chr
       when /^M-.$/
-        (bare[-1].ord | 0b1000_0000).chr
+        meta(bare[-1].ord).chr
       when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
-        (bare[-1].ord & 0b1001_1111 | 0b1000_0000).chr
+        meta(control(bare[-1].ord)).chr
       when /^[0-7]+/
         bare.to_i(8).chr
-      when "\n"
-        bare
       else
         bare
       end
+    end
+
+    def hex_to_unicode_char(str)
+      str.to_i(16).chr(Encoding::UTF_8)
+    end
+
+    def hex_to_char(str)
+      str.to_i(16).chr
+    end
+
+    def control(val)
+      val & 0b1001_1111
+    end
+
+    def meta(val)
+      val | 0b1000_0000
     end
   end
 end
