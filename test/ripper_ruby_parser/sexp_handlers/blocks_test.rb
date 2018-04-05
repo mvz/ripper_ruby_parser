@@ -25,6 +25,16 @@ describe RipperRubyParser::Parser do
                               0,
                               s(:call, nil, :bar))
       end
+
+      it 'works with nested begin..end plus other statements' do
+        'foo do; bar; begin; baz; end; end;'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0,
+                              s(:block,
+                                s(:call, nil, :bar),
+                                s(:call, nil, :baz)))
+      end
     end
 
     describe 'for block parameters' do

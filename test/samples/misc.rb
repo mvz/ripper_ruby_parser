@@ -49,4 +49,19 @@ class Foo
     foo += begin; bar; end
     foo[qux] ||= begin; bar; end
   end
+
+  # Nested do and begin blocks
+  def quuz
+    foo do
+      bar
+
+      begin
+        baz
+      rescue
+        qux
+      end
+
+      quuz
+    end
+  end
 end

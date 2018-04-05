@@ -212,7 +212,7 @@ module RipperRubyParser
         when 1
           statements.first
         else
-          s(:block, *statements)
+          s(:block, *map_unwrap_begin_list(statements))
         end
       end
     end
