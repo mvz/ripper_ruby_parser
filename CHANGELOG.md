@@ -3,8 +3,9 @@
 ## 1.4.3 / Unreleased
 
 * Process embedded documents as comments
-* Refactor handling of begin..end in order to fix handling of array element
-  operator assignment of such a block.
+* Fix handling of array element operator assignment when assignee is a
+  begin..end block
+* Enhance testing of begin..end handling
 
 ## 1.4.2 / 2018-04-03
 
