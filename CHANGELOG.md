@@ -6,6 +6,7 @@
 * Fix handling of array element operator assignment when assignee is a
   begin..end block
 * Enhance testing of begin..end handling
+* Handle \u{xxxx} form of unicode escape sequence
 
 ## 1.4.2 / 2018-04-03
 
