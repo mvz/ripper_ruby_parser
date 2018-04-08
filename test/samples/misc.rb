@@ -64,4 +64,21 @@ class Foo
       quuz
     end
   end
+
+  # Using splat and double-splat args
+  def barbaz(*foo, **bar)
+    puts [foo, bar]
+    foo.each do |baz, **qux|
+      puts [foo, bar, baz, qux]
+    end
+    puts [foo, bar]
+  end
+
+  def self.barbaz(*foo, **bar)
+    puts [foo, bar]
+    foo.each do |baz, **qux|
+      puts [foo, bar, baz, qux]
+    end
+    puts [foo, bar]
+  end
 end

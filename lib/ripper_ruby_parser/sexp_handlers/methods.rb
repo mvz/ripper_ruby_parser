@@ -6,18 +6,21 @@ module RipperRubyParser
         _, ident, params, body = exp.shift 4
         ident, pos = extract_node_symbol_with_position ident
         params = convert_special_args(process(params))
-        with_position(pos,
-                      s(:defn, ident, params, *method_body(body)))
+        kwrest = kwrest_param(params)
+        body = with_kwrest(kwrest) { method_body(body) }
+        with_position(pos, s(:defn, ident, params, *body))
       end
 
       def process_defs(exp)
         _, receiver, _, method, params, body = exp.shift 6
         params = convert_special_args(process(params))
+        kwrest = kwrest_param(params)
+        body = with_kwrest(kwrest) { method_body(body) }
 
         s(:defs,
           process(receiver),
           extract_node_symbol(method),
-          params, *method_body(body))
+          params, *body)
       end
 
       def process_return(exp)
@@ -123,6 +126,20 @@ module RipperRubyParser
             end
           end
         end
+      end
+
+      def kwrest_param(params)
+        last_param = params[-1].to_s
+        found = last_param =~ /^\*\*(.*)/
+        Regexp.last_match[1].to_sym if found
+      end
+
+      def with_kwrest(kwrest)
+        old_kwrest = @kwrest
+        @kwrest = kwrest
+        result = yield
+        @kwrest = old_kwrest
+        result
       end
     end
   end

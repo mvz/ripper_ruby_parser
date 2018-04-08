@@ -37,6 +37,7 @@ module RipperRubyParser
       @errors = []
 
       @in_method_body = false
+      @kwrest = nil
     end
 
     include SexpHandlers
