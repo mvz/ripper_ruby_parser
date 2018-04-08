@@ -14,11 +14,13 @@ module RipperRubyParser
       def process_defs(exp)
         _, receiver, _, method, params, body = exp.shift 6
         params = convert_special_args(process(params))
+        kwrest = kwrest_param(params)
+        body = with_kwrest(kwrest) { method_body(body) }
 
         s(:defs,
           process(receiver),
           extract_node_symbol(method),
-          params, *method_body(body))
+          params, *body)
       end
 
       def process_return(exp)
