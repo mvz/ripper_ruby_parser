@@ -6,8 +6,14 @@ module RipperRubyParser
         _, ident, params, body = exp.shift 4
         ident, pos = extract_node_symbol_with_position ident
         params = convert_special_args(process(params))
-        with_position(pos,
-                      s(:defn, ident, params, *method_body(body)))
+        last_param = params[-1].to_s
+        old_kwrest = @kwrest
+        @kwrest = if last_param =~ /^\*\*(.*)/
+                    Regexp.last_match[1].to_sym
+                  end
+        body = method_body(body)
+        @kwrest = old_kwrest
+        with_position(pos, s(:defn, ident, params, *body))
       end
 
       def process_defs(exp)
