@@ -51,9 +51,8 @@ Style/GuardClause:
   MinBodyLength: 2
 
 # Avoid offenses on s().
-# See https://github.com/bbatsov/rubocop/issues/4753
 Style/MethodCallWithoutArgsParentheses:
-  Enabled: false
+  IgnoredMethods: ['s']
 
 # This cop gives confusing results for objects that may not be numbers.
 Style/NumericPredicate:
