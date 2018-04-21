@@ -8,6 +8,7 @@
 * Enhance testing of begin..end handling
 * Handle \u{xxxx} form of unicode escape sequence
 * Add work-around for Ripper not parsing kwrest args as locals
+* Handle heredocs with single quotes
 
 ## 1.4.2 / 2018-04-03
 
