@@ -475,6 +475,7 @@ describe RipperRubyParser::Parser do
         end
 
         it 'works for the automatically outdenting case' do
+          skip 'This is not valid syntax below Ruby 2.3' if RUBY_VERSION < '2.3.0'
           "  <<~FOO\n  bar\n  FOO".
             must_be_parsed_as s(:str, "bar\n")
         end
@@ -495,6 +496,7 @@ describe RipperRubyParser::Parser do
         end
 
         it 'does not unescape the automatically outdenting single quoted version' do
+          skip 'This is not valid syntax below Ruby 2.3' if RUBY_VERSION < '2.3.0'
           "<<~'FOO'\n  bar\\tbaz\n  FOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
         end
