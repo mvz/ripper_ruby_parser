@@ -469,6 +469,11 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\n")
         end
 
+        it 'works for the indentable case' do
+          "<<-FOO\n  bar\n  FOO".
+            must_be_parsed_as s(:str, "  bar\n")
+        end
+
         it 'works for escape sequences' do
           "<<FOO\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\tbaz\n")
@@ -477,6 +482,11 @@ describe RipperRubyParser::Parser do
         it 'does not unescape with single quoted version' do
           "<<'FOO'\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
+        end
+
+        it 'does not unescape with indentable single quoted version' do
+          "<<-'FOO'\n  bar\\tbaz\n  FOO".
+            must_be_parsed_as s(:str, "  bar\\tbaz\n")
         end
 
         it 'handles line continuation' do
