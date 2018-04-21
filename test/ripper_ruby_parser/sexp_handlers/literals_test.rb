@@ -474,6 +474,11 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\tbaz\n")
         end
 
+        it 'does not unescape with single quoted version' do
+          "<<'FOO'\nbar\\tbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\\tbaz\n")
+        end
+
         it 'handles line continuation' do
           "<<FOO\nbar\\\nbaz\nFOO".
             must_be_parsed_as s(:str, "barbaz\n")
