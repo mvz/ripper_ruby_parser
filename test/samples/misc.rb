@@ -45,6 +45,7 @@ class Foo
     foo and begin; bar; end
     begin; foo; end if bar
     begin; foo; end unless bar
+    begin; foo; end.bar
     foo ||= begin; bar; end
     foo += begin; bar; end
     foo[qux] ||= begin; bar; end

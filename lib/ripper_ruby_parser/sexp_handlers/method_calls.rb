@@ -29,7 +29,7 @@ module RipperRubyParser
           s(type, process(receiver), :call)
         else
           with_position_from_node_symbol(ident) do |method|
-            s(type, process(receiver), method)
+            s(type, unwrap_begin(process(receiver)), method)
           end
         end
       end
