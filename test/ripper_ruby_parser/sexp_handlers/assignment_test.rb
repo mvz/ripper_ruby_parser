@@ -17,6 +17,11 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar))
       end
 
+      it 'works with blocks' do
+        'foo = begin; bar; end'.
+          must_be_parsed_as s(:lasgn, :foo, s(:call, nil, :bar))
+      end
+
       describe 'with a right-hand splat' do
         specify do
           'foo = *bar'.

@@ -18,14 +18,14 @@ sjis = /foo#{bar}/s
 enc = __ENCODING__
 
 class Foo
-# calling #[] on self
-# https://github.com/seattlerb/ruby_parser/issues/250
+  # calling #[] on self
+  # https://github.com/seattlerb/ruby_parser/issues/250
   def bar
     self[:foo]
   end
 
-# required keyword arguments and no parentheses
-# https://github.com/seattlerb/ruby_parser/pull/254
+  # required keyword arguments and no parentheses
+  # https://github.com/seattlerb/ruby_parser/pull/254
   def foo a:, b:
     puts "A: #{a}, B: #{b}"
   end
@@ -48,6 +48,9 @@ class Foo
     foo ||= begin; bar; end
     foo += begin; bar; end
     foo[qux] ||= begin; bar; end
+    foo = begin; bar; end
+    foo = begin; if bar; baz; end; end
+    baz = begin; foo; ensure; bar; end
   end
 
   # Nested do and begin blocks
