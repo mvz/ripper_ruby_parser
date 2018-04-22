@@ -23,7 +23,7 @@ describe RipperRubyParser::Parser do
       end
 
       describe 'with a right-hand splat' do
-        specify do
+        it 'works in the simple case' do
           'foo = *bar'.
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:svalue,
@@ -31,7 +31,24 @@ describe RipperRubyParser::Parser do
                                     s(:call, nil, :bar))))
         end
 
-        specify do
+        it 'works with blocks' do
+          'foo = *begin; bar; end'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:svalue, s(:splat, s(:call, nil, :bar))))
+        end
+      end
+
+      describe 'with several items on the right hand side' do
+        it 'works in the simple case' do
+          'foo = bar, baz'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:svalue,
+                                  s(:array,
+                                    s(:call, nil, :bar),
+                                    s(:call, nil, :baz))))
+        end
+
+        it 'works with a splat' do
           'foo = bar, *baz'.
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:svalue,
@@ -39,17 +56,6 @@ describe RipperRubyParser::Parser do
                                     s(:call, nil, :bar),
                                     s(:splat,
                                       s(:call, nil, :baz)))))
-        end
-      end
-
-      describe 'with several items on the right hand side' do
-        specify do
-          'foo = bar, baz'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:svalue,
-                                  s(:array,
-                                    s(:call, nil, :bar),
-                                    s(:call, nil, :baz))))
         end
       end
 

@@ -51,6 +51,8 @@ class Foo
     foo = begin; bar; end
     foo = begin; if bar; baz; end; end
     baz = begin; foo; ensure; bar; end
+    foo = *begin; bar; end
+    foo = bar, *begin; baz; end
   end
 
   # Nested do and begin blocks
