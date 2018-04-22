@@ -18,29 +18,53 @@ EOS
 \xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E
 EOS
 
+# Quotes around heredoc names
+<<'FOO'
+\n
+FOO
+
+<<"FOO"
+\n
+FOO
+
 # Line continuation
 "foo\
 bar"
+
 'foo2\
 bar'
+
 /foo3\
 bar/
+
 <<EOS
 foo4\
 bar
 EOS
+
+<<'EOS'
+foo4\
+bar
+EOS
+
 %Q[foo5\
 bar]
+
 %W[fooa\
 bar baz]
+
 %I[foob\
 bar baz]
+
 %q[fooc\
 bar]
+
 %w[food\
 bar baz]
+
 %i[fooe\
 bar baz]
+
 %r[foof\
 bar baz]
 

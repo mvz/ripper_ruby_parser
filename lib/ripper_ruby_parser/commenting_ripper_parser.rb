@@ -185,6 +185,8 @@ module RipperRubyParser
 
     def on_tstring_content(content)
       content = case @delimiter_stack.last
+                when /^<<[-~]?'/
+                  content
                 when /^<</
                   unescape(content)
                 when '"', '`', ':"', /^%Q.$/, /^%.$/
