@@ -53,6 +53,7 @@ class Foo
     baz = begin; foo; ensure; bar; end
     foo = *begin; bar; end
     foo = bar, *begin; baz; end
+    foo, bar = *begin; baz; end
   end
 
   # Nested do and begin blocks
