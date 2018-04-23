@@ -82,7 +82,7 @@ module RipperRubyParser
           first.shift
           s(:block, *first, *statements)
         else
-          s(:block, unwrap_begin(first), *map_unwrap_begin_list(statements))
+          s(:block, first, *statements)
         end
       end
     end

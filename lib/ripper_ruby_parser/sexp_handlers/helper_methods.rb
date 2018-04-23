@@ -76,10 +76,6 @@ module RipperRubyParser
         end
       end
 
-      def map_unwrap_begin_list(list)
-        list.map { |it| unwrap_begin(it) }
-      end
-
       def handle_argument_list(exp)
         process(exp).tap(&:shift)
       end
