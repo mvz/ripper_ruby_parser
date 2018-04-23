@@ -93,7 +93,7 @@ module RipperRubyParser
       end
 
       def handle_consequent(exp)
-        unwrap_nil unwrap_begin process(exp) if exp
+        unwrap_nil process(exp) if exp
       end
 
       def construct_conditional(cond, truepart, falsepart)

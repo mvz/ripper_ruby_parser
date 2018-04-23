@@ -201,7 +201,7 @@ module RipperRubyParser
         if stmt.empty?
           s(:iter, call, args)
         else
-          s(:iter, call, args, unwrap_begin(stmt))
+          s(:iter, call, args, stmt)
         end
       end
 
