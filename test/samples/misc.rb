@@ -1,5 +1,21 @@
 # Miscellaneous samples
 
+BEGIN {
+  begin
+    foo
+  end
+}
+
+BEGIN {}
+
+END {
+  begin
+    bar
+  end
+}
+
+END {}
+
 # regular expressions with different encoding flags
 regular = /foo/
 noenc = /foo/n
@@ -100,6 +116,16 @@ class Foo
       end
       begin
         qux
+      end
+    end
+  end
+
+  # Begin/end blocks and case statements
+  def quuz
+    case foo
+    when bar
+      begin
+        baz
       end
     end
   end

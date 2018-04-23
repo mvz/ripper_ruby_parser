@@ -44,16 +44,16 @@ module RipperRubyParser
         body.reject { |sub_exp| sub_exp.sexp_type == :void_stmt }
       end
 
-      def map_process_sexp_body_compact(list)
-        reject_void_stmt map_process_sexp_body list
-      end
-
-      def map_process_sexp_body(list)
-        map_unwrap_begin_process_list(list.sexp_body)
+      def map_process_list_compact(list)
+        reject_void_stmt map_unwrap_begin_list map_process_list list
       end
 
       def map_process_list(list)
         list.map { |exp| process(exp) }
+      end
+
+      def map_unwrap_begin_list(list)
+        list.map { |exp| unwrap_begin(exp) }
       end
 
       def unwrap_nil(exp)
@@ -74,10 +74,6 @@ module RipperRubyParser
         else
           exp
         end
-      end
-
-      def map_unwrap_begin_process_list(list)
-        list.map { |exp| unwrap_begin process(exp) }
       end
 
       def handle_argument_list(exp)

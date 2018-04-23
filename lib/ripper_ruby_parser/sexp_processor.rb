@@ -70,7 +70,7 @@ module RipperRubyParser
 
     def process_stmts(exp)
       _, *statements = shift_all(exp)
-      statements = reject_void_stmt map_unwrap_begin_process_list statements
+      statements = map_process_list_compact statements
       case statements.count
       when 0
         s(:void_stmt)
@@ -144,12 +144,14 @@ module RipperRubyParser
 
     def process_BEGIN(exp)
       _, body = exp.shift 2
-      s(:iter, s(:preexe), s(:args), *map_process_sexp_body_compact(body))
+      body = reject_void_stmt map_process_list body.sexp_body
+      s(:iter, s(:preexe), s(:args), *body)
     end
 
     def process_END(exp)
       _, body = exp.shift 2
-      s(:iter, s(:postexe), 0, *map_process_sexp_body_compact(body))
+      body = map_process_list_compact body.sexp_body
+      s(:iter, s(:postexe), 0, *body)
     end
 
     # number literals
