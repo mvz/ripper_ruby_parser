@@ -12,6 +12,8 @@ module RipperRubyParser
           value.sexp_type = :svalue
         when :fake_array
           value = s(:svalue, s(:array, *value.sexp_body))
+        else
+          value = unwrap_begin(value)
         end
 
         with_line_number(lvalue.line,
