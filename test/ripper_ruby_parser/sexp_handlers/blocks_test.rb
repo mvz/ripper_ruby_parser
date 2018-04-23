@@ -2,7 +2,7 @@ require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   describe '#parse' do
-    describe 'for blocks' do
+    describe 'for do blocks' do
       it 'works with no statements in the block body' do
         'foo do; end'.
           must_be_parsed_as s(:iter,
@@ -235,6 +235,12 @@ describe RipperRubyParser::Parser do
                               nil,
                               s(:begin, s(:call, nil, :foo)))
       end
+
+      it 'does not keep :begin for a method receiver' do
+        'begin; foo; end.bar'.
+          must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
+      end
+
     end
 
     describe 'for rescue/else' do
@@ -360,6 +366,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:resbody,
                                 s(:array),
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a nested begin..end block' do
+        'begin; foo; rescue; begin; bar; end; end'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody, s(:array),
                                 s(:call, nil, :bar)))
       end
 

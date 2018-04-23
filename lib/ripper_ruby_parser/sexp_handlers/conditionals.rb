@@ -63,7 +63,7 @@ module RipperRubyParser
 
         values = handle_argument_list values
 
-        truepart = map_process_sexp_body_compact(truepart)
+        truepart = map_process_list_compact truepart.sexp_body
         truepart = [nil] if truepart.empty?
 
         s(s(:when,
@@ -93,7 +93,7 @@ module RipperRubyParser
       end
 
       def handle_consequent(exp)
-        unwrap_nil unwrap_begin process(exp) if exp
+        unwrap_nil process(exp) if exp
       end
 
       def construct_conditional(cond, truepart, falsepart)

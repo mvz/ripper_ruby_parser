@@ -501,6 +501,11 @@ describe RipperRubyParser::Parser do
         'BEGIN { foo }'.
           must_be_parsed_as s(:iter, s(:preexe), s(:args), s(:call, nil, :foo))
       end
+
+      it 'works with an empty block' do
+        'BEGIN { }'.
+          must_be_parsed_as s(:iter, s(:preexe), s(:args))
+      end
     end
 
     describe 'for constant lookups' do

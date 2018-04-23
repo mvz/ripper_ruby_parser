@@ -1,5 +1,21 @@
 # Miscellaneous samples
 
+BEGIN {
+  begin
+    foo
+  end
+}
+
+BEGIN {}
+
+END {
+  begin
+    bar
+  end
+}
+
+END {}
+
 # regular expressions with different encoding flags
 regular = /foo/
 noenc = /foo/n
@@ -45,6 +61,7 @@ class Foo
     foo and begin; bar; end
     begin; foo; end if bar
     begin; foo; end unless bar
+    begin; foo; end.bar
     foo ||= begin; bar; end
     foo += begin; bar; end
     foo[qux] ||= begin; bar; end
@@ -68,6 +85,48 @@ class Foo
       end
 
       quuz
+    end
+  end
+
+  # Nested begin/rescue blocks
+  def quuz
+    begin
+      bar
+    rescue
+      begin
+        baz
+      end
+    end
+
+    begin
+      bar
+    rescue
+      begin
+        baz
+      rescue
+        qux
+      end
+    end
+
+    begin
+      bar
+    rescue
+      begin
+        baz
+      end
+      begin
+        qux
+      end
+    end
+  end
+
+  # Begin/end blocks and case statements
+  def quuz
+    case foo
+    when bar
+      begin
+        baz
+      end
     end
   end
 

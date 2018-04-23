@@ -56,7 +56,7 @@ module RipperRubyParser
 
       def process_rescue(exp)
         _, eclass, evar, block, after = exp.shift 5
-        rescue_block = map_process_sexp_body_compact(block)
+        rescue_block = map_process_list_compact block.sexp_body
         rescue_block << nil if rescue_block.empty?
 
         arr = []
@@ -80,7 +80,7 @@ module RipperRubyParser
 
         body = s()
 
-        main = wrap_in_block map_process_sexp_body_compact(main)
+        main = wrap_in_block map_process_list_compact main.sexp_body
         body << main if main
 
         if rescue_block
@@ -201,7 +201,7 @@ module RipperRubyParser
         if stmt.empty?
           s(:iter, call, args)
         else
-          s(:iter, call, args, unwrap_begin(stmt))
+          s(:iter, call, args, stmt)
         end
       end
 
@@ -212,7 +212,7 @@ module RipperRubyParser
         when 1
           statements.first
         else
-          s(:block, *map_unwrap_begin_list(statements))
+          s(:block, *statements)
         end
       end
     end
