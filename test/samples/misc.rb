@@ -72,6 +72,38 @@ class Foo
     end
   end
 
+  # Nested begin/rescue blocks
+  def quuz
+    begin
+      bar
+    rescue
+      begin
+        baz
+      end
+    end
+
+    begin
+      bar
+    rescue
+      begin
+        baz
+      rescue
+        qux
+      end
+    end
+
+    begin
+      bar
+    rescue
+      begin
+        baz
+      end
+      begin
+        qux
+      end
+    end
+  end
+
   # Using splat and double-splat args
   def barbaz(*foo, **bar)
     puts [foo, bar]

@@ -53,7 +53,7 @@ module RipperRubyParser
       end
 
       def map_process_list(list)
-        list.map { |exp| process(exp) }
+        list.map { |exp| unwrap_begin process(exp) }
       end
 
       def unwrap_nil(exp)
