@@ -70,7 +70,7 @@ module RipperRubyParser
 
     def process_stmts(exp)
       _, *statements = shift_all(exp)
-      statements = reject_void_stmt map_process_list statements
+      statements = reject_void_stmt map_unwrap_begin_process_list statements
       case statements.count
       when 0
         s(:void_stmt)

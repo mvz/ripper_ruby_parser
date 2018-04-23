@@ -49,11 +49,11 @@ module RipperRubyParser
       end
 
       def map_process_sexp_body(list)
-        map_process_list(list.sexp_body)
+        map_unwrap_begin_process_list(list.sexp_body)
       end
 
       def map_process_list(list)
-        list.map { |exp| unwrap_begin process(exp) }
+        list.map { |exp| process(exp) }
       end
 
       def unwrap_nil(exp)
@@ -74,6 +74,10 @@ module RipperRubyParser
         else
           exp
         end
+      end
+
+      def map_unwrap_begin_process_list(list)
+        list.map { |exp| unwrap_begin process(exp) }
       end
 
       def handle_argument_list(exp)
