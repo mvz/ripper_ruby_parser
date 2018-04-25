@@ -59,25 +59,26 @@ module RipperRubyParser
         rescue_block = map_process_list_compact block.sexp_body
         rescue_block << nil if rescue_block.empty?
 
-        if eclass
-          if eclass.first.is_a? Symbol
-            eclass = process(eclass)
-            if eclass.sexp_type == :mrhs
-              arr = eclass.sexp_body.first
-            else
-              arr = s(:array, *eclass.sexp_body)
-            end
-          else
-            arr = s(:array, process(eclass[0]))
-          end
-        else
-          arr = s(:array)
-        end
+        capture = if eclass
+                    if eclass.first.is_a? Symbol
+                      eclass = process(eclass)
+                      body = eclass.sexp_body
+                      if eclass.sexp_type == :mrhs
+                        body.first
+                      else
+                        s(:array, *body)
+                      end
+                    else
+                      s(:array, process(eclass[0]))
+                    end
+                  else
+                    s(:array)
+                  end
 
-        arr << create_assignment_sub_type(process(evar), s(:gvar, :$!)) if evar
+        capture << create_assignment_sub_type(process(evar), s(:gvar, :$!)) if evar
 
         s(
-          s(:resbody, arr, *rescue_block),
+          s(:resbody, capture, *rescue_block),
           *process(after))
       end
 
