@@ -146,4 +146,13 @@ class Foo
     end
     puts [foo, bar]
   end
+
+  # rescue
+  def barfoo
+    foo
+  rescue *bar
+    baz
+  rescue *qux => err
+    puts err
+  end
 end
