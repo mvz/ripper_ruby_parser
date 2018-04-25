@@ -152,6 +152,8 @@ class Foo
     foo
   rescue *bar
     baz
+  rescue *quuz, Bar
+    zyxxy
   rescue *qux => err
     puts err
   end

@@ -44,7 +44,8 @@ module RipperRubyParser
 
       def process_mrhs_new_from_args(exp)
         _, inner, last = exp.shift 3
-        inner = map_process_list inner.sexp_body
+        inner = process(inner)
+        inner = inner.sexp_body
         inner.push process(last) if last
         s(:fake_array, *inner)
       end
