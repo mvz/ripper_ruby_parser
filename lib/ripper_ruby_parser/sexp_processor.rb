@@ -14,8 +14,6 @@ module RipperRubyParser
     def initialize(filename: nil)
       super()
 
-      # TODO: Find these automatically
-
       @processors[:@int] = :process_at_int
       @processors[:@float] = :process_at_float
       @processors[:@CHAR] = :process_at_CHAR
