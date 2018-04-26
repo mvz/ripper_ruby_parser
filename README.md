@@ -16,7 +16,8 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 ## Known incompatibilities
 
-* Won't handle non-UTF-8 files, just like regular Ruby
+* Won't handle non-UTF-8 files without an encoding comment, just like regular
+  Ruby
 * Keeps carriage return characters in heredocs that include them
 * Does not attempt to match RubyParser's line numbering bugs
 * Handles unicode escapes without braces
