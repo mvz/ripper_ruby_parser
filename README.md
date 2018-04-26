@@ -14,6 +14,13 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 * Should handle 1.9 and later syntax gracefully.
 * Requires MRI 2.2 or higher
 
+## Known incompatibilities
+
+* Won't handle non-UTF-8 files, just like regular Ruby
+* Keeps carriage return characters in heredocs that include them
+* Does not attempt to match RubyParser's line numbering bugs
+* Handles unicode escapes without braces
+
 ## Install
 
 * gem install ripper_ruby_parser
