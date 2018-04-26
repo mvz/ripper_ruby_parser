@@ -10,7 +10,7 @@ module RipperRubyParser
         case value.sexp_type
         when :mrhs
           value.sexp_type = :svalue
-        when :fake_array
+        when :args
           value = s(:svalue, s(:array, *value.sexp_body))
         else
           value = unwrap_begin(value)
@@ -31,7 +31,7 @@ module RipperRubyParser
         right = process(right)
 
         case right.sexp_type
-        when :fake_array
+        when :args
           right[0] = :array
         when :mrhs
           right = right[1]
@@ -44,9 +44,9 @@ module RipperRubyParser
 
       def process_mrhs_new_from_args(exp)
         _, inner, last = exp.shift 3
-        inner = map_process_list inner.sexp_body
-        inner.push process(last) if last
-        s(:fake_array, *inner)
+        process(inner).tap do |result|
+          result.push process(last) if last
+        end
       end
 
       def process_mrhs_add_star(exp)

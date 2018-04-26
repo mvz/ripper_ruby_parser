@@ -360,6 +360,26 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux)))
       end
 
+      it 'works rescuing a splatted list of exception types' do
+        'begin; foo; rescue *bar; baz; end'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:splat, s(:call, nil, :bar)),
+                                s(:call, nil, :baz)))
+      end
+
+      it 'works rescuing a complex list of exception types' do
+        'begin; foo; rescue *bar, Baz; qux; end'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array,
+                                  s(:splat, s(:call, nil, :bar)),
+                                  s(:const, :Baz)),
+                                s(:call, nil, :qux)))
+      end
+
       it 'works in the postfix case' do
         'foo rescue bar'.
           must_be_parsed_as s(:rescue,
