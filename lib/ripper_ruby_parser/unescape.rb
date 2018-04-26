@@ -48,6 +48,7 @@ module RipperRubyParser
       string.gsub(/\\(
         '   | # single quote
         \\  | # backslash
+        [ ] | # space
         \n    # newline
       )/x) do
         Regexp.last_match[1]

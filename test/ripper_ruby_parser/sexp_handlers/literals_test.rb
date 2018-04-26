@@ -535,12 +535,22 @@ describe RipperRubyParser::Parser do
         "%w(foo\\\nbar baz)".
           must_be_parsed_as s(:array, s(:str, "foo\nbar"), s(:str, 'baz'))
       end
+
+      it 'handles escaped spaces' do
+        '%w(foo bar\ baz)'.
+          must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar baz'))
+      end
     end
 
     describe 'for word list literals with %W delimiter' do
       it 'works for the simple case' do
         '%W(foo bar)'.
           must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar'))
+      end
+
+      it 'handles escaped spaces' do
+        '%W(foo bar\ baz)'.
+          must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar baz'))
       end
 
       it 'correctly handles interpolation' do
