@@ -23,8 +23,8 @@ module RipperRubyParser
         coll = process(coll)
         var = process(var)
 
-        assgn = if var.sexp_type == :mlhs
-                  s(:masgn, s(:array, *create_multiple_assignment_sub_types(var.sexp_body)))
+        assgn = if var.sexp_type == :masgn
+                  var
                 else
                   s(:lasgn, var[1])
                 end
