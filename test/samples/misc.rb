@@ -139,6 +139,10 @@ class Foo
     puts [foo, bar]
   end
 
+  def barbaz_block(*foo, **bar, &block)
+    puts [foo, bar]
+  end
+
   def self.barbaz(*foo, **bar)
     puts [foo, bar]
     foo.each do |baz, **qux|
