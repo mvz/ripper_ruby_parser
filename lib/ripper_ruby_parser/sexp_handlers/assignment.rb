@@ -24,9 +24,7 @@ module RipperRubyParser
         _, left, right = exp.shift 3
 
         left = process left
-
-        left = left[1] if left.sexp_type == :masgn
-        left = create_multiple_assignment_sub_types left.sexp_body
+        left = left[1].sexp_body
 
         right = process(right)
 
@@ -56,24 +54,37 @@ module RipperRubyParser
       def process_mlhs_add_star(exp)
         _, args, splatarg = exp.shift 3
         items = process args
-        items << s(:splat, process(splatarg))
+
+        splat = process(splatarg)
+        splat_item = if splat.nil?
+                       s(:splat)
+                     else
+                       s(:splat, create_valueless_assignment_sub_type(splat))
+                     end
+
+        items[1] << splat_item
+        items
       end
 
       def process_mlhs_add_post(exp)
         _, base, rest = exp.shift 3
-        process(base).push(*process(rest).sexp_body)
+        items = process(base)
+        rest = process(rest)
+        items[1].push(*rest[1].sexp_body)
+        items
       end
 
       def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
         items = process(contents)
+      end
 
-        if items.sexp_type == :mlhs
-          s(:masgn, s(:array, *create_multiple_assignment_sub_types(items.sexp_body)))
-        else
-          items
-        end
+      def process_mlhs(exp)
+        _, *rest = shift_all exp
+
+        items = map_process_list(rest)
+        s(:masgn, s(:array, *create_multiple_assignment_sub_types(items)))
       end
 
       def process_opassign(exp)
@@ -90,15 +101,7 @@ module RipperRubyParser
 
       def create_multiple_assignment_sub_types(sexp_list)
         sexp_list.map! do |item|
-          if item.sexp_type == :splat
-            if item[1].nil?
-              s(:splat)
-            else
-              s(:splat, create_valueless_assignment_sub_type(item[1]))
-            end
-          else
-            create_valueless_assignment_sub_type item
-          end
+          create_valueless_assignment_sub_type item
         end
       end
 

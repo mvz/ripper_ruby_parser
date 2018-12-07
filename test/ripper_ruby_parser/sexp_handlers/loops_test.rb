@@ -117,5 +117,31 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz), true)
       end
     end
+
+    describe 'for the for statement' do
+      it 'works with a single assignment' do
+        'for foo in bar; end'.
+          must_be_parsed_as s(:for, s(:call, nil, :bar), s(:lasgn, :foo))
+      end
+
+      it 'works with explicit multiple assignment' do
+        'for foo, bar in baz; end'.
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :baz),
+                              s(:masgn,
+                                s(:array,
+                                  s(:lasgn, :foo),
+                                  s(:lasgn, :bar))))
+      end
+
+      it 'works with multiple assignment with trailing comma' do
+        'for foo, in bar; end'.
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:masgn,
+                                s(:array,
+                                  s(:lasgn, :foo))))
+      end
+    end
   end
 end
