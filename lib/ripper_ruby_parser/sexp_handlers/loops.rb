@@ -21,7 +21,13 @@ module RipperRubyParser
       def process_for(exp)
         _, var, coll, block = exp.shift 4
         coll = process(coll)
-        assgn = s(:lasgn, process(var)[1])
+        var = process(var)
+
+        assgn = if var.sexp_type == :mlhs
+                  s(:masgn, s(:array, *create_multiple_assignment_sub_types(var.sexp_body)))
+                else
+                  s(:lasgn, var[1])
+                end
         block = unwrap_nil process(block)
         if block
           s(:for, coll, assgn, block)
