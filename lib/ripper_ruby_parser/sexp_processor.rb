@@ -236,6 +236,7 @@ module RipperRubyParser
       body = process(exp)
 
       return body if body.empty?
+
       if body.sexp_type == :block
         body.sexp_body
       else

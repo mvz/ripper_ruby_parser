@@ -12,6 +12,7 @@ module RipperRubyParser
       def process_hash(exp)
         _, body = exp.shift 2
         return s(:hash) unless body
+
         _, elems = body
         s(:hash, *make_hash_items(elems))
       end

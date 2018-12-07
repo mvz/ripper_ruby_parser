@@ -156,11 +156,13 @@ module RipperRubyParser
 
       def handle_normal_arguments(normal)
         return [] unless normal
+
         map_process_list normal
       end
 
       def handle_default_arguments(defaults)
         return [] unless defaults
+
         defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
       end
 
@@ -174,6 +176,7 @@ module RipperRubyParser
 
       def handle_kwargs(kwargs)
         return [] unless kwargs
+
         kwargs.map do |sym, val|
           symbol = process(sym)[1]
           if val
@@ -186,11 +189,13 @@ module RipperRubyParser
 
       def handle_double_splat(doublesplat)
         return [] unless doublesplat
+
         [s(:dsplat, process(doublesplat))]
       end
 
       def handle_block_argument(block)
         return [] unless block
+
         [process(block)]
       end
 

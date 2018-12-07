@@ -240,7 +240,6 @@ describe RipperRubyParser::Parser do
         'begin; foo; end.bar'.
           must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
       end
-
     end
 
     describe 'for rescue/else' do
