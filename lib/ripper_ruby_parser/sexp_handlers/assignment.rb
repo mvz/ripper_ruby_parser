@@ -77,7 +77,7 @@ module RipperRubyParser
       def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
-        items = process(contents)
+        process(contents)
       end
 
       def process_mlhs(exp)
