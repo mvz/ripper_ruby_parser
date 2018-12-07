@@ -128,8 +128,7 @@ module RipperRubyParser
       end
 
       def kwrest_param(params)
-        last_param = params[-1].to_s
-        found = last_param =~ /^\*\*(.*)/
+        found = params.find { |param| param.to_s =~ /^\*\*(.*)/ }
         Regexp.last_match[1].to_sym if found
       end
 
