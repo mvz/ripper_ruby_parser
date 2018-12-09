@@ -2,8 +2,6 @@
 
 by Matijs van Zuijlen
 
-http://www.github.com/mvz/ripper_ruby_parser
-
 ## Description
 
 Parse with Ripper, produce sexps that are compatible with RubyParser.
@@ -24,7 +22,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 ## Install
 
-* gem install ripper_ruby_parser
+    gem install ripper_ruby_parser
 
 ## Synopsis
 
@@ -38,7 +36,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 ## Requirements
 
 * Ruby 2.2 or higher
-* sexp_processor
+* `sexp_processor`
 
 ## Hacking and contributing
 
