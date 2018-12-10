@@ -39,6 +39,7 @@ module MiniTest
         assert_nil result
       else
         assert_equal sexp, result
+        assert_equal sexp.to_s, result.to_s
       end
     end
 

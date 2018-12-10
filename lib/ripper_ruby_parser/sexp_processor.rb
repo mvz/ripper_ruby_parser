@@ -16,6 +16,7 @@ module RipperRubyParser
 
       @processors[:@int] = :process_at_int
       @processors[:@float] = :process_at_float
+      @processors[:@rational] = :process_at_rational
       @processors[:@CHAR] = :process_at_CHAR
       @processors[:@label] = :process_at_label
 
@@ -159,6 +160,10 @@ module RipperRubyParser
 
     def process_at_float(exp)
       make_literal(exp, &:to_f)
+    end
+
+    def process_at_rational(exp)
+      make_literal(exp, &:to_r)
     end
 
     # character literals
