@@ -93,3 +93,8 @@ bar baz]
 bar baz]
 %r[fool\\
 bar baz]
+
+eval(<<FOO, __FILE__, __LINE__)
+bar
+baz
+FOO
