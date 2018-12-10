@@ -15,6 +15,20 @@ module MiniTest
       exp.to_s.gsub(/\), /, "),\n")
     end
 
+    def fix_lines(exp)
+      return s(:lit, :__LINE__) if exp.sexp_type == :lit && exp.line == exp[1]
+
+      inner = exp.map do |sub_exp|
+        if sub_exp.is_a? Sexp
+          fix_lines sub_exp
+        else
+          sub_exp
+        end
+      end
+
+      s(*inner)
+    end
+
     def to_comments(exp)
       inner = exp.map do |sub_exp|
         if sub_exp.is_a? Sexp
@@ -48,6 +62,9 @@ module MiniTest
       newparser = RipperRubyParser::Parser.new
       expected = oldparser.parse code.dup
       result = newparser.parse code
+      expected = to_comments fix_lines expected
+      result = to_comments fix_lines result
+      assert_equal expected, result
       assert_equal formatted(expected), formatted(result)
     end
   end
