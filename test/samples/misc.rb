@@ -171,7 +171,3 @@ class Foo
   alias :+ -
   alias next bar
 end
-
-if begin foo end
-  bar
-end

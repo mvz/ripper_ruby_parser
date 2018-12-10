@@ -14,7 +14,7 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         s(:if,
-          process(cond),
+          unwrap_begin(process(cond)),
           handle_consequent(truepart),
           handle_consequent(falsepart))
       end

@@ -352,6 +352,17 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :quuz),
                                 nil))
       end
+
+      it 'cleans up begin..end block in condition' do
+        'if foo; bar; elsif begin baz end; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                nil))
+      end
     end
 
     describe 'for case block' do
