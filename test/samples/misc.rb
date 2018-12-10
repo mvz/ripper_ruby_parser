@@ -170,4 +170,14 @@ class Foo
   alias foo :bar
   alias :+ -
   alias next bar
+
+  # rescue with assignment
+  foo = bar rescue baz
+  foo = bar baz rescue qux
+  foo = bar(baz) rescue qux
+  foo, bar = baz qux rescue quuz
+  @foo = bar baz rescue qux
+  @@foo = bar baz rescue qux
+  FOO = bar baz rescue qux
+  $foo = bar baz rescue qux
 end

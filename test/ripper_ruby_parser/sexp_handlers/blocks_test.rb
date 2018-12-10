@@ -388,6 +388,68 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :bar)))
       end
 
+      it 'works in the postfix case with assignment in compat mode' do
+        parser = RipperRubyParser::Parser.new
+        parser.extra_compatible = true
+        result = parser.parse 'foo = bar rescue baz'
+        result.must_equal s(:lasgn, :foo,
+                            s(:rescue,
+                              s(:call, nil, :bar),
+                              s(:resbody, s(:array), s(:call, nil, :baz))))
+      end
+
+      it 'works in the postfix case with assignment with argument with brackets in compat mode' do
+        parser = RipperRubyParser::Parser.new
+        parser.extra_compatible = true
+        result = parser.parse 'foo = bar(baz) rescue qux'
+        result.must_equal s(:lasgn, :foo,
+                            s(:rescue,
+                              s(:call, nil, :bar, s(:call, nil, :baz)),
+                              s(:resbody, s(:array), s(:call, nil, :qux))))
+      end
+
+      it 'works in the postfix case with assignment with argument without brackets in compat mode' do
+        parser = RipperRubyParser::Parser.new
+        parser.extra_compatible = true
+        result = parser.parse 'foo = bar baz rescue qux'
+        result.must_equal s(:rescue,
+                            s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                            s(:resbody, s(:array), s(:call, nil, :qux)))
+      end
+
+      it 'works in the postfix case with assignment' do
+        'foo = bar rescue baz'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar),
+                                s(:resbody, s(:array), s(:call, nil, :baz))))
+      end
+
+      it 'works in the postfix case with assignment with argument' do
+        'foo = bar(baz) rescue qux'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar, s(:call, nil, :baz)),
+                                s(:resbody, s(:array), s(:call, nil, :qux))))
+      end
+
+      it 'works in the postfix case with assignment with argument without brackets' do
+        'foo = bar baz rescue qux'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar, s(:call, nil, :baz)),
+                                s(:resbody, s(:array), s(:call, nil, :qux))))
+      end
+
+      it 'works in the postfix case with multiple assignment' do
+        'foo, bar = baz rescue qux'.
+          must_be_parsed_as s(:rescue,
+                              s(:masgn,
+                                s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                                s(:to_ary, s(:call, nil, :baz))),
+                              s(:resbody, s(:array), s(:call, nil, :qux)))
+      end
+
       it 'works with a nested begin..end block' do
         'begin; foo; rescue; begin; bar; end; end'.
           must_be_parsed_as s(:rescue,
