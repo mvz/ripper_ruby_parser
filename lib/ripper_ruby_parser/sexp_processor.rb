@@ -10,8 +10,9 @@ module RipperRubyParser
     include Unescape
 
     attr_reader :filename
+    attr_reader :extra_compatible
 
-    def initialize(filename: nil)
+    def initialize(filename: nil, extra_compatible: nil)
       super()
 
       @processors[:@int] = :process_at_int
@@ -32,6 +33,7 @@ module RipperRubyParser
       @processors[:@tstring_content] = :process_at_tstring_content
 
       @filename = filename
+      @extra_compatible = extra_compatible
 
       @errors = []
 
