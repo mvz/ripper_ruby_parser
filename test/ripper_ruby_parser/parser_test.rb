@@ -137,57 +137,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for the undef statement' do
-      it 'works with a single bareword identifier' do
-        'undef foo'.
-          must_be_parsed_as s(:undef, s(:lit, :foo))
-      end
-
-      it 'works with a single symbol' do
-        'undef :foo'.
-          must_be_parsed_as s(:undef, s(:lit, :foo))
-      end
-
-      it 'works with multiple bareword identifiers' do
-        'undef foo, bar'.
-          must_be_parsed_as s(:block,
-                              s(:undef, s(:lit, :foo)),
-                              s(:undef, s(:lit, :bar)))
-      end
-
-      it 'works with multiple bareword symbols' do
-        'undef :foo, :bar'.
-          must_be_parsed_as s(:block,
-                              s(:undef, s(:lit, :foo)),
-                              s(:undef, s(:lit, :bar)))
-      end
-    end
-
-    describe 'for the alias statement' do
-      it 'works with regular barewords' do
-        'alias foo bar'.
-          must_be_parsed_as s(:alias,
-                              s(:lit, :foo), s(:lit, :bar))
-      end
-
-      it 'works with symbols' do
-        'alias :foo :bar'.
-          must_be_parsed_as s(:alias,
-                              s(:lit, :foo), s(:lit, :bar))
-      end
-
-      it 'works with operator barewords' do
-        'alias + -'.
-          must_be_parsed_as s(:alias,
-                              s(:lit, :+), s(:lit, :-))
-      end
-
-      it 'works with global variables' do
-        'alias $foo $bar'.
-          must_be_parsed_as s(:valias, :$foo, :$bar)
-      end
-    end
-
     describe 'for arguments' do
       it 'works for a simple case with splat' do
         'foo *bar'.

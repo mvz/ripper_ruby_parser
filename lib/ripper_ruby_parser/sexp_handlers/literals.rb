@@ -96,7 +96,11 @@ module RipperRubyParser
 
       def process_symbol_literal(exp)
         _, symbol = exp.shift 2
-        process(symbol)
+        if symbol.sexp_type == :symbol
+          process(symbol)
+        else
+          handle_symbol_content(symbol)
+        end
       end
 
       def process_symbol(exp)
