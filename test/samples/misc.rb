@@ -71,6 +71,7 @@ class Foo
     foo = *begin; bar; end
     foo = bar, *begin; baz; end
     foo, bar = *begin; baz; end
+    foo if begin bar end
   end
 
   # Nested do and begin blocks
@@ -169,4 +170,8 @@ class Foo
   alias foo :bar
   alias :+ -
   alias next bar
+end
+
+if begin foo end
+  bar
 end

@@ -58,6 +58,20 @@ describe RipperRubyParser::Parser do
                               s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
                               s(:call, nil, :baz), true)
       end
+
+      it 'cleans up begin..end block in condition' do
+        'while begin foo end; bar; end'.
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
+      end
+
+      it 'cleans up begin..end block in condition in the postfix case' do
+        'foo while begin bar end'.
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), true)
+      end
     end
 
     describe 'for the until statement' do
@@ -115,6 +129,20 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:while,
                               s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
                               s(:call, nil, :baz), true)
+      end
+
+      it 'cleans up begin..end block in condition' do
+        'until begin foo end; bar; end'.
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), true)
+      end
+
+      it 'cleans up begin..end block in condition in the postfix case' do
+        'foo until begin bar end'.
+          must_be_parsed_as s(:until,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), true)
       end
     end
 
