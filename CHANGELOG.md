@@ -13,6 +13,7 @@
   value, as a receiver, as a condition
 * Fix handling of for loops that assign to multiple loop variables
 * Handle aliasing for method names that are keywords, e.g., `alias next succ`
+* Do not crash on rational literals
 
 ## 1.4.2 / 2018-04-03
 
