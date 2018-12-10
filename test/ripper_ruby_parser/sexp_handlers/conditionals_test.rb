@@ -116,6 +116,21 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :qux),
                               s(:call, nil, :baz))
       end
+
+      it 'cleans up begin..end block in condition' do
+        'if begin foo end; bar; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar), nil)
+      end
+
+      it 'handles special conditions inside begin..end block' do
+        'if begin foo..bar end; baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:flip2, s(:call, nil, :foo), s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              nil)
+      end
     end
 
     describe 'for postfix if' do
@@ -157,6 +172,13 @@ describe RipperRubyParser::Parser do
                               s(:call, s(:call, nil, :foo), :=~, s(:call, nil, :bar)),
                               nil,
                               s(:call, nil, :baz))
+      end
+
+      it 'cleans up begin..end block in condition' do
+        'foo if begin bar end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo), nil)
       end
     end
 
@@ -336,6 +358,17 @@ describe RipperRubyParser::Parser do
                                     :=~,
                                     s(:call, nil, :qux))),
                                 s(:call, nil, :quuz),
+                                nil))
+      end
+
+      it 'cleans up begin..end block in condition' do
+        'if foo; bar; elsif begin baz end; qux; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
                                 nil))
       end
     end

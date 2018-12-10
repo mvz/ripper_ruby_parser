@@ -14,7 +14,7 @@ module RipperRubyParser
         _, cond, truepart, falsepart = exp.shift 4
 
         s(:if,
-          process(cond),
+          unwrap_begin(process(cond)),
           handle_consequent(truepart),
           handle_consequent(falsepart))
       end
@@ -80,16 +80,16 @@ module RipperRubyParser
       private
 
       def handle_condition(cond)
-        cond = process(cond)
-        if (cond.sexp_type == :lit) && cond[1].is_a?(Regexp)
-          s(:match, cond)
-        elsif cond.sexp_type == :dot2
-          s(:flip2, *cond[1..-1])
-        elsif cond.sexp_type == :dot3
-          s(:flip3, *cond[1..-1])
-        else
-          cond
+        cond = unwrap_begin process(cond)
+        case cond.sexp_type
+        when :lit
+          return s(:match, cond) if cond[1].is_a?(Regexp)
+        when :dot2
+          return s(:flip2, *cond[1..-1])
+        when :dot3
+          return s(:flip3, *cond[1..-1])
         end
+        cond
       end
 
       def handle_consequent(exp)
