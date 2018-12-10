@@ -80,7 +80,7 @@ module RipperRubyParser
       private
 
       def handle_condition(cond)
-        cond = process(cond)
+        cond = unwrap_begin process(cond)
         if (cond.sexp_type == :lit) && cond[1].is_a?(Regexp)
           s(:match, cond)
         elsif cond.sexp_type == :dot2
@@ -88,7 +88,7 @@ module RipperRubyParser
         elsif cond.sexp_type == :dot3
           s(:flip3, *cond[1..-1])
         else
-          unwrap_begin cond
+          cond
         end
       end
 

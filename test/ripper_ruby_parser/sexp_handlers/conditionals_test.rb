@@ -123,6 +123,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:call, nil, :bar), nil)
       end
+
+      it 'handles special conditions inside begin..end block' do
+        'if begin foo..bar end; baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:flip2, s(:call, nil, :foo), s(:call, nil, :bar)),
+                              s(:call, nil, :baz),
+                              nil)
+      end
     end
 
     describe 'for postfix if' do
