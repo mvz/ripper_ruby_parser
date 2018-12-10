@@ -47,7 +47,7 @@ module RipperRubyParser
         _, args = exp.shift 2
 
         args.map! do |sub_exp|
-          s(:undef, make_method_name_literal(sub_exp))
+          s(:undef, process(sub_exp))
         end
 
         if args.size == 1
@@ -60,9 +60,7 @@ module RipperRubyParser
       def process_alias(exp)
         _, left, right = exp.shift 3
 
-        s(:alias,
-          make_method_name_literal(left),
-          make_method_name_literal(right))
+        s(:alias, process(left), process(right))
       end
 
       private
@@ -72,10 +70,6 @@ module RipperRubyParser
         result = yield
         @in_method_body = false
         result
-      end
-
-      def make_method_name_literal(exp)
-        process(exp).tap { |it| it[0] = :lit }
       end
 
       def method_body(exp)

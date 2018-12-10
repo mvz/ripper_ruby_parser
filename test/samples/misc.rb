@@ -161,4 +161,12 @@ class Foo
   rescue *qux => err
     puts err
   end
+
+  # alias
+  alias foo bar
+  alias :foo bar
+  alias :foo :bar
+  alias foo :bar
+  alias :+ -
+  alias next bar
 end
