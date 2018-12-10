@@ -3,12 +3,16 @@
 ## 1.4.3 / Unreleased
 
 * Process embedded documents as comments
-* Fix handling of array element operator assignment when assignee is a
-  begin..end block
-* Enhance testing of begin..end handling
 * Handle \u{xxxx} form of unicode escape sequence
-* Add work-around for Ripper not parsing kwrest args as locals
-* Handle heredocs with single quotes
+* Specifically treat keyword rest arguments (double spats) as local variables.
+  All other arguments are already treated as such by Ripper, but these are not.
+  A hacky workaround was added to adjust this
+* Do not unescape heredocs with single quotes. These are heredocs where the
+  marker is a single-quoted string
+* Increase compatibility when handling a begin..end block, e.g., as an assigned
+  value, as a receiver, as a condition
+* Fix handling of for loops that assign to multiple loop variables
+* Handle aliasing for method names that are keywords, e.g., `alias next succ`
 
 ## 1.4.2 / 2018-04-03
 
@@ -16,7 +20,7 @@
 * Handle line continuations in stringlike literals
   - Handle line continuations in string and regexp literals
   - Handle escaped line continuations
-  - Hanlde line continuations in word and symbol list literals
+  - Handle line continuations in word and symbol list literals
 * Force encoding of string literals to UTF-8 if the result is valid
 * Fix handling of range operators with float literals
 
