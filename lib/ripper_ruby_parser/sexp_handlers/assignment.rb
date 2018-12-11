@@ -4,8 +4,10 @@ module RipperRubyParser
     module Assignment
       def process_assign(exp)
         _, lvalue, value = exp.shift 3
-        if extra_compatible && value.sexp_type == :rescue_mod && value[1].sexp_type == :command
-          return process s(:rescue_mod, s(:assign, lvalue, value[1]), value[2])
+        if extra_compatible && value.sexp_type == :rescue_mod
+          if [:command, :command_call].include? value[1].sexp_type
+            return process s(:rescue_mod, s(:assign, lvalue, value[1]), value[2])
+          end
         end
 
         lvalue = process(lvalue)

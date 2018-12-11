@@ -443,6 +443,15 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :bar)))
       end
 
+      it 'works when the fallback value is a keyword' do
+        'foo rescue next'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:next)))
+      end
+
       it 'works with assignment' do
         'foo = bar rescue baz'.
           must_be_parsed_as s(:lasgn, :foo,
@@ -471,6 +480,21 @@ describe RipperRubyParser::Parser do
                          s(:resbody, s(:array), s(:call, nil, :qux))))
                    end
         'foo = bar baz rescue qux'.must_be_parsed_as expected
+      end
+
+      it 'works with assignment with class method call with argument without brackets' do
+        expected = if RUBY_VERSION < '2.4.0'
+                     s(:rescue,
+                       s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                       s(:resbody, s(:array), s(:call, nil, :quuz)))
+                   else
+                     s(:lasgn, :foo,
+                       s(:rescue,
+                         s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                         s(:resbody, s(:array), s(:call, nil, :quuz))))
+                   end
+        'foo = Bar.baz qux rescue quuz'.
+          must_be_parsed_as expected
       end
 
       it 'works with multiple assignment' do
@@ -509,6 +533,13 @@ describe RipperRubyParser::Parser do
           result.must_equal s(:rescue,
                               s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
                               s(:resbody, s(:array), s(:call, nil, :qux)))
+        end
+
+        it 'works with assignment with class method call with argument without brackets' do
+          result = parser.parse 'foo = Bar.baz qux rescue quuz'
+          result.must_equal s(:rescue,
+                              s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                              s(:resbody, s(:array), s(:call, nil, :quuz)))
         end
       end
     end
