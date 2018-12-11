@@ -435,11 +435,17 @@ describe RipperRubyParser::Parser do
       end
 
       it 'works in the postfix case with assignment with argument without brackets' do
-        'foo = bar baz rescue qux'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux))))
+        expected = if RUBY_VERSION < '2.4.0'
+                     s(:rescue,
+                       s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                       s(:resbody, s(:array), s(:call, nil, :qux)))
+                   else
+                     s(:lasgn, :foo,
+                       s(:rescue,
+                         s(:call, nil, :bar, s(:call, nil, :baz)),
+                         s(:resbody, s(:array), s(:call, nil, :qux))))
+                   end
+        'foo = bar baz rescue qux'.must_be_parsed_as expected
       end
 
       it 'works in the postfix case with multiple assignment' do
