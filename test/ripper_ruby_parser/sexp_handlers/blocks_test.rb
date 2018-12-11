@@ -388,33 +388,34 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :bar)))
       end
 
-      it 'works in the postfix case with assignment in compat mode' do
-        parser = RipperRubyParser::Parser.new
-        parser.extra_compatible = true
-        result = parser.parse 'foo = bar rescue baz'
-        result.must_equal s(:lasgn, :foo,
-                            s(:rescue,
-                              s(:call, nil, :bar),
-                              s(:resbody, s(:array), s(:call, nil, :baz))))
-      end
+      describe 'when extra compatibility is turned on' do
+        let(:parser) { RipperRubyParser::Parser.new }
+        before do
+          parser.extra_compatible = true
+        end
 
-      it 'works in the postfix case with assignment with argument with brackets in compat mode' do
-        parser = RipperRubyParser::Parser.new
-        parser.extra_compatible = true
-        result = parser.parse 'foo = bar(baz) rescue qux'
-        result.must_equal s(:lasgn, :foo,
-                            s(:rescue,
-                              s(:call, nil, :bar, s(:call, nil, :baz)),
-                              s(:resbody, s(:array), s(:call, nil, :qux))))
-      end
+        it 'works in the postfix case with assignment' do
+          result = parser.parse 'foo = bar rescue baz'
+          result.must_equal s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar),
+                                s(:resbody, s(:array), s(:call, nil, :baz))))
+        end
 
-      it 'works in the postfix case with assignment with argument without brackets in compat mode' do
-        parser = RipperRubyParser::Parser.new
-        parser.extra_compatible = true
-        result = parser.parse 'foo = bar baz rescue qux'
-        result.must_equal s(:rescue,
-                            s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                            s(:resbody, s(:array), s(:call, nil, :qux)))
+        it 'works in the postfix case with assignment with argument with brackets' do
+          result = parser.parse 'foo = bar(baz) rescue qux'
+          result.must_equal s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar, s(:call, nil, :baz)),
+                                s(:resbody, s(:array), s(:call, nil, :qux))))
+        end
+
+        it 'works in the postfix case with assignment with argument without brackets' do
+          result = parser.parse 'foo = bar baz rescue qux'
+          result.must_equal s(:rescue,
+                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                              s(:resbody, s(:array), s(:call, nil, :qux)))
+        end
       end
 
       it 'works in the postfix case with assignment' do
