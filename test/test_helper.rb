@@ -60,6 +60,7 @@ module MiniTest
     def assert_parsed_as_before(code)
       oldparser = RubyParser.new
       newparser = RipperRubyParser::Parser.new
+      newparser.extra_compatible = true
       expected = oldparser.parse code.dup
       result = newparser.parse code
       expected = to_comments fix_lines expected
