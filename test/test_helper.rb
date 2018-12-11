@@ -65,7 +65,6 @@ module MiniTest
       result = newparser.parse code
       expected = to_comments fix_lines expected
       result = to_comments fix_lines result
-      assert_equal expected, result
       assert_equal formatted(expected), formatted(result)
     end
   end
