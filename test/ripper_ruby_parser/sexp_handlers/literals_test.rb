@@ -358,13 +358,22 @@ describe RipperRubyParser::Parser do
                                 s(:str, "\n"))
         end
 
-        # TODO: Behave differently in extra_compatible mode.
         it 'converts to unicode after interpolation' do
           '"#{foo}2\302\275"'.
             must_be_parsed_as s(:dstr,
                                 '',
                                 s(:evstr, s(:call, nil, :foo)),
                                 s(:str, '2½'))
+        end
+
+        it 'does not convert to unicode after interpolation in extra-compatible mode' do
+          parser = RipperRubyParser::Parser.new
+          parser.extra_compatible = true
+          result = parser.parse '"#{foo}2\302\275"'
+          result.must_equal s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "2\xC2\xBD".force_encoding('ascii-8bit')))
         end
       end
 

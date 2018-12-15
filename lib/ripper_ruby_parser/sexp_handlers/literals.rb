@@ -151,7 +151,18 @@ module RipperRubyParser
       private
 
       def extract_string_parts(list)
-        parts = map_process_list list
+        parts = []
+
+        unless list.empty?
+          parts << process(list.shift)
+          list.each do |item|
+            if extra_compatible && item.sexp_type == :@tstring_content
+              parts << alternative_process_at_tstring_content(item)
+            else
+              parts << process(item)
+            end
+          end
+        end
 
         string = ''
         while !parts.empty? && parts.first.sexp_type == :str
@@ -162,6 +173,29 @@ module RipperRubyParser
         rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
 
         return string, rest
+      end
+
+      def alternative_process_at_tstring_content(exp)
+        _, content, _, delim = exp.shift 4
+        string = case delim
+                 when /^<<[-~]?'/
+                   content
+                 when /^<</
+                   unescape(content)
+                 when '"', '`', ':"', /^%Q.$/, /^%.$/
+                   unescape(content)
+                 when /^%[WI].$/
+                   unescape_wordlist_word(content)
+                 when "'", ":'", /^%q.$/
+                   simple_unescape(content)
+                 when '/', /^%r.$/
+                   unescape_regexp(content)
+                 when /^%[wi].$/
+                   simple_unescape_wordlist_word(content)
+                 else
+                   content
+                 end
+        s(:str, string)
       end
 
       def character_flags_to_numerical(flags)

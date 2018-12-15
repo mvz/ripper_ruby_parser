@@ -6,6 +6,8 @@
 %w(foo\nbar baz)
 
 "foo\u273bbar"
+"2\302\275"
+"#{foo}2\302\275"
 
 # Encoding
 "日本語"
