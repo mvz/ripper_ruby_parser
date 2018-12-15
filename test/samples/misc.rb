@@ -193,4 +193,9 @@ class Foo
 
   def (bar = (@@baz = qux)).foo
   end
+
+  # Assignment to global variables inside method argument
+  # definitions.
+  def foo(bar = ($baz = qux))
+  end
 end
