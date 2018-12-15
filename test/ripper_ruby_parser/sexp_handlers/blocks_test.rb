@@ -538,7 +538,9 @@ describe RipperRubyParser::Parser do
         it 'works with assignment with class method call with argument without brackets' do
           result = parser.parse 'foo = Bar.baz qux rescue quuz'
           result.must_equal s(:rescue,
-                              s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                              s(:lasgn,
+                                :foo,
+                                s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
                               s(:resbody, s(:array), s(:call, nil, :quuz)))
         end
       end
