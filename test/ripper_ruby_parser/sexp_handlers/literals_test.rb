@@ -351,6 +351,15 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:array, s(:lit, :foo), s(:str, 'bar'))),
                                 s(:str, "\n"))
         end
+
+        # TODO: Behave differently in extra_compatible mode.
+        it 'converts to unicode after interpolation' do
+          '"#{foo}2\302\275"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, '2½'))
+        end
       end
 
       describe 'with single quoted strings' do
