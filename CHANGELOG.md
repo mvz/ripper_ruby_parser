@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.4.3 / Unreleased
+## Unreleased
 
 * Process embedded documents as comments
 * Handle \u{xxxx} form of unicode escape sequence
@@ -14,6 +14,11 @@
 * Fix handling of for loops that assign to multiple loop variables
 * Handle aliasing for method names that are keywords, e.g., `alias next succ`
 * Do not crash on rational literals
+* Restore `#extra_compatible` flag.
+* Match RubyParser bug in handling rescue modifier when combined with
+  assignment. See RubyParser
+  [issue #227](https://github.com/seattlerb/ruby_parser/issues/227.).
+  This behavior is only enabled when `#extra_compatible` is set to true.
 
 ## 1.4.2 / 2018-04-03
 
