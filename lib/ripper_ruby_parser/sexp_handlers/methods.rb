@@ -4,18 +4,26 @@ module RipperRubyParser
     module Methods
       def process_def(exp)
         _, ident, params, body = exp.shift 4
+
         ident, pos = extract_node_symbol_with_position ident
-        params = convert_special_args(process(params))
-        kwrest = kwrest_param(params)
-        body = with_kwrest(kwrest) { method_body(body) }
+
+        in_method do
+          params = convert_special_args(process(params))
+          kwrest = kwrest_param(params)
+          body = with_kwrest(kwrest) { method_body(body) }
+        end
+
         with_position(pos, s(:defn, ident, params, *body))
       end
 
       def process_defs(exp)
         _, receiver, _, method, params, body = exp.shift 6
-        params = convert_special_args(process(params))
-        kwrest = kwrest_param(params)
-        body = with_kwrest(kwrest) { method_body(body) }
+
+        in_method do
+          params = convert_special_args(process(params))
+          kwrest = kwrest_param(params)
+          body = with_kwrest(kwrest) { method_body(body) }
+        end
 
         s(:defs,
           process(receiver),
@@ -73,7 +81,7 @@ module RipperRubyParser
       end
 
       def method_body(exp)
-        block = in_method { process exp }
+        block = process exp
         case block.length
         when 0
           [s(:nil)]
