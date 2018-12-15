@@ -68,6 +68,66 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :baz)))
         end
       end
+
+      it 'works when assigning to an instance variable' do
+        '@foo = bar'.
+          must_be_parsed_as s(:iasgn,
+                              :@foo,
+                              s(:call, nil, :bar))
+      end
+
+      it 'works when assigning to a constant' do
+        'FOO = bar'.
+          must_be_parsed_as s(:cdecl,
+                              :FOO,
+                              s(:call, nil, :bar))
+      end
+
+      it 'works when assigning to a collection element' do
+        'foo[bar] = baz'.
+          must_be_parsed_as s(:attrasgn,
+                              s(:call, nil, :foo),
+                              :[]=,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
+
+      it 'works when assigning to an attribute' do
+        'foo.bar = baz'.
+          must_be_parsed_as s(:attrasgn,
+                              s(:call, nil, :foo),
+                              :bar=,
+                              s(:call, nil, :baz))
+      end
+
+      it 'works when assigning to a class variable' do
+        '@@foo = bar'.
+          must_be_parsed_as s(:cvdecl,
+                              :@@foo,
+                              s(:call, nil, :bar))
+      end
+
+      it 'works when assigning to a class variable inside a method' do
+        'def foo; @@bar = baz; end'.
+          must_be_parsed_as s(:defn,
+                              :foo, s(:args),
+                              s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+      end
+
+      it 'works when assigning to a class variable inside a method with a receiver' do
+        'def self.foo; @@bar = baz; end'.
+          must_be_parsed_as s(:defs,
+                              s(:self),
+                              :foo, s(:args),
+                              s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+      end
+
+      it 'works when assigning to a global variable' do
+        '$foo = bar'.
+          must_be_parsed_as s(:gasgn,
+                              :$foo,
+                              s(:call, nil, :bar))
+      end
     end
 
     describe 'for multiple assignment' do
