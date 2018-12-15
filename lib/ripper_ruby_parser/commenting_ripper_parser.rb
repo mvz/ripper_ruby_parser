@@ -8,10 +8,6 @@ module RipperRubyParser
   #
   # @api private
   class CommentingRipperParser < Ripper::SexpBuilder
-    include Unescape
-
-    attr_accessor :extra_compatible
-
     def initialize(*args)
       super
       @comment = ''
@@ -20,7 +16,6 @@ module RipperRubyParser
       @space_before = false
       @seen_space = false
       @in_symbol = false
-      @extra_compatible = false
     end
 
     def parse
@@ -187,25 +182,7 @@ module RipperRubyParser
     end
 
     def on_tstring_content(content)
-      content = case @delimiter_stack.last
-                when /^<<[-~]?'/
-                  content
-                when /^<</
-                  unescape(content)
-                when '"', '`', ':"', /^%Q.$/, /^%.$/
-                  fix_encoding(unescape(content))
-                when /^%[WI].$/
-                  fix_encoding(unescape_wordlist_word(content))
-                when "'", ":'", /^%q.$/
-                  simple_unescape(content)
-                when '/', /^%r.$/
-                  unescape_regexp(content)
-                when /^%[wi].$/
-                  simple_unescape_wordlist_word(content)
-                else
-                  content
-                end
-      super(content)
+      super(content) << @delimiter_stack.last
     end
 
     def on_tstring_end(delimiter)

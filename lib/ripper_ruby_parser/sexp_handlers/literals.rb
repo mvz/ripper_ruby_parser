@@ -126,7 +126,25 @@ module RipperRubyParser
       end
 
       def process_at_tstring_content(exp)
-        _, string, = exp.shift 3
+        _, content, _, delim = exp.shift 4
+        string = case delim
+                 when /^<<[-~]?'/
+                   content
+                 when /^<</
+                   unescape(content)
+                 when '"', '`', ':"', /^%Q.$/, /^%.$/
+                   fix_encoding unescape(content)
+                 when /^%[WI].$/
+                   fix_encoding unescape_wordlist_word(content)
+                 when "'", ":'", /^%q.$/
+                   fix_encoding simple_unescape(content)
+                 when '/', /^%r.$/
+                   fix_encoding unescape_regexp(content)
+                 when /^%[wi].$/
+                   fix_encoding simple_unescape_wordlist_word(content)
+                 else
+                   fix_encoding content
+                 end
         s(:str, string)
       end
 
@@ -172,7 +190,14 @@ module RipperRubyParser
       end
 
       def handle_symbol_content(node)
-        with_position_from_node_symbol(node) { |sym| s(:lit, sym) }
+        if node.sexp_type == :'@kw'
+          symbol, position = extract_node_symbol_with_position(node)
+          with_line_number(position, s(:lit, symbol))
+        else
+          processed = process(node)
+          symbol = processed[1].to_sym
+          with_line_number(processed.line, s(:lit, symbol))
+        end
       end
 
       def merge_left_into_right(left, right)
