@@ -180,4 +180,6 @@ class Foo
   @@foo = bar baz rescue qux
   FOO = bar baz rescue qux
   $foo = bar baz rescue qux
+  foo = Foo.bar(baz) rescue qux
+  foo = Foo.bar baz rescue qux
 end

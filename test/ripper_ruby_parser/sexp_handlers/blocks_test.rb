@@ -379,84 +379,6 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :qux)))
       end
 
-      it 'works in the postfix case' do
-        'foo rescue bar'.
-          must_be_parsed_as s(:rescue,
-                              s(:call, nil, :foo),
-                              s(:resbody,
-                                s(:array),
-                                s(:call, nil, :bar)))
-      end
-
-      describe 'when extra compatibility is turned on' do
-        let(:parser) { RipperRubyParser::Parser.new }
-        before do
-          parser.extra_compatible = true
-        end
-
-        it 'works in the postfix case with assignment' do
-          result = parser.parse 'foo = bar rescue baz'
-          result.must_equal s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar),
-                                s(:resbody, s(:array), s(:call, nil, :baz))))
-        end
-
-        it 'works in the postfix case with assignment with argument with brackets' do
-          result = parser.parse 'foo = bar(baz) rescue qux'
-          result.must_equal s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux))))
-        end
-
-        it 'works in the postfix case with assignment with argument without brackets' do
-          result = parser.parse 'foo = bar baz rescue qux'
-          result.must_equal s(:rescue,
-                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                              s(:resbody, s(:array), s(:call, nil, :qux)))
-        end
-      end
-
-      it 'works in the postfix case with assignment' do
-        'foo = bar rescue baz'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar),
-                                s(:resbody, s(:array), s(:call, nil, :baz))))
-      end
-
-      it 'works in the postfix case with assignment with argument' do
-        'foo = bar(baz) rescue qux'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux))))
-      end
-
-      it 'works in the postfix case with assignment with argument without brackets' do
-        expected = if RUBY_VERSION < '2.4.0'
-                     s(:rescue,
-                       s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                       s(:resbody, s(:array), s(:call, nil, :qux)))
-                   else
-                     s(:lasgn, :foo,
-                       s(:rescue,
-                         s(:call, nil, :bar, s(:call, nil, :baz)),
-                         s(:resbody, s(:array), s(:call, nil, :qux))))
-                   end
-        'foo = bar baz rescue qux'.must_be_parsed_as expected
-      end
-
-      it 'works in the postfix case with multiple assignment' do
-        'foo, bar = baz rescue qux'.
-          must_be_parsed_as s(:rescue,
-                              s(:masgn,
-                                s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                                s(:to_ary, s(:call, nil, :baz))),
-                              s(:resbody, s(:array), s(:call, nil, :qux)))
-      end
-
       it 'works with a nested begin..end block' do
         'begin; foo; rescue; begin; bar; end; end'.
           must_be_parsed_as s(:rescue,
@@ -508,6 +430,119 @@ describe RipperRubyParser::Parser do
                               s(:args),
                               s(:call, nil, :bar),
                               s(:call, nil, :baz))
+      end
+    end
+
+    describe 'for the postfix rescue modifier' do
+      it 'works in the basic case' do
+        'foo rescue bar'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works when the fallback value is a keyword' do
+        'foo rescue next'.
+          must_be_parsed_as s(:rescue,
+                              s(:call, nil, :foo),
+                              s(:resbody,
+                                s(:array),
+                                s(:next)))
+      end
+
+      it 'works with assignment' do
+        'foo = bar rescue baz'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar),
+                                s(:resbody, s(:array), s(:call, nil, :baz))))
+      end
+
+      it 'works with assignment with argument' do
+        'foo = bar(baz) rescue qux'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar, s(:call, nil, :baz)),
+                                s(:resbody, s(:array), s(:call, nil, :qux))))
+      end
+
+      it 'works with assignment with argument without brackets' do
+        expected = if RUBY_VERSION < '2.4.0'
+                     s(:rescue,
+                       s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                       s(:resbody, s(:array), s(:call, nil, :qux)))
+                   else
+                     s(:lasgn, :foo,
+                       s(:rescue,
+                         s(:call, nil, :bar, s(:call, nil, :baz)),
+                         s(:resbody, s(:array), s(:call, nil, :qux))))
+                   end
+        'foo = bar baz rescue qux'.must_be_parsed_as expected
+      end
+
+      it 'works with assignment with class method call with argument without brackets' do
+        expected = if RUBY_VERSION < '2.4.0'
+                     s(:rescue,
+                       s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                       s(:resbody, s(:array), s(:call, nil, :quuz)))
+                   else
+                     s(:lasgn, :foo,
+                       s(:rescue,
+                         s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                         s(:resbody, s(:array), s(:call, nil, :quuz))))
+                   end
+        'foo = Bar.baz qux rescue quuz'.
+          must_be_parsed_as expected
+      end
+
+      it 'works with multiple assignment' do
+        'foo, bar = baz rescue qux'.
+          must_be_parsed_as s(:rescue,
+                              s(:masgn,
+                                s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                                s(:to_ary, s(:call, nil, :baz))),
+                              s(:resbody, s(:array), s(:call, nil, :qux)))
+      end
+
+      describe 'when extra compatibility is turned on' do
+        let(:parser) { RipperRubyParser::Parser.new }
+        before do
+          parser.extra_compatible = true
+        end
+
+        it 'works with assignment' do
+          result = parser.parse 'foo = bar rescue baz'
+          result.must_equal s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar),
+                                s(:resbody, s(:array), s(:call, nil, :baz))))
+        end
+
+        it 'works with assignment with argument with brackets' do
+          result = parser.parse 'foo = bar(baz) rescue qux'
+          result.must_equal s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar, s(:call, nil, :baz)),
+                                s(:resbody, s(:array), s(:call, nil, :qux))))
+        end
+
+        it 'works with assignment with argument without brackets' do
+          result = parser.parse 'foo = bar baz rescue qux'
+          result.must_equal s(:rescue,
+                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                              s(:resbody, s(:array), s(:call, nil, :qux)))
+        end
+
+        it 'works with assignment with class method call with argument without brackets' do
+          result = parser.parse 'foo = Bar.baz qux rescue quuz'
+          result.must_equal s(:rescue,
+                              s(:lasgn,
+                                :foo,
+                                s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                              s(:resbody, s(:array), s(:call, nil, :quuz)))
+        end
       end
     end
 
