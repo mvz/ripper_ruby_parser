@@ -182,4 +182,15 @@ class Foo
   $foo = bar baz rescue qux
   foo = Foo.bar(baz) rescue qux
   foo = Foo.bar baz rescue qux
+
+  # Assignment to class variables inside method argument
+  # definitions.
+  def foo(bar = (@@baz = qux))
+  end
+
+  def self.foo(bar = (@@baz = qux))
+  end
+
+  def (bar = (@@baz = qux)).foo
+  end
 end

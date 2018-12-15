@@ -100,26 +100,49 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz))
       end
 
-      it 'works when assigning to a class variable' do
-        '@@foo = bar'.
-          must_be_parsed_as s(:cvdecl,
-                              :@@foo,
-                              s(:call, nil, :bar))
-      end
+      describe 'when assigning to a class variable' do
+        it 'works outside a method' do
+          '@@foo = bar'.
+            must_be_parsed_as s(:cvdecl,
+                                :@@foo,
+                                s(:call, nil, :bar))
+        end
 
-      it 'works when assigning to a class variable inside a method' do
-        'def foo; @@bar = baz; end'.
-          must_be_parsed_as s(:defn,
-                              :foo, s(:args),
-                              s(:cvasgn, :@@bar, s(:call, nil, :baz)))
-      end
+        it 'works inside a method' do
+          'def foo; @@bar = baz; end'.
+            must_be_parsed_as s(:defn,
+                                :foo, s(:args),
+                                s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+        end
 
-      it 'works when assigning to a class variable inside a method with a receiver' do
-        'def self.foo; @@bar = baz; end'.
-          must_be_parsed_as s(:defs,
-                              s(:self),
-                              :foo, s(:args),
-                              s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+        it 'works inside a method with a receiver' do
+          'def self.foo; @@bar = baz; end'.
+            must_be_parsed_as s(:defs,
+                                s(:self),
+                                :foo, s(:args),
+                                s(:cvasgn, :@@bar, s(:call, nil, :baz)))
+        end
+
+        it 'works inside method arguments' do
+          'def foo(bar = (@@baz = qux)); end'.
+            must_be_parsed_as s(:defn,
+                                :foo,
+                                s(:args,
+                                  s(:lasgn, :bar,
+                                    s(:cvasgn, :@@baz, s(:call, nil, :qux)))),
+                                s(:nil))
+        end
+
+        it 'works inside method arguments of a singleton method' do
+          'def self.foo(bar = (@@baz = qux)); end'.
+            must_be_parsed_as s(:defs,
+                                s(:self),
+                                :foo,
+                                s(:args,
+                                  s(:lasgn, :bar,
+                                    s(:cvasgn, :@@baz, s(:call, nil, :qux)))),
+                                s(:nil))
+        end
       end
 
       it 'works when assigning to a global variable' do
