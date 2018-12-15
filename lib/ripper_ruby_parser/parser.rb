@@ -13,6 +13,7 @@ module RipperRubyParser
 
     def parse(source, filename = '(string)', lineno = 1)
       parser = CommentingRipperParser.new(source, filename, lineno)
+      parser.extra_compatible = extra_compatible
       exp = parser.parse
 
       processor = SexpProcessor.new(filename: filename, extra_compatible: extra_compatible)

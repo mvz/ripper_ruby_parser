@@ -235,9 +235,15 @@ describe RipperRubyParser::Parser do
           '"foo\\C-Zbar"'.must_be_parsed_as s(:str, "foo\C-Zbar")
         end
 
-        # TODO: Behave differently in extra_compatible mode.
-        it 'works with unicode escapes (unlike RubyParser)' do
+        it 'works with unicode escapes' do
           '"foo\\u273bbar"'.must_be_parsed_as s(:str, 'foo✻bar')
+        end
+
+        it 'works with unicode escapes in extra-compatible mode' do
+          parser = RipperRubyParser::Parser.new
+          parser.extra_compatible = true
+          result = parser.parse '"foo\\u273bbar"'
+          result.must_equal s(:str, 'foo✻r')
         end
 
         it 'works with unicode escapes with braces' do

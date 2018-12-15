@@ -10,6 +10,8 @@ module RipperRubyParser
   class CommentingRipperParser < Ripper::SexpBuilder
     include Unescape
 
+    attr_accessor :extra_compatible
+
     def initialize(*args)
       super
       @comment = ''
@@ -18,6 +20,7 @@ module RipperRubyParser
       @space_before = false
       @seen_space = false
       @in_symbol = false
+      @extra_compatible = false
     end
 
     def parse

@@ -5,6 +5,8 @@
 %W(foo\nbar baz)
 %w(foo\nbar baz)
 
+"foo\u273bbar"
+
 # Encoding
 "日本語"
 "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"  # => "日本語"
