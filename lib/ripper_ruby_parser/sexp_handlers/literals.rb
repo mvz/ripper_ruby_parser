@@ -156,11 +156,11 @@ module RipperRubyParser
         unless list.empty?
           parts << process(list.shift)
           list.each do |item|
-            if extra_compatible && item.sexp_type == :@tstring_content
-              parts << alternative_process_at_tstring_content(item)
-            else
-              parts << process(item)
-            end
+            parts << if extra_compatible && item.sexp_type == :@tstring_content
+                       alternative_process_at_tstring_content(item)
+                     else
+                       process(item)
+                     end
           end
         end
 
@@ -195,9 +195,7 @@ module RipperRubyParser
                  else
                    content
                  end
-        if string == "\0"
-          string.force_encoding('ascii-8bit')
-        end
+        string.force_encoding('ascii-8bit') if string == "\0"
         s(:str, string)
       end
 

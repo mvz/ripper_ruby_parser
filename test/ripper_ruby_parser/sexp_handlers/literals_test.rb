@@ -371,9 +371,9 @@ describe RipperRubyParser::Parser do
           parser.extra_compatible = true
           result = parser.parse '"#{foo}2\302\275"'
           result.must_equal s(:dstr,
-                                '',
-                                s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "2\xC2\xBD".force_encoding('ascii-8bit')))
+                              '',
+                              s(:evstr, s(:call, nil, :foo)),
+                              s(:str, "2\xC2\xBD".force_encoding('ascii-8bit')))
         end
 
         it 'convert null byte to unicode after interpolation' do
