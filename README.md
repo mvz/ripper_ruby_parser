@@ -32,6 +32,8 @@ extra-compatible mode:
 * RipperRubyParser handles the rescue modifier correctly, while RubyParser
   still contains a bug that was fixed in Ruby 2.4. See RubyParser
   [issue #227](https://github.com/seattlerb/ruby_parser/issues/227).
+* RubyParser handles byte sequences in second and further literal parts of a
+  strings with interpolations differently.
 
 ## Install
 
