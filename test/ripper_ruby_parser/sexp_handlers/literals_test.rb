@@ -375,6 +375,24 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:call, nil, :foo)),
                                 s(:str, "2\xC2\xBD".force_encoding('ascii-8bit')))
         end
+
+        it 'convert null byte to unicode after interpolation' do
+          '"#{foo}\0"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "\u0000"))
+        end
+
+        it 'keeps null byte as ascii after interpolation in extra-compatible mode' do
+          parser = RipperRubyParser::Parser.new
+          parser.extra_compatible = true
+          result = parser.parse '"#{foo}\0"'
+          result.to_s.must_equal s(:dstr,
+                                   '',
+                                   s(:evstr, s(:call, nil, :foo)),
+                                   s(:str, "\x00".force_encoding('ascii-8bit'))).to_s
+        end
       end
 
       describe 'with single quoted strings' do

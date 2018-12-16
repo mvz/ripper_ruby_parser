@@ -6,6 +6,9 @@
 %w(foo\nbar baz)
 
 "foo\u273bbar"
+"\0"
+"foo#{bar}\0"
+"foo#{bar}baz\0"
 "2\302\275"
 "#{foo}2\302\275"
 

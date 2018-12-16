@@ -195,6 +195,9 @@ module RipperRubyParser
                  else
                    content
                  end
+        if string == "\0"
+          string.force_encoding('ascii-8bit')
+        end
         s(:str, string)
       end
 
