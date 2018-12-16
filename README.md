@@ -14,11 +14,26 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 ## Known incompatibilities
 
-* Won't handle non-UTF-8 files without an encoding comment, just like regular
-  Ruby
-* Keeps carriage return characters in heredocs that include them
-* Does not attempt to match RubyParser's line numbering bugs
-* Handles unicode escapes without braces
+RipperRubyParser has some incompatibilities with RubyParser. For some of these,
+the behavior can be changed by turning on extra-compatible mode.
+
+The following incompatibilities cannot be changed:
+
+* RipperRubyParser won't handle non-UTF-8 files without an encoding comment,
+  just like regular Ruby
+* RipperRubyParser keeps carriage return characters in heredocs that include them
+* RipperRubyParser does not attempt to match RubyParser's line numbering bugs
+
+The following incompatibilities can be made compatible by turning on
+extra-compatible mode:
+
+* RipperRubyParser handles unicode escapes without braces correctly, while
+  RubyParser absorbs trailing hexadecimal characters
+* RipperRubyParser handles the rescue modifier correctly, while RubyParser
+  still contains a bug that was fixed in Ruby 2.4. See RubyParser
+  [issue #227](https://github.com/seattlerb/ruby_parser/issues/227).
+* RubyParser handles byte sequences in second and further literal parts of a
+  strings with interpolations differently.
 
 ## Install
 
@@ -29,9 +44,16 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
     require 'ripper_ruby_parser'
 
     parser = RipperRubyParser::Parser.new
-    result = parser.parse "puts 'Hello World'"
-    p result
+    parser.parse "puts 'Hello World'"
     # => s(:call, nil, :puts, s(:arglist, s(:str, "Hello World!")))
+
+    parser.parse '"foo\u273bbar"'
+    # => s(:str, "foo✻bar")
+
+    parser.extra_compatible = true
+
+    parser.parse '"foo\u273bbar"'
+    # => s(:str, "foo✻r")
 
 ## Requirements
 

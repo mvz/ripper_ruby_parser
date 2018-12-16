@@ -39,11 +39,8 @@ describe RipperRubyParser::Parser do
       end
 
       it 'works with the no-encoding flag' do
-        parser = RipperRubyParser::Parser.new
-        result = parser.parse '/foo/n'
-        # Use inspect since regular == finds no difference between /foo/n
-        # and /foo/
-        result.inspect.must_equal s(:lit, /foo/n).inspect
+        '/foo/n'.
+          must_be_parsed_as s(:lit, /foo/n)
       end
 
       it 'works with line continuation' do
@@ -235,9 +232,13 @@ describe RipperRubyParser::Parser do
           '"foo\\C-Zbar"'.must_be_parsed_as s(:str, "foo\C-Zbar")
         end
 
-        # TODO: Behave differently in extra_compatible mode.
-        it 'works with unicode escapes (unlike RubyParser)' do
+        it 'works with unicode escapes' do
           '"foo\\u273bbar"'.must_be_parsed_as s(:str, 'foo✻bar')
+        end
+
+        it 'works with unicode escapes in extra-compatible mode' do
+          '"foo\\u273bbar"'.
+            must_be_parsed_as s(:str, 'foo✻r'), extra_compatible: true
         end
 
         it 'works with unicode escapes with braces' do
@@ -249,10 +250,9 @@ describe RipperRubyParser::Parser do
         end
 
         it 'does not convert to unicode if result is not valid' do
-          parser = RipperRubyParser::Parser.new
-          result = parser.parse '"2\x82\302\275"'
-          expected = s(:str, "2\x82\xC2\xBD".force_encoding(Encoding::US_ASCII))
-          result.inspect.must_equal expected.inspect
+          '"2\x82\302\275"'.
+            must_be_parsed_as s(:str,
+                                "2\x82\xC2\xBD".force_encoding('ascii-8bit'))
         end
       end
 
@@ -350,6 +350,40 @@ describe RipperRubyParser::Parser do
                                 '',
                                 s(:evstr, s(:array, s(:lit, :foo), s(:str, 'bar'))),
                                 s(:str, "\n"))
+        end
+
+        it 'converts to unicode after interpolation' do
+          '"#{foo}2\302\275"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, '2½'))
+        end
+
+        it 'does not convert to unicode after interpolation in extra-compatible mode' do
+          '"#{foo}2\302\275"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "2\xC2\xBD".force_encoding('ascii-8bit'))),
+                              extra_compatible: true
+        end
+
+        it 'convert null byte to unicode after interpolation' do
+          '"#{foo}\0"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "\u0000"))
+        end
+
+        it 'keeps null byte as ascii after interpolation in extra-compatible mode' do
+          '"#{foo}\0"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "\x00".force_encoding('ascii-8bit'))),
+                              extra_compatible: true
         end
       end
 
@@ -513,10 +547,8 @@ describe RipperRubyParser::Parser do
         end
 
         it 'does not convert to unicode even if possible' do
-          parser = RipperRubyParser::Parser.new
-          result = parser.parse "<<FOO\n2\\302\\275\nFOO"
-          expected = s(:str, "2\xC2\xBD\n".force_encoding(Encoding::US_ASCII))
-          result.inspect.must_equal expected.inspect
+          "<<FOO\n2\\302\\275\nFOO".
+            must_be_parsed_as s(:str, "2\xC2\xBD\n".force_encoding('ascii-8bit'))
         end
       end
     end

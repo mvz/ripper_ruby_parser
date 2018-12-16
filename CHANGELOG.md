@@ -17,10 +17,13 @@
 * Restore `#extra_compatible` flag.
 * Match RubyParser bug in handling rescue modifier when combined with
   assignment. See RubyParser
-  [issue #227](https://github.com/seattlerb/ruby_parser/issues/227.).
+  [issue #227](https://github.com/seattlerb/ruby_parser/issues/227).
   This behavior is only enabled when `#extra_compatible` is set to true.
 * Fix compatibility when assigning to a class variable inside the method
   argument specification.
+* Match RubyParser's handling of byte sequences in second and further literal
+  parts of strings with interpolations. This behavior is only enabled when
+  `#extra_compatible` is set to true.
 
 ## 1.4.2 / 2018-04-03
 

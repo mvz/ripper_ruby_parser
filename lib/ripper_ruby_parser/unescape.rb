@@ -7,7 +7,7 @@ module RipperRubyParser
       /\\(
         [0-7]{1,3}        | # octal character
         x[0-9a-fA-F]{1,2} | # hex byte
-        u[0-9a-fA-F]{4}   | # unicode character
+        u[0-9a-fA-F]+     | # unicode character
         u{[0-9a-fA-F]{4}} | # unicode character
         M-\\C-.           | # meta-ctrl
         C-\\M-.           | # ctrl-meta
@@ -104,7 +104,8 @@ module RipperRubyParser
       when /^u{/
         hex_to_unicode_char(bare[2..-2])
       when /^u/
-        hex_to_unicode_char(bare[1..-1])
+        hex_to_unicode_char(bare[1..4]) +
+          (extra_compatible ? '' : bare[5..-1])
       when /^(c|C-).$/
         control(bare[-1].ord).chr
       when /^M-.$/

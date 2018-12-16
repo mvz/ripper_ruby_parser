@@ -5,6 +5,13 @@
 %W(foo\nbar baz)
 %w(foo\nbar baz)
 
+"foo\u273bbar"
+"\0"
+"foo#{bar}\0"
+"foo#{bar}baz\0"
+"2\302\275"
+"#{foo}2\302\275"
+
 # Encoding
 "日本語"
 "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"  # => "日本語"
