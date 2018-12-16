@@ -513,35 +513,39 @@ describe RipperRubyParser::Parser do
         end
 
         it 'works with assignment' do
-          result = parser.parse 'foo = bar rescue baz'
-          result.must_equal s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar),
-                                s(:resbody, s(:array), s(:call, nil, :baz))))
+          'foo = bar rescue baz'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar),
+                                  s(:resbody, s(:array), s(:call, nil, :baz)))),
+                              extra_compatible: true
         end
 
         it 'works with assignment with argument with brackets' do
-          result = parser.parse 'foo = bar(baz) rescue qux'
-          result.must_equal s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux))))
+          'foo = bar(baz) rescue qux'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar, s(:call, nil, :baz)),
+                                  s(:resbody, s(:array), s(:call, nil, :qux)))),
+                              extra_compatible: true
         end
 
         it 'works with assignment with argument without brackets' do
-          result = parser.parse 'foo = bar baz rescue qux'
-          result.must_equal s(:rescue,
-                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                              s(:resbody, s(:array), s(:call, nil, :qux)))
+          'foo = bar baz rescue qux'.
+            must_be_parsed_as s(:rescue,
+                                s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                                s(:resbody, s(:array), s(:call, nil, :qux))),
+                              extra_compatible: true
         end
 
         it 'works with assignment with class method call with argument without brackets' do
-          result = parser.parse 'foo = Bar.baz qux rescue quuz'
-          result.must_equal s(:rescue,
-                              s(:lasgn,
-                                :foo,
-                                s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                              s(:resbody, s(:array), s(:call, nil, :quuz)))
+          'foo = Bar.baz qux rescue quuz'.
+            must_be_parsed_as s(:rescue,
+                                s(:lasgn,
+                                  :foo,
+                                  s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                                s(:resbody, s(:array), s(:call, nil, :quuz))),
+                              extra_compatible: true
         end
       end
     end
