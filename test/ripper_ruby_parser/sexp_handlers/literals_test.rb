@@ -153,6 +153,11 @@ describe RipperRubyParser::Parser do
         result[1].encoding.to_s.must_equal 'UTF-8'
       end
 
+      it 'handles line breaks within double-quoted strings' do
+        "\"foo\nbar\"".
+          must_be_parsed_as s(:str, "foo\nbar")
+      end
+
       it 'handles line continuation with double-quoted strings' do
         "\"foo\\\nbar\"".
           must_be_parsed_as s(:str, 'foobar')
@@ -425,9 +430,36 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "foo\nbar")
         end
 
+        it 'works for multi-line strings' do
+          "%Q[foo\nbar]".
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+
         it 'handles line continuation' do
           "%Q[foo\\\nbar]".
             must_be_parsed_as s(:str, 'foobar')
+        end
+      end
+
+      describe 'with %q-delimited strings' do
+        it 'works for the simple case' do
+          '%q[bar]'.
+            must_be_parsed_as s(:str, 'bar')
+        end
+
+        it 'does not handle for escape sequences' do
+          '%q[foo\\nbar]'.
+            must_be_parsed_as s(:str, 'foo\nbar')
+        end
+
+        it 'works for multi-line strings' do
+          "%q[foo\nbar]".
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+
+        it 'handles line continuation' do
+          "%q[foo\\\nbar]".
+            must_be_parsed_as s(:str, "foo\\\nbar")
         end
       end
 
@@ -440,6 +472,16 @@ describe RipperRubyParser::Parser do
         it 'works for escape sequences' do
           '%(foo\nbar)'.
             must_be_parsed_as s(:str, "foo\nbar")
+        end
+
+        it 'works for multiple lines' do
+          "%(foo\nbar)".
+            must_be_parsed_as s(:str, "foo\nbar")
+        end
+
+        it 'works with line continuations' do
+          "%(foo\\\nbar)".
+            must_be_parsed_as s(:str, 'foobar')
         end
 
         it 'works for odd delimiters' do
@@ -504,6 +546,11 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\n")
         end
 
+        it 'works with multiple lines' do
+          "<<FOO\nbar\nbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\nbaz\n")
+        end
+
         it 'works for the indentable case' do
           "<<-FOO\n  bar\n  FOO".
             must_be_parsed_as s(:str, "  bar\n")
@@ -523,6 +570,11 @@ describe RipperRubyParser::Parser do
         it 'does not unescape with single quoted version' do
           "<<'FOO'\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
+        end
+
+        it 'works with multiple lines with the single quoted version' do
+          "<<'FOO'\nbar\nbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\nbaz\n")
         end
 
         it 'does not unescape with indentable single quoted version' do
@@ -625,6 +677,14 @@ describe RipperRubyParser::Parser do
                               s(:str, "foo\nbar"),
                               s(:str, 'baz'))
       end
+
+      it 'correctly handles multiple lines' do
+        "%W(foo\nbar baz)".
+          must_be_parsed_as s(:array,
+                              s(:str, 'foo'),
+                              s(:str, 'bar'),
+                              s(:str, 'baz'))
+      end
     end
 
     describe 'for symbol list literals with %i delimiter' do
@@ -681,6 +741,15 @@ describe RipperRubyParser::Parser do
                               s(:lit, :"foo\nbar"),
                               s(:lit, :baz))
       end
+
+      it 'correctly handles multiple lines' do
+        "%I(foo\nbar baz)".
+          must_be_parsed_as s(:array,
+                              s(:lit, :foo),
+                              s(:lit, :bar),
+                              s(:lit, :baz))
+      end
+
     end
 
     describe 'for character literals' do
@@ -736,6 +805,11 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, :@foo)
       end
 
+      it 'works for symbols that look like class names' do
+        ':Foo'.
+          must_be_parsed_as s(:lit, :Foo)
+      end
+
       it 'works for simple dsyms' do
         ':"foo"'.
           must_be_parsed_as s(:lit, :foo)
@@ -753,6 +827,16 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, :"foo\nbar")
       end
 
+      it 'works for dsyms with multiple lines' do
+        ":\"foo\nbar\"".
+          must_be_parsed_as s(:lit, :"foo\nbar")
+      end
+
+      it 'works for dsyms with line continuations' do
+        ":\"foo\\\nbar\"".
+          must_be_parsed_as s(:lit, :foobar)
+      end
+
       it 'works with single quoted dsyms' do
         ":'foo'".
           must_be_parsed_as s(:lit, :foo)
@@ -761,6 +845,16 @@ describe RipperRubyParser::Parser do
       it 'works with single quoted dsyms with escaped single quotes' do
         ":'foo\\'bar'".
           must_be_parsed_as s(:lit, :'foo\'bar')
+      end
+
+      it 'works with single quoted dsyms with multiple lines' do
+        ":'foo\nbar'".
+          must_be_parsed_as s(:lit, :"foo\nbar")
+      end
+
+      it 'works with single quoted dsyms with line continuations' do
+        ":'foo\\\nbar'".
+          must_be_parsed_as s(:lit, :"foo\\\nbar")
       end
 
       it 'works with single quoted dsyms with embedded backslashes' do
@@ -782,9 +876,25 @@ describe RipperRubyParser::Parser do
                               s(:evstr, s(:call, nil, :bar)))
       end
 
+      it 'works for backtick strings interpolated at the start' do
+        '`#{foo}`'.
+          must_be_parsed_as s(:dxstr, '',
+                              s(:evstr, s(:call, nil, :foo)))
+      end
+
       it 'works for backtick strings with escape sequences' do
         '`foo\\n`'.
           must_be_parsed_as s(:xstr, "foo\n")
+      end
+
+      it 'works for backtick strings with multiple lines' do
+        "`foo\nbar`".
+          must_be_parsed_as s(:xstr, "foo\nbar")
+      end
+
+      it 'works for backtick strings with line continuations' do
+        "`foo\\\nbar`".
+          must_be_parsed_as s(:xstr, "foobar")
       end
     end
 

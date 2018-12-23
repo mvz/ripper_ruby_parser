@@ -125,6 +125,25 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               s(:args, :bar, :"*baz"))
       end
+
+      it 'works with a double splat argument' do
+        'foo do |**bar|; baz bar; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :"**bar"),
+                              s(:call, nil, :baz,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a combination of regular arguments and a splat argument' do
+        'foo do |bar, **baz|; qux bar, baz; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :bar, :"**baz"),
+                              s(:call, nil, :qux,
+                                s(:lvar, :bar),
+                                s(:call, nil, :baz)))
+      end
     end
 
     describe 'for begin' do

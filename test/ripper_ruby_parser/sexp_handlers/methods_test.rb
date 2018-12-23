@@ -27,6 +27,18 @@ describe RipperRubyParser::Parser do
                               s(:lvar, :bar))
       end
 
+      it 'treats kwargs as a local variable in a block with kwargs' do
+        'def foo(**bar); baz { |**qux| bar; qux }; end'.
+          must_be_parsed_as s(:defn, :foo,
+                              s(:args, :"**bar"),
+                              s(:iter,
+                                s(:call, nil, :baz),
+                                s(:args, :"**qux"),
+                                s(:block,
+                                  s(:lvar, :bar),
+                                  s(:call, nil, :qux))))
+      end
+
       it 'works with a method argument with a default value' do
         'def foo bar=nil; end'.
           must_be_parsed_as s(:defn,

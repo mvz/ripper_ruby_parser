@@ -131,6 +131,22 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz),
                               nil)
       end
+
+      it 'works with assignment in the condition' do
+        'if foo = bar; baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:lasgn, :foo,
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz), nil)
+      end
+
+      it 'works with bracketed assignment in the condition' do
+        'if (foo = bar); baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:lasgn, :foo,
+                                s(:call, nil, :bar)),
+                              s(:call, nil, :baz), nil)
+      end
     end
 
     describe 'for postfix if' do
@@ -416,6 +432,19 @@ describe RipperRubyParser::Parser do
                                 s(:array, s(:call, nil, :bar)),
                                 s(:call, nil, :baz)),
                               s(:call, nil, :qux))
+      end
+
+      it 'works with multiple statements in the else block' do
+        'case foo; when bar; baz; else; qux; quuz end'.
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array,
+                                  s(:call, nil, :bar)),
+                                s(:call, nil, :baz)),
+                              s(:block,
+                                s(:call, nil, :qux),
+                                s(:call, nil, :quuz)))
       end
 
       it 'works with an empty when block' do

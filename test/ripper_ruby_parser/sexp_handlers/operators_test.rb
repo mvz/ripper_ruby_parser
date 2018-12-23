@@ -2,16 +2,6 @@ require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   describe '#parse' do
-    describe 'for negated operators' do
-      specify do
-        'foo !~ bar'.must_be_parsed_as s(:not,
-                                         s(:call,
-                                           s(:call, nil, :foo),
-                                           :=~,
-                                           s(:call, nil, :bar)))
-      end
-    end
-
     describe 'for boolean operators' do
       it 'handles :and' do
         'foo and bar'.
@@ -231,6 +221,38 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:call,
                               s(:call, nil, :foo),
                               :+@)
+      end
+    end
+
+    describe 'for match operators' do
+      it 'handles :=~ with two non-literals' do
+        'foo =~ bar'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :=~,
+                              s(:call, nil, :bar))
+      end
+
+      it 'handles :=~ with literal regexp on the left hand side' do
+        '/foo/ =~ bar'.
+          must_be_parsed_as s(:match2,
+                              s(:lit, /foo/),
+                              s(:call, nil, :bar))
+      end
+
+      it 'handles :=~ with literal regexp on the right hand side' do
+        'foo =~ /bar/'.
+          must_be_parsed_as s(:match3,
+                              s(:lit, /bar/),
+                              s(:call, nil, :foo))
+      end
+
+      it 'handles negated match operators' do
+        'foo !~ bar'.must_be_parsed_as s(:not,
+                                         s(:call,
+                                           s(:call, nil, :foo),
+                                           :=~,
+                                           s(:call, nil, :bar)))
       end
     end
   end

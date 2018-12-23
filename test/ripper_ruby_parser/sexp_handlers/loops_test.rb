@@ -147,9 +147,27 @@ describe RipperRubyParser::Parser do
     end
 
     describe 'for the for statement' do
-      it 'works with a single assignment' do
+      it 'works with do' do
+        'for foo in bar do; baz; end'.
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:lasgn, :foo),
+                              s(:call, nil, :baz))
+      end
+
+      it 'works without do' do
+        'for foo in bar; baz; end'.
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:lasgn, :foo),
+                              s(:call, nil, :baz))
+      end
+
+      it 'works with an empty body' do
         'for foo in bar; end'.
-          must_be_parsed_as s(:for, s(:call, nil, :bar), s(:lasgn, :foo))
+          must_be_parsed_as s(:for,
+                              s(:call, nil, :bar),
+                              s(:lasgn, :foo))
       end
 
       it 'works with explicit multiple assignment' do
