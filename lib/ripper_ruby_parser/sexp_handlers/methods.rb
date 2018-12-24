@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RipperRubyParser
   module SexpHandlers
     # Sexp handers for method definitions and related constructs

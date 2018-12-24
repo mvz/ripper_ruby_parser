@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ripper'
 require 'ripper_ruby_parser/syntax_error'
 require 'ripper_ruby_parser/unescape'

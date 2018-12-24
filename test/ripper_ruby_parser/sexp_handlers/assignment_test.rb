@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
@@ -149,7 +151,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:defs,
                                 s(:lasgn, :bar,
                                   s(:cvdecl, :@@baz,
-                                      s(:call, nil, :qux))), :foo,
+                                    s(:call, nil, :qux))), :foo,
                                 s(:args), s(:nil))
         end
       end
@@ -206,24 +208,24 @@ describe RipperRubyParser::Parser do
         'foo += bar'.
           must_be_parsed_as s(:lasgn, :foo,
                               s(:call, s(:lvar, :foo),
-                              :+,
-                              s(:call, nil, :bar)))
+                                :+,
+                                s(:call, nil, :bar)))
       end
 
       it 'works with -=' do
         'foo -= bar'.
           must_be_parsed_as s(:lasgn, :foo,
                               s(:call, s(:lvar, :foo),
-                              :-,
-                              s(:call, nil, :bar)))
+                                :-,
+                                s(:call, nil, :bar)))
       end
 
       it 'works with *=' do
         'foo *= bar'.
           must_be_parsed_as s(:lasgn, :foo,
                               s(:call, s(:lvar, :foo),
-                              :*,
-                              s(:call, nil, :bar)))
+                                :*,
+                                s(:call, nil, :bar)))
       end
 
       it 'works with /=' do
@@ -239,7 +241,7 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:op_asgn_or,
                               s(:lvar, :foo),
                               s(:lasgn, :foo,
-                              s(:call, nil, :bar)))
+                                s(:call, nil, :bar)))
       end
 
       it 'works when assigning to an instance variable' do

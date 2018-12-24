@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RipperRubyParser
   # Implements string unescaping
   #

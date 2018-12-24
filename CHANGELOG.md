@@ -14,16 +14,17 @@
 * Fix handling of for loops that assign to multiple loop variables
 * Handle aliasing for method names that are keywords, e.g., `alias next succ`
 * Do not crash on rational literals
-* Restore `#extra_compatible` flag.
+* Restore `#extra_compatible` flag
 * Match RubyParser bug in handling rescue modifier when combined with
   assignment. See RubyParser
   [issue #227](https://github.com/seattlerb/ruby_parser/issues/227).
-  This behavior is only enabled when `#extra_compatible` is set to true.
+  This behavior is only enabled when `#extra_compatible` is set to true
 * Fix compatibility when assigning to a class variable inside the method
-  argument specification.
+  argument specification
 * Match RubyParser's handling of byte sequences in second and further literal
   parts of strings with interpolations. This behavior is only enabled when
-  `#extra_compatible` is set to true.
+  `#extra_compatible` is set to true
+* Require Ruby 2.3 or higher
 
 ## 1.4.2 / 2018-04-03
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
@@ -257,7 +259,7 @@ describe RipperRubyParser::Parser do
         it 'does not convert to unicode if result is not valid' do
           '"2\x82\302\275"'.
             must_be_parsed_as s(:str,
-                                "2\x82\xC2\xBD".force_encoding('ascii-8bit'))
+                                (+"2\x82\xC2\xBD").force_encoding('ascii-8bit'))
         end
       end
 
@@ -370,7 +372,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:dstr,
                                 '',
                                 s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "2\xC2\xBD".force_encoding('ascii-8bit'))),
+                                s(:str, (+"2\xC2\xBD").force_encoding('ascii-8bit'))),
                               extra_compatible: true
         end
 
@@ -387,7 +389,7 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:dstr,
                                 '',
                                 s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "\x00".force_encoding('ascii-8bit'))),
+                                s(:str, (+"\x00").force_encoding('ascii-8bit'))),
                               extra_compatible: true
         end
       end
@@ -557,7 +559,6 @@ describe RipperRubyParser::Parser do
         end
 
         it 'works for the automatically outdenting case' do
-          skip 'This is not valid syntax below Ruby 2.3' if RUBY_VERSION < '2.3.0'
           "  <<~FOO\n  bar\n  FOO".
             must_be_parsed_as s(:str, "bar\n")
         end
@@ -583,7 +584,6 @@ describe RipperRubyParser::Parser do
         end
 
         it 'does not unescape the automatically outdenting single quoted version' do
-          skip 'This is not valid syntax below Ruby 2.3' if RUBY_VERSION < '2.3.0'
           "<<~'FOO'\n  bar\\tbaz\n  FOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
         end
@@ -600,7 +600,7 @@ describe RipperRubyParser::Parser do
 
         it 'does not convert to unicode even if possible' do
           "<<FOO\n2\\302\\275\nFOO".
-            must_be_parsed_as s(:str, "2\xC2\xBD\n".force_encoding('ascii-8bit'))
+            must_be_parsed_as s(:str, (+"2\xC2\xBD\n").force_encoding('ascii-8bit'))
         end
       end
     end
@@ -749,7 +749,6 @@ describe RipperRubyParser::Parser do
                               s(:lit, :bar),
                               s(:lit, :baz))
       end
-
     end
 
     describe 'for character literals' do
@@ -770,27 +769,27 @@ describe RipperRubyParser::Parser do
 
       it 'works for escaped character literals with meta' do
         '?\\M-a'.
-          must_be_parsed_as s(:str, "\xE1".force_encoding('ascii-8bit'))
+          must_be_parsed_as s(:str, (+"\xE1").force_encoding('ascii-8bit'))
       end
 
       it 'works for escaped character literals with meta plus shorthand ctrl' do
         '?\\M-\\ca'.
-          must_be_parsed_as s(:str, "\x81".force_encoding('ascii-8bit'))
+          must_be_parsed_as s(:str, (+"\x81").force_encoding('ascii-8bit'))
       end
 
       it 'works for escaped character literals with shorthand ctrl plus meta' do
         '?\\c\\M-a'.
-          must_be_parsed_as s(:str, "\x81".force_encoding('ascii-8bit'))
+          must_be_parsed_as s(:str, (+"\x81").force_encoding('ascii-8bit'))
       end
 
       it 'works for escaped character literals with meta plus ctrl' do
         '?\\M-\\C-a'.
-          must_be_parsed_as s(:str, "\x81".force_encoding('ascii-8bit'))
+          must_be_parsed_as s(:str, (+"\x81").force_encoding('ascii-8bit'))
       end
 
       it 'works for escaped character literals with ctrl plus meta' do
         '?\\C-\\M-a'.
-          must_be_parsed_as s(:str, "\x81".force_encoding('ascii-8bit'))
+          must_be_parsed_as s(:str, (+"\x81").force_encoding('ascii-8bit'))
       end
     end
 
@@ -894,7 +893,7 @@ describe RipperRubyParser::Parser do
 
       it 'works for backtick strings with line continuations' do
         "`foo\\\nbar`".
-          must_be_parsed_as s(:xstr, "foobar")
+          must_be_parsed_as s(:xstr, 'foobar')
       end
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module RipperRubyParser
   module SexpHandlers
     # Utility methods used in several of the sexp handler modules
