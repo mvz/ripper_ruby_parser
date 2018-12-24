@@ -128,23 +128,42 @@ describe RipperRubyParser::Parser do
                               s(:args, :bar, :"*baz"))
       end
 
-      it 'works with a double splat argument' do
+      it 'works with a kwrest argument' do
+        expected = if RUBY_VERSION < '2.6.0'
+                     s(:iter,
+                       s(:call, nil, :foo),
+                       s(:args, :"**bar"),
+                       s(:call, nil, :baz,
+                         s(:call, nil, :bar)))
+                   else
+                     s(:iter,
+                       s(:call, nil, :foo),
+                       s(:args, :"**bar"),
+                       s(:call, nil, :baz,
+                         s(:lvar, :bar)))
+                   end
         'foo do |**bar|; baz bar; end'.
-          must_be_parsed_as s(:iter,
-                              s(:call, nil, :foo),
-                              s(:args, :"**bar"),
-                              s(:call, nil, :baz,
-                                s(:call, nil, :bar)))
+          must_be_parsed_as expected
       end
 
-      it 'works with a combination of regular arguments and a splat argument' do
+      it 'works with a combination of regular arguments and a kwrest argument' do
+        expected = if RUBY_VERSION < '2.6.0'
+                     s(:iter,
+                       s(:call, nil, :foo),
+                       s(:args, :bar, :"**baz"),
+                       s(:call, nil, :qux,
+                         s(:lvar, :bar),
+                         s(:call, nil, :baz)))
+                   else
+                     s(:iter,
+                       s(:call, nil, :foo),
+                       s(:args, :bar, :"**baz"),
+                       s(:call, nil, :qux,
+                         s(:lvar, :bar),
+                         s(:lvar, :baz)))
+                   end
         'foo do |bar, **baz|; qux bar, baz; end'.
-          must_be_parsed_as s(:iter,
-                              s(:call, nil, :foo),
-                              s(:args, :bar, :"**baz"),
-                              s(:call, nil, :qux,
-                                s(:lvar, :bar),
-                                s(:call, nil, :baz)))
+          must_be_parsed_as expected
       end
     end
 
