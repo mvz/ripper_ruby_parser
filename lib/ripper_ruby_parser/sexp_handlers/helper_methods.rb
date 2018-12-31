@@ -11,8 +11,9 @@ module RipperRubyParser
 
       def extract_node_symbol(exp)
         return nil if exp.nil?
+        raise "Unexpected number of children: #{exp.length}" if exp.length != 2
 
-        _, ident, = exp.shift 3
+        _, ident = exp.shift 2
         ident.to_sym
       end
 

@@ -300,14 +300,14 @@ describe RipperRubyParser::SexpProcessor do
   end
 
   describe '#extract_node_symbol' do
-    it 'processes an identifier sexp to a bare symbol' do
-      sexp = s(:@ident, 'foo', s(1, 0))
+    it 'processes an lvar sexp to a bare symbol' do
+      sexp = s(:lvar, 'foo')
       result = processor.send :extract_node_symbol, sexp
       result.must_equal :foo
     end
 
     it 'processes a const sexp to a bare symbol' do
-      sexp = s(:@const, 'Foo', s(1, 0))
+      sexp = s(:const, 'Foo')
       result = processor.send :extract_node_symbol, sexp
       result.must_equal :Foo
     end

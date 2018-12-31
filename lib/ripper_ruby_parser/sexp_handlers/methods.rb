@@ -29,7 +29,7 @@ module RipperRubyParser
 
         s(:defs,
           process(receiver),
-          extract_node_symbol(method),
+          extract_node_symbol(process(method)),
           params, *body)
       end
 
