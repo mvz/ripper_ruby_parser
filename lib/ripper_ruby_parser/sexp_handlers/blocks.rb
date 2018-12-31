@@ -36,6 +36,11 @@ module RipperRubyParser
         s(:args, *args)
       end
 
+      def process_rest_param(exp)
+        _, ident = exp.shift 2
+        s(:splat, process(ident))
+      end
+
       def process_kwrest_param(exp)
         _, sym, = exp.shift 3
         process(sym)
