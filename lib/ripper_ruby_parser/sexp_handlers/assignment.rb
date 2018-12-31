@@ -31,21 +31,19 @@ module RipperRubyParser
       def process_massign(exp)
         _, left, right = exp.shift 3
 
-        left = process left
-        left = left[1].sexp_body
-
+        left = process(left).last
         right = process(right)
 
         case right.sexp_type
         when :args
-          right[0] = :array
+          right.sexp_type = :array
         when :mrhs
-          right = right[1]
+          _, right = right
         else
           right = s(:to_ary, right)
         end
 
-        s(:masgn, s(:array, *left), right)
+        s(:masgn, left, right)
       end
 
       def process_mrhs_new_from_args(exp)
@@ -60,8 +58,8 @@ module RipperRubyParser
       end
 
       def process_mlhs_add_star(exp)
-        _, args, splatarg = exp.shift 3
-        items = process args
+        _, base, splatarg = exp.shift 3
+        masgn = process base
 
         splat = process(splatarg)
         splat_item = if splat.nil?
@@ -70,16 +68,16 @@ module RipperRubyParser
                        s(:splat, create_valueless_assignment_sub_type(splat))
                      end
 
-        items[1] << splat_item
-        items
+        masgn.last << splat_item
+        masgn
       end
 
       def process_mlhs_add_post(exp)
         _, base, rest = exp.shift 3
-        items = process(base)
+        base = process(base)
         rest = process(rest)
-        items[1].push(*rest[1].sexp_body)
-        items
+        base.last.push(*rest.last.sexp_body)
+        base
       end
 
       def process_mlhs_paren(exp)
@@ -96,11 +94,11 @@ module RipperRubyParser
       end
 
       def process_opassign(exp)
-        _, lvalue, operator, value = exp.shift 4
+        _, lvalue, (_, operator,), value = exp.shift 4
 
         lvalue = process(lvalue)
         value = process(value)
-        operator = operator[1].delete('=').to_sym
+        operator = operator.chop.to_sym
 
         create_operator_assignment_sub_type lvalue, value, operator
       end
@@ -172,7 +170,8 @@ module RipperRubyParser
       }.freeze
 
       def create_assignment_sub_type(lvalue, value)
-        s(map_assignment_lvalue_type(lvalue.sexp_type), lvalue[1], value)
+        lvalue_type, lvalue_value = lvalue
+        s(map_assignment_lvalue_type(lvalue_type), lvalue_value, value)
       end
 
       def map_assignment_lvalue_type(type)
