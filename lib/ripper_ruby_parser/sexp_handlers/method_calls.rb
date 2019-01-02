@@ -94,6 +94,15 @@ module RipperRubyParser
         end
       end
 
+      def process_aref(exp)
+        _, coll, idx = exp.shift 3
+
+        coll = process(coll)
+        idx = process(idx) || s(:arglist)
+        idx.shift
+        s(:call, coll, :[], *idx)
+      end
+
       def process_super(exp)
         _, args = exp.shift 2
         args = process(args)

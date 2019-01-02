@@ -142,6 +142,13 @@ module RipperRubyParser
         s(:str, string)
       end
 
+      def process_array(exp)
+        _, elems = exp.shift 2
+        return s(:array) if elems.nil?
+
+        s(:array, *handle_array_elements(elems))
+      end
+
       private
 
       def extract_string_parts(list)
