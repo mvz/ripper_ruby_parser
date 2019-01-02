@@ -39,6 +39,15 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe 'for brace blocks' do
+      it 'works with no statements in the block body' do
+        'foo { }'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0)
+      end
+    end
+
     describe 'for block parameters' do
       specify do
         'foo do |(bar, baz)| end'.
@@ -114,6 +123,30 @@ describe RipperRubyParser::Parser do
                               s(:args, :bar, :baz))
       end
 
+      it 'works with an argument with a default value' do
+        'foo do |bar=baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args,
+                                s(:lasgn, :bar, s(:call, nil, :baz))))
+      end
+
+      it 'works with a keyword argument with no default value' do
+        'foo do |bar:|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args,
+                                s(:kwarg, :bar)))
+      end
+
+      it 'works with a keyword argument with a default value' do
+        'foo do |bar: baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args,
+                                s(:kwarg, :bar, s(:call, nil, :baz))))
+      end
+
       it 'works with a single splat argument' do
         'foo do |*bar|; end'.
           must_be_parsed_as s(:iter,
@@ -144,6 +177,13 @@ describe RipperRubyParser::Parser do
                    end
         'foo do |**bar|; baz bar; end'.
           must_be_parsed_as expected
+      end
+
+      it 'works with a regular argumenta after a splat argument' do
+        'foo do |*bar, baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :"*bar", :baz))
       end
 
       it 'works with a combination of regular arguments and a kwrest argument' do
@@ -671,6 +711,14 @@ describe RipperRubyParser::Parser do
     describe 'for stabby lambda' do
       it 'works in the simple case' do
         '->(foo) { bar }'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              s(:args, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it 'works in the simple case without parentheses' do
+        '-> foo { bar }'.
           must_be_parsed_as s(:iter,
                               s(:call, nil, :lambda),
                               s(:args, :foo),
