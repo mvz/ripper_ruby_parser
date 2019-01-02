@@ -3,6 +3,8 @@
 require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
+  let(:parser) { RipperRubyParser::Parser.new }
+
   describe '#parse' do
     describe 'for single assignment' do
       it 'works when assigning to a namespaced constant' do
@@ -209,6 +211,11 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as expected
         end
       end
+
+      it 'sets the correct line numbers' do
+        result = parser.parse 'foo = {}'
+        result.line.must_equal 1
+      end
     end
 
     describe 'for multiple assignment' do
@@ -379,6 +386,11 @@ describe RipperRubyParser::Parser do
                               s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                               s(:splat,
                                 s(:call, nil, :baz)))
+      end
+
+      it 'sets the correct line numbers' do
+        result = parser.parse 'foo, bar = {}, {}'
+        result.line.must_equal 1
       end
     end
 

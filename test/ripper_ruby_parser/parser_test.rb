@@ -587,16 +587,6 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
-      it 'works for assignment of the empty hash' do
-        result = parser.parse 'foo = {}'
-        result.line.must_equal 1
-      end
-
-      it 'works for multiple assignment of empty hashes' do
-        result = parser.parse 'foo, bar = {}, {}'
-        result.line.must_equal 1
-      end
-
       it 'assigns line numbers to nested sexps without their own line numbers' do
         result = parser.parse "foo(bar) do\nnext baz\nend\n"
         result.must_equal s(:iter,
