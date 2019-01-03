@@ -433,15 +433,6 @@ describe RipperRubyParser::Parser do
         result[4].comments.must_equal "# bar\n"
       end
 
-      it 'handles the use of symbols that are keywords' do
-        result = parser.parse "# Foo\ndef bar\n:class\nend"
-        result.must_equal s(:defn,
-                            :bar,
-                            s(:args),
-                            s(:lit, :class))
-        result.comments.must_equal "# Foo\n"
-      end
-
       it 'handles use of singleton class inside methods' do
         result = parser.parse "# Foo\ndef bar\nclass << self\nbaz\nend\nend"
         result.must_equal s(:defn,
@@ -544,11 +535,6 @@ describe RipperRubyParser::Parser do
 
       it 'works for nil' do
         result = parser.parse 'nil'
-        result.line.must_equal 1
-      end
-
-      it 'works for a symbol literal' do
-        result = parser.parse ':foo'
         result.line.must_equal 1
       end
 
