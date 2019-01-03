@@ -24,8 +24,7 @@ module RipperRubyParser
       def process_params(exp)
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
-        args = []
-        args += handle_normal_arguments normal
+        args = handle_normal_arguments normal
         args += handle_default_arguments defaults
         args += handle_splat splat
         args += handle_normal_arguments rest
@@ -76,7 +75,7 @@ module RipperRubyParser
                         s(:array, *body)
                       end
                     else
-                      s(:array, process(eclass[0]))
+                      s(:array, process(eclass.first))
                     end
                   else
                     s(:array)
@@ -158,7 +157,7 @@ module RipperRubyParser
       def handle_generic_block(exp)
         type, args, stmts = exp.shift 3
         args = process(args)
-        s(type, args, s(unwrap_nil(process(stmts))))
+        s(nil, args, s(unwrap_nil(process(stmts))))
       end
 
       def handle_normal_arguments(normal)
@@ -170,7 +169,11 @@ module RipperRubyParser
       def handle_default_arguments(defaults)
         return [] unless defaults
 
-        defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
+        defaults.map do |sym, val|
+          s(:lasgn,
+            extract_node_symbol(process(sym)),
+            process(val))
+        end
       end
 
       def handle_splat(splat)
@@ -185,7 +188,7 @@ module RipperRubyParser
         return [] unless kwargs
 
         kwargs.map do |sym, val|
-          symbol = process(sym)[1]
+          symbol = extract_node_symbol process(sym)
           if val
             s(:kwarg, symbol, process(val))
           else
