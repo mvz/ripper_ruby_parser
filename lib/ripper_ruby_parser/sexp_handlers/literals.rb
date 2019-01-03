@@ -127,22 +127,30 @@ module RipperRubyParser
         s(:symbols, *items)
       end
 
+      INTERPOLATING_HEREDOC = /^<<[-~]?[^']/.freeze
+      NON_INTERPOLATING_HEREDOC = /^<<[-~]?'/.freeze
+      INTERPOLATING_STRINGS = ['"', '`', ':"', /^%Q.$/, /^%.$/].freeze
+      NON_INTERPOLATING_STRINGS = ["'", ":'", /^%q.$/].freeze
+      INTERPOLATING_WORD_LIST = /^%[WI].$/.freeze
+      NON_INTERPOLATING_WORD_LIST = /^%[wi].$/.freeze
+      REGEXP_LITERALS = ['/', /^%r.$/].freeze
+
       def process_at_tstring_content(exp)
         _, content, _, delim = exp.shift 4
         string = case delim
-                 when /^<<[-~]?'/
+                 when NON_INTERPOLATING_HEREDOC
                    content
-                 when /^<</
+                 when INTERPOLATING_HEREDOC
                    unescape(content)
-                 when '"', '`', ':"', /^%Q.$/, /^%.$/
+                 when *INTERPOLATING_STRINGS
                    fix_encoding unescape(content)
-                 when /^%[WI].$/
+                 when INTERPOLATING_WORD_LIST
                    fix_encoding unescape_wordlist_word(content)
-                 when "'", ":'", /^%q.$/
+                 when *NON_INTERPOLATING_STRINGS
                    fix_encoding simple_unescape(content)
-                 when '/', /^%r.$/
+                 when *REGEXP_LITERALS
                    fix_encoding unescape_regexp(content)
-                 when /^%[wi].$/
+                 when NON_INTERPOLATING_WORD_LIST
                    fix_encoding simple_unescape_wordlist_word(content)
                  else
                    fix_encoding content
@@ -180,19 +188,19 @@ module RipperRubyParser
       def alternative_process_at_tstring_content(exp)
         _, content, _, delim = exp.shift 4
         string = case delim
-                 when /^<<[-~]?'/
+                 when NON_INTERPOLATING_HEREDOC
                    content
-                 when /^<</
+                 when INTERPOLATING_HEREDOC
                    unescape(content)
-                 when '"', '`', ':"', /^%Q.$/, /^%.$/
+                 when *INTERPOLATING_STRINGS
                    unescape(content)
-                 when /^%[WI].$/
+                 when INTERPOLATING_WORD_LIST
                    unescape_wordlist_word(content)
-                 when "'", ":'", /^%q.$/
+                 when *NON_INTERPOLATING_STRINGS
                    simple_unescape(content)
-                 when '/', /^%r.$/
+                 when *REGEXP_LITERALS
                    unescape_regexp(content)
-                 when /^%[wi].$/
+                 when NON_INTERPOLATING_WORD_LIST
                    simple_unescape_wordlist_word(content)
                  else
                    content
