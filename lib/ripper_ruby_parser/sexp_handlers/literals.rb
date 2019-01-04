@@ -171,12 +171,6 @@ module RipperRubyParser
         s(:kwsplat, process(param))
       end
 
-      # Handle implied hashes, such as at the end of argument lists.
-      def process_bare_assoc_hash(exp)
-        _, elems = exp.shift 2
-        s(:hash, *make_hash_items(elems))
-      end
-
       private
 
       def extract_string_parts(list)
