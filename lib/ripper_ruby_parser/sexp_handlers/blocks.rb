@@ -142,7 +142,7 @@ module RipperRubyParser
         _, args, statements = exp.shift 3
         old_type = args.sexp_type
         args = convert_special_args(process(args))
-        args = 0 if args == s(:args) && old_type == :params
+        args = nil if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
                   safe_unwrap_void_stmt(process(statements)))
@@ -211,6 +211,7 @@ module RipperRubyParser
       end
 
       def make_iter(call, args, stmt)
+        args.pop if args && args.last == s(:excessed_comma)
         args ||= 0
         if stmt.empty?
           s(:iter, call, args)

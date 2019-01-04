@@ -25,7 +25,7 @@ module RipperRubyParser
 
       def process_call(exp)
         _, receiver, op, ident = exp.shift 4
-        type = CALL_OP_MAP.fetch op
+        type = map_call_op op
         case ident
         when :call
           s(type, process(receiver), :call)
@@ -46,11 +46,16 @@ module RipperRubyParser
 
       def process_command_call(exp)
         _, receiver, op, ident, arguments = exp.shift 5
-        type = CALL_OP_MAP.fetch op
+        type = map_call_op op
         with_position_from_node_symbol(ident) do |method|
           args = handle_argument_list(arguments)
           s(type, process(receiver), method, *args)
         end
+      end
+
+      def map_call_op(call_op)
+        call_op = call_op.sexp_body.first.to_sym if call_op.is_a? Sexp
+        CALL_OP_MAP.fetch(call_op)
       end
 
       def process_vcall(exp)
