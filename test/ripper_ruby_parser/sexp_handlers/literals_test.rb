@@ -22,6 +22,11 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, /\)\n\\/)
       end
 
+      it 'does not fix encoding' do
+        '/2\302\275/'.
+          must_be_parsed_as s(:lit, /2\302\275/)
+      end
+
       it 'works for a regex literal with the multiline flag' do
         '/foo/m'.
           must_be_parsed_as s(:lit, /foo/m)

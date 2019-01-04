@@ -298,7 +298,7 @@ module RipperRubyParser
           else
             fix_encoding string
           end
-        when *INTERPOLATING_STRINGS, *REGEXP_LITERALS
+        when *INTERPOLATING_STRINGS
           fix_encoding string
         else
           string
