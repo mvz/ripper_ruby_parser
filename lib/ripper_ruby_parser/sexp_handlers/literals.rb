@@ -127,7 +127,7 @@ module RipperRubyParser
         s(:symbols, *items)
       end
 
-      INTERPOLATING_HEREDOC = /^<<[-~]?[^']/.freeze
+      INTERPOLATING_HEREDOC = /^<<[-~]?[^-~']/.freeze
       NON_INTERPOLATING_HEREDOC = /^<<[-~]?'/.freeze
       INTERPOLATING_STRINGS = ['"', '`', ':"', /^%Q.$/, /^%.$/].freeze
       NON_INTERPOLATING_STRINGS = ["'", ":'", /^%q.$/].freeze
@@ -137,24 +137,8 @@ module RipperRubyParser
 
       def process_at_tstring_content(exp)
         _, content, _, delim = exp.shift 4
-        string = case delim
-                 when NON_INTERPOLATING_HEREDOC
-                   content
-                 when INTERPOLATING_HEREDOC
-                   unescape(content)
-                 when *INTERPOLATING_STRINGS
-                   fix_encoding unescape(content)
-                 when INTERPOLATING_WORD_LIST
-                   fix_encoding unescape_wordlist_word(content)
-                 when *NON_INTERPOLATING_STRINGS
-                   fix_encoding simple_unescape(content)
-                 when *REGEXP_LITERALS
-                   fix_encoding unescape_regexp(content)
-                 when NON_INTERPOLATING_WORD_LIST
-                   fix_encoding simple_unescape_wordlist_word(content)
-                 else
-                   fix_encoding content
-                 end
+        string = handle_string_unescaping(content, delim)
+        string = handle_string_encoding(string, delim)
         s(:str, string)
       end
 
@@ -257,6 +241,38 @@ module RipperRubyParser
           _, first, *rest = right
           left.push s(:str, first) unless first.empty?
           left.push(*rest)
+        end
+      end
+
+      def handle_string_unescaping(content, delim)
+        case delim
+        when INTERPOLATING_HEREDOC, *INTERPOLATING_STRINGS
+          unescape(content)
+        when INTERPOLATING_WORD_LIST
+          unescape_wordlist_word(content)
+        when *NON_INTERPOLATING_STRINGS
+          simple_unescape(content)
+        when *REGEXP_LITERALS
+          unescape_regexp(content)
+        when NON_INTERPOLATING_WORD_LIST
+          simple_unescape_wordlist_word(content)
+        else
+          content
+        end
+      end
+
+      def handle_string_encoding(string, delim)
+        case delim
+        when INTERPOLATING_HEREDOC, INTERPOLATING_WORD_LIST
+          if extra_compatible
+            string
+          else
+            fix_encoding string
+          end
+        when *INTERPOLATING_STRINGS, *REGEXP_LITERALS
+          fix_encoding string
+        else
+          string
         end
       end
     end

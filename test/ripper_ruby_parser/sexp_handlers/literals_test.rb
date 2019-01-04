@@ -598,9 +598,16 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\\\nbaz\n")
         end
 
-        it 'does not convert to unicode even if possible' do
+        it 'converts to unicode' do
           "<<FOO\n2\\302\\275\nFOO".
-            must_be_parsed_as s(:str, (+"2\xC2\xBD\n").force_encoding('ascii-8bit'))
+            must_be_parsed_as s(:str, "2½\n")
+        end
+
+        it 'does not convert to unicode in extra-compatible mode' do
+          "<<FOO\n2\\302\\275\nFOO".
+            must_be_parsed_as s(:str,
+                                (+"2\xC2\xBD\n").force_encoding('ascii-8bit')),
+                              extra_compatible: true
         end
       end
     end
@@ -669,6 +676,17 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:array,
                               s(:str, "foo\nbar"),
                               s(:str, 'baz'))
+      end
+
+      it 'converts to unicode if possible' do
+        '%W(2\302\275)'.must_be_parsed_as s(:array, s(:str, '2½'))
+      end
+
+      it 'does not convert to unicode if possible in extra-compatible mode' do
+        '%W(2\302\275)'.
+          must_be_parsed_as s(:array,
+                              s(:str, (+"2\xC2\xBD").force_encoding('ascii-8bit'))),
+                            extra_compatible: true
       end
 
       it 'correctly handles line continuation' do

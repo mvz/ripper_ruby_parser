@@ -33,7 +33,10 @@ extra-compatible mode:
   still contains a bug that was fixed in Ruby 2.4. See RubyParser
   [issue #227](https://github.com/seattlerb/ruby_parser/issues/227).
 * RubyParser handles byte sequences in second and further literal parts of a
-  strings with interpolations differently.
+  strings with interpolations differently. RipperRubyParser will convert these
+  to unicode if possible.
+* RubyParser handles byte sequences in heredocs and interpolating word lists
+  differently. RipperRubyParser will convert these to unicode if possible.
 
 ## Install
 
