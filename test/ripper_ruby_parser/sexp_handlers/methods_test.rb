@@ -29,7 +29,8 @@ describe RipperRubyParser::Parser do
                               s(:lvar, :bar))
       end
 
-      it 'treats kwargs as a local variable in a block with kwargs' do
+      # NOTE: See https://github.com/seattlerb/ruby_parser/issues/276
+      it 'treats kwargs as a method call in a block with kwargs' do
         'def foo(**bar); baz { |**qux| bar; qux }; end'.
           must_be_parsed_as s(:defn, :foo,
                               s(:args, :"**bar"),
