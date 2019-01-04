@@ -141,19 +141,27 @@ module RipperRubyParser
                  when NON_INTERPOLATING_HEREDOC
                    content
                  when INTERPOLATING_HEREDOC
-                   unescape(content)
+                   if extra_compatible
+                     unescape(content)
+                   else
+                     fix_encoding unescape(content)
+                   end
                  when *INTERPOLATING_STRINGS
                    fix_encoding unescape(content)
                  when INTERPOLATING_WORD_LIST
-                   fix_encoding unescape_wordlist_word(content)
+                   if extra_compatible
+                     unescape_wordlist_word(content)
+                   else
+                     fix_encoding unescape_wordlist_word(content)
+                   end
                  when *NON_INTERPOLATING_STRINGS
-                   fix_encoding simple_unescape(content)
+                   simple_unescape(content)
                  when *REGEXP_LITERALS
                    fix_encoding unescape_regexp(content)
                  when NON_INTERPOLATING_WORD_LIST
-                   fix_encoding simple_unescape_wordlist_word(content)
+                   simple_unescape_wordlist_word(content)
                  else
-                   fix_encoding content
+                   content
                  end
         s(:str, string)
       end
