@@ -315,11 +315,6 @@ describe RipperRubyParser::Parser do
                               nil,
                               s(:begin, s(:call, nil, :foo)))
       end
-
-      it 'does not keep :begin for a method receiver' do
-        'begin; foo; end.bar'.
-          must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
-      end
     end
 
     describe 'for rescue/else' do
