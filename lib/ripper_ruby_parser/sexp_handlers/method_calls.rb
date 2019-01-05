@@ -12,7 +12,7 @@ module RipperRubyParser
         _, regular, block = exp.shift 3
         args = process(regular)
         args << s(:block_pass, process(block)) if block
-        s(:arglist, *args.sexp_body)
+        args
       end
 
       def process_arg_paren(exp)
@@ -25,14 +25,8 @@ module RipperRubyParser
       def process_method_add_arg(exp)
         _, call, parens = exp.shift 3
         call = process(call)
-        unless parens.empty?
-          parens = process(parens)
-          parens.shift
-        end
-        parens.each do |arg|
-          call << arg
-        end
-        call
+        parens = process(parens)
+        call.push(*parens.sexp_body)
       end
 
       # Handle implied hashes, such as at the end of argument lists.
@@ -104,7 +98,7 @@ module RipperRubyParser
         _, coll, idx = exp.shift 3
 
         coll = process(coll)
-        idx = process(idx) || s(:arglist)
+        idx = process(idx) || []
         idx.shift
         s(:call, coll, :[], *idx)
       end

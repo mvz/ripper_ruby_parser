@@ -127,6 +127,7 @@ module RipperRubyParser
         case lvalue.sexp_type
         when :aref_field
           _, arr, arglist = lvalue
+          arglist.sexp_type = :arglist
           s(:op_asgn1, arr, arglist, operator, value)
         when :field
           _, obj, _, (_, field) = lvalue
