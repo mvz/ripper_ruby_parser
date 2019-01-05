@@ -77,7 +77,7 @@ module RipperRubyParser
       private
 
       def make_boolean_operator(operator, left, right)
-        _, left, _, right = rebalance_binary(s(:binary, left, operator, right))
+        _, left, _, right = rebalance_binary(left, operator, right)
         s(operator, unwrap_begin(process(left)), process(right))
       end
 
@@ -91,13 +91,12 @@ module RipperRubyParser
         end
       end
 
-      def rebalance_binary(exp)
-        _, left, op, right = exp
-        if left.sexp_type == :binary && BINARY_OPERATOR_MAP[op] == BINARY_OPERATOR_MAP[left[2]]
-          _, left, _, middle = rebalance_binary(left)
-          right = rebalance_binary(s(:binary, middle, op, right))
+      def rebalance_binary(left, operator, right)
+        if BINARY_OPERATOR_MAP[operator] == BINARY_OPERATOR_MAP[left[2]]
+          _, left, _, middle = rebalance_binary(*left.sexp_body)
+          right = rebalance_binary(middle, operator, right)
         end
-        s(:binary, left, op, right)
+        s(:binary, left, operator, right)
       end
     end
   end
