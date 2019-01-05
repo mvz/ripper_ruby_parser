@@ -45,7 +45,7 @@ module RipperRubyParser
 
       def process_yield(exp)
         _, arglist = exp.shift 2
-        s(:yield, *handle_argument_list(arglist))
+        s(:yield, *process(arglist).sexp_body)
       end
 
       def process_yield0(exp)

@@ -63,7 +63,7 @@ module RipperRubyParser
       def process_command(exp)
         _, ident, arglist = exp.shift 3
         with_position_from_node_symbol(ident) do |method|
-          args = handle_argument_list(arglist)
+          args = process(arglist).sexp_body
           s(:call, nil, method, *args)
         end
       end
@@ -72,7 +72,7 @@ module RipperRubyParser
         _, receiver, op, ident, arguments = exp.shift 5
         type = map_call_op op
         with_position_from_node_symbol(ident) do |method|
-          args = handle_argument_list(arguments)
+          args = process(arguments).sexp_body
           s(type, process(receiver), method, *args)
         end
       end

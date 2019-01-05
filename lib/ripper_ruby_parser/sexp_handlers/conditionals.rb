@@ -62,7 +62,7 @@ module RipperRubyParser
           falsepart = s(falsepart)
         end
 
-        values = handle_argument_list values
+        values = process(values).sexp_body
 
         truepart = map_process_list_compact truepart.sexp_body
         truepart = [nil] if truepart.empty?

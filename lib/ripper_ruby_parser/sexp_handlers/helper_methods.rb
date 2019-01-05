@@ -80,12 +80,8 @@ module RipperRubyParser
         end
       end
 
-      def handle_argument_list(exp)
-        process(exp).tap(&:shift)
-      end
-
       def handle_return_argument_list(arglist)
-        args = handle_argument_list(arglist)
+        args = process(arglist).sexp_body
 
         case args.length
         when 0
