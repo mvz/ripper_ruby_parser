@@ -39,7 +39,7 @@ module RipperRubyParser
       end
 
       def process_return0(exp)
-        _ = exp.shift
+        exp.shift
         s(:return)
       end
 
@@ -49,7 +49,7 @@ module RipperRubyParser
       end
 
       def process_yield0(exp)
-        _ = exp.shift
+        exp.shift
         s(:yield)
       end
 
@@ -61,7 +61,7 @@ module RipperRubyParser
         end
 
         if args.size == 1
-          args[0]
+          args.first
         else
           s(:block, *args)
         end
@@ -122,7 +122,7 @@ module RipperRubyParser
       end
 
       def kwrest_param(params)
-        found = params.find { |param| param.to_s =~ /^\*\*(.*)/ }
+        found = params.find { |param| param.to_s =~ /^\*\*(.+)/ }
         Regexp.last_match[1].to_sym if found
       end
 
