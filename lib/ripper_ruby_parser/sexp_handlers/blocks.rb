@@ -50,7 +50,7 @@ module RipperRubyParser
 
         names = process(args)
 
-        convert_special_args names
+        convert_block_args names
       end
 
       def process_begin(exp)
@@ -145,7 +145,7 @@ module RipperRubyParser
       def process_lambda(exp)
         _, args, statements = exp.shift 3
         old_type = args.sexp_type
-        args = convert_special_args(process(args))
+        args = convert_method_args(process(args))
         args = nil if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
@@ -236,6 +236,35 @@ module RipperRubyParser
           statements.first
         else
           s(:block, *statements)
+        end
+      end
+
+      def convert_block_args(args)
+        args.map! do |item|
+          if item.is_a? Symbol
+            item
+          else
+            case item.sexp_type
+            when :lvar
+              item.last
+            when :masgn
+              args = item[1]
+              args.shift
+              s(:masgn, *convert_block_args(args))
+            when :lasgn
+              if item.length == 2
+                item[1]
+              else
+                item
+              end
+            when *Methods::SPECIAL_ARG_MARKER.keys
+              marker = Methods::SPECIAL_ARG_MARKER[item.sexp_type]
+              name = extract_node_symbol item[1]
+              :"#{marker}#{name}"
+            else
+              item
+            end
+          end
         end
       end
     end
