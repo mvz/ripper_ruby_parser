@@ -211,6 +211,15 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :baz),
                               s(:call, nil, :qux))
       end
+
+      it 'works with a simple splat' do
+        'def foo.bar *baz; end'.
+          must_be_parsed_as s(:defs,
+                              s(:call, nil, :foo),
+                              :bar,
+                              s(:args, :"*baz"),
+                              s(:nil))
+      end
     end
 
     describe 'for the alias statement' do
@@ -266,6 +275,115 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:block,
                               s(:undef, s(:lit, :foo)),
                               s(:undef, s(:lit, :bar)))
+      end
+    end
+
+    describe 'for the return statement' do
+      it 'works with no arguments' do
+        'return'.
+          must_be_parsed_as s(:return)
+      end
+
+      it 'works with one argument' do
+        'return foo'.
+          must_be_parsed_as s(:return,
+                              s(:call, nil, :foo))
+      end
+
+      it 'works with a splat argument' do
+        'return *foo'.
+          must_be_parsed_as s(:return,
+                              s(:svalue,
+                                s(:splat,
+                                  s(:call, nil, :foo))))
+      end
+
+      it 'works with multiple arguments' do
+        'return foo, bar'.
+          must_be_parsed_as s(:return,
+                              s(:array,
+                                s(:call, nil, :foo),
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a regular argument and a splat argument' do
+        'return foo, *bar'.
+          must_be_parsed_as s(:return,
+                              s(:array,
+                                s(:call, nil, :foo),
+                                s(:splat,
+                                  s(:call, nil, :bar))))
+      end
+
+      it 'works with a function call with parentheses' do
+        'return foo(bar)'.
+          must_be_parsed_as s(:return,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a function call without parentheses' do
+        'return foo bar'.
+          must_be_parsed_as s(:return,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
+    end
+
+    describe 'for yield' do
+      it 'works with no arguments and no parentheses' do
+        'yield'.
+          must_be_parsed_as s(:yield)
+      end
+
+      it 'works with parentheses but no arguments' do
+        'yield()'.
+          must_be_parsed_as s(:yield)
+      end
+
+      it 'works with one argument and no parentheses' do
+        'yield foo'.
+          must_be_parsed_as s(:yield, s(:call, nil, :foo))
+      end
+
+      it 'works with one argument and parentheses' do
+        'yield(foo)'.
+          must_be_parsed_as s(:yield, s(:call, nil, :foo))
+      end
+
+      it 'works with multiple arguments and no parentheses' do
+        'yield foo, bar'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it 'works with multiple arguments and parentheses' do
+        'yield(foo, bar)'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it 'works with splat' do
+        'yield foo, *bar'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo),
+                              s(:splat, s(:call, nil, :bar)))
+      end
+
+      it 'works with a function call with parentheses' do
+        'yield foo(bar)'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with a function call without parentheses' do
+        'yield foo bar'.
+          must_be_parsed_as s(:yield,
+                              s(:call, nil, :foo,
+                                s(:call, nil, :bar)))
       end
     end
   end
