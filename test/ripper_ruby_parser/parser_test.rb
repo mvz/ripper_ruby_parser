@@ -207,39 +207,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for operators' do
-      it 'handles :!=' do
-        'foo != bar'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :!=,
-                              s(:call, nil, :bar))
-      end
-
-      it 'handles unary !' do
-        '!foo'.
-          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
-      end
-
-      it 'converts :not to :!' do
-        'not foo'.
-          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
-      end
-
-      it 'handles unary ! with a number literal' do
-        '!1'.
-          must_be_parsed_as s(:call, s(:lit, 1), :!)
-      end
-
-      it 'handles the ternary operator' do
-        'foo ? bar : baz'.
-          must_be_parsed_as s(:if,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz))
-      end
-    end
-
     describe 'for expressions' do
       it 'handles assignment inside binary operator expressions' do
         'foo + (bar = baz)'.
