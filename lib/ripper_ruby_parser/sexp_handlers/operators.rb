@@ -25,11 +25,11 @@ module RipperRubyParser
         _, left, op, right = exp.shift 4
 
         if op == :=~
-          make_regexp_match_operator(op, left, right)
+          make_regexp_match_operator(left, op, right)
         elsif (mapped = NEGATED_BINARY_OPERATOR_MAP[op])
-          s(:not, make_regexp_match_operator(mapped, left, right))
+          s(:not, make_regexp_match_operator(left, mapped, right))
         elsif (mapped = BINARY_OPERATOR_MAP[op])
-          make_boolean_operator(mapped, left, right)
+          make_boolean_operator(left, mapped, right)
         elsif SHIFT_OPERATORS.include? op
           s(:call, unwrap_begin(process(left)), op, unwrap_begin(process(right)))
         else
@@ -76,12 +76,12 @@ module RipperRubyParser
 
       private
 
-      def make_boolean_operator(operator, left, right)
+      def make_boolean_operator(left, operator, right)
         _, left, _, right = rebalance_binary(left, operator, right)
         s(operator, unwrap_begin(process(left)), process(right))
       end
 
-      def make_regexp_match_operator(operator, left, right)
+      def make_regexp_match_operator(left, operator, right)
         if left.sexp_type == :regexp_literal
           s(:match2, process(left), process(right))
         elsif right.sexp_type == :regexp_literal
