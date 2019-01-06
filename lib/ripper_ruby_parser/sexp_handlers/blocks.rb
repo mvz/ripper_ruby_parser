@@ -6,19 +6,11 @@ module RipperRubyParser
     module Blocks
       def process_method_add_block(exp)
         _, call, block = exp.shift 3
-        block = process(block)
         _, args, stmt = block
         call = process(call)
-        stmts = stmt.first || s()
-        make_iter call, args, stmts
-      end
-
-      def process_brace_block(exp)
-        handle_generic_block exp
-      end
-
-      def process_do_block(exp)
-        handle_generic_block exp
+        args = process(args)
+        stmt = safe_unwrap_void_stmt process(stmt)
+        make_iter call, args, stmt
       end
 
       def process_params(exp)
@@ -153,12 +145,6 @@ module RipperRubyParser
       end
 
       private
-
-      def handle_generic_block(exp)
-        type, args, stmts = exp.shift 3
-        args = process(args)
-        s(nil, args, s(unwrap_nil(process(stmts))))
-      end
 
       def handle_normal_arguments(normal)
         return [] unless normal
