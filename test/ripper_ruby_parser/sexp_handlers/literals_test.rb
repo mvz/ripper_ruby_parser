@@ -924,6 +924,13 @@ describe RipperRubyParser::Parser do
                               s(:evstr, s(:call, nil, :bar)))
       end
 
+      it 'works for dsyms with interpolations at the start' do
+        ':"#{bar}"'.
+          must_be_parsed_as s(:dsym,
+                              '',
+                              s(:evstr, s(:call, nil, :bar)))
+      end
+
       it 'works for dsyms with escape sequences' do
         ':"foo\nbar"'.
           must_be_parsed_as s(:lit, :"foo\nbar")

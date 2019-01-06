@@ -179,7 +179,7 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as expected
       end
 
-      it 'works with a regular argumenta after a splat argument' do
+      it 'works with a regular argument after a splat argument' do
         'foo do |*bar, baz|; end'.
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
