@@ -79,7 +79,7 @@ module RipperRubyParser
 
         return s(:lit, Regexp.new(content.last, numflags)) if content.length == 2
 
-        content.sexp_type = :dregx_once if flags.match?(/o/)
+        content.sexp_type = :dregx_once if flags =~ /o/
         content << numflags unless numflags == 0
         content
       end
@@ -203,12 +203,12 @@ module RipperRubyParser
       def character_flags_to_numerical(flags)
         numflags = 0
 
-        numflags = Regexp::MULTILINE if flags.match?(/m/)
-        numflags |= Regexp::EXTENDED if flags.match?(/x/)
-        numflags |= Regexp::IGNORECASE if flags.match?(/i/)
+        numflags = Regexp::MULTILINE if flags =~ /m/
+        numflags |= Regexp::EXTENDED if flags =~ /x/
+        numflags |= Regexp::IGNORECASE if flags =~ /i/
 
-        numflags |= Regexp::NOENCODING if flags.match?(/n/)
-        numflags |= Regexp::FIXEDENCODING if flags.match?(/[ues]/)
+        numflags |= Regexp::NOENCODING if flags =~ /n/
+        numflags |= Regexp::FIXEDENCODING if flags =~ /[ues]/
 
         numflags
       end
