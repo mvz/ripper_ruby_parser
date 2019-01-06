@@ -39,6 +39,15 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe 'for brace blocks' do
+      it 'works with no statements in the block body' do
+        'foo { }'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              0)
+      end
+    end
+
     describe 'for block parameters' do
       specify do
         'foo do |(bar, baz)| end'.
@@ -114,6 +123,30 @@ describe RipperRubyParser::Parser do
                               s(:args, :bar, :baz))
       end
 
+      it 'works with an argument with a default value' do
+        'foo do |bar=baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args,
+                                s(:lasgn, :bar, s(:call, nil, :baz))))
+      end
+
+      it 'works with a keyword argument with no default value' do
+        'foo do |bar:|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args,
+                                s(:kwarg, :bar)))
+      end
+
+      it 'works with a keyword argument with a default value' do
+        'foo do |bar: baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args,
+                                s(:kwarg, :bar, s(:call, nil, :baz))))
+      end
+
       it 'works with a single splat argument' do
         'foo do |*bar|; end'.
           must_be_parsed_as s(:iter,
@@ -144,6 +177,13 @@ describe RipperRubyParser::Parser do
                    end
         'foo do |**bar|; baz bar; end'.
           must_be_parsed_as expected
+      end
+
+      it 'works with a regular argumenta after a splat argument' do
+        'foo do |*bar, baz|; end'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo),
+                              s(:args, :"*bar", :baz))
       end
 
       it 'works with a combination of regular arguments and a kwrest argument' do
@@ -183,83 +223,6 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar))
       end
 
-      it 'keeps :begin for the argument of a unary operator' do
-        '- begin; foo; end'.
-          must_be_parsed_as s(:call,
-                              s(:begin, s(:call, nil, :foo)),
-                              :-@)
-      end
-
-      it 'keeps :begin for the first argument of a binary operator' do
-        'begin; bar; end + foo'.
-          must_be_parsed_as s(:call,
-                              s(:begin, s(:call, nil, :bar)),
-                              :+,
-                              s(:call, nil, :foo))
-      end
-
-      it 'keeps :begin for the second argument of a binary operator' do
-        'foo + begin; bar; end'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :+,
-                              s(:begin, s(:call, nil, :bar)))
-      end
-
-      it 'does not keep :begin for the first argument of a boolean operator' do
-        'begin; bar; end and foo'.
-          must_be_parsed_as s(:and,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :foo))
-      end
-
-      it 'keeps :begin for the second argument of a boolean operator' do
-        'foo and begin; bar; end'.
-          must_be_parsed_as s(:and,
-                              s(:call, nil, :foo),
-                              s(:begin, s(:call, nil, :bar)))
-      end
-
-      it 'does not keep :begin for the first argument of a shift operator' do
-        'begin; bar; end << foo'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :bar),
-                              :<<,
-                              s(:call, nil, :foo))
-      end
-
-      it 'does not keep :begin for the second argument of a shift operator' do
-        'foo >> begin; bar; end'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :>>,
-                              s(:call, nil, :bar))
-      end
-
-      it 'keeps :begin for the first argument of a ternary operator' do
-        'begin; foo; end ? bar : baz'.
-          must_be_parsed_as s(:if,
-                              s(:begin, s(:call, nil, :foo)),
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz))
-      end
-
-      it 'keeps :begin for the second argument of a ternary operator' do
-        'foo ? begin; bar; end : baz'.
-          must_be_parsed_as s(:if,
-                              s(:call, nil, :foo),
-                              s(:begin, s(:call, nil, :bar)),
-                              s(:call, nil, :baz))
-      end
-
-      it 'keeps :begin for the third argument of a ternary operator' do
-        'foo ? bar : begin; baz; end'.
-          must_be_parsed_as s(:if,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar),
-                              s(:begin, s(:call, nil, :baz)))
-      end
-
       it 'keeps :begin for the truepart of a postfix if' do
         'begin; foo; end if bar'.
           must_be_parsed_as s(:if,
@@ -274,11 +237,6 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar),
                               nil,
                               s(:begin, s(:call, nil, :foo)))
-      end
-
-      it 'does not keep :begin for a method receiver' do
-        'begin; foo; end.bar'.
-          must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
       end
     end
 
@@ -491,103 +449,6 @@ describe RipperRubyParser::Parser do
                                 s(:array),
                                 s(:next)))
       end
-
-      it 'works with assignment' do
-        'foo = bar rescue baz'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar),
-                                s(:resbody, s(:array), s(:call, nil, :baz))))
-      end
-
-      it 'works with assignment with argument' do
-        'foo = bar(baz) rescue qux'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux))))
-      end
-
-      it 'works with assignment with argument without brackets' do
-        expected = if RUBY_VERSION < '2.4.0'
-                     s(:rescue,
-                       s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                       s(:resbody, s(:array), s(:call, nil, :qux)))
-                   else
-                     s(:lasgn, :foo,
-                       s(:rescue,
-                         s(:call, nil, :bar, s(:call, nil, :baz)),
-                         s(:resbody, s(:array), s(:call, nil, :qux))))
-                   end
-        'foo = bar baz rescue qux'.must_be_parsed_as expected
-      end
-
-      it 'works with assignment with class method call with argument without brackets' do
-        expected = if RUBY_VERSION < '2.4.0'
-                     s(:rescue,
-                       s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                       s(:resbody, s(:array), s(:call, nil, :quuz)))
-                   else
-                     s(:lasgn, :foo,
-                       s(:rescue,
-                         s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
-                         s(:resbody, s(:array), s(:call, nil, :quuz))))
-                   end
-        'foo = Bar.baz qux rescue quuz'.
-          must_be_parsed_as expected
-      end
-
-      it 'works with multiple assignment' do
-        'foo, bar = baz rescue qux'.
-          must_be_parsed_as s(:rescue,
-                              s(:masgn,
-                                s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                                s(:to_ary, s(:call, nil, :baz))),
-                              s(:resbody, s(:array), s(:call, nil, :qux)))
-      end
-
-      describe 'when extra compatibility is turned on' do
-        let(:parser) { RipperRubyParser::Parser.new }
-        before do
-          parser.extra_compatible = true
-        end
-
-        it 'works with assignment' do
-          'foo = bar rescue baz'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:rescue,
-                                  s(:call, nil, :bar),
-                                  s(:resbody, s(:array), s(:call, nil, :baz)))),
-                              extra_compatible: true
-        end
-
-        it 'works with assignment with argument with brackets' do
-          'foo = bar(baz) rescue qux'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:rescue,
-                                  s(:call, nil, :bar, s(:call, nil, :baz)),
-                                  s(:resbody, s(:array), s(:call, nil, :qux)))),
-                              extra_compatible: true
-        end
-
-        it 'works with assignment with argument without brackets' do
-          'foo = bar baz rescue qux'.
-            must_be_parsed_as s(:rescue,
-                                s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                                s(:resbody, s(:array), s(:call, nil, :qux))),
-                              extra_compatible: true
-        end
-
-        it 'works with assignment with class method call with argument without brackets' do
-          'foo = Bar.baz qux rescue quuz'.
-            must_be_parsed_as s(:rescue,
-                                s(:lasgn,
-                                  :foo,
-                                  s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                                s(:resbody, s(:array), s(:call, nil, :quuz))),
-                              extra_compatible: true
-        end
-      end
     end
 
     describe 'for the ensure statement' do
@@ -768,6 +629,14 @@ describe RipperRubyParser::Parser do
     describe 'for stabby lambda' do
       it 'works in the simple case' do
         '->(foo) { bar }'.
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              s(:args, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it 'works in the simple case without parentheses' do
+        '-> foo { bar }'.
           must_be_parsed_as s(:iter,
                               s(:call, nil, :lambda),
                               s(:args, :foo),

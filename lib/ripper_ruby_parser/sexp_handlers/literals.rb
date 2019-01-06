@@ -2,7 +2,7 @@
 
 module RipperRubyParser
   module SexpHandlers
-    # Sexp handlers for literals, except hash and array literals
+    # Sexp handlers for literals
     module Literals
       def process_string_literal(exp)
         _, content = exp.shift 2
@@ -31,16 +31,16 @@ module RipperRubyParser
         when :str
           val
         when :void_stmt
-          s(:dstr, '', s(:evstr))
+          s(:dstr, s(:evstr))
         else
-          s(:dstr, '', s(:evstr, val))
+          s(:dstr, s(:evstr, val))
         end
       end
 
       def process_string_dvar(exp)
         _, list = exp.shift 2
         val = process(list)
-        s(:dstr, '', s(:evstr, val))
+        s(:dstr, s(:evstr, val))
       end
 
       def process_string_concat(exp)
@@ -74,35 +74,25 @@ module RipperRubyParser
       def process_regexp_literal(exp)
         _, content, (_, flags,) = exp.shift 3
 
-        string, rest = process(content).sexp_body
+        content = process(content)
         numflags = character_flags_to_numerical flags
 
-        if rest.empty?
-          s(:lit, Regexp.new(string, numflags))
-        else
-          rest << numflags if numflags > 0
-          sexp_type = if flags =~ /o/
-                        :dregx_once
-                      else
-                        :dregx
-                      end
-          s(sexp_type, string, *rest)
-        end
+        return s(:lit, Regexp.new(content.last, numflags)) if content.length == 2
+
+        content.sexp_type = :dregx_once if flags =~ /o/
+        content << numflags unless numflags == 0
+        content
       end
 
       def process_regexp(exp)
         _, *rest = shift_all exp
         string, rest = extract_string_parts(rest)
-        s(:regexp, string, rest)
+        s(:dregx, string, *rest)
       end
 
       def process_symbol_literal(exp)
         _, symbol = exp.shift 2
-        if symbol.sexp_type == :symbol
-          process(symbol)
-        else
-          handle_symbol_content(symbol)
-        end
+        handle_symbol_content(symbol)
       end
 
       def process_symbol(exp)
@@ -142,6 +132,35 @@ module RipperRubyParser
         s(:str, string)
       end
 
+      def process_array(exp)
+        _, elems = exp.shift 2
+        return s(:array) if elems.nil?
+
+        process(elems).tap { |arr| arr.sexp_type = :array }
+      end
+
+      # Handle hash literals sexps. These can be either empty, or contain a
+      # nested :assoclist_from_args Sexp.
+      #
+      # @example Empty hash
+      #   s(:hash, nil)
+      # @example Hash with contents
+      #   s(:hash, s(:assoclist_from_args, ...))
+      def process_hash(exp)
+        _, body = exp.shift 2
+        return s(:hash) unless body
+
+        _, elems = body
+        s(:hash, *make_hash_items(elems))
+      end
+
+      # @example
+      #   s(:assoc_splat, s(:vcall, s(:@ident, "bar")))
+      def process_assoc_splat(exp)
+        _, param = exp.shift 2
+        s(:kwsplat, process(param))
+      end
+
       private
 
       def extract_string_parts(list)
@@ -161,7 +180,7 @@ module RipperRubyParser
         string = ''
         while !parts.empty? && parts.first.sexp_type == :str
           str = parts.shift
-          string += str[1]
+          string += str.last
         end
 
         rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
@@ -172,20 +191,8 @@ module RipperRubyParser
       def alternative_process_at_tstring_content(exp)
         _, content, _, delim = exp.shift 4
         string = case delim
-                 when NON_INTERPOLATING_HEREDOC
-                   content
-                 when INTERPOLATING_HEREDOC
-                   unescape(content)
                  when *INTERPOLATING_STRINGS
                    unescape(content)
-                 when INTERPOLATING_WORD_LIST
-                   unescape_wordlist_word(content)
-                 when *NON_INTERPOLATING_STRINGS
-                   simple_unescape(content)
-                 when *REGEXP_LITERALS
-                   unescape_regexp(content)
-                 when NON_INTERPOLATING_WORD_LIST
-                   simple_unescape_wordlist_word(content)
                  else
                    content
                  end
@@ -196,12 +203,12 @@ module RipperRubyParser
       def character_flags_to_numerical(flags)
         numflags = 0
 
-        flags =~ /m/ and numflags |= Regexp::MULTILINE
-        flags =~ /x/ and numflags |= Regexp::EXTENDED
-        flags =~ /i/ and numflags |= Regexp::IGNORECASE
+        numflags = Regexp::MULTILINE if flags =~ /m/
+        numflags |= Regexp::EXTENDED if flags =~ /x/
+        numflags |= Regexp::IGNORECASE if flags =~ /i/
 
-        flags =~ /n/ and numflags |= Regexp::NOENCODING
-        flags =~ /[ues]/ and numflags |= Regexp::FIXEDENCODING
+        numflags |= Regexp::NOENCODING if flags =~ /n/
+        numflags |= Regexp::FIXEDENCODING if flags =~ /[ues]/
 
         numflags
       end
@@ -213,24 +220,22 @@ module RipperRubyParser
           s(:lit, body.first.to_sym)
         when :dstr, :dxstr
           s(:dsym, *body)
-        else
-          raise type.to_s
         end
       end
 
       def handle_symbol_content(node)
         if node.sexp_type == :'@kw'
           symbol, position = extract_node_symbol_with_position(node)
-          with_line_number(position, s(:lit, symbol))
         else
           processed = process(node)
-          symbol = processed[1].to_sym
-          with_line_number(processed.line, s(:lit, symbol))
+          symbol = processed.last.to_sym
+          position = processed.line
         end
+        with_line_number(position, s(:lit, symbol))
       end
 
       def merge_left_into_right(left, right)
-        right[1] = left[1] + right[1]
+        right[1] = left.last + right[1]
         right
       end
 
@@ -269,11 +274,24 @@ module RipperRubyParser
           else
             fix_encoding string
           end
-        when *INTERPOLATING_STRINGS, *REGEXP_LITERALS
+        when *INTERPOLATING_STRINGS
           fix_encoding string
         else
           string
         end
+      end
+
+      # Process list of items that can be either :assoc_new or :assoc_splat
+      def make_hash_items(elems)
+        result = s()
+        elems.each do |sub_exp|
+          if sub_exp.sexp_type == :assoc_new
+            sub_exp.sexp_body.each { |elem| result << process(elem) }
+          else # :assoc_splat
+            result << process(sub_exp)
+          end
+        end
+        result
       end
     end
   end

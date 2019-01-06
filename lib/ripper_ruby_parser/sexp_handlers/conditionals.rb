@@ -61,9 +61,8 @@ module RipperRubyParser
         elsif falsepart.first.is_a? Symbol
           falsepart = s(falsepart)
         end
-        falsepart = [nil] if falsepart.empty?
 
-        values = handle_argument_list values
+        values = process(values).sexp_body
 
         truepart = map_process_list_compact truepart.sexp_body
         truepart = [nil] if truepart.empty?
@@ -85,11 +84,11 @@ module RipperRubyParser
         cond = unwrap_begin process(cond)
         case cond.sexp_type
         when :lit
-          return s(:match, cond) if cond[1].is_a?(Regexp)
+          return s(:match, cond) if cond.last.is_a?(Regexp)
         when :dot2
-          return s(:flip2, *cond[1..-1])
+          return s(:flip2, *cond.sexp_body)
         when :dot3
-          return s(:flip3, *cond[1..-1])
+          return s(:flip3, *cond.sexp_body)
         end
         cond
       end

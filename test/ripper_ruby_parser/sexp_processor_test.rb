@@ -41,23 +41,11 @@ describe RipperRubyParser::SexpProcessor do
 
     describe 'for a :string_literal sexp' do
       it 'transforms a simple sexp to :str' do
-        sexp = s(:string_literal, s(:string_content, s(:@tstring_content, 'foo')))
+        sexp = s(:string_literal,
+                 s(:string_content,
+                   s(:@tstring_content, 'foo', s(1, 1), '"')))
         result = processor.process sexp
         result.must_equal s(:str, 'foo')
-      end
-    end
-
-    describe 'for an :args_add_block sexp' do
-      it 'transforms a one-argument sexp to an :arglist' do
-        sexp = s(:args_add_block, s(:args, s(:foo)), false)
-        result = processor.process sexp
-        result.must_equal s(:arglist, s(:foo_p))
-      end
-
-      it 'transforms a multi-argument sexp to an :arglist' do
-        sexp = s(:args_add_block, s(:args, s(:foo), s(:bar)), false)
-        result = processor.process sexp
-        result.must_equal s(:arglist, s(:foo_p), s(:bar_p))
       end
     end
 
@@ -300,14 +288,14 @@ describe RipperRubyParser::SexpProcessor do
   end
 
   describe '#extract_node_symbol' do
-    it 'processes an identifier sexp to a bare symbol' do
-      sexp = s(:@ident, 'foo', s(1, 0))
+    it 'processes an lvar sexp to a bare symbol' do
+      sexp = s(:lvar, 'foo')
       result = processor.send :extract_node_symbol, sexp
       result.must_equal :foo
     end
 
     it 'processes a const sexp to a bare symbol' do
-      sexp = s(:@const, 'Foo', s(1, 0))
+      sexp = s(:const, 'Foo')
       result = processor.send :extract_node_symbol, sexp
       result.must_equal :Foo
     end

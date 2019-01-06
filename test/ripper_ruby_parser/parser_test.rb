@@ -48,58 +48,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for the return statement' do
-      it 'works with no arguments' do
-        'return'.
-          must_be_parsed_as s(:return)
-      end
-
-      it 'works with one argument' do
-        'return foo'.
-          must_be_parsed_as s(:return,
-                              s(:call, nil, :foo))
-      end
-
-      it 'works with a splat argument' do
-        'return *foo'.
-          must_be_parsed_as s(:return,
-                              s(:svalue,
-                                s(:splat,
-                                  s(:call, nil, :foo))))
-      end
-
-      it 'works with multiple arguments' do
-        'return foo, bar'.
-          must_be_parsed_as s(:return,
-                              s(:array,
-                                s(:call, nil, :foo),
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works with a regular argument and a splat argument' do
-        'return foo, *bar'.
-          must_be_parsed_as s(:return,
-                              s(:array,
-                                s(:call, nil, :foo),
-                                s(:splat,
-                                  s(:call, nil, :bar))))
-      end
-
-      it 'works with a function call with parentheses' do
-        'return foo(bar)'.
-          must_be_parsed_as s(:return,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works with a function call without parentheses' do
-        'return foo bar'.
-          must_be_parsed_as s(:return,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
-      end
-    end
-
     describe 'for a begin..end block' do
       it 'works with no statements' do
         'begin; end'.
@@ -150,83 +98,6 @@ describe RipperRubyParser::Parser do
                               s(:hash,
                                 s(:call, nil, :bar),
                                 s(:call, nil, :baz)))
-      end
-    end
-
-    describe 'for collection indexing' do
-      it 'works in the simple case' do
-        'foo[bar]'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :[],
-                              s(:call, nil, :bar))
-      end
-
-      it 'works without any indexes' do
-        'foo[]'.must_be_parsed_as s(:call, s(:call, nil, :foo),
-                                    :[])
-      end
-
-      it 'works with self[]' do
-        'self[foo]'.must_be_parsed_as s(:call, s(:self), :[],
-                                        s(:call, nil, :foo))
-      end
-    end
-
-    describe 'for yield' do
-      it 'works with no arguments and no parentheses' do
-        'yield'.
-          must_be_parsed_as s(:yield)
-      end
-
-      it 'works with parentheses but no arguments' do
-        'yield()'.
-          must_be_parsed_as s(:yield)
-      end
-
-      it 'works with one argument and no parentheses' do
-        'yield foo'.
-          must_be_parsed_as s(:yield, s(:call, nil, :foo))
-      end
-
-      it 'works with one argument and parentheses' do
-        'yield(foo)'.
-          must_be_parsed_as s(:yield, s(:call, nil, :foo))
-      end
-
-      it 'works with multiple arguments and no parentheses' do
-        'yield foo, bar'.
-          must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
-      end
-
-      it 'works with multiple arguments and parentheses' do
-        'yield(foo, bar)'.
-          must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
-      end
-
-      it 'works with splat' do
-        'yield foo, *bar'.
-          must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo),
-                              s(:splat, s(:call, nil, :bar)))
-      end
-
-      it 'works with a function call with parentheses' do
-        'yield foo(bar)'.
-          must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works with a function call without parentheses' do
-        'yield foo bar'.
-          must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
       end
     end
 
@@ -336,39 +207,6 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for operators' do
-      it 'handles :!=' do
-        'foo != bar'.
-          must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :!=,
-                              s(:call, nil, :bar))
-      end
-
-      it 'handles unary !' do
-        '!foo'.
-          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
-      end
-
-      it 'converts :not to :!' do
-        'not foo'.
-          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
-      end
-
-      it 'handles unary ! with a number literal' do
-        '!1'.
-          must_be_parsed_as s(:call, s(:lit, 1), :!)
-      end
-
-      it 'handles the ternary operator' do
-        'foo ? bar : baz'.
-          must_be_parsed_as s(:if,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz))
-      end
-    end
-
     describe 'for expressions' do
       it 'handles assignment inside binary operator expressions' do
         'foo + (bar = baz)'.
@@ -451,15 +289,6 @@ describe RipperRubyParser::Parser do
         result.comments.must_equal "# Foo\n"
         result[3].comments.must_equal "# foo\n"
         result[4].comments.must_equal "# bar\n"
-      end
-
-      it 'handles the use of symbols that are keywords' do
-        result = parser.parse "# Foo\ndef bar\n:class\nend"
-        result.must_equal s(:defn,
-                            :bar,
-                            s(:args),
-                            s(:lit, :class))
-        result.comments.must_equal "# Foo\n"
       end
 
       it 'handles use of singleton class inside methods' do
@@ -567,11 +396,6 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
-      it 'works for a symbol literal' do
-        result = parser.parse ':foo'
-        result.line.must_equal 1
-      end
-
       it 'works for a class definition' do
         result = parser.parse 'class Foo; end'
         result.line.must_equal 1
@@ -584,16 +408,6 @@ describe RipperRubyParser::Parser do
 
       it 'works for a method definition' do
         result = parser.parse 'def foo; end'
-        result.line.must_equal 1
-      end
-
-      it 'works for assignment of the empty hash' do
-        result = parser.parse 'foo = {}'
-        result.line.must_equal 1
-      end
-
-      it 'works for multiple assignment of empty hashes' do
-        result = parser.parse 'foo, bar = {}, {}'
         result.line.must_equal 1
       end
 

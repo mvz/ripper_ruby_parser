@@ -6,26 +6,17 @@ module RipperRubyParser
     module Blocks
       def process_method_add_block(exp)
         _, call, block = exp.shift 3
-        block = process(block)
         _, args, stmt = block
         call = process(call)
-        stmts = stmt.first || s()
-        make_iter call, args, stmts
-      end
-
-      def process_brace_block(exp)
-        handle_generic_block exp
-      end
-
-      def process_do_block(exp)
-        handle_generic_block exp
+        args = process(args)
+        stmt = safe_unwrap_void_stmt process(stmt)
+        make_iter call, args, stmt
       end
 
       def process_params(exp)
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
-        args = []
-        args += handle_normal_arguments normal
+        args = handle_normal_arguments normal
         args += handle_default_arguments defaults
         args += handle_splat splat
         args += handle_normal_arguments rest
@@ -34,6 +25,11 @@ module RipperRubyParser
         args += handle_block_argument block
 
         s(:args, *args)
+      end
+
+      def process_rest_param(exp)
+        _, ident = exp.shift 2
+        s(:splat, process(ident))
       end
 
       def process_kwrest_param(exp)
@@ -46,7 +42,7 @@ module RipperRubyParser
 
         names = process(args)
 
-        convert_special_args names
+        convert_block_args names
       end
 
       def process_begin(exp)
@@ -71,7 +67,7 @@ module RipperRubyParser
                         s(:array, *body)
                       end
                     else
-                      s(:array, process(eclass[0]))
+                      s(:array, process(eclass.first))
                     end
                   else
                     s(:array)
@@ -141,7 +137,7 @@ module RipperRubyParser
       def process_lambda(exp)
         _, args, statements = exp.shift 3
         old_type = args.sexp_type
-        args = convert_special_args(process(args))
+        args = convert_method_args(process(args))
         args = nil if args == s(:args) && old_type == :params
         make_iter(s(:call, nil, :lambda),
                   args,
@@ -149,12 +145,6 @@ module RipperRubyParser
       end
 
       private
-
-      def handle_generic_block(exp)
-        type, args, stmts = exp.shift 3
-        args = process(args)
-        s(type, args, s(unwrap_nil(process(stmts))))
-      end
 
       def handle_normal_arguments(normal)
         return [] unless normal
@@ -165,7 +155,11 @@ module RipperRubyParser
       def handle_default_arguments(defaults)
         return [] unless defaults
 
-        defaults.map { |sym, val| s(:lasgn, process(sym)[1], process(val)) }
+        defaults.map do |sym, val|
+          s(:lasgn,
+            extract_node_symbol(process(sym)),
+            process(val))
+        end
       end
 
       def handle_splat(splat)
@@ -180,7 +174,7 @@ module RipperRubyParser
         return [] unless kwargs
 
         kwargs.map do |sym, val|
-          symbol = process(sym)[1]
+          symbol = extract_node_symbol process(sym)
           if val
             s(:kwarg, symbol, process(val))
           else
@@ -228,6 +222,35 @@ module RipperRubyParser
           statements.first
         else
           s(:block, *statements)
+        end
+      end
+
+      def convert_block_args(args)
+        args.map! do |item|
+          if item.is_a? Symbol
+            item
+          else
+            case item.sexp_type
+            when :lvar
+              item.last
+            when :masgn
+              args = item[1]
+              args.shift
+              s(:masgn, *convert_block_args(args))
+            when :lasgn
+              if item.length == 2
+                item[1]
+              else
+                item
+              end
+            when *Methods::SPECIAL_ARG_MARKER.keys
+              marker = Methods::SPECIAL_ARG_MARKER[item.sexp_type]
+              name = extract_node_symbol item[1]
+              :"#{marker}#{name}"
+            else
+              item
+            end
+          end
         end
       end
     end

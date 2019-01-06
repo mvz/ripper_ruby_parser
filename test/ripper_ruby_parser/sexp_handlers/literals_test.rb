@@ -3,6 +3,8 @@
 require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
+  let(:parser) { RipperRubyParser::Parser.new }
+
   describe '#parse' do
     describe 'for regexp literals' do
       it 'works for a simple regex literal' do
@@ -18,6 +20,11 @@ describe RipperRubyParser::Parser do
       it 'works for regex literals with escape sequences' do
         '/\\)\\n\\\\/'.
           must_be_parsed_as s(:lit, /\)\n\\/)
+      end
+
+      it 'does not fix encoding' do
+        '/2\302\275/'.
+          must_be_parsed_as s(:lit, /2\302\275/)
       end
 
       it 'works for a regex literal with the multiline flag' do
@@ -36,8 +43,8 @@ describe RipperRubyParser::Parser do
       end
 
       it 'works for a regex literal with a combination of flags' do
-        '/foo/ixm'.
-          must_be_parsed_as s(:lit, /foo/ixm)
+        '/foo/ixmn'.
+          must_be_parsed_as s(:lit, /foo/mixn)
       end
 
       it 'works with the no-encoding flag' do
@@ -71,6 +78,15 @@ describe RipperRubyParser::Parser do
                                 s(:str, 'baz'))
         end
 
+        it 'works for a simple interpolation in extra-compatible mode' do
+          '/foo#{bar}baz/'.
+            must_be_parsed_as s(:dregx,
+                                'foo',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, 'baz')),
+                              extra_compatible: true
+        end
+
         it 'works for a regex literal with flags and interpolation' do
           '/foo#{bar}/ixm'.
             must_be_parsed_as s(:dregx,
@@ -93,6 +109,14 @@ describe RipperRubyParser::Parser do
                                 'foo',
                                 s(:evstr,
                                   s(:call, nil, :bar)), 16)
+        end
+
+        it 'works with unicode flag plus other flag' do
+          '/foo#{bar}/un'.
+            must_be_parsed_as s(:dregx,
+                                'foo',
+                                s(:evstr,
+                                  s(:call, nil, :bar)), 48)
         end
 
         it 'works with the euc-encoding flag' do
@@ -256,6 +280,10 @@ describe RipperRubyParser::Parser do
           '"2\302\275"'.must_be_parsed_as s(:str, '2½')
         end
 
+        it 'converts to unicode if possible in extra-compatible mode' do
+          '"2\302\275"'.must_be_parsed_as s(:str, '2½'), extra_compatible: true
+        end
+
         it 'does not convert to unicode if result is not valid' do
           '"2\x82\302\275"'.
             must_be_parsed_as s(:str,
@@ -367,7 +395,17 @@ describe RipperRubyParser::Parser do
                                 s(:str, '2½'))
         end
 
-        it 'does not convert to unicode after interpolation in extra-compatible mode' do
+        it 'convert single null byte to unicode after interpolation' do
+          '"#{foo}\0"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "\u0000"))
+        end
+      end
+
+      describe 'with interpolations and escape sequences in extra-compatible mode' do
+        it 'does not convert to unicode after interpolation' do
           '"#{foo}2\302\275"'.
             must_be_parsed_as s(:dstr,
                                 '',
@@ -376,20 +414,21 @@ describe RipperRubyParser::Parser do
                               extra_compatible: true
         end
 
-        it 'convert null byte to unicode after interpolation' do
-          '"#{foo}\0"'.
-            must_be_parsed_as s(:dstr,
-                                '',
-                                s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "\u0000"))
-        end
-
-        it 'keeps null byte as ascii after interpolation in extra-compatible mode' do
+        it 'keeps single null byte as ascii after interpolation' do
           '"#{foo}\0"'.
             must_be_parsed_as s(:dstr,
                                 '',
                                 s(:evstr, s(:call, nil, :foo)),
                                 s(:str, (+"\x00").force_encoding('ascii-8bit'))),
+                              extra_compatible: true
+        end
+
+        it 'converts string with null to unicode after interpolation' do
+          '"#{foo}bar\0"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :foo)),
+                                s(:str, "bar\x00")),
                               extra_compatible: true
         end
       end
@@ -418,6 +457,12 @@ describe RipperRubyParser::Parser do
         it 'does not process line continuation' do
           "'foo\\\nbar'".
             must_be_parsed_as s(:str, "foo\\\nbar")
+        end
+
+        it 'handles escape sequences correctly in extra-compatible mode' do
+          "'foo\\'bar\\\nbaz\\aqux'".
+            must_be_parsed_as s(:str, "foo'bar\\\nbaz\\aqux"),
+                              extra_compatible: true
         end
       end
 
@@ -568,9 +613,21 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\tbaz\n")
         end
 
+        it 'works for escape sequences in extra-compatible mode' do
+          "<<FOO\nbar\\tbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\tbaz\n"),
+                              extra_compatible: true
+        end
+
         it 'does not unescape with single quoted version' do
           "<<'FOO'\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
+        end
+
+        it 'does not unescape with single quoted version in extra-compatible mode' do
+          "<<'FOO'\nbar\\tbaz\nFOO".
+            must_be_parsed_as s(:str, "bar\\tbaz\n"),
+                              extra_compatible: true
         end
 
         it 'works with multiple lines with the single quoted version' do
@@ -703,6 +760,20 @@ describe RipperRubyParser::Parser do
                               s(:str, 'bar'),
                               s(:str, 'baz'))
       end
+
+      it 'handles escaped spaces in extra-compatible mode' do
+        '%W(foo bar\ baz)'.
+          must_be_parsed_as s(:array, s(:str, 'foo'), s(:str, 'bar baz')),
+                            extra_compatible: true
+      end
+
+      it 'correctly handles line continuation in extra-compatible mode' do
+        "%W(foo\\\nbar baz)".
+          must_be_parsed_as s(:array,
+                              s(:str, "foo\nbar"),
+                              s(:str, 'baz')),
+                            extra_compatible: true
+      end
     end
 
     describe 'for symbol list literals with %i delimiter' do
@@ -827,6 +898,20 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, :Foo)
       end
 
+      it 'works for symbols that look like keywords' do
+        ':class'.must_be_parsed_as s(:lit, :class)
+      end
+
+      it 'works for :__LINE__' do
+        ':__LINE__'.
+          must_be_parsed_as s(:lit, :__LINE__)
+      end
+
+      it 'works for :__FILE__' do
+        ':__FILE__'.
+          must_be_parsed_as s(:lit, :__FILE__)
+      end
+
       it 'works for simple dsyms' do
         ':"foo"'.
           must_be_parsed_as s(:lit, :foo)
@@ -877,6 +962,17 @@ describe RipperRubyParser::Parser do
       it 'works with single quoted dsyms with embedded backslashes' do
         ":'foo\\abar'".
           must_be_parsed_as s(:lit, :"foo\\abar")
+      end
+
+      it 'works with barewords that need to be interpreted as symbols' do
+        'alias foo bar'.
+          must_be_parsed_as s(:alias,
+                              s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it 'assigns a line number to the result' do
+        result = parser.parse ':foo'
+        result.line.must_equal 1
       end
     end
 

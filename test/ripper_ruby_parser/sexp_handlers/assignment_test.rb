@@ -3,6 +3,8 @@
 require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
+  let(:parser) { RipperRubyParser::Parser.new }
+
   describe '#parse' do
     describe 'for single assignment' do
       it 'works when assigning to a namespaced constant' do
@@ -162,6 +164,58 @@ describe RipperRubyParser::Parser do
                               :$foo,
                               s(:call, nil, :bar))
       end
+
+      describe 'with a rescue modifier' do
+        it 'works with assigning a bare method call' do
+          'foo = bar rescue baz'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar),
+                                  s(:resbody, s(:array), s(:call, nil, :baz))))
+        end
+
+        it 'works with a method call with argument' do
+          'foo = bar(baz) rescue qux'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar, s(:call, nil, :baz)),
+                                  s(:resbody, s(:array), s(:call, nil, :qux))))
+        end
+
+        it 'works with a method call with argument without brackets' do
+          expected = if RUBY_VERSION < '2.4.0'
+                       s(:rescue,
+                         s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                         s(:resbody, s(:array), s(:call, nil, :qux)))
+                     else
+                       s(:lasgn, :foo,
+                         s(:rescue,
+                           s(:call, nil, :bar, s(:call, nil, :baz)),
+                           s(:resbody, s(:array), s(:call, nil, :qux))))
+                     end
+          'foo = bar baz rescue qux'.must_be_parsed_as expected
+        end
+
+        it 'works with a class method call with argument without brackets' do
+          expected = if RUBY_VERSION < '2.4.0'
+                       s(:rescue,
+                         s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                         s(:resbody, s(:array), s(:call, nil, :quuz)))
+                     else
+                       s(:lasgn, :foo,
+                         s(:rescue,
+                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                           s(:resbody, s(:array), s(:call, nil, :quuz))))
+                     end
+          'foo = Bar.baz qux rescue quuz'.
+            must_be_parsed_as expected
+        end
+      end
+
+      it 'sets the correct line numbers' do
+        result = parser.parse 'foo = {}'
+        result.line.must_equal 1
+      end
     end
 
     describe 'for multiple assignment' do
@@ -189,136 +243,16 @@ describe RipperRubyParser::Parser do
                                 s(:lasgn, :bar)),
                               s(:to_ary, s(:call, nil, :baz)))
       end
-    end
 
-    describe 'for assignment to a collection element' do
-      it 'handles multiple indices' do
-        'foo[bar, baz] = qux'.
-          must_be_parsed_as s(:attrasgn,
-                              s(:call, nil, :foo),
-                              :[]=,
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux))
-      end
-    end
-
-    describe 'for operator assignment' do
-      it 'works with +=' do
-        'foo += bar'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:call, s(:lvar, :foo),
-                                :+,
-                                s(:call, nil, :bar)))
+      it 'works with a rescue modifier' do
+        'foo, bar = baz rescue qux'.
+          must_be_parsed_as s(:rescue,
+                              s(:masgn,
+                                s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                                s(:to_ary, s(:call, nil, :baz))),
+                              s(:resbody, s(:array), s(:call, nil, :qux)))
       end
 
-      it 'works with -=' do
-        'foo -= bar'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:call, s(:lvar, :foo),
-                                :-,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works with *=' do
-        'foo *= bar'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:call, s(:lvar, :foo),
-                                :*,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works with /=' do
-        'foo /= bar'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:call,
-                                s(:lvar, :foo), :/,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works with ||=' do
-        'foo ||= bar'.
-          must_be_parsed_as s(:op_asgn_or,
-                              s(:lvar, :foo),
-                              s(:lasgn, :foo,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works when assigning to an instance variable' do
-        '@foo += bar'.
-          must_be_parsed_as s(:iasgn, :@foo,
-                              s(:call,
-                                s(:ivar, :@foo), :+,
-                                s(:call, nil, :bar)))
-      end
-
-      it 'works when assigning to a collection element' do
-        'foo[bar] += baz'.
-          must_be_parsed_as s(:op_asgn1,
-                              s(:call, nil, :foo),
-                              s(:arglist, s(:call, nil, :bar)),
-                              :+,
-                              s(:call, nil, :baz))
-      end
-
-      it 'works with ||= when assigning to a collection element' do
-        'foo[bar] ||= baz'.
-          must_be_parsed_as s(:op_asgn1,
-                              s(:call, nil, :foo),
-                              s(:arglist, s(:call, nil, :bar)),
-                              :"||",
-                              s(:call, nil, :baz))
-      end
-
-      it 'works when assigning to an attribute' do
-        'foo.bar += baz'.
-          must_be_parsed_as s(:op_asgn2,
-                              s(:call, nil, :foo),
-                              :bar=, :+,
-                              s(:call, nil, :baz))
-      end
-
-      it 'works with ||= when assigning to an attribute' do
-        'foo.bar ||= baz'.
-          must_be_parsed_as s(:op_asgn2,
-                              s(:call, nil, :foo),
-                              :bar=, :'||',
-                              s(:call, nil, :baz))
-      end
-
-      describe 'assigning to a collection element' do
-        it 'handles multiple indices' do
-          'foo[bar, baz] += qux'.
-            must_be_parsed_as s(:op_asgn1,
-                                s(:call, nil, :foo),
-                                s(:arglist,
-                                  s(:call, nil, :bar),
-                                  s(:call, nil, :baz)),
-                                :+,
-                                s(:call, nil, :qux))
-        end
-
-        it 'works with boolean operators' do
-          'foo &&= bar'.
-            must_be_parsed_as s(:op_asgn_and,
-                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
-        end
-
-        it 'works with boolean operators and blocks' do
-          'foo &&= begin; bar; end'.
-            must_be_parsed_as s(:op_asgn_and,
-                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
-        end
-
-        it 'works with arithmetic operators and blocks' do
-          'foo += begin; bar; end'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:call, s(:lvar, :foo), :+, s(:call, nil, :bar)))
-        end
-      end
-    end
-
-    describe 'for multiple assignment' do
       it 'works the same number of items on each side' do
         'foo, bar = baz, qux'.
           must_be_parsed_as s(:masgn,
@@ -452,6 +386,188 @@ describe RipperRubyParser::Parser do
                               s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
                               s(:splat,
                                 s(:call, nil, :baz)))
+      end
+
+      it 'sets the correct line numbers' do
+        result = parser.parse 'foo, bar = {}, {}'
+        result.line.must_equal 1
+      end
+    end
+
+    describe 'for assignment to a collection element' do
+      it 'handles multiple indices' do
+        'foo[bar, baz] = qux'.
+          must_be_parsed_as s(:attrasgn,
+                              s(:call, nil, :foo),
+                              :[]=,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz),
+                              s(:call, nil, :qux))
+      end
+    end
+
+    describe 'for operator assignment' do
+      it 'works with +=' do
+        'foo += bar'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:call, s(:lvar, :foo),
+                                :+,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with -=' do
+        'foo -= bar'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:call, s(:lvar, :foo),
+                                :-,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with *=' do
+        'foo *= bar'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:call, s(:lvar, :foo),
+                                :*,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with /=' do
+        'foo /= bar'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:call,
+                                s(:lvar, :foo), :/,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works with ||=' do
+        'foo ||= bar'.
+          must_be_parsed_as s(:op_asgn_or,
+                              s(:lvar, :foo),
+                              s(:lasgn, :foo,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works when assigning to an instance variable' do
+        '@foo += bar'.
+          must_be_parsed_as s(:iasgn, :@foo,
+                              s(:call,
+                                s(:ivar, :@foo), :+,
+                                s(:call, nil, :bar)))
+      end
+
+      it 'works when assigning to a collection element' do
+        'foo[bar] += baz'.
+          must_be_parsed_as s(:op_asgn1,
+                              s(:call, nil, :foo),
+                              s(:arglist, s(:call, nil, :bar)),
+                              :+,
+                              s(:call, nil, :baz))
+      end
+
+      it 'works with ||= when assigning to a collection element' do
+        'foo[bar] ||= baz'.
+          must_be_parsed_as s(:op_asgn1,
+                              s(:call, nil, :foo),
+                              s(:arglist, s(:call, nil, :bar)),
+                              :"||",
+                              s(:call, nil, :baz))
+      end
+
+      it 'works when assigning to an attribute' do
+        'foo.bar += baz'.
+          must_be_parsed_as s(:op_asgn2,
+                              s(:call, nil, :foo),
+                              :bar=, :+,
+                              s(:call, nil, :baz))
+      end
+
+      it 'works with ||= when assigning to an attribute' do
+        'foo.bar ||= baz'.
+          must_be_parsed_as s(:op_asgn2,
+                              s(:call, nil, :foo),
+                              :bar=, :'||',
+                              s(:call, nil, :baz))
+      end
+
+      describe 'assigning to a collection element' do
+        it 'handles multiple indices' do
+          'foo[bar, baz] += qux'.
+            must_be_parsed_as s(:op_asgn1,
+                                s(:call, nil, :foo),
+                                s(:arglist,
+                                  s(:call, nil, :bar),
+                                  s(:call, nil, :baz)),
+                                :+,
+                                s(:call, nil, :qux))
+        end
+
+        it 'works with boolean operators' do
+          'foo &&= bar'.
+            must_be_parsed_as s(:op_asgn_and,
+                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
+        end
+
+        it 'works with boolean operators and blocks' do
+          'foo &&= begin; bar; end'.
+            must_be_parsed_as s(:op_asgn_and,
+                                s(:lvar, :foo), s(:lasgn, :foo, s(:call, nil, :bar)))
+        end
+
+        it 'works with arithmetic operators and blocks' do
+          'foo += begin; bar; end'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:call, s(:lvar, :foo), :+, s(:call, nil, :bar)))
+        end
+      end
+    end
+
+    describe 'when extra compatibility is turned on' do
+      it 'works with a bare method call' do
+        'foo = bar'.
+          must_be_parsed_as s(:lasgn, :foo, s(:call, nil, :bar)),
+                            extra_compatible: true
+      end
+
+      it 'works with a literal' do
+        'foo = 0'.
+          must_be_parsed_as s(:lasgn, :foo, s(:lit, 0)),
+                            extra_compatible: true
+      end
+
+      it 'works with a bare method call with rescue modifier' do
+        'foo = bar rescue baz'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar),
+                                s(:resbody, s(:array), s(:call, nil, :baz)))),
+                            extra_compatible: true
+      end
+
+      it 'works with a method call with argument with bracket with rescue modifier' do
+        'foo = bar(baz) rescue qux'.
+          must_be_parsed_as s(:lasgn, :foo,
+                              s(:rescue,
+                                s(:call, nil, :bar, s(:call, nil, :baz)),
+                                s(:resbody, s(:array), s(:call, nil, :qux)))),
+                            extra_compatible: true
+      end
+
+      it 'works with a method call with argument without bracket with rescue modifier' do
+        'foo = bar baz rescue qux'.
+          must_be_parsed_as s(:rescue,
+                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                              s(:resbody, s(:array), s(:call, nil, :qux))),
+                            extra_compatible: true
+      end
+
+      it 'works with a class method call with argument without bracket with rescue modifier' do
+        'foo = Bar.baz qux rescue quuz'.
+          must_be_parsed_as s(:rescue,
+                              s(:lasgn,
+                                :foo,
+                                s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                              s(:resbody, s(:array), s(:call, nil, :quuz))),
+                            extra_compatible: true
       end
     end
   end

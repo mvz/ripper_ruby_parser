@@ -126,6 +126,60 @@ describe RipperRubyParser::Parser do
                                   s(:call, nil, :baz),
                                   s(:call, nil, :qux))))
       end
+
+      it 'handles :!=' do
+        'foo != bar'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :!=,
+                              s(:call, nil, :bar))
+      end
+
+      it 'keeps :begin for the first argument of a binary operator' do
+        'begin; bar; end + foo'.
+          must_be_parsed_as s(:call,
+                              s(:begin, s(:call, nil, :bar)),
+                              :+,
+                              s(:call, nil, :foo))
+      end
+
+      it 'keeps :begin for the second argument of a binary operator' do
+        'foo + begin; bar; end'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :+,
+                              s(:begin, s(:call, nil, :bar)))
+      end
+
+      it 'does not keep :begin for the first argument of a boolean operator' do
+        'begin; bar; end and foo'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :bar),
+                              s(:call, nil, :foo))
+      end
+
+      it 'keeps :begin for the second argument of a boolean operator' do
+        'foo and begin; bar; end'.
+          must_be_parsed_as s(:and,
+                              s(:call, nil, :foo),
+                              s(:begin, s(:call, nil, :bar)))
+      end
+
+      it 'does not keep :begin for the first argument of a shift operator' do
+        'begin; bar; end << foo'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :bar),
+                              :<<,
+                              s(:call, nil, :foo))
+      end
+
+      it 'does not keep :begin for the second argument of a shift operator' do
+        'foo >> begin; bar; end'.
+          must_be_parsed_as s(:call,
+                              s(:call, nil, :foo),
+                              :>>,
+                              s(:call, nil, :bar))
+      end
     end
 
     describe 'for the range operator' do
@@ -151,6 +205,20 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:dot2,
                               s(:str, 'a'),
                               s(:str, 'z'))
+      end
+
+      it 'handles non-literal begin' do
+        'foo..3'.
+          must_be_parsed_as s(:dot2,
+                              s(:call, nil, :foo),
+                              s(:lit, 3))
+      end
+
+      it 'handles non-literal end' do
+        '3..foo'.
+          must_be_parsed_as s(:dot2,
+                              s(:lit, 3),
+                              s(:call, nil, :foo))
       end
 
       it 'handles non-literals' do
@@ -186,7 +254,21 @@ describe RipperRubyParser::Parser do
                               s(:str, 'z'))
       end
 
-      it 'handles non-literals' do
+      it 'handles non-literal begin' do
+        'foo...3'.
+          must_be_parsed_as s(:dot3,
+                              s(:call, nil, :foo),
+                              s(:lit, 3))
+      end
+
+      it 'handles non-literal end' do
+        '3...foo'.
+          must_be_parsed_as s(:dot3,
+                              s(:lit, 3),
+                              s(:call, nil, :foo))
+      end
+
+      it 'handles two non-literals' do
         'foo...bar'.
           must_be_parsed_as s(:dot3,
                               s(:call, nil, :foo),
@@ -194,7 +276,7 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for unary numerical operators' do
+    describe 'for unary operators' do
       it 'handles unary minus with an integer literal' do
         '- 1'.must_be_parsed_as s(:call, s(:lit, 1), :-@)
       end
@@ -223,6 +305,62 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:call,
                               s(:call, nil, :foo),
                               :+@)
+      end
+
+      it 'handles unary !' do
+        '!foo'.
+          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
+      end
+
+      it 'converts :not to :!' do
+        'not foo'.
+          must_be_parsed_as s(:call, s(:call, nil, :foo), :!)
+      end
+
+      it 'handles unary ! with a number literal' do
+        '!1'.
+          must_be_parsed_as s(:call, s(:lit, 1), :!)
+      end
+
+      it 'keeps :begin for the argument' do
+        '- begin; foo; end'.
+          must_be_parsed_as s(:call,
+                              s(:begin, s(:call, nil, :foo)),
+                              :-@)
+      end
+    end
+
+    describe 'for the ternary operater' do
+      it 'works in the simple case' do
+        'foo ? bar : baz'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
+
+      it 'keeps :begin for the first argument' do
+        'begin; foo; end ? bar : baz'.
+          must_be_parsed_as s(:if,
+                              s(:begin, s(:call, nil, :foo)),
+                              s(:call, nil, :bar),
+                              s(:call, nil, :baz))
+      end
+
+      it 'keeps :begin for the second argument' do
+        'foo ? begin; bar; end : baz'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:begin, s(:call, nil, :bar)),
+                              s(:call, nil, :baz))
+      end
+
+      it 'keeps :begin for the third argument' do
+        'foo ? bar : begin; baz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:begin, s(:call, nil, :baz)))
       end
     end
 

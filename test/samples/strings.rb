@@ -12,9 +12,11 @@
 "2\302\275"
 "#{foo}2\302\275"
 %W(2\302\275)
+/2\302\275/
 
 # Encoding
 "日本語"
+/日本語/
 "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"  # => "日本語"
 "\xAB\xE6\x97\xA5"                      # Invalid in UTF8
 

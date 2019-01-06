@@ -10,7 +10,7 @@ module RipperRubyParser
         ident, pos = extract_node_symbol_with_position ident
 
         in_method do
-          params = convert_special_args(process(params))
+          params = convert_method_args(process(params))
           kwrest = kwrest_param(params)
           body = with_kwrest(kwrest) { method_body(body) }
         end
@@ -22,14 +22,14 @@ module RipperRubyParser
         _, receiver, _, method, params, body = exp.shift 6
 
         in_method do
-          params = convert_special_args(process(params))
+          params = convert_method_args(process(params))
           kwrest = kwrest_param(params)
           body = with_kwrest(kwrest) { method_body(body) }
         end
 
         s(:defs,
           process(receiver),
-          extract_node_symbol(method),
+          extract_node_symbol(process(method)),
           params, *body)
       end
 
@@ -39,17 +39,17 @@ module RipperRubyParser
       end
 
       def process_return0(exp)
-        _ = exp.shift
+        exp.shift
         s(:return)
       end
 
       def process_yield(exp)
         _, arglist = exp.shift 2
-        s(:yield, *handle_argument_list(arglist))
+        s(:yield, *process(arglist).sexp_body)
       end
 
       def process_yield0(exp)
-        _ = exp.shift
+        exp.shift
         s(:yield)
       end
 
@@ -61,7 +61,7 @@ module RipperRubyParser
         end
 
         if args.size == 1
-          args[0]
+          args.first
         else
           s(:block, *args)
         end
@@ -102,27 +102,17 @@ module RipperRubyParser
         blockarg: '&'
       }.freeze
 
-      def convert_special_args(args)
+      def convert_method_args(args)
         args.map! do |item|
           if item.is_a? Symbol
             item
           else
             case item.sexp_type
             when :lvar
-              item[1]
-            when :masgn
-              args = item[1]
-              args.shift
-              s(:masgn, *convert_special_args(args))
-            when :lasgn
-              if item.length == 2
-                item[1]
-              else
-                item
-              end
+              item.last
             when *SPECIAL_ARG_MARKER.keys
               marker = SPECIAL_ARG_MARKER[item.sexp_type]
-              name = extract_node_symbol item[1]
+              name = extract_node_symbol item.last
               :"#{marker}#{name}"
             else
               item
@@ -132,7 +122,7 @@ module RipperRubyParser
       end
 
       def kwrest_param(params)
-        found = params.find { |param| param.to_s =~ /^\*\*(.*)/ }
+        found = params.find { |param| param.to_s =~ /^\*\*(.+)/ }
         Regexp.last_match[1].to_sym if found
       end
 

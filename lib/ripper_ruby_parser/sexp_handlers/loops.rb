@@ -25,16 +25,12 @@ module RipperRubyParser
         coll = process(coll)
         var = process(var)
 
-        assgn = if var.sexp_type == :masgn
-                  var
-                else
-                  s(:lasgn, var[1])
-                end
+        var.sexp_type = :lasgn if var.sexp_type == :lvar
         block = unwrap_nil process(block)
         if block
-          s(:for, coll, assgn, block)
+          s(:for, coll, var, block)
         else
-          s(:for, coll, assgn)
+          s(:for, coll, var)
         end
       end
 

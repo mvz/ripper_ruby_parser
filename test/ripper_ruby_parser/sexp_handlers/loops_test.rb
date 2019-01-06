@@ -74,6 +74,20 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar),
                               s(:call, nil, :foo), true)
       end
+
+      it 'works with do and an empty body' do
+        'while foo do; end'.
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :foo),
+                              nil, true)
+      end
+
+      it 'works without do and with an empty body' do
+        'while foo; end'.
+          must_be_parsed_as s(:while,
+                              s(:call, nil, :foo),
+                              nil, true)
+      end
     end
 
     describe 'for the until statement' do

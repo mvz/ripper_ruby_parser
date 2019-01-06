@@ -71,6 +71,14 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
+      it 'handles bare integer literal in condition' do
+        'if 1; bar; end'.
+          must_be_parsed_as s(:if,
+                              s(:lit, 1),
+                              s(:call, nil, :bar),
+                              nil)
+      end
+
       it 'handles bare regex literal in condition' do
         'if /foo/; bar; end'.
           must_be_parsed_as s(:if,
@@ -331,6 +339,17 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz),
                                 nil,
                                 nil))
+      end
+
+      it 'works with an else' do
+        'if foo; bar; elsif baz; qux; else; quuz; end'.
+          must_be_parsed_as s(:if,
+                              s(:call, nil, :foo),
+                              s(:call, nil, :bar),
+                              s(:if,
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                s(:call, nil, :quuz)))
       end
 
       it 'works with an empty else' do

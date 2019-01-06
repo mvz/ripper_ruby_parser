@@ -15,3 +15,9 @@ end
 if foo
 elsif begin bar..baz end
 end
+
+if 1
+  bar
+else
+  baz
+end

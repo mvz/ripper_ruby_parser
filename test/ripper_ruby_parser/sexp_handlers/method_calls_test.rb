@@ -2,8 +2,8 @@
 
 require File.expand_path('../../test_helper.rb', File.dirname(__FILE__))
 
-describe RipperRubyParser::Parser do
-  describe '#parse' do
+describe RipperRubyParser::SexpHandlers::MethodCalls do
+  describe 'when parsing with RipperRubyParser::Parser#parse' do
     describe 'for method calls' do
       describe 'without a receiver' do
         it 'works without parentheses' do
@@ -137,6 +137,31 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz,
                                   s(:call, nil, :qux)))
         end
+
+        it 'does not keep :begin around a method receiver' do
+          'begin; foo; end.bar'.
+            must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
+        end
+      end
+
+      describe 'for collection indexing' do
+        it 'works in the simple case' do
+          'foo[bar]'.
+            must_be_parsed_as s(:call,
+                                s(:call, nil, :foo),
+                                :[],
+                                s(:call, nil, :bar))
+        end
+
+        it 'works without any indexes' do
+          'foo[]'.must_be_parsed_as s(:call, s(:call, nil, :foo),
+                                      :[])
+        end
+
+        it 'works with self[]' do
+          'self[foo]'.must_be_parsed_as s(:call, s(:self), :[],
+                                          s(:call, nil, :foo))
+        end
       end
 
       describe 'safe call' do
@@ -207,6 +232,36 @@ describe RipperRubyParser::Parser do
     it 'handles calling a proc' do
       'foo.()'.
         must_be_parsed_as s(:call, s(:call, nil, :foo), :call)
+    end
+  end
+
+  describe 'when processing a Sexp' do
+    let(:processor) { RipperRubyParser::SexpProcessor.new }
+
+    describe '#process_command_call' do
+      it 'processes a Ruby 2.5 style period Sexp' do
+        sexp = s(:call,
+                 s(:vcall, s(:@ident, 'foo', s(1, 0))),
+                 :'.',
+                 s(:@ident, 'bar', s(1, 4)))
+        processor.process(sexp).must_equal s(:call, s(:call, nil, :foo), :bar)
+      end
+
+      it 'processes a Ruby 2.6 style period Sexp' do
+        sexp = s(:call,
+                 s(:vcall, s(:@ident, 'foo', s(1, 0))),
+                 s(:@period, '.', s(1, 3)),
+                 s(:@ident, 'bar', s(1, 4)))
+        processor.process(sexp).must_equal s(:call, s(:call, nil, :foo), :bar)
+      end
+
+      it 'raises an error for an unknown call operator' do
+        sexp = s(:call,
+                 s(:vcall, s(:@ident, 'foo', s(1, 0))),
+                 :'>.',
+                 s(:@ident, 'bar', s(1, 4)))
+        -> { processor.process(sexp) }.must_raise
+      end
     end
   end
 end
