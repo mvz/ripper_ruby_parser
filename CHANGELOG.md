@@ -4,9 +4,10 @@
 
 * Process embedded documents as comments
 * Handle \u{xxxx} form of unicode escape sequence
-* Specifically treat keyword rest arguments (double spats) as local variables.
-  All other arguments are already treated as such by Ripper, but these are not.
-  A hacky workaround was added to adjust this
+* Treat keyword rest arguments (double spats) as local variables, for blocks
+  and for methods.
+  Versions of Ripper before CRuby 2.6 do not handle these correctly, so
+  RipperRubyParser adds its own accounting of these parameters.
 * Do not unescape heredocs with single quotes. These are heredocs where the
   marker is a single-quoted string
 * Increase compatibility when handling a begin..end block, e.g., as an assigned

@@ -9,8 +9,9 @@ module RipperRubyParser
         _, args, stmt = block
         call = process(call)
         args = process(args)
-        stmt = safe_unwrap_void_stmt process(stmt)
-        make_iter call, args, stmt
+        kwrest = kwrest_param(args) if args
+        stmt = with_kwrest(kwrest) { process(stmt) }
+        make_iter call, args, safe_unwrap_void_stmt(stmt)
       end
 
       def process_params(exp)

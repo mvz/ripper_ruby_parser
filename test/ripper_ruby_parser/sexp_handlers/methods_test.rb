@@ -29,29 +29,16 @@ describe RipperRubyParser::Parser do
                               s(:lvar, :bar))
       end
 
-      # NOTE: See https://github.com/seattlerb/ruby_parser/issues/276
-      it 'treats kwargs compatibly in a block with kwargs' do
-        expected = if RUBY_VERSION < '2.6.0'
-                     s(:defn, :foo,
-                       s(:args, :"**bar"),
-                       s(:iter,
-                         s(:call, nil, :baz),
-                         s(:args, :"**qux"),
-                         s(:block,
-                           s(:lvar, :bar),
-                           s(:call, nil, :qux))))
-                   else
-                     s(:defn, :foo,
-                       s(:args, :"**bar"),
-                       s(:iter,
-                         s(:call, nil, :baz),
-                         s(:args, :"**qux"),
-                         s(:block,
-                           s(:lvar, :bar),
-                           s(:lvar, :qux))))
-                   end
+      it 'treats block kwargs as lvars' do
         'def foo(**bar); baz { |**qux| bar; qux }; end'.
-          must_be_parsed_as expected
+          must_be_parsed_as s(:defn, :foo,
+                              s(:args, :"**bar"),
+                              s(:iter,
+                                s(:call, nil, :baz),
+                                s(:args, :"**qux"),
+                                s(:block,
+                                  s(:lvar, :bar),
+                                  s(:lvar, :qux))))
       end
 
       it 'works with a method argument with a default value' do
