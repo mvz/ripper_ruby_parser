@@ -520,55 +520,5 @@ describe RipperRubyParser::Parser do
         end
       end
     end
-
-    describe 'when extra compatibility is turned on' do
-      it 'works with a bare method call' do
-        'foo = bar'.
-          must_be_parsed_as s(:lasgn, :foo, s(:call, nil, :bar)),
-                            extra_compatible: true
-      end
-
-      it 'works with a literal' do
-        'foo = 0'.
-          must_be_parsed_as s(:lasgn, :foo, s(:lit, 0)),
-                            extra_compatible: true
-      end
-
-      it 'works with a bare method call with rescue modifier' do
-        'foo = bar rescue baz'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar),
-                                s(:resbody, s(:array), s(:call, nil, :baz)))),
-                            extra_compatible: true
-      end
-
-      it 'works with a method call with argument with bracket with rescue modifier' do
-        'foo = bar(baz) rescue qux'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux)))),
-                            extra_compatible: true
-      end
-
-      it 'works with a method call with argument without bracket with rescue modifier' do
-        'foo = bar baz rescue qux'.
-          must_be_parsed_as s(:rescue,
-                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                              s(:resbody, s(:array), s(:call, nil, :qux))),
-                            extra_compatible: true
-      end
-
-      it 'works with a class method call with argument without bracket with rescue modifier' do
-        'foo = Bar.baz qux rescue quuz'.
-          must_be_parsed_as s(:rescue,
-                              s(:lasgn,
-                                :foo,
-                                s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                              s(:resbody, s(:array), s(:call, nil, :quuz))),
-                            extra_compatible: true
-      end
-    end
   end
 end
