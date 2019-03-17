@@ -150,7 +150,7 @@ module RipperRubyParser
     def process_BEGIN(exp)
       _, body = exp.shift 2
       body = reject_void_stmt map_process_list body.sexp_body
-      s(:iter, s(:preexe), s(:args), *body)
+      s(:iter, s(:preexe), 0, *body)
     end
 
     def process_END(exp)
