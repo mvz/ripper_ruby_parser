@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+* Make results compatible with RubyParser 3.13.0
+  ([#65](https://github.com/mvz/ripper_ruby_parser/pull/65))
+  - Change result for `BEGIN { foo }`
+  - Remove extra-compatible handling of rescue modifier
+
 ## 1.5.1 / 2019-03-21
 
 * Fix handling of singleton methods whose names are keywords
