@@ -4,9 +4,10 @@
 
 * Process embedded documents as comments
 * Handle \u{xxxx} form of unicode escape sequence
-* Specifically treat keyword rest arguments (double spats) as local variables.
-  All other arguments are already treated as such by Ripper, but these are not.
-  A hacky workaround was added to adjust this
+* Treat keyword rest arguments (double spats) as local variables, for blocks
+  and for methods.
+  Versions of Ripper before CRuby 2.6 do not handle these correctly, so
+  RipperRubyParser adds its own accounting of these parameters.
 * Do not unescape heredocs with single quotes. These are heredocs where the
   marker is a single-quoted string
 * Increase compatibility when handling a begin..end block, e.g., as an assigned
@@ -25,7 +26,10 @@
   parts of strings with interpolations. This behavior is only enabled when
   `#extra_compatible` is set to true
 * Require Ruby 2.3 or higher
-* Compatible with RubyParser 3.12.0
+* Mark as compatible with RubyParser 3.12.0
+* Match RubyParser's handling of block keyword rest arguments.
+  This behavior is only enabled when `#extra_compatible` is set to true
+* Support Ruby 2.6
 
 ## 1.4.2 / 2018-04-03
 
@@ -67,6 +71,7 @@
 * Improve handling of boolean operators with parenthes
 * Improve compatibility for begin..end blocks used as method and operator
   arguments.
+* Support Ruby 2.5
 * Drop support for Ruby 2.0 and 2.1
 * Handle `__ENCODING__` constant.
 
