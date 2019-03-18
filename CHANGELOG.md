@@ -29,6 +29,7 @@
 * Mark as compatible with RubyParser 3.12.0
 * Match RubyParser's handling of block keyword rest arguments.
   This behavior is only enabled when `#extra_compatible` is set to true
+* Support Ruby 2.6
 
 ## 1.4.2 / 2018-04-03
 
@@ -70,6 +71,7 @@
 * Improve handling of boolean operators with parenthes
 * Improve compatibility for begin..end blocks used as method and operator
   arguments.
+* Support Ruby 2.5
 * Drop support for Ruby 2.0 and 2.1
 * Handle `__ENCODING__` constant.
 
