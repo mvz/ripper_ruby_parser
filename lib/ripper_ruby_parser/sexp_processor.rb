@@ -42,6 +42,7 @@ module RipperRubyParser
 
       @in_method_body = false
       @kwrest = []
+      @block_kwrest = []
     end
 
     include SexpHandlers
