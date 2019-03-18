@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.5.0 / 2019-03-18
 
 * Process embedded documents as comments
 * Handle \u{xxxx} form of unicode escape sequence
