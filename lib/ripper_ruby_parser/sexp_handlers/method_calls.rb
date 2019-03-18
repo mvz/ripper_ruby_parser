@@ -79,7 +79,7 @@ module RipperRubyParser
       def process_vcall(exp)
         _, ident = exp.shift 2
         with_position_from_node_symbol(ident) do |method|
-          if is_kwrest_arg? method
+          if replace_kwrest_arg_call? method
             s(:lvar, method)
           else
             s(:call, nil, method)
@@ -108,6 +108,13 @@ module RipperRubyParser
         args = process(args)
         args.shift
         s(:super, *args)
+      end
+
+      private
+
+      def replace_kwrest_arg_call?(method)
+        is_method_kwrest_arg?(method) ||
+          !extra_compatible && is_block_kwrest_arg?(method)
       end
     end
   end
