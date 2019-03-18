@@ -200,7 +200,13 @@ module RipperRubyParser
     end
 
     def process_at_ident(exp)
-      make_identifier(:lvar, exp)
+      with_position_from_node_symbol(exp) do |ident|
+        if replace_kwrest_arg_lvar? ident
+          s(:call, nil, ident)
+        else
+          s(:lvar, ident)
+        end
+      end
     end
 
     def process_at_op(exp)
@@ -269,6 +275,10 @@ module RipperRubyParser
     def make_literal(exp)
       _, val, pos = exp.shift 3
       with_position(pos, s(:lit, yield(val)))
+    end
+
+    def replace_kwrest_arg_lvar?(ident)
+      extra_compatible && @block_kwrest.include?(ident)
     end
   end
 end
