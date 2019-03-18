@@ -140,11 +140,11 @@ module RipperRubyParser
         result
       end
 
-      def is_method_kwrest_arg?(method)
+      def method_kwrest_arg?(method)
         @kwrest.include?(method)
       end
 
-      def is_block_kwrest_arg?(method)
+      def block_kwrest_arg?(method)
         @block_kwrest.include?(method)
       end
     end
