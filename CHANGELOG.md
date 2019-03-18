@@ -26,7 +26,9 @@
   parts of strings with interpolations. This behavior is only enabled when
   `#extra_compatible` is set to true
 * Require Ruby 2.3 or higher
-* Compatible with RubyParser 3.12.0
+* Mark as compatible with RubyParser 3.12.0
+* Match RubyParser's handling of block keyword rest arguments.
+  This behavior is only enabled when `#extra_compatible` is set to true
 
 ## 1.4.2 / 2018-04-03
 
