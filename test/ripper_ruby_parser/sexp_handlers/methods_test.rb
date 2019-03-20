@@ -177,6 +177,12 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:defn, :+, s(:args),
                               s(:nil))
       end
+
+      it 'works when the method name is a keyword' do
+        'def for; end'.
+          must_be_parsed_as s(:defn, :for, s(:args),
+                              s(:nil))
+      end
     end
 
     describe 'for singleton method definitions' do
@@ -205,6 +211,14 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo),
                               :bar,
                               s(:args, :"*baz"),
+                              s(:nil))
+      end
+
+      it 'works when the method name is a keyword' do
+        'def foo.for; end'.
+          must_be_parsed_as s(:defs,
+                              s(:call, nil, :foo),
+                              :for, s(:args),
                               s(:nil))
       end
     end
