@@ -125,7 +125,7 @@ module RipperRubyParser
 
       def convert_marked_argument(item)
         marker = SPECIAL_ARG_MARKER[item.sexp_type]
-        name = extract_node_symbol item.last
+        name = make_symbol item.last
         :"#{marker}#{name}"
       end
 
