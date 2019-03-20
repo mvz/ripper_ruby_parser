@@ -6,5 +6,5 @@ source 'https://rubygems.org'
 gemspec
 
 group :local_development do
-  gem 'irbtools'
+  gem 'pry'
 end
