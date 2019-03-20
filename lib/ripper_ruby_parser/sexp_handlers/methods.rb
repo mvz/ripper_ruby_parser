@@ -7,7 +7,7 @@ module RipperRubyParser
       def process_def(exp)
         _, ident, params, body, pos = exp.shift 5
 
-        ident, = extract_node_symbol_with_position ident
+        ident = extract_node_symbol ident
 
         in_method do
           params = convert_arguments(process(params))
@@ -21,7 +21,7 @@ module RipperRubyParser
       def process_defs(exp)
         _, receiver, _, ident, params, body, = exp.shift 7
 
-        ident, = extract_node_symbol_with_position ident
+        ident = extract_node_symbol ident
 
         in_method do
           params = convert_arguments(process(params))
