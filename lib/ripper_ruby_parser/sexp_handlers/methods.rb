@@ -132,19 +132,8 @@ module RipperRubyParser
         result
       end
 
-      def with_block_kwrest(kwrest)
-        @block_kwrest.push kwrest
-        result = yield
-        @block_kwrest.pop
-        result
-      end
-
-      def method_kwrest_arg?(method)
+      def kwrest_arg?(method)
         @kwrest.include?(method)
-      end
-
-      def block_kwrest_arg?(method)
-        @block_kwrest.include?(method)
       end
     end
   end

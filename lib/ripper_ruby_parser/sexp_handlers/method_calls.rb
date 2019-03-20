@@ -113,8 +113,7 @@ module RipperRubyParser
       private
 
       def replace_kwrest_arg_call?(method)
-        method_kwrest_arg?(method) ||
-          !extra_compatible && block_kwrest_arg?(method)
+        kwrest_arg?(method)
       end
     end
   end

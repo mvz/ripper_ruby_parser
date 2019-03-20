@@ -389,7 +389,7 @@ describe RipperRubyParser::Parser do
     end
 
     describe 'when extra compatibility is turned on' do
-      it 'treats block kwargs as calls' do
+      it 'still treats block kwargs as lvars' do
         'def foo(**bar); baz { |**qux| bar; qux }; end'.
           must_be_parsed_as s(:defn, :foo,
                               s(:args, :"**bar"),
@@ -398,7 +398,7 @@ describe RipperRubyParser::Parser do
                                 s(:args, :"**qux"),
                                 s(:block,
                                   s(:lvar, :bar),
-                                  s(:call, nil, :qux)))),
+                                  s(:lvar, :qux)))),
                             extra_compatible: true
       end
     end
