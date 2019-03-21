@@ -19,7 +19,9 @@ module RipperRubyParser
       end
 
       def process_defs(exp)
-        _, receiver, _, method, params, body = exp.shift 6
+        _, receiver, _, ident, params, body = exp.shift 6
+
+        ident, = extract_node_symbol_with_position ident
 
         in_method do
           params = convert_method_args(process(params))
@@ -27,10 +29,7 @@ module RipperRubyParser
           body = with_kwrest(kwrest) { method_body(body) }
         end
 
-        s(:defs,
-          process(receiver),
-          extract_node_symbol(process(method)),
-          params, *body)
+        s(:defs, process(receiver), ident, params, *body)
       end
 
       def process_return(exp)
