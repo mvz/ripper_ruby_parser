@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.5.1 / 2019-03-21
+
+* Fix handling of singleton methods whose names are keywords
+  ([#66](https://github.com/mvz/ripper_ruby_parser/pull/66))
+
 ## 1.5.0 / 2019-03-18
 
 * Process embedded documents as comments
