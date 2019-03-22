@@ -10,7 +10,7 @@ module RipperRubyParser
         call = process(call)
         args = process(args)
         kwrest = kwrest_param(args) if args
-        stmt = with_block_kwrest(kwrest) { process(stmt) }
+        stmt = with_kwrest(kwrest) { process(stmt) }
         make_iter call, args, safe_unwrap_void_stmt(stmt)
       end
 
@@ -107,6 +107,9 @@ module RipperRubyParser
 
       def process_rescue_mod(exp)
         _, scary, safe = exp.shift 3
+        if extra_compatible && scary.sexp_type == :assign
+          return process s(:assign, scary[1], s(:rescue_mod, scary[2], safe))
+        end
         s(:rescue, process(scary), s(:resbody, s(:array), process(safe)))
       end
 

@@ -150,7 +150,7 @@ module RipperRubyParser
     def process_BEGIN(exp)
       _, body = exp.shift 2
       body = reject_void_stmt map_process_list body.sexp_body
-      s(:iter, s(:preexe), s(:args), *body)
+      s(:iter, s(:preexe), 0, *body)
     end
 
     def process_END(exp)
@@ -200,13 +200,7 @@ module RipperRubyParser
     end
 
     def process_at_ident(exp)
-      with_position_from_node_symbol(exp) do |ident|
-        if replace_kwrest_arg_lvar? ident
-          s(:call, nil, ident)
-        else
-          s(:lvar, ident)
-        end
-      end
+      make_identifier(:lvar, exp)
     end
 
     def process_at_op(exp)
@@ -275,10 +269,6 @@ module RipperRubyParser
     def make_literal(exp)
       _, val, pos = exp.shift 3
       with_position(pos, s(:lit, yield(val)))
-    end
-
-    def replace_kwrest_arg_lvar?(ident)
-      extra_compatible && @block_kwrest.include?(ident)
     end
   end
 end

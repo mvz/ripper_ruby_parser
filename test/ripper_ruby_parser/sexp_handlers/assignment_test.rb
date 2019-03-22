@@ -210,6 +210,73 @@ describe RipperRubyParser::Parser do
           'foo = Bar.baz qux rescue quuz'.
             must_be_parsed_as expected
         end
+
+        it 'works with a method call with argument without brackets' do
+          expected = if RUBY_VERSION < '2.4.0'
+                       s(:rescue,
+                         s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                         s(:resbody, s(:array), s(:call, nil, :qux)))
+                     else
+                       s(:lasgn, :foo,
+                         s(:rescue,
+                           s(:call, nil, :bar, s(:call, nil, :baz)),
+                           s(:resbody, s(:array), s(:call, nil, :qux))))
+                     end
+          'foo = bar baz rescue qux'.must_be_parsed_as expected
+        end
+
+        it 'works with a class method call with argument without brackets' do
+          expected = if RUBY_VERSION < '2.4.0'
+                       s(:rescue,
+                         s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                         s(:resbody, s(:array), s(:call, nil, :quuz)))
+                     else
+                       s(:lasgn, :foo,
+                         s(:rescue,
+                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                           s(:resbody, s(:array), s(:call, nil, :quuz))))
+                     end
+          'foo = Bar.baz qux rescue quuz'.
+            must_be_parsed_as expected
+        end
+      end
+
+      describe 'with a rescue modifier in extra compatible mode' do
+        it 'works with assigning a bare method call' do
+          'foo = bar rescue baz'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar),
+                                  s(:resbody, s(:array), s(:call, nil, :baz)))),
+                              extra_compatible: true
+        end
+
+        it 'works with a method call with argument' do
+          'foo = bar(baz) rescue qux'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar, s(:call, nil, :baz)),
+                                  s(:resbody, s(:array), s(:call, nil, :qux)))),
+                              extra_compatible: true
+        end
+
+        it 'always uses post-2.3 behavior for a method call with bare argument' do
+          'foo = bar baz rescue qux'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, nil, :bar, s(:call, nil, :baz)),
+                                  s(:resbody, s(:array), s(:call, nil, :qux)))),
+                              extra_compatible: true
+        end
+
+        it 'always uses post-2.3 behavior for a class method call with bare argument' do
+          'foo = Bar.baz qux rescue quuz'.
+            must_be_parsed_as s(:lasgn, :foo,
+                                s(:rescue,
+                                  s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                                  s(:resbody, s(:array), s(:call, nil, :quuz)))),
+                              extra_compatible: true
+        end
       end
 
       it 'sets the correct line numbers' do
@@ -518,56 +585,6 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:lasgn, :foo,
                                 s(:call, s(:lvar, :foo), :+, s(:call, nil, :bar)))
         end
-      end
-    end
-
-    describe 'when extra compatibility is turned on' do
-      it 'works with a bare method call' do
-        'foo = bar'.
-          must_be_parsed_as s(:lasgn, :foo, s(:call, nil, :bar)),
-                            extra_compatible: true
-      end
-
-      it 'works with a literal' do
-        'foo = 0'.
-          must_be_parsed_as s(:lasgn, :foo, s(:lit, 0)),
-                            extra_compatible: true
-      end
-
-      it 'works with a bare method call with rescue modifier' do
-        'foo = bar rescue baz'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar),
-                                s(:resbody, s(:array), s(:call, nil, :baz)))),
-                            extra_compatible: true
-      end
-
-      it 'works with a method call with argument with bracket with rescue modifier' do
-        'foo = bar(baz) rescue qux'.
-          must_be_parsed_as s(:lasgn, :foo,
-                              s(:rescue,
-                                s(:call, nil, :bar, s(:call, nil, :baz)),
-                                s(:resbody, s(:array), s(:call, nil, :qux)))),
-                            extra_compatible: true
-      end
-
-      it 'works with a method call with argument without bracket with rescue modifier' do
-        'foo = bar baz rescue qux'.
-          must_be_parsed_as s(:rescue,
-                              s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
-                              s(:resbody, s(:array), s(:call, nil, :qux))),
-                            extra_compatible: true
-      end
-
-      it 'works with a class method call with argument without bracket with rescue modifier' do
-        'foo = Bar.baz qux rescue quuz'.
-          must_be_parsed_as s(:rescue,
-                              s(:lasgn,
-                                :foo,
-                                s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                              s(:resbody, s(:array), s(:call, nil, :quuz))),
-                            extra_compatible: true
       end
     end
   end

@@ -148,12 +148,12 @@ describe RipperRubyParser::Parser do
     describe 'for the BEGIN keyword' do
       it 'converts to a :preexe iterator' do
         'BEGIN { foo }'.
-          must_be_parsed_as s(:iter, s(:preexe), s(:args), s(:call, nil, :foo))
+          must_be_parsed_as s(:iter, s(:preexe), 0, s(:call, nil, :foo))
       end
 
       it 'works with an empty block' do
         'BEGIN { }'.
-          must_be_parsed_as s(:iter, s(:preexe), s(:args))
+          must_be_parsed_as s(:iter, s(:preexe), 0)
       end
     end
 
