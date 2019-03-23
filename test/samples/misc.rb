@@ -163,6 +163,13 @@ class Foo
     puts err
   end
 
+  # begin/rescue with multiple assignment
+  foo, bar = begin
+    baz
+  rescue qux
+    quuz
+  end
+
   # alias
   alias foo bar
   alias :foo bar

@@ -35,7 +35,7 @@ module RipperRubyParser
         when :mrhs
           _, right = right
         else
-          right = s(:to_ary, right)
+          right = s(:to_ary, unwrap_begin(right))
         end
 
         s(:masgn, left, right)

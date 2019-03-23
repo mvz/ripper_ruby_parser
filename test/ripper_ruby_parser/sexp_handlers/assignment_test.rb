@@ -311,6 +311,13 @@ describe RipperRubyParser::Parser do
                               s(:to_ary, s(:call, nil, :baz)))
       end
 
+      it 'works with blocks' do
+        'foo, bar = begin; baz; end'.
+          must_be_parsed_as s(:masgn,
+                              s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                              s(:to_ary, s(:call, nil, :baz)))
+      end
+
       it 'works with a rescue modifier' do
         'foo, bar = baz rescue qux'.
           must_be_parsed_as s(:rescue,
