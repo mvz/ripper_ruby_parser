@@ -110,6 +110,7 @@ module RipperRubyParser
         if extra_compatible && scary.sexp_type == :assign
           return process s(:assign, scary[1], s(:rescue_mod, scary[2], safe))
         end
+
         s(:rescue, process(scary), s(:resbody, s(:array), process(safe)))
       end
 
