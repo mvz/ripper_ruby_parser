@@ -57,6 +57,12 @@ foo4\
 bar
 EOS
 
+<<EOS
+#{bar}
+baz \
+qux
+EOS
+
 %Q[foo5\
 bar]
 

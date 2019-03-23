@@ -666,6 +666,28 @@ describe RipperRubyParser::Parser do
                                 (+"2\xC2\xBD\n").force_encoding('ascii-8bit')),
                               extra_compatible: true
         end
+
+        it 'handles interpolation' do
+          "<<FOO\n\#{bar}\nFOO".
+            must_be_parsed_as s(:dstr, '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "\n"))
+        end
+
+        it 'handles line continuation after interpolation' do
+          "<<FOO\n\#{bar}\nbaz\\\nqux\nFOO".
+            must_be_parsed_as s(:dstr, '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "\nbazqux\n"))
+        end
+
+        it 'handles line continuation after interpolation in extra-compatible mode' do
+          "<<FOO\n\#{bar}\nbaz\\\nqux\nFOO".
+            must_be_parsed_as s(:dstr, '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "\nbazqux\n")),
+                              extra_compatible: true
+        end
       end
     end
 

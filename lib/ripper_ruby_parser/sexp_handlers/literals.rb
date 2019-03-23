@@ -190,12 +190,7 @@ module RipperRubyParser
 
       def alternative_process_at_tstring_content(exp)
         _, content, _, delim = exp.shift 4
-        string = case delim
-                 when *INTERPOLATING_STRINGS
-                   unescape(content)
-                 else
-                   content
-                 end
+        string = handle_string_unescaping(content, delim)
         string.force_encoding('ascii-8bit') if string == "\0"
         s(:str, string)
       end
