@@ -10,7 +10,7 @@ module RipperRubyParser
         ident, pos = extract_node_symbol_with_position ident
 
         in_method do
-          params = convert_method_args(process(params))
+          params = convert_arguments(process(params))
           kwrest = kwrest_param(params)
           body = with_kwrest(kwrest) { method_body(body) }
         end
@@ -24,7 +24,7 @@ module RipperRubyParser
         ident, = extract_node_symbol_with_position ident
 
         in_method do
-          params = convert_method_args(process(params))
+          params = convert_arguments(process(params))
           kwrest = kwrest_param(params)
           body = with_kwrest(kwrest) { method_body(body) }
         end
@@ -101,7 +101,7 @@ module RipperRubyParser
         blockarg: '&'
       }.freeze
 
-      def convert_method_args(args)
+      def convert_arguments(args)
         args.map! do |item|
           if item.is_a? Symbol
             item
@@ -116,7 +116,7 @@ module RipperRubyParser
             when :masgn
               args = item[1]
               args.shift
-              s(:masgn, *convert_method_args(args))
+              s(:masgn, *convert_arguments(args))
             when :lasgn
               if item.length == 2
                 item[1]
