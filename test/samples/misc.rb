@@ -205,4 +205,17 @@ class Foo
   # definitions.
   def foo(bar = ($baz = qux))
   end
+
+  # Argument destructuring
+  def foo((bar, baz))
+  end
+
+  def foo((bar, baz), (qux, quuz))
+  end
+
+  def self.foo((bar, baz))
+  end
+
+  def self.foo((bar, baz), (qux, quuz))
+  end
 end

@@ -113,6 +113,16 @@ module RipperRubyParser
               marker = SPECIAL_ARG_MARKER[item.sexp_type]
               name = extract_node_symbol item.last
               :"#{marker}#{name}"
+            when :masgn
+              args = item[1]
+              args.shift
+              s(:masgn, *convert_method_args(args))
+            when :lasgn
+              if item.length == 2
+                item[1]
+              else
+                item
+              end
             else
               item
             end

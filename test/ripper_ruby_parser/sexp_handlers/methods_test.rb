@@ -172,6 +172,14 @@ describe RipperRubyParser::Parser do
                               s(:nil))
       end
 
+      it 'works with argument destructuring' do
+        'def foo((bar, baz)); end'.
+          must_be_parsed_as s(:defn, :foo,
+                              s(:args, s(:masgn, :bar, :baz)),
+                              s(:nil))
+      end
+
+
       it 'works when the method name is an operator' do
         'def +; end'.
           must_be_parsed_as s(:defn, :+, s(:args),
