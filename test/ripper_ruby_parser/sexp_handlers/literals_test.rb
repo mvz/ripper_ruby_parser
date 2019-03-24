@@ -367,6 +367,22 @@ describe RipperRubyParser::Parser do
                                   s(:evstr),
                                   s(:str, 'bar'))
           end
+
+          it 'correctly handles interpolation with __FILE__ before another interpolation' do
+            "\"foo\#{__FILE__}\#{bar}\"".
+              must_be_parsed_as s(:dstr,
+                                  'foo(string)',
+                                  s(:evstr, s(:call, nil, :bar)))
+          end
+
+          it 'correctly handles interpolation with __FILE__ after another interpolation' do
+            "\"\#{bar}foo\#{__FILE__}\"".
+              must_be_parsed_as s(:dstr,
+                                  '',
+                                  s(:evstr, s(:call, nil, :bar)),
+                                  s(:str, 'foo'),
+                                  s(:str, '(string)'))
+          end
         end
       end
 
