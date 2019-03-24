@@ -10,7 +10,7 @@ module RipperRubyParser
         ident, pos = extract_node_symbol_with_position ident
 
         in_method do
-          params = convert_method_args(process(params))
+          params = convert_arguments(process(params))
           kwrest = kwrest_param(params)
           body = with_kwrest(kwrest) { method_body(body) }
         end
@@ -24,7 +24,7 @@ module RipperRubyParser
         ident, = extract_node_symbol_with_position ident
 
         in_method do
-          params = convert_method_args(process(params))
+          params = convert_arguments(process(params))
           kwrest = kwrest_param(params)
           body = with_kwrest(kwrest) { method_body(body) }
         end
@@ -101,7 +101,7 @@ module RipperRubyParser
         blockarg: '&'
       }.freeze
 
-      def convert_method_args(args)
+      def convert_arguments(args)
         args.map! do |item|
           if item.is_a? Symbol
             item
@@ -110,12 +110,37 @@ module RipperRubyParser
             when :lvar
               item.last
             when *SPECIAL_ARG_MARKER.keys
-              marker = SPECIAL_ARG_MARKER[item.sexp_type]
-              name = extract_node_symbol item.last
-              :"#{marker}#{name}"
+              convert_marked_argument(item)
+            when :masgn
+              convert_masgn_argument(item)
             else
               item
             end
+          end
+        end
+      end
+
+      def convert_marked_argument(item)
+        marker = SPECIAL_ARG_MARKER[item.sexp_type]
+        name = extract_node_symbol item.last
+        :"#{marker}#{name}"
+      end
+
+      def convert_masgn_argument(item)
+        args = item[1]
+        args.shift
+        s(:masgn, *convert_destructuring_arguments(args))
+      end
+
+      def convert_destructuring_arguments(args)
+        args.map! do |item|
+          case item.sexp_type
+          when :splat
+            convert_marked_argument(item)
+          when :masgn
+            convert_masgn_argument(item)
+          when :lasgn
+            item[1]
           end
         end
       end
