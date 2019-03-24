@@ -116,16 +116,27 @@ module RipperRubyParser
             when :masgn
               args = item[1]
               args.shift
-              s(:masgn, *convert_arguments(args))
-            when :lasgn
-              if item.length == 2
-                item[1]
-              else
-                item
-              end
+              s(:masgn, *convert_destructuring_arguments(args))
             else
               item
             end
+          end
+        end
+      end
+
+      def convert_destructuring_arguments(args)
+        args.map! do |item|
+          case item.sexp_type
+          when :splat
+            marker = SPECIAL_ARG_MARKER[item.sexp_type]
+            name = extract_node_symbol item.last
+            :"#{marker}#{name}"
+          when :masgn
+            args = item[1]
+            args.shift
+            s(:masgn, *convert_destructuring_arguments(args))
+          when :lasgn
+            item[1]
           end
         end
       end
