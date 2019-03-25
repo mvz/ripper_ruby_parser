@@ -31,6 +31,8 @@ module RipperRubyParser
       @processors[:@kw] = :process_at_kw
       @processors[:@op] = :process_at_op
       @processors[:@backref] = :process_at_backref
+
+      @processors[:@backtick] = :process_at_backtick
       @processors[:@period] = :process_at_period
 
       @processors[:@tstring_content] = :process_at_tstring_content
@@ -205,6 +207,10 @@ module RipperRubyParser
 
     def process_at_op(exp)
       make_identifier(:op, exp)
+    end
+
+    def process_at_backtick(exp)
+      make_identifier(:backtick, exp)
     end
 
     def process_at_kw(exp)
