@@ -171,28 +171,24 @@ module RipperRubyParser
 
         parts = list.flat_map do |item|
           type, val, *rest = item
-          if type == :dstr && !val.empty?
-            [s(:str, val), s(:dstr, '', *rest)]
+          if type == :dstr
+            if val.empty?
+              rest
+            else
+              [s(:str, val), *rest]
+            end
           else
             [item]
           end
         end
 
         string = ''
-        while !parts.empty? && parts.first.sexp_type == :str
+        while parts.first&.sexp_type == :str
           str = parts.shift
           string += str.last
         end
 
-        rest = parts.map do |se|
-          if se.sexp_type == :dstr
-            se.last
-          else
-            se
-          end
-        end
-
-        return string, rest
+        return string, parts
       end
 
       def merge_raw_string_literals(list)
