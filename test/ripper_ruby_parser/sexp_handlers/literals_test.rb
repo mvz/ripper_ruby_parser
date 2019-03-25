@@ -704,6 +704,13 @@ describe RipperRubyParser::Parser do
                                 s(:str, "\nbazqux\n")),
                               extra_compatible: true
         end
+
+        it 'handles line continuation after interpolation for the indentable case' do
+          "<<-FOO\n\#{bar}\nbaz\\\nqux\nFOO".
+            must_be_parsed_as s(:dstr, '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "\nbazqux\n"))
+        end
       end
     end
 

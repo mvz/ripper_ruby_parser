@@ -164,16 +164,16 @@ module RipperRubyParser
       private
 
       def extract_string_parts(list)
-        parts = []
+        return '', [] if list.empty?
 
-        unless list.empty?
-          parts << process(list.shift)
-          list.each do |item|
-            parts << if extra_compatible && item.sexp_type == :@tstring_content
-                       alternative_process_at_tstring_content(item)
-                     else
-                       process(item)
-                     end
+        list = merge_raw_string_literals list
+
+        parts = [process(list.shift)]
+        parts += list.map do |item|
+          if extra_compatible && item.sexp_type == :@tstring_content
+            alternative_process_at_tstring_content(item)
+          else
+            process(item)
           end
         end
 
@@ -186,6 +186,19 @@ module RipperRubyParser
         rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
 
         return string, rest
+      end
+
+      def merge_raw_string_literals(list)
+        chunks = list.chunk { |it| it.sexp_type == :@tstring_content }
+        chunks.flat_map do |is_simple, items|
+          if is_simple && items.count > 1
+            head = items.first
+            contents = items.map { |it| it[1] }.join
+            [s(:@tstring_content, contents, head[2], head[3])]
+          else
+            items
+          end
+        end
       end
 
       def alternative_process_at_tstring_content(exp)

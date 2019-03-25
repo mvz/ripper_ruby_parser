@@ -63,6 +63,12 @@ baz \
 qux
 EOS
 
+<<-EOS
+#{bar}
+baz \
+qux
+EOS
+
 %Q[foo5\
 bar]
 
