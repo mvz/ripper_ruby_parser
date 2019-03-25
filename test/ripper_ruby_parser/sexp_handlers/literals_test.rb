@@ -382,6 +382,23 @@ describe RipperRubyParser::Parser do
                                 s(:str, 'foo'),
                                 s(:str, '(string)'))
         end
+
+        it 'correctly handles nested interpolation' do
+          '"foo#{"bar#{baz}"}"'.
+            must_be_parsed_as s(:dstr,
+                                'foobar',
+                                s(:evstr, s(:call, nil, :baz)))
+        end
+
+        it 'correctly handles consecutive nested interpolation' do
+          '"foo#{"bar#{baz}"}foo#{"bar#{baz}"}"'.
+            must_be_parsed_as s(:dstr,
+                                'foobar',
+                                s(:evstr, s(:call, nil, :baz)),
+                                s(:str, 'foo'),
+                                s(:str, 'bar'),
+                                s(:evstr, s(:call, nil, :baz)))
+        end
       end
 
       describe 'with interpolations and escape sequences' do

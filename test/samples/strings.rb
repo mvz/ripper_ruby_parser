@@ -120,3 +120,9 @@ eval(<<FOO, __FILE__, __LINE__)
 bar
 baz
 FOO
+
+# Interpolation
+"foo#{bar}"
+"foo#{"bar#{baz}"}"
+"foo#{"bar#{"baz#{qux}"}"}"
+"foo#{"bar#{baz}"}foo#{"bar#{baz}"}"

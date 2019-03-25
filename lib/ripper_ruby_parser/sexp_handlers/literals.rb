@@ -28,19 +28,19 @@ module RipperRubyParser
         val = process(list.sexp_body.first)
 
         case val.sexp_type
-        when :str
+        when :str, :dstr
           val
         when :void_stmt
-          s(:dstr, s(:evstr))
+          s(:dstr, '', s(:evstr))
         else
-          s(:dstr, s(:evstr, val))
+          s(:dstr, '', s(:evstr, val))
         end
       end
 
       def process_string_dvar(exp)
         _, list = exp.shift 2
         val = process(list)
-        s(:dstr, s(:evstr, val))
+        s(:dstr, '', s(:evstr, val))
       end
 
       def process_string_concat(exp)
@@ -167,13 +167,14 @@ module RipperRubyParser
         return '', [] if list.empty?
 
         list = merge_raw_string_literals list
+        list = map_process_string_parts list
 
-        parts = [process(list.shift)]
-        parts += list.map do |item|
-          if extra_compatible && item.sexp_type == :@tstring_content
-            alternative_process_at_tstring_content(item)
+        parts = list.flat_map do |item|
+          type, val, *rest = item
+          if type == :dstr && !val.empty?
+            [s(:str, val), s(:dstr, '', *rest)]
           else
-            process(item)
+            [item]
           end
         end
 
@@ -183,7 +184,13 @@ module RipperRubyParser
           string += str.last
         end
 
-        rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
+        rest = parts.map do |se|
+          if se.sexp_type == :dstr
+            se.last
+          else
+            se
+          end
+        end
 
         return string, rest
       end
@@ -199,6 +206,18 @@ module RipperRubyParser
             items
           end
         end
+      end
+
+      def map_process_string_parts(list)
+        parts = [process(list.shift)]
+        parts += list.map do |item|
+          if extra_compatible && item.sexp_type == :@tstring_content
+            alternative_process_at_tstring_content(item)
+          else
+            process(item)
+          end
+        end
+        parts
       end
 
       def alternative_process_at_tstring_content(exp)
