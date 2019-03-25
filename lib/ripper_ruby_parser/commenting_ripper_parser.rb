@@ -29,6 +29,7 @@ module RipperRubyParser
 
     def on_backtick(delimiter)
       @delimiter_stack.push delimiter
+      super
     end
 
     def on_comment(tok)

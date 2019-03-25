@@ -237,3 +237,6 @@ class Foo
   def self.foo((bar, (baz, *qux)))
   end
 end
+
+# Special symbols
+[:`, :|, :*, :&, :%, :'^', :-@, :+@, :'~@']
