@@ -128,6 +128,16 @@ class Foo
       begin
         baz
       end
+    when qux
+      begin
+        quuz
+        zyxxy
+      end
+    else
+      begin
+        foobar
+        barbaz
+      end
     end
   end
 

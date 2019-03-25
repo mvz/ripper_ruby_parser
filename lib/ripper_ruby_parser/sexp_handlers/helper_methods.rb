@@ -80,6 +80,14 @@ module RipperRubyParser
         end
       end
 
+      def unwrap_block(exp)
+        if exp.sexp_type == :block
+          exp.sexp_body
+        else
+          [exp]
+        end
+      end
+
       def handle_return_argument_list(arglist)
         args = process(arglist).sexp_body
 

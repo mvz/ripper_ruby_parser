@@ -65,7 +65,14 @@ module RipperRubyParser
         values = process(values).sexp_body
 
         truepart = map_process_list_compact truepart.sexp_body
-        truepart = [nil] if truepart.empty?
+        truepart = case truepart.count
+                   when 0
+                     [nil]
+                   when 1
+                     unwrap_block(truepart.first)
+                   else
+                     truepart
+                   end
 
         s(s(:when,
             s(:array, *values),
