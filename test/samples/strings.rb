@@ -63,6 +63,12 @@ baz \
 qux
 EOS
 
+<<-EOS
+#{bar}
+baz \
+qux
+EOS
+
 %Q[foo5\
 bar]
 
@@ -114,3 +120,9 @@ eval(<<FOO, __FILE__, __LINE__)
 bar
 baz
 FOO
+
+# Interpolation
+"foo#{bar}"
+"foo#{"bar#{baz}"}"
+"foo#{"bar#{"baz#{qux}"}"}"
+"foo#{"bar#{baz}"}foo#{"bar#{baz}"}"

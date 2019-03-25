@@ -291,82 +291,113 @@ describe RipperRubyParser::Parser do
         end
       end
 
-      describe 'with interpolations' do
-        describe 'containing just a literal string' do
-          it 'performs the interpolation when it is at the end' do
-            '"foo#{"bar"}"'.must_be_parsed_as s(:str, 'foobar')
-          end
-
-          it 'performs the interpolation when it is in the middle' do
-            '"foo#{"bar"}baz"'.must_be_parsed_as s(:str, 'foobarbaz')
-          end
-
-          it 'performs the interpolation when it is at the start' do
-            '"#{"foo"}bar"'.must_be_parsed_as s(:str, 'foobar')
-          end
+      describe 'with interpolations containing just a literal string' do
+        it 'performs the interpolation when it is at the end' do
+          '"foo#{"bar"}"'.must_be_parsed_as s(:str, 'foobar')
         end
 
-        describe 'without braces' do
-          it 'works for ivars' do
-            "\"foo\#@bar\"".must_be_parsed_as s(:dstr,
-                                                'foo',
-                                                s(:evstr, s(:ivar, :@bar)))
-          end
-
-          it 'works for gvars' do
-            "\"foo\#$bar\"".must_be_parsed_as s(:dstr,
-                                                'foo',
-                                                s(:evstr, s(:gvar, :$bar)))
-          end
-
-          it 'works for cvars' do
-            "\"foo\#@@bar\"".must_be_parsed_as s(:dstr,
-                                                 'foo',
-                                                 s(:evstr, s(:cvar, :@@bar)))
-          end
+        it 'performs the interpolation when it is in the middle' do
+          '"foo#{"bar"}baz"'.must_be_parsed_as s(:str, 'foobarbaz')
         end
 
-        describe 'with braces' do
-          it 'works for trivial interpolated strings' do
-            '"#{foo}"'.
-              must_be_parsed_as s(:dstr,
-                                  '',
-                                  s(:evstr,
-                                    s(:call, nil, :foo)))
-          end
+        it 'performs the interpolation when it is at the start' do
+          '"#{"foo"}bar"'.must_be_parsed_as s(:str, 'foobar')
+        end
+      end
 
-          it 'works for basic interpolated strings' do
-            '"foo#{bar}"'.
-              must_be_parsed_as s(:dstr,
-                                  'foo',
-                                  s(:evstr,
-                                    s(:call, nil, :bar)))
-          end
+      describe 'with interpolations without braces' do
+        it 'works for ivars' do
+          "\"foo\#@bar\"".must_be_parsed_as s(:dstr,
+                                              'foo',
+                                              s(:evstr, s(:ivar, :@bar)))
+        end
 
-          it 'works for strings with several interpolations' do
-            '"foo#{bar}baz#{qux}"'.
-              must_be_parsed_as s(:dstr,
-                                  'foo',
-                                  s(:evstr, s(:call, nil, :bar)),
-                                  s(:str, 'baz'),
-                                  s(:evstr, s(:call, nil, :qux)))
-          end
+        it 'works for gvars' do
+          "\"foo\#$bar\"".must_be_parsed_as s(:dstr,
+                                              'foo',
+                                              s(:evstr, s(:gvar, :$bar)))
+        end
 
-          it 'correctly handles two interpolations in a row' do
-            "\"\#{bar}\#{qux}\"".
-              must_be_parsed_as s(:dstr,
-                                  '',
-                                  s(:evstr, s(:call, nil, :bar)),
-                                  s(:evstr, s(:call, nil, :qux)))
-          end
+        it 'works for cvars' do
+          "\"foo\#@@bar\"".must_be_parsed_as s(:dstr,
+                                               'foo',
+                                               s(:evstr, s(:cvar, :@@bar)))
+        end
+      end
 
-          it 'works with an empty interpolation' do
-            "\"foo\#{}bar\"".
-              must_be_parsed_as s(:dstr,
-                                  'foo',
-                                  s(:evstr),
-                                  s(:str, 'bar'))
-          end
+      describe 'with interpolations with braces' do
+        it 'works for trivial interpolated strings' do
+          '"#{foo}"'.
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr,
+                                  s(:call, nil, :foo)))
+        end
+
+        it 'works for basic interpolated strings' do
+          '"foo#{bar}"'.
+            must_be_parsed_as s(:dstr,
+                                'foo',
+                                s(:evstr,
+                                  s(:call, nil, :bar)))
+        end
+
+        it 'works for strings with several interpolations' do
+          '"foo#{bar}baz#{qux}"'.
+            must_be_parsed_as s(:dstr,
+                                'foo',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, 'baz'),
+                                s(:evstr, s(:call, nil, :qux)))
+        end
+
+        it 'correctly handles two interpolations in a row' do
+          "\"\#{bar}\#{qux}\"".
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:evstr, s(:call, nil, :qux)))
+        end
+
+        it 'works with an empty interpolation' do
+          "\"foo\#{}bar\"".
+            must_be_parsed_as s(:dstr,
+                                'foo',
+                                s(:evstr),
+                                s(:str, 'bar'))
+        end
+
+        it 'correctly handles interpolation with __FILE__ before another interpolation' do
+          "\"foo\#{__FILE__}\#{bar}\"".
+            must_be_parsed_as s(:dstr,
+                                'foo(string)',
+                                s(:evstr, s(:call, nil, :bar)))
+        end
+
+        it 'correctly handles interpolation with __FILE__ after another interpolation' do
+          "\"\#{bar}foo\#{__FILE__}\"".
+            must_be_parsed_as s(:dstr,
+                                '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, 'foo'),
+                                s(:str, '(string)'))
+        end
+
+        it 'correctly handles nested interpolation' do
+          '"foo#{"bar#{baz}"}"'.
+            must_be_parsed_as s(:dstr,
+                                'foobar',
+                                s(:evstr, s(:call, nil, :baz)))
+        end
+
+        it 'correctly handles consecutive nested interpolation' do
+          '"foo#{"bar#{baz}"}foo#{"bar#{baz}"}"'.
+            must_be_parsed_as s(:dstr,
+                                'foobar',
+                                s(:evstr, s(:call, nil, :baz)),
+                                s(:str, 'foo'),
+                                s(:str, 'bar'),
+                                s(:evstr, s(:call, nil, :baz)))
         end
       end
 
@@ -687,6 +718,13 @@ describe RipperRubyParser::Parser do
                                 s(:evstr, s(:call, nil, :bar)),
                                 s(:str, "\nbazqux\n")),
                               extra_compatible: true
+        end
+
+        it 'handles line continuation after interpolation for the indentable case' do
+          "<<-FOO\n\#{bar}\nbaz\\\nqux\nFOO".
+            must_be_parsed_as s(:dstr, '',
+                                s(:evstr, s(:call, nil, :bar)),
+                                s(:str, "\nbazqux\n"))
         end
       end
     end

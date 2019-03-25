@@ -28,19 +28,19 @@ module RipperRubyParser
         val = process(list.sexp_body.first)
 
         case val.sexp_type
-        when :str
+        when :str, :dstr
           val
         when :void_stmt
-          s(:dstr, s(:evstr))
+          s(:dstr, '', s(:evstr))
         else
-          s(:dstr, s(:evstr, val))
+          s(:dstr, '', s(:evstr, val))
         end
       end
 
       def process_string_dvar(exp)
         _, list = exp.shift 2
         val = process(list)
-        s(:dstr, s(:evstr, val))
+        s(:dstr, '', s(:evstr, val))
       end
 
       def process_string_concat(exp)
@@ -164,28 +164,56 @@ module RipperRubyParser
       private
 
       def extract_string_parts(list)
-        parts = []
+        return '', [] if list.empty?
 
-        unless list.empty?
-          parts << process(list.shift)
-          list.each do |item|
-            parts << if extra_compatible && item.sexp_type == :@tstring_content
-                       alternative_process_at_tstring_content(item)
-                     else
-                       process(item)
-                     end
+        list = merge_raw_string_literals list
+        list = map_process_string_parts list
+
+        parts = list.flat_map do |item|
+          type, val, *rest = item
+          if type == :dstr
+            if val.empty?
+              rest
+            else
+              [s(:str, val), *rest]
+            end
+          else
+            [item]
           end
         end
 
         string = ''
-        while !parts.empty? && parts.first.sexp_type == :str
+        while parts.first&.sexp_type == :str
           str = parts.shift
           string += str.last
         end
 
-        rest = parts.map { |se| se.sexp_type == :dstr ? se.last : se }
+        return string, parts
+      end
 
-        return string, rest
+      def merge_raw_string_literals(list)
+        chunks = list.chunk { |it| it.sexp_type == :@tstring_content }
+        chunks.flat_map do |is_simple, items|
+          if is_simple && items.count > 1
+            head = items.first
+            contents = items.map { |it| it[1] }.join
+            [s(:@tstring_content, contents, head[2], head[3])]
+          else
+            items
+          end
+        end
+      end
+
+      def map_process_string_parts(list)
+        parts = [process(list.shift)]
+        parts += list.map do |item|
+          if extra_compatible && item.sexp_type == :@tstring_content
+            alternative_process_at_tstring_content(item)
+          else
+            process(item)
+          end
+        end
+        parts
       end
 
       def alternative_process_at_tstring_content(exp)
