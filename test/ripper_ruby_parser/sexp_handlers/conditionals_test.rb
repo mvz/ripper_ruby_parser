@@ -508,6 +508,18 @@ describe RipperRubyParser::Parser do
                               nil)
       end
 
+      it 'cleans up a multi-statement begin..end at start of the when clause' do
+        'case foo; when bar; begin; baz; qux; end; quuz; end'.
+          must_be_parsed_as s(:case,
+                              s(:call, nil, :foo),
+                              s(:when,
+                                s(:array, s(:call, nil, :bar)),
+                                s(:call, nil, :baz),
+                                s(:call, nil, :qux),
+                                s(:call, nil, :quuz)),
+                              nil)
+      end
+
       it 'keeps up a multi-statement begin..end in the else clause' do
         'case foo; when bar; baz; else; begin; qux; quuz; end; end'.
           must_be_parsed_as s(:case,

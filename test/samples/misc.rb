@@ -128,16 +128,42 @@ class Foo
       begin
         baz
       end
-    when qux
+    end
+
+    case foo
+    when bar
       begin
-        quuz
-        zyxxy
+        baz
+        qux
       end
+    end
+
+    case foo
+    when bar
+      begin
+        baz
+        qux
+      end
+      quuz
+    end
+
+    case foo
+    when bar
     else
       begin
-        foobar
-        barbaz
+        baz
+        qux
       end
+    end
+
+    case foo
+    when bar
+    else
+      begin
+        baz
+        qux
+      end
+      quuz
     end
   end
 
