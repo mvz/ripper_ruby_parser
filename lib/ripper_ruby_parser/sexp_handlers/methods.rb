@@ -87,11 +87,7 @@ module RipperRubyParser
         when 0
           [s(:nil)]
         else
-          if block.sexp_type == :block
-            block.sexp_body
-          else
-            [block]
-          end
+          unwrap_block block
         end
       end
 

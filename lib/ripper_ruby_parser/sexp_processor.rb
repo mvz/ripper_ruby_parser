@@ -85,12 +85,7 @@ module RipperRubyParser
         statements.first
       else
         first = statements.shift
-        if first.sexp_type == :block
-          first.shift
-          s(:block, *first, *statements)
-        else
-          s(:block, first, *statements)
-        end
+        s(:block, *unwrap_block(first), *statements)
       end
     end
 
@@ -259,11 +254,7 @@ module RipperRubyParser
 
       return body if body.empty?
 
-      if body.sexp_type == :block
-        body.sexp_body
-      else
-        [body]
-      end
+      unwrap_block body
     end
 
     def make_identifier(type, exp)
