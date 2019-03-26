@@ -129,6 +129,42 @@ class Foo
         baz
       end
     end
+
+    case foo
+    when bar
+      begin
+        baz
+        qux
+      end
+    end
+
+    case foo
+    when bar
+      begin
+        baz
+        qux
+      end
+      quuz
+    end
+
+    case foo
+    when bar
+    else
+      begin
+        baz
+        qux
+      end
+    end
+
+    case foo
+    when bar
+    else
+      begin
+        baz
+        qux
+      end
+      quuz
+    end
   end
 
   # Using splat and double-splat args
