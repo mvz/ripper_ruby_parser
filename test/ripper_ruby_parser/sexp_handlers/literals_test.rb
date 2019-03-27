@@ -691,11 +691,9 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "2½\n")
         end
 
-        it 'does not convert to unicode in extra-compatible mode' do
+        it 'converts to unicode in extra-compatible mode' do
           "<<FOO\n2\\302\\275\nFOO".
-            must_be_parsed_as s(:str,
-                                (+"2\xC2\xBD\n").force_encoding('ascii-8bit')),
-                              extra_compatible: true
+            must_be_parsed_as s(:str, "2½\n"), extra_compatible: true
         end
 
         it 'handles interpolation' do
@@ -799,11 +797,9 @@ describe RipperRubyParser::Parser do
         '%W(2\302\275)'.must_be_parsed_as s(:array, s(:str, '2½'))
       end
 
-      it 'does not convert to unicode if possible in extra-compatible mode' do
+      it 'converts to unicode if possible in extra-compatible mode' do
         '%W(2\302\275)'.
-          must_be_parsed_as s(:array,
-                              s(:str, (+"2\xC2\xBD").force_encoding('ascii-8bit'))),
-                            extra_compatible: true
+          must_be_parsed_as s(:array, s(:str, '2½')), extra_compatible: true
       end
 
       it 'correctly handles line continuation' do

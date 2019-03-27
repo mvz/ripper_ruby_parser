@@ -272,13 +272,7 @@ module RipperRubyParser
 
       def handle_string_encoding(string, delim)
         case delim
-        when INTERPOLATING_HEREDOC, INTERPOLATING_WORD_LIST
-          if extra_compatible
-            string
-          else
-            fix_encoding string
-          end
-        when *INTERPOLATING_STRINGS
+        when INTERPOLATING_HEREDOC, INTERPOLATING_WORD_LIST, *INTERPOLATING_STRINGS
           fix_encoding string
         else
           string
