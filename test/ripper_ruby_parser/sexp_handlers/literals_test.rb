@@ -436,21 +436,21 @@ describe RipperRubyParser::Parser do
       end
 
       describe 'with interpolations and escape sequences in extra-compatible mode' do
-        it 'does not convert to unicode after interpolation' do
+        it 'converts to unicode after interpolation' do
           '"#{foo}2\302\275"'.
             must_be_parsed_as s(:dstr,
                                 '',
                                 s(:evstr, s(:call, nil, :foo)),
-                                s(:str, (+"2\xC2\xBD").force_encoding('ascii-8bit'))),
+                                s(:str, '2½')),
                               extra_compatible: true
         end
 
-        it 'keeps single null byte as ascii after interpolation' do
+        it 'converts single null byte to unicode after interpolation' do
           '"#{foo}\0"'.
             must_be_parsed_as s(:dstr,
                                 '',
                                 s(:evstr, s(:call, nil, :foo)),
-                                s(:str, (+"\x00").force_encoding('ascii-8bit'))),
+                                s(:str, "\u0000")),
                               extra_compatible: true
         end
 

@@ -167,7 +167,7 @@ module RipperRubyParser
         return '', [] if list.empty?
 
         list = merge_raw_string_literals list
-        list = map_process_string_parts list
+        list = map_process_list list
 
         parts = list.flat_map do |item|
           type, val, *rest = item
@@ -202,25 +202,6 @@ module RipperRubyParser
             items
           end
         end
-      end
-
-      def map_process_string_parts(list)
-        parts = [process(list.shift)]
-        parts += list.map do |item|
-          if extra_compatible && item.sexp_type == :@tstring_content
-            alternative_process_at_tstring_content(item)
-          else
-            process(item)
-          end
-        end
-        parts
-      end
-
-      def alternative_process_at_tstring_content(exp)
-        _, content, _, delim = exp.shift 4
-        string = handle_string_unescaping(content, delim)
-        string.force_encoding('ascii-8bit') if string == "\0"
-        s(:str, string)
       end
 
       def character_flags_to_numerical(flags)
