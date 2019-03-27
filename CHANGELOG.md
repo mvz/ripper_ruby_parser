@@ -2,15 +2,24 @@
 
 ## Unreleased
 
-* Make results compatible with RubyParser 3.13.0
-  ([#65](https://github.com/mvz/ripper_ruby_parser/pull/65))
+* Improve compatibility for when clauses containing `begin..end` blocks ([#73])
+* Handle use of backtick as a symbol ([#72])
+* Improve string handling compatibility ([#71])
+  - Interpolation with `__FILE__` keyword
+  - Line continuation after interpolation for indentable heredocs
+  - Nested interpolations
+* Handle method argument destructuring ([#70])
+* Improve compatibility of operator assignment ([#69])
+* Handle multiple assignment with RHS that is a block ([#68])
+* Improve compatibility of handling escaped line-endings ([#67])
+* Make results compatible with RubyParser 3.13.0 ([#65])
   - Change result for `BEGIN { foo }`
   - Remove extra-compatible handling of rescue modifier
 
 ## 1.5.1 / 2019-03-21
 
 * Fix handling of singleton methods whose names are keywords
-  ([#66](https://github.com/mvz/ripper_ruby_parser/pull/66))
+  ([#66])
 
 ## 1.5.0 / 2019-03-18
 
@@ -138,3 +147,14 @@
 ## 0.0.1 / 2012-03-11
 
 * Initial release
+
+<!-- Pull request links -->
+[#73]: https://github.com/mvz/ripper_ruby_parser/pull/73
+[#72]: https://github.com/mvz/ripper_ruby_parser/pull/72
+[#71]: https://github.com/mvz/ripper_ruby_parser/pull/71
+[#70]: https://github.com/mvz/ripper_ruby_parser/pull/70
+[#69]: https://github.com/mvz/ripper_ruby_parser/pull/69
+[#68]: https://github.com/mvz/ripper_ruby_parser/pull/68
+[#67]: https://github.com/mvz/ripper_ruby_parser/pull/67
+[#66]: https://github.com/mvz/ripper_ruby_parser/pull/66
+[#65]: https://github.com/mvz/ripper_ruby_parser/pull/65
