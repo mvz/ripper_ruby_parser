@@ -269,7 +269,7 @@ describe RipperRubyParser::Parser do
 
         it 'works with unicode escapes in extra-compatible mode' do
           '"foo\\u273bbar"'.
-            must_be_parsed_as s(:str, 'foo✻r'), extra_compatible: true
+            must_be_parsed_as s(:str, 'foo✻bar'), extra_compatible: true
         end
 
         it 'works with unicode escapes with braces' do

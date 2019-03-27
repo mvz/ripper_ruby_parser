@@ -106,8 +106,7 @@ module RipperRubyParser
       when /^u\{/
         hex_to_unicode_char(bare[2..-2])
       when /^u/
-        hex_to_unicode_char(bare[1..4]) +
-          (extra_compatible ? '' : bare[5..-1])
+        hex_to_unicode_char(bare[1..4]) + bare[5..-1]
       when /^(c|C-).$/
         control(bare[-1].ord).chr
       when /^M-.$/
