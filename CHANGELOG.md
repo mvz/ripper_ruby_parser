@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Make results compatible with RubyParser 3.13.1 ([#74])
+  - Removes extra-compatible handling of string literals
 * Improve compatibility for when clauses containing `begin..end` blocks ([#73])
 * Handle use of backtick as a symbol ([#72])
 * Improve string handling compatibility ([#71])
@@ -149,6 +151,7 @@
 * Initial release
 
 <!-- Pull request links -->
+[#74]: https://github.com/mvz/ripper_ruby_parser/pull/74
 [#73]: https://github.com/mvz/ripper_ruby_parser/pull/73
 [#72]: https://github.com/mvz/ripper_ruby_parser/pull/72
 [#71]: https://github.com/mvz/ripper_ruby_parser/pull/71

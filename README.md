@@ -11,7 +11,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
 * Requires MRI 2.3 or higher
-* Compatible with RubyParser 3.13.0
+* Compatible with RubyParser 3.13.1
 
 ## Known incompatibilities
 
@@ -28,13 +28,9 @@ The following incompatibilities cannot be changed:
 The following incompatibilities can be made compatible by turning on
 extra-compatible mode:
 
-* RipperRubyParser handles unicode escapes without braces correctly, while
-  RubyParser absorbs trailing hexadecimal characters
-* RubyParser handles byte sequences in second and further literal parts of a
-  strings with interpolations differently. RipperRubyParser will convert these
-  to unicode if possible.
-* RubyParser handles byte sequences in heredocs and interpolating word lists
-  differently. RipperRubyParser will convert these to unicode if possible.
+* Operator assignment of a method call without parenteses to a collection
+  element uses and `:array` S-expression instead of `:arglist`
+* The `rescue` modifier behaves like Ruby 2.4+ even on Ruby 2.3
 
 ## Install
 
@@ -58,7 +54,7 @@ extra-compatible mode:
 
 ## Requirements
 
-* Ruby 2.2 or higher
+* Ruby 2.3 or higher
 * `sexp_processor`
 
 ## Hacking and contributing
