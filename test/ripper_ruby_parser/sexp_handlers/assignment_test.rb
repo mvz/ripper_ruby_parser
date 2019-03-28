@@ -241,44 +241,6 @@ describe RipperRubyParser::Parser do
         end
       end
 
-      describe 'with a rescue modifier in extra compatible mode' do
-        it 'works with assigning a bare method call' do
-          'foo = bar rescue baz'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:rescue,
-                                  s(:call, nil, :bar),
-                                  s(:resbody, s(:array), s(:call, nil, :baz)))),
-                              extra_compatible: true
-        end
-
-        it 'works with a method call with argument' do
-          'foo = bar(baz) rescue qux'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:rescue,
-                                  s(:call, nil, :bar, s(:call, nil, :baz)),
-                                  s(:resbody, s(:array), s(:call, nil, :qux)))),
-                              extra_compatible: true
-        end
-
-        it 'always uses post-2.3 behavior for a method call with bare argument' do
-          'foo = bar baz rescue qux'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:rescue,
-                                  s(:call, nil, :bar, s(:call, nil, :baz)),
-                                  s(:resbody, s(:array), s(:call, nil, :qux)))),
-                              extra_compatible: true
-        end
-
-        it 'always uses post-2.3 behavior for a class method call with bare argument' do
-          'foo = Bar.baz qux rescue quuz'.
-            must_be_parsed_as s(:lasgn, :foo,
-                                s(:rescue,
-                                  s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
-                                  s(:resbody, s(:array), s(:call, nil, :quuz)))),
-                              extra_compatible: true
-        end
-      end
-
       it 'sets the correct line numbers' do
         result = parser.parse 'foo = {}'
         result.line.must_equal 1
