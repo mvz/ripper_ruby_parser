@@ -388,6 +388,17 @@ describe RipperRubyParser::Parser do
                                     s(:call, nil, :quuz)))))
       end
 
+      it 'works with destructuring with multiple levels' do
+        '((foo, bar)) = baz'.
+          must_be_parsed_as s(:masgn,
+                              s(:array,
+                                s(:masgn,
+                                  s(:array,
+                                    s(:lasgn, :foo),
+                                    s(:lasgn, :bar)))),
+                              s(:to_ary, s(:call, nil, :baz)))
+      end
+
       it 'works with instance variables' do
         '@foo, @bar = baz'.
           must_be_parsed_as s(:masgn,

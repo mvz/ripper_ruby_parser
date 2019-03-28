@@ -78,7 +78,11 @@ module RipperRubyParser
       def process_mlhs_paren(exp)
         _, contents = exp.shift 2
 
-        process(contents)
+        if contents.sexp_type == :mlhs_paren
+          s(:masgn, s(:array, process(contents)))
+        else
+          process(contents)
+        end
       end
 
       def process_mlhs(exp)
