@@ -9,7 +9,7 @@ describe 'Using RipperRubyParser and RubyParser' do
   end
 
   let :oldparser do
-    RubyParser.new
+    RubyParser.for_current_ruby
   end
 
   describe 'for a program with quite some comments' do

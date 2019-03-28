@@ -9,7 +9,7 @@ describe 'Using RipperRubyParser and RubyParser' do
   end
 
   let :oldparser do
-    RubyParser.new
+    RubyParser.for_current_ruby
   end
 
   Dir.glob('test/ripper_ruby_parser/**/*.rb').each do |file|
