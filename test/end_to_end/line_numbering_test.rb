@@ -25,7 +25,7 @@ describe 'Using RipperRubyParser and RubyParser' do
   end
 
   let :oldparser do
-    RubyParser.new
+    RubyParser.for_current_ruby
   end
 
   describe 'for a multi-line program' do
