@@ -37,6 +37,16 @@ FOO
 \n
 FOO
 
+# Escape sequences in heredocs, in particular carriage returns
+#
+<<FOO
+foo\rbar\tbaz\r
+FOO
+
+<<'FOO'
+foo\rbar\tbaz\r
+FOO
+
 # Line continuation
 "foo\
 bar"
