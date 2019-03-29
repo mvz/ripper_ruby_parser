@@ -599,6 +599,16 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\tbaz\n")
         end
 
+        it 'converts \r to carriage returns' do
+          "<<FOO\nbar\\rbaz\\r\nFOO".
+            must_be_parsed_as s(:str, "bar\rbaz\r\n")
+        end
+
+        it 'removes \r in extra-compatible mode' do
+          "<<FOO\nbar\\rbaz\\r\nFOO".
+            must_be_parsed_as s(:str, "barbaz\n"), extra_compatible: true
+        end
+
         it 'does not unescape with single quoted version' do
           "<<'FOO'\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
