@@ -2,8 +2,12 @@
 
 ## Unreleased
 
+* Match RubyParser behavior for current Ruby rather than latest Ruby ([#76])
+  - Adjust integration tests to compare against `RubyParser.for_current_ruby`
+  - Remove extra-compatible handling of `rescue` modifier
+* Handle directly nested parentheses in destructuring ([#75])
 * Make results compatible with RubyParser 3.13.1 ([#74])
-  - Removes extra-compatible handling of string literals
+  - Remove extra-compatible handling of string literals
 * Improve compatibility for when clauses containing `begin..end` blocks ([#73])
 * Handle use of backtick as a symbol ([#72])
 * Improve string handling compatibility ([#71])
@@ -151,6 +155,8 @@
 * Initial release
 
 <!-- Pull request links -->
+[#76]: https://github.com/mvz/ripper_ruby_parser/pull/76
+[#75]: https://github.com/mvz/ripper_ruby_parser/pull/75
 [#74]: https://github.com/mvz/ripper_ruby_parser/pull/74
 [#73]: https://github.com/mvz/ripper_ruby_parser/pull/73
 [#72]: https://github.com/mvz/ripper_ruby_parser/pull/72

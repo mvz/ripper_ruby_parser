@@ -30,7 +30,6 @@ extra-compatible mode:
 
 * Operator assignment of a method call without parenteses to a collection
   element uses and `:array` S-expression instead of `:arglist`
-* The `rescue` modifier behaves like Ruby 2.4+ even on Ruby 2.3
 
 ## Install
 
