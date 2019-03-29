@@ -604,11 +604,6 @@ describe RipperRubyParser::Parser do
             must_be_parsed_as s(:str, "bar\rbaz\r\n")
         end
 
-        it 'removes \r in extra-compatible mode' do
-          "<<FOO\nbar\\rbaz\\r\nFOO".
-            must_be_parsed_as s(:str, "barbaz\n"), extra_compatible: true
-        end
-
         it 'does not unescape with single quoted version' do
           "<<'FOO'\nbar\\tbaz\nFOO".
             must_be_parsed_as s(:str, "bar\\tbaz\n")
@@ -1105,6 +1100,17 @@ describe RipperRubyParser::Parser do
       it 'works for rationals' do
         '1000r'.
           must_be_parsed_as s(:lit, 1000r)
+      end
+    end
+
+    describe 'in extra compatible mode' do
+      it 'converts \r to carriage returns in double-quoted strings' do
+        '"foo\\rbar"'.must_be_parsed_as s(:str, "foo\rbar"), extra_compatible: true
+      end
+
+      it 'removes \r from heredocs' do
+        "<<FOO\nbar\\rbaz\\r\nFOO".
+          must_be_parsed_as s(:str, "barbaz\n"), extra_compatible: true
       end
     end
   end
