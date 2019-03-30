@@ -6,6 +6,7 @@
 %w(foo\nbar baz)
 
 "foo\u273bbar"
+"foo\a\b\e\f\r\s\t\vbar\nbaz"
 "\0"
 "foo#{bar}\0"
 "foo#{bar}baz\0"
@@ -13,6 +14,7 @@
 "#{foo}2\302\275"
 %W(2\302\275)
 /2\302\275/
+
 
 # Encoding
 "日本語"
