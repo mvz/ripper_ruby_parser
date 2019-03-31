@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Match handling of carriage returns in heredocs in extra-compatible mode
+  ([#77], [#78])
 * Match RubyParser behavior for current Ruby rather than latest Ruby ([#76])
   - Adjust integration tests to compare against `RubyParser.for_current_ruby`
   - Remove extra-compatible handling of `rescue` modifier
@@ -155,6 +157,8 @@
 * Initial release
 
 <!-- Pull request links -->
+[#78]: https://github.com/mvz/ripper_ruby_parser/pull/78
+[#77]: https://github.com/mvz/ripper_ruby_parser/pull/77
 [#76]: https://github.com/mvz/ripper_ruby_parser/pull/76
 [#75]: https://github.com/mvz/ripper_ruby_parser/pull/75
 [#74]: https://github.com/mvz/ripper_ruby_parser/pull/74

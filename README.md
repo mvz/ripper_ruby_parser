@@ -22,14 +22,16 @@ The following incompatibilities cannot be changed:
 
 * RipperRubyParser won't handle non-UTF-8 files without an encoding comment,
   just like regular Ruby
-* RipperRubyParser keeps carriage return characters in heredocs that include them
 * RipperRubyParser does not attempt to match RubyParser's line numbering bugs
+* RipperRubyParser correctly dedents heredocs with interploations
 
 The following incompatibilities can be made compatible by turning on
 extra-compatible mode:
 
 * Operator assignment of a method call without parenteses to a collection
   element uses and `:array` S-expression instead of `:arglist`
+* RipperRubyParser keeps carriage return characters in heredocs that include
+  them
 
 ## Install
 
