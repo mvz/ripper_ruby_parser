@@ -49,7 +49,7 @@ module RipperRubyParser
         left = process(left)
         right = process(right)
         if integer_literal?(left) && integer_literal?(right)
-          s(:lit, Range.new(left[1], right[1]))
+          with_line_number(left.line, s(:lit, Range.new(left[1], right[1])))
         else
           s(:dot2, left, right)
         end
@@ -60,7 +60,7 @@ module RipperRubyParser
         left = process(left)
         right = process(right)
         if integer_literal?(left) && integer_literal?(right)
-          s(:lit, Range.new(left[1], right[1], true))
+          with_line_number(left.line, s(:lit, Range.new(left[1], right[1], true)))
         else
           s(:dot3, left, right)
         end
