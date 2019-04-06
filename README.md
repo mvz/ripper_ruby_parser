@@ -23,12 +23,12 @@ The following incompatibilities cannot be changed:
 * RipperRubyParser won't handle non-UTF-8 files without an encoding comment,
   just like regular Ruby
 * RipperRubyParser does not attempt to match RubyParser's line numbering bugs
-* RipperRubyParser correctly dedents heredocs with interploations
+* RipperRubyParser correctly dedents heredocs with interpolations
 
 The following incompatibilities can be made compatible by turning on
 extra-compatible mode:
 
-* Operator assignment of a method call without parenteses to a collection
+* Operator assignment of a method call without parentheses to a collection
   element uses and `:array` S-expression instead of `:arglist`
 * RipperRubyParser keeps carriage return characters in heredocs that include
   them
@@ -39,19 +39,25 @@ extra-compatible mode:
 
 ## Synopsis
 
-    require 'ripper_ruby_parser'
+```ruby
+require 'ripper_ruby_parser'
 
-    parser = RipperRubyParser::Parser.new
-    parser.parse "puts 'Hello World'"
-    # => s(:call, nil, :puts, s(:arglist, s(:str, "Hello World!")))
+parser = RipperRubyParser::Parser.new
+parser.parse "puts 'Hello World'"
+# => s(:call, nil, :puts, s(:str, "Hello World!"))
+parser.parse "foo[bar] += baz qux"
+# => s(:op_asgn1, s(:call, nil, :foo),
+#      s(:arglist, s(:call, nil, :bar)),
+#      :+,
+#      s(:call, nil, :baz, s(:call, nil, :qux)))
+parser.extra_compatible = true
 
-    parser.parse '"foo\u273bbar"'
-    # => s(:str, "foo✻bar")
-
-    parser.extra_compatible = true
-
-    parser.parse '"foo\u273bbar"'
-    # => s(:str, "foo✻r")
+parser.parse "foo[bar] += baz qux"
+# => s(:op_asgn1, s(:call, nil, :foo),
+#      s(:array, s(:call, nil, :bar)),
+#      :+,
+#      s(:call, nil, :baz, s(:call, nil, :qux)))
+```
 
 ## Requirements
 
