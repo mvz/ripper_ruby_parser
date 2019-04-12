@@ -167,7 +167,10 @@ module RipperRubyParser
       end
 
       def handle_splat(splat)
-        if splat && splat != 0
+        if splat == 0
+          # Only relevant for Ruby < 2.6
+          [s(:excessed_comma)]
+        elsif splat
           [process(splat)]
         else
           []
@@ -209,7 +212,7 @@ module RipperRubyParser
       end
 
       def make_iter(call, args, stmt)
-        args.pop if args && args.last == s(:excessed_comma)
+        args[-1] = nil if args && args.last == s(:excessed_comma)
         args ||= 0
         if stmt.empty?
           s(:iter, call, args)

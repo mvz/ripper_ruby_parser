@@ -276,3 +276,6 @@ end
 
 # Special symbols
 [:`, :|, :*, :&, :%, :'^', :-@, :+@, :'~@']
+
+# Blocks
+foo do |bar, | end

@@ -95,11 +95,11 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :bar))
       end
 
-      it 'ignores a trailing comma in the block parameters' do
+      it 'handles a trailing comma in the block parameters' do
         _('foo do |bar, | end').
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo),
-                              s(:args, :bar))
+                              s(:args, :bar, nil))
       end
 
       it 'works with zero arguments' do
@@ -655,6 +655,24 @@ describe RipperRubyParser::Parser do
                               s(:block,
                                 s(:call, nil, :bar),
                                 s(:call, nil, :baz)))
+      end
+    end
+
+    describe 'for lambda keyword' do
+      it 'works in the simple case' do
+        _('lambda { |foo| bar }').
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              s(:args, :foo),
+                              s(:call, nil, :bar))
+      end
+
+      it 'works with trailing argument comma' do
+        _('lambda { |foo,| bar }').
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :lambda),
+                              s(:args, :foo, nil),
+                              s(:call, nil, :bar))
       end
     end
   end
