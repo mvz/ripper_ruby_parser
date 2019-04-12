@@ -96,11 +96,10 @@ module RipperRubyParser
         _, lvalue, (_, operator,), value = exp.shift 4
 
         lvalue = process(lvalue)
-        original_value_type = value.sexp_type
         value = process(value)
         operator = operator.chop.to_sym
 
-        create_operator_assignment_sub_type lvalue, value, operator, original_value_type
+        create_operator_assignment_sub_type lvalue, value, operator
       end
 
       private
@@ -123,7 +122,7 @@ module RipperRubyParser
         '&&': :op_asgn_and
       }.freeze
 
-      def create_operator_assignment_sub_type(lvalue, value, operator, original_value_type)
+      def create_operator_assignment_sub_type(lvalue, value, operator)
         case lvalue.sexp_type
         when :aref_field
           _, arr, arglist = lvalue
