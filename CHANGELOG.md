@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.6.0 / 2019-04-12
 
+* Fix line numbering for range literals ([#79])
 * Match handling of carriage returns in heredocs in extra-compatible mode
   ([#77], [#78])
 * Match RubyParser behavior for current Ruby rather than latest Ruby ([#76])
@@ -157,6 +158,7 @@
 * Initial release
 
 <!-- Pull request links -->
+[#79]: https://github.com/mvz/ripper_ruby_parser/pull/79
 [#78]: https://github.com/mvz/ripper_ruby_parser/pull/78
 [#77]: https://github.com/mvz/ripper_ruby_parser/pull/77
 [#76]: https://github.com/mvz/ripper_ruby_parser/pull/76
