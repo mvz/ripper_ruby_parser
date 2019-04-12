@@ -77,7 +77,9 @@ module RipperRubyParser
         content = process(content)
         numflags = character_flags_to_numerical flags
 
-        return s(:lit, Regexp.new(content.last, numflags)) if content.length == 2
+        if content.length == 2
+          return with_line_number(content.line, s(:lit, Regexp.new(content.last, numflags)))
+        end
 
         content.sexp_type = :dregx_once if flags =~ /o/
         content << numflags unless numflags == 0
@@ -86,8 +88,8 @@ module RipperRubyParser
 
       def process_regexp(exp)
         _, *rest = shift_all exp
-        _, string, rest = extract_string_parts(rest)
-        s(:dregx, string, *rest)
+        line, string, rest = extract_string_parts(rest)
+        with_line_number(line, s(:dregx, string, *rest))
       end
 
       def process_symbol_literal(exp)
