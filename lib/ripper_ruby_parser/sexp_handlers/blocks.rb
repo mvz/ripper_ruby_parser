@@ -143,7 +143,7 @@ module RipperRubyParser
         old_type = args.sexp_type
         args = convert_arguments(process(args))
         args = nil if args == s(:args) && old_type == :params
-        make_iter(s(:call, nil, :lambda),
+        make_iter(s(:lambda),
                   args,
                   safe_unwrap_void_stmt(process(statements)))
       end

@@ -611,7 +611,7 @@ describe RipperRubyParser::Parser do
       it 'works in the simple case' do
         _('->(foo) { bar }').
           must_be_parsed_as s(:iter,
-                              s(:call, nil, :lambda),
+                              s(:lambda),
                               s(:args, :foo),
                               s(:call, nil, :bar))
       end
@@ -619,7 +619,7 @@ describe RipperRubyParser::Parser do
       it 'works in the simple case without parentheses' do
         _('-> foo { bar }').
           must_be_parsed_as s(:iter,
-                              s(:call, nil, :lambda),
+                              s(:lambda),
                               s(:args, :foo),
                               s(:call, nil, :bar))
       end
@@ -627,7 +627,7 @@ describe RipperRubyParser::Parser do
       it 'works when there are zero arguments' do
         _('->() { bar }').
           must_be_parsed_as s(:iter,
-                              s(:call, nil, :lambda),
+                              s(:lambda),
                               s(:args),
                               s(:call, nil, :bar))
       end
@@ -635,7 +635,7 @@ describe RipperRubyParser::Parser do
       it 'works when there are no arguments' do
         _('-> { bar }').
           must_be_parsed_as s(:iter,
-                              s(:call, nil, :lambda),
+                              s(:lambda),
                               0,
                               s(:call, nil, :bar))
       end
@@ -643,14 +643,14 @@ describe RipperRubyParser::Parser do
       it 'works when there are no statements in the body' do
         _('->(foo) { }').
           must_be_parsed_as s(:iter,
-                              s(:call, nil, :lambda),
+                              s(:lambda),
                               s(:args, :foo))
       end
 
       it 'works when there are several statements in the body' do
         _('->(foo) { bar; baz }').
           must_be_parsed_as s(:iter,
-                              s(:call, nil, :lambda),
+                              s(:lambda),
                               s(:args, :foo),
                               s(:block,
                                 s(:call, nil, :bar),
