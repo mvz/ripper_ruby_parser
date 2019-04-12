@@ -9,8 +9,8 @@ describe 'Using RipperRubyParser and RubyParser' do
       "puts 'Hello World'"
     end
 
-    it 'gives the same result' do
-      program.must_be_parsed_as_before
+    it 'gives the same result with line numbers' do
+      program.must_be_parsed_as_before with_line_numbers: true
     end
   end
 
@@ -35,8 +35,8 @@ describe 'Using RipperRubyParser and RubyParser' do
       END
     end
 
-    it 'gives the same result' do
-      program.must_be_parsed_as_before
+    it 'gives the same result with line numbers' do
+      program.must_be_parsed_as_before with_line_numbers: true
     end
   end
 
@@ -45,8 +45,8 @@ describe 'Using RipperRubyParser and RubyParser' do
       'def fred() yield(3) if block_given?; end'
     end
 
-    it 'gives the same result' do
-      program.must_be_parsed_as_before
+    it 'gives the same result with line numbers' do
+      program.must_be_parsed_as_before with_line_numbers: true
     end
   end
 
@@ -97,8 +97,8 @@ describe 'Using RipperRubyParser and RubyParser' do
       "/(\#{@types})\\s*(\\w+)\\s*\\(([^)]*)\\)/"
     end
 
-    it 'gives the same result' do
-      program.must_be_parsed_as_before
+    it 'gives the same result with line numbers' do
+      program.must_be_parsed_as_before with_line_numbers: true
     end
   end
 end
