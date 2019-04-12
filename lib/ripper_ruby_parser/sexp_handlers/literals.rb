@@ -63,9 +63,9 @@ module RipperRubyParser
 
       def process_xstring(exp)
         _, *rest = shift_all exp
-        _, string, rest = extract_string_parts(rest)
+        line, string, rest = extract_string_parts(rest)
         if rest.empty?
-          s(:xstr, string)
+          s(:xstr, string).line(line)
         else
           s(:dxstr, string, *rest)
         end

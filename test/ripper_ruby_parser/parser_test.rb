@@ -401,6 +401,11 @@ describe RipperRubyParser::Parser do
         result.line.must_equal 1
       end
 
+      it 'works for a backtick string literal' do
+        result = parser.parse '`foo`'
+        result.line.must_equal 1
+      end
+
       it 'works for a regular expression back reference' do
         result = parser.parse '$1'
         result.line.must_equal 1
