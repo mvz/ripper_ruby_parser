@@ -1102,16 +1102,5 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:lit, 1000r)
       end
     end
-
-    describe 'in extra compatible mode' do
-      it 'converts \r to carriage returns in double-quoted strings' do
-        _('"foo\\rbar"').must_be_parsed_as s(:str, "foo\rbar"), extra_compatible: true
-      end
-
-      it 'removes \r from heredocs' do
-        _("<<FOO\nbar\\rbaz\\r\nFOO").
-          must_be_parsed_as s(:str, "barbaz\n"), extra_compatible: true
-      end
-    end
   end
 end
