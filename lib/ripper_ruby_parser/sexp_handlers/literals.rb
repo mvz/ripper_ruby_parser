@@ -230,12 +230,13 @@ module RipperRubyParser
       def handle_symbol_content(node)
         if node.sexp_type == :'@kw'
           symbol, position = extract_node_symbol_with_position(node)
+          with_position(position, s(:lit, symbol))
         else
           processed = process(node)
           symbol = processed.last.to_sym
-          position = processed.line
+          line = processed.line
+          with_line_number(line, s(:lit, symbol))
         end
-        with_line_number(position, s(:lit, symbol))
       end
 
       def merge_left_into_right(left, right)
