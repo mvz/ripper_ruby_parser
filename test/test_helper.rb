@@ -13,8 +13,30 @@ require 'ripper_ruby_parser'
 
 module MiniTest
   class Spec
-    def formatted(exp)
-      exp.to_s.gsub(/\), /, "),\n")
+    def inspect_with_line_numbers(exp)
+      parts = exp.map do |sub_exp|
+        if sub_exp.is_a? Sexp
+          inspect_with_line_numbers(sub_exp)
+        else
+          sub_exp.inspect
+        end
+      end
+
+      plain = "s(#{parts.join(', ')})"
+      if exp.line
+        "#{plain}.line(#{exp.line})"
+      else
+        plain
+      end
+    end
+
+    def formatted(exp, with_line_numbers: false)
+      inspection = if with_line_numbers
+                     inspect_with_line_numbers(exp)
+                   else
+                     exp.inspect
+                   end
+      inspection.gsub(/\), /, "),\n")
     end
 
     def fix_lines(exp)
@@ -48,7 +70,7 @@ module MiniTest
       end
     end
 
-    def assert_parsed_as(sexp, code, extra_compatible: false)
+    def assert_parsed_as(sexp, code, extra_compatible: false, with_line_numbers: false)
       parser = RipperRubyParser::Parser.new
       parser.extra_compatible = extra_compatible
       result = parser.parse code
@@ -56,7 +78,8 @@ module MiniTest
         assert_nil result
       else
         assert_equal sexp, result
-        assert_equal sexp.to_s, result.to_s
+        assert_equal(formatted(sexp, with_line_numbers: with_line_numbers),
+                     formatted(result, with_line_numbers: with_line_numbers))
       end
     end
 
