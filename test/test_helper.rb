@@ -13,14 +13,36 @@ require 'ripper_ruby_parser'
 
 module MiniTest
   class Spec
-    def formatted(exp)
-      exp.to_s.gsub(/\), /, "),\n")
+    def inspect_with_line_numbers(exp)
+      parts = exp.map do |sub_exp|
+        if sub_exp.is_a? Sexp
+          inspect_with_line_numbers(sub_exp)
+        else
+          sub_exp.inspect
+        end
+      end
+
+      plain = "s(#{parts.join(', ')})"
+      if exp.line
+        "#{plain}.line(#{exp.line})"
+      else
+        plain
+      end
+    end
+
+    def formatted(exp, with_line_numbers: false)
+      inspection = if with_line_numbers
+                     inspect_with_line_numbers(exp)
+                   else
+                     exp.inspect
+                   end
+      inspection.gsub(/\), /, "),\n")
     end
 
     def fix_lines(exp)
-      return s(:lit, :__LINE__) if exp.sexp_type == :lit && exp.line == exp[1]
+      return s(:lit, :__LINE__).line(exp.line) if exp.sexp_type == :lit && exp.line == exp[1]
 
-      inner = exp.map do |sub_exp|
+      exp.sexp_body = exp.sexp_body.map do |sub_exp|
         if sub_exp.is_a? Sexp
           fix_lines sub_exp
         else
@@ -28,11 +50,13 @@ module MiniTest
         end
       end
 
-      s(*inner)
+      exp
     end
 
     def to_comments(exp)
-      inner = exp.map do |sub_exp|
+      comments = exp.comments.to_s.gsub(/\n\s*\n/, "\n")
+
+      exp.sexp_body = exp.sexp_body.map do |sub_exp|
         if sub_exp.is_a? Sexp
           to_comments sub_exp
         else
@@ -40,15 +64,14 @@ module MiniTest
         end
       end
 
-      comments = exp.comments.to_s.gsub(/\n\s*\n/, "\n")
       if comments.empty?
-        s(*inner)
+        exp
       else
-        s(:comment, comments, s(*inner))
+        s(:comment, comments, exp)
       end
     end
 
-    def assert_parsed_as(sexp, code, extra_compatible: false)
+    def assert_parsed_as(sexp, code, extra_compatible: false, with_line_numbers: false)
       parser = RipperRubyParser::Parser.new
       parser.extra_compatible = extra_compatible
       result = parser.parse code
@@ -56,11 +79,12 @@ module MiniTest
         assert_nil result
       else
         assert_equal sexp, result
-        assert_equal sexp.to_s, result.to_s
+        assert_equal(formatted(sexp, with_line_numbers: with_line_numbers),
+                     formatted(result, with_line_numbers: with_line_numbers))
       end
     end
 
-    def assert_parsed_as_before(code)
+    def assert_parsed_as_before(code, with_line_numbers: false)
       oldparser = RubyParser.for_current_ruby
       newparser = RipperRubyParser::Parser.new
       newparser.extra_compatible = true
@@ -68,7 +92,9 @@ module MiniTest
       result = newparser.parse code
       expected = to_comments fix_lines expected
       result = to_comments fix_lines result
-      assert_equal formatted(expected), formatted(result)
+      assert_equal expected, result
+      assert_equal(formatted(expected, with_line_numbers: with_line_numbers),
+                   formatted(result, with_line_numbers: with_line_numbers))
     end
   end
 

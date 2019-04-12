@@ -359,11 +359,11 @@ describe RipperRubyParser::Parser do
       end
 
       it 'works for a local variable' do
-        result = parser.parse "foo = bar\nfoo\n"
-        result.sexp_type.must_equal :block
-        result[1].line.must_equal 1
-        result[2].line.must_equal 2
-        result.line.must_equal 1
+        "foo = bar\nfoo\n".
+          must_be_parsed_as s(:block,
+                              s(:lasgn, :foo, s(:call, nil, :bar).line(1)).line(1),
+                              s(:lvar, :foo).line(2)).line(1),
+                            with_line_numbers: true
       end
 
       it 'works for an integer literal' do
@@ -447,15 +447,12 @@ describe RipperRubyParser::Parser do
       end
 
       it 'assigns line numbers to nested sexps without their own line numbers' do
-        result = parser.parse "foo(bar) do\nnext baz\nend\n"
-        result.must_equal s(:iter,
-                            s(:call, nil, :foo, s(:call, nil, :bar)),
-                            0,
-                            s(:next, s(:call, nil, :baz)))
-        arglist = result[1][3]
-        block = result[3]
-        nums = [arglist.line, block.line]
-        nums.must_equal [1, 2]
+        "foo(bar) do\nnext baz\nend\n".
+          must_be_parsed_as s(:iter,
+                              s(:call, nil, :foo, s(:call, nil, :bar).line(1)).line(1),
+                              0,
+                              s(:next, s(:call, nil, :baz).line(2)).line(2)).line(1),
+                            with_line_numbers: true
       end
 
       describe 'when a line number is passed' do
