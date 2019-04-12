@@ -11,10 +11,10 @@ module RipperRubyParser
 
       def process_string_content(exp)
         _, *rest = shift_all exp
-        string, rest = extract_string_parts(rest)
+        line, string, rest = extract_string_parts(rest)
 
         if rest.empty?
-          s(:str, string)
+          with_line_number(line, s(:str, string))
         else
           s(:dstr, string, *rest)
         end
@@ -63,7 +63,7 @@ module RipperRubyParser
 
       def process_xstring(exp)
         _, *rest = shift_all exp
-        string, rest = extract_string_parts(rest)
+        _, string, rest = extract_string_parts(rest)
         if rest.empty?
           s(:xstr, string)
         else
@@ -86,7 +86,7 @@ module RipperRubyParser
 
       def process_regexp(exp)
         _, *rest = shift_all exp
-        string, rest = extract_string_parts(rest)
+        _, string, rest = extract_string_parts(rest)
         s(:dregx, string, *rest)
       end
 
@@ -126,10 +126,10 @@ module RipperRubyParser
       REGEXP_LITERALS = ['/', /^%r.$/].freeze
 
       def process_at_tstring_content(exp)
-        _, content, _, delim = exp.shift 4
+        _, content, pos, delim = exp.shift 4
         string = handle_string_unescaping(content, delim)
         string = handle_string_encoding(string, delim)
-        s(:str, string)
+        with_position(pos, s(:str, string))
       end
 
       def process_array(exp)
@@ -164,7 +164,7 @@ module RipperRubyParser
       private
 
       def extract_string_parts(list)
-        return '', [] if list.empty?
+        return nil, '', [] if list.empty?
 
         list = merge_raw_string_literals list
         list = map_process_list list
@@ -185,10 +185,11 @@ module RipperRubyParser
         string = ''
         while parts.first&.sexp_type == :str
           str = parts.shift
+          line ||= str.line
           string += str.last
         end
 
-        return string, parts
+        return line, string, parts
       end
 
       def merge_raw_string_literals(list)
