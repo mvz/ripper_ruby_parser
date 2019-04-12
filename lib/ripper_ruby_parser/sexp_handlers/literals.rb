@@ -11,10 +11,10 @@ module RipperRubyParser
 
       def process_string_content(exp)
         _, *rest = shift_all exp
-        string, rest = extract_string_parts(rest)
+        line, string, rest = extract_string_parts(rest)
 
         if rest.empty?
-          s(:str, string)
+          with_line_number(line, s(:str, string))
         else
           s(:dstr, string, *rest)
         end
@@ -63,9 +63,9 @@ module RipperRubyParser
 
       def process_xstring(exp)
         _, *rest = shift_all exp
-        string, rest = extract_string_parts(rest)
+        line, string, rest = extract_string_parts(rest)
         if rest.empty?
-          s(:xstr, string)
+          s(:xstr, string).line(line)
         else
           s(:dxstr, string, *rest)
         end
@@ -77,7 +77,9 @@ module RipperRubyParser
         content = process(content)
         numflags = character_flags_to_numerical flags
 
-        return s(:lit, Regexp.new(content.last, numflags)) if content.length == 2
+        if content.length == 2
+          return with_line_number(content.line, s(:lit, Regexp.new(content.last, numflags)))
+        end
 
         content.sexp_type = :dregx_once if flags =~ /o/
         content << numflags unless numflags == 0
@@ -86,8 +88,8 @@ module RipperRubyParser
 
       def process_regexp(exp)
         _, *rest = shift_all exp
-        string, rest = extract_string_parts(rest)
-        s(:dregx, string, *rest)
+        line, string, rest = extract_string_parts(rest)
+        with_line_number(line, s(:dregx, string, *rest))
       end
 
       def process_symbol_literal(exp)
@@ -126,10 +128,10 @@ module RipperRubyParser
       REGEXP_LITERALS = ['/', /^%r.$/].freeze
 
       def process_at_tstring_content(exp)
-        _, content, _, delim = exp.shift 4
+        _, content, pos, delim = exp.shift 4
         string = handle_string_unescaping(content, delim)
         string = handle_string_encoding(string, delim)
-        s(:str, string)
+        with_position(pos, s(:str, string))
       end
 
       def process_array(exp)
@@ -164,7 +166,7 @@ module RipperRubyParser
       private
 
       def extract_string_parts(list)
-        return '', [] if list.empty?
+        return nil, '', [] if list.empty?
 
         list = merge_raw_string_literals list
         list = map_process_list list
@@ -185,10 +187,11 @@ module RipperRubyParser
         string = ''
         while parts.first&.sexp_type == :str
           str = parts.shift
+          line ||= str.line
           string += str.last
         end
 
-        return string, parts
+        return line, string, parts
       end
 
       def merge_raw_string_literals(list)
@@ -230,12 +233,13 @@ module RipperRubyParser
       def handle_symbol_content(node)
         if node.sexp_type == :'@kw'
           symbol, position = extract_node_symbol_with_position(node)
+          with_position(position, s(:lit, symbol))
         else
           processed = process(node)
           symbol = processed.last.to_sym
-          position = processed.line
+          line = processed.line
+          with_line_number(line, s(:lit, symbol))
         end
-        with_line_number(position, s(:lit, symbol))
       end
 
       def merge_left_into_right(left, right)
