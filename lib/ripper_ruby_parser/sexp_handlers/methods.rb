@@ -5,9 +5,9 @@ module RipperRubyParser
     # Sexp handers for method definitions and related constructs
     module Methods
       def process_def(exp)
-        _, ident, params, body = exp.shift 4
+        _, ident, params, body, pos = exp.shift 5
 
-        ident, pos = extract_node_symbol_with_position ident
+        ident, = extract_node_symbol_with_position ident
 
         in_method do
           params = convert_arguments(process(params))
@@ -19,7 +19,7 @@ module RipperRubyParser
       end
 
       def process_defs(exp)
-        _, receiver, _, ident, params, body = exp.shift 6
+        _, receiver, _, ident, params, body, = exp.shift 7
 
         ident, = extract_node_symbol_with_position ident
 
