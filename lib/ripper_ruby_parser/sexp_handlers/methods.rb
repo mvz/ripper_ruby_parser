@@ -85,7 +85,7 @@ module RipperRubyParser
         block = process exp
         case block.length
         when 0
-          [s(:nil)]
+          [s(:nil).line(block.line)]
         else
           unwrap_block block
         end

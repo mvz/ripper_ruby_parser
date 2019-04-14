@@ -204,6 +204,15 @@ describe RipperRubyParser::Parser do
           must_be_parsed_as s(:defn, :for, s(:args),
                               s(:nil))
       end
+
+      it 'assigns correct line numbers when the body is empty' do
+        "def bar\nend".
+          must_be_parsed_as s(:defn,
+                              :bar,
+                              s(:args).line(1),
+                              s(:nil).line(2)).line(1),
+                            with_line_numbers: true
+      end
     end
 
     describe 'for singleton method definitions' do

@@ -74,10 +74,10 @@ describe RipperRubyParser::SexpProcessor do
     end
 
     describe 'for a :module sexp' do
-      it 'does not create body eleents for an empty definition' do
+      it 'does not create body elements for an empty definition' do
         sexp = s(:module,
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))),
-                 s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil))
+                 s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 3))), nil, nil, nil))
         result = processor.process sexp
         result.must_equal s(:module, :Foo)
       end
@@ -103,7 +103,7 @@ describe RipperRubyParser::SexpProcessor do
       it 'does not create body eleents for an empty definition' do
         sexp = s(:class,
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))), nil,
-                 s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil))
+                 s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 8))), nil, nil, nil))
         result = processor.process sexp
         result.must_equal s(:class, :Foo, nil)
       end
@@ -128,7 +128,7 @@ describe RipperRubyParser::SexpProcessor do
         sexp = s(:class,
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))),
                  s(:var_ref, s(:@const, 'Bar', s(1, 12))),
-                 s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil))
+                 s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 7))), nil, nil, nil))
         result = processor.process sexp
         result.must_equal s(:class, :Foo, s(:const, :Bar))
       end
@@ -153,7 +153,7 @@ describe RipperRubyParser::SexpProcessor do
         sexp = s(:def,
                  s(:@ident, 'foo', s(1, 4)),
                  s(:params, nil, nil, nil, nil, nil),
-                 s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil))
+                 s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 3))), nil, nil, nil))
         result = processor.process sexp
         result.must_equal s(:defn, :foo, s(:args), s(:nil))
       end

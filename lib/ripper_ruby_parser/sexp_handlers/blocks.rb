@@ -86,7 +86,9 @@ module RipperRubyParser
 
         body = s()
 
-        main = wrap_in_block map_process_list_compact main.sexp_body
+        main_list = map_unwrap_begin_list map_process_list main.sexp_body
+        line = main_list.first.line
+        main = wrap_in_block reject_void_stmt main_list
         body << main if main
 
         if rescue_block
@@ -102,7 +104,7 @@ module RipperRubyParser
           body = s(s(:ensure, *body))
         end
 
-        wrap_in_block(body) || s()
+        wrap_in_block(body) || s().line(line)
       end
 
       def process_rescue_mod(exp)

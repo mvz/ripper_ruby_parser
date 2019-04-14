@@ -36,6 +36,11 @@ module RipperRubyParser
       commentize(:begin, super)
     end
 
+    def on_void_stmt
+      result = super
+      result << [lineno, column]
+    end
+
     def on_comment(tok)
       @comment += tok
     end
