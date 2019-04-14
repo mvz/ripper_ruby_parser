@@ -143,6 +143,22 @@ describe RipperRubyParser::Parser do
         'END { }'.
           must_be_parsed_as s(:iter, s(:postexe), 0)
       end
+
+      it 'assigns correct line numbers' do
+        "END {\nfoo\n}".
+          must_be_parsed_as s(:iter,
+                              s(:postexe).line(1), 0,
+                              s(:call, nil, :foo).line(2)).line(1),
+                            with_line_numbers: true
+      end
+
+      it 'assigns correct line numbers to a embedded begin block' do
+        "END {\nbegin\nfoo\nend\n}".
+          must_be_parsed_as s(:iter,
+                              s(:postexe).line(1), 0,
+                              s(:call, nil, :foo).line(3)).line(1),
+                            with_line_numbers: true
+      end
     end
 
     describe 'for the BEGIN keyword' do
