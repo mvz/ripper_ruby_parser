@@ -22,7 +22,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:def,
                                 s(:@ident, 'foo', s(2, 4)),
                                 empty_params_list,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(2, 12))), nil, nil, nil),
+                                s(2, 0)))))
     end
 
     it 'produces a blank comment node surrounding a def that has no comment' do
@@ -34,7 +36,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:def,
                                 s(:@ident, 'foo', s(1, 4)),
                                 empty_params_list,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(1, 12))), nil, nil, nil),
+                                s(1, 0)))))
     end
 
     it 'produces a comment node surrounding a commented class' do
@@ -46,7 +50,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:class,
                                 s(:const_ref, s(:@const, 'Foo', s(2, 6))),
                                 nil,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(2, 10))), nil, nil, nil),
+                                s(2, 0)))))
     end
 
     it 'produce a blank comment node surrounding a class that has no comment' do
@@ -58,7 +64,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:class,
                                 s(:const_ref, s(:@const, 'Foo', s(1, 6))),
                                 nil,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(1, 10))), nil, nil, nil),
+                                s(1, 0)))))
     end
 
     it 'produces a comment node surrounding a commented module' do
@@ -69,7 +77,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               "# Foo\n",
                               s(:module,
                                 s(:const_ref, s(:@const, 'Foo', s(2, 7))),
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(2, 11))), nil, nil, nil),
+                                s(2, 0)))))
     end
 
     it 'produces a blank comment node surrounding a module that has no comment' do
@@ -80,7 +90,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               '',
                               s(:module,
                                 s(:const_ref, s(:@const, 'Foo', s(1, 7))),
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(1, 11))), nil, nil, nil),
+                                s(1, 0)))))
     end
 
     it 'is not confused by a symbol containing a keyword' do
@@ -93,7 +105,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:def,
                                 s(:@ident, 'foo', s(1, 12)),
                                 empty_params_list,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(1, 20))), nil, nil, nil),
+                                s(1, 8)))))
     end
 
     it 'is not confused by a dynamic symbol' do
@@ -107,7 +121,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:def,
                                 s(:@ident, 'bar', s(1, 12)),
                                 empty_params_list,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(1, 20))), nil, nil, nil),
+                                s(1, 8)))))
     end
 
     it 'is not confused by a dynamic symbol containing a class definition' do
@@ -125,10 +141,8 @@ describe RipperRubyParser::CommentingRipperParser do
                                         s(:const_ref, s(:@const, 'Bar', s(1, 13))),
                                         nil,
                                         s(:bodystmt,
-                                          s(:stmts, s(:void_stmt)),
-                                          nil,
-                                          nil,
-                                          nil)))))))))
+                                          s(:stmts, s(:void_stmt, s(1, 17))), nil, nil, nil),
+                                        s(1, 7)))))))))
     end
 
     it 'turns an embedded document into a comment node' do
@@ -140,7 +154,9 @@ describe RipperRubyParser::CommentingRipperParser do
                               s(:class,
                                 s(:const_ref, s(:@const, 'Foo', s(4, 6))),
                                 nil,
-                                s(:bodystmt, s(:stmts, s(:void_stmt)), nil, nil, nil)))))
+                                s(:bodystmt,
+                                  s(:stmts, s(:void_stmt, s(4, 10))), nil, nil, nil),
+                                s(4, 0)))))
     end
   end
 

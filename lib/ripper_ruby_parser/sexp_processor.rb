@@ -45,6 +45,8 @@ module RipperRubyParser
       @in_method_body = false
       @kwrest = []
       @block_kwrest = []
+
+      @kept_comment = nil
     end
 
     include SexpHandlers
@@ -56,23 +58,23 @@ module RipperRubyParser
     end
 
     def process_module(exp)
-      _, const_ref, body = exp.shift 3
-      const, line = const_ref_to_const_with_line_number const_ref
-      with_line_number(line,
-                       s(:module, const, *class_or_module_body(body)))
+      _, const_ref, body, pos = exp.shift 4
+      const = const_ref_to_const const_ref
+      with_position(pos,
+                    s(:module, const, *class_or_module_body(body)))
     end
 
     def process_class(exp)
-      _, const_ref, parent, body = exp.shift 4
-      const, line = const_ref_to_const_with_line_number const_ref
+      _, const_ref, parent, body, pos = exp.shift 5
+      const = const_ref_to_const const_ref
       parent = process(parent)
-      with_line_number(line,
-                       s(:class, const, parent, *class_or_module_body(body)))
+      with_position(pos,
+                    s(:class, const, parent, *class_or_module_body(body)))
     end
 
     def process_sclass(exp)
-      _, klass, block = exp.shift 3
-      s(:sclass, process(klass), *class_or_module_body(block))
+      _, klass, block, pos = exp.shift 4
+      with_position pos, s(:sclass, process(klass), *class_or_module_body(block))
     end
 
     def process_stmts(exp)
@@ -102,6 +104,11 @@ module RipperRubyParser
     def process_var_alias(exp)
       _, left, right = exp.shift 3
       s(:valias, left[1].to_sym, right[1].to_sym)
+    end
+
+    def process_void_stmt(exp)
+      _, pos = exp.shift 2
+      with_position pos, s(:void_stmt)
     end
 
     def process_const_path_ref(exp)
@@ -139,21 +146,28 @@ module RipperRubyParser
 
     def process_comment(exp)
       _, comment, inner = exp.shift 3
+      comment = @kept_comment + comment if @kept_comment
+      @kept_comment = nil
       sexp = process(inner)
-      sexp.comments = comment
+      case sexp.sexp_type
+      when :defs, :defn, :module, :class, :sclass
+        sexp.comments = comment
+      else
+        @kept_comment = comment
+      end
       sexp
     end
 
     def process_BEGIN(exp)
-      _, body = exp.shift 2
+      _, body, pos = exp.shift 3
       body = reject_void_stmt map_process_list body.sexp_body
-      s(:iter, s(:preexe), 0, *body)
+      with_position pos, s(:iter, s(:preexe), 0, *body)
     end
 
     def process_END(exp)
-      _, body = exp.shift 2
+      _, body, pos = exp.shift 3
       body = map_process_list_compact body.sexp_body
-      s(:iter, s(:postexe), 0, *body)
+      with_position pos, s(:iter, s(:postexe), 0, *body)
     end
 
     # number literals
@@ -242,11 +256,10 @@ module RipperRubyParser
 
     private
 
-    def const_ref_to_const_with_line_number(const_ref)
+    def const_ref_to_const(const_ref)
       const = process(const_ref)
-      line = const.line
       const = const[1] if const.sexp_type == :const
-      return const, line
+      const
     end
 
     def class_or_module_body(exp)
