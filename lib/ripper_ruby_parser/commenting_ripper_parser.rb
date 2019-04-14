@@ -32,6 +32,10 @@ module RipperRubyParser
       super
     end
 
+    def on_begin(*args)
+      commentize(:begin, super)
+    end
+
     def on_comment(tok)
       @comment += tok
     end
@@ -51,7 +55,7 @@ module RipperRubyParser
     def on_kw(tok)
       result = super
       case tok
-      when 'class', 'def', 'module', 'BEGIN'
+      when 'class', 'def', 'module', 'BEGIN', 'begin'
         unless @in_symbol
           @comment_stack.push [result, @comment]
           @comment = ''

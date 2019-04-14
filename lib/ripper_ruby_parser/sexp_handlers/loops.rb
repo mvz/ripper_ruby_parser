@@ -52,10 +52,12 @@ module RipperRubyParser
       def handle_conditional_loop_mod(type, negated_type, exp)
         _, cond, body = exp.shift 3
 
+        cond = process(cond)
+        body = process(body)
         check_at_start = check_at_start?(body)
         construct_conditional_loop(type, negated_type,
-                                   unwrap_begin(process(cond)),
-                                   unwrap_begin(process(body)),
+                                   unwrap_begin(cond),
+                                   unwrap_begin(body),
                                    check_at_start)
       end
 

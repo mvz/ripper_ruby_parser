@@ -163,6 +163,15 @@ describe RipperRubyParser::Parser do
                               s(:call, nil, :foo).line(2)).line(1),
                             with_line_numbers: true
       end
+
+      it 'assigns correct line numbers to a embedded begin block' do
+        "BEGIN {\nbegin\nfoo\nend\n}".
+          must_be_parsed_as s(:iter,
+                              s(:preexe).line(1), 0,
+                              s(:begin,
+                                s(:call, nil, :foo).line(3)).line(2)).line(1),
+                            with_line_numbers: true
+      end
     end
 
     describe 'for constant lookups' do

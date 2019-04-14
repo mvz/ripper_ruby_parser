@@ -47,10 +47,10 @@ module RipperRubyParser
       end
 
       def process_begin(exp)
-        _, body = exp.shift 2
+        _, body, pos = exp.shift 3
 
         body = convert_empty_to_nil_symbol process(body)
-        s(:begin, body)
+        with_position pos, s(:begin, body)
       end
 
       def process_rescue(exp)

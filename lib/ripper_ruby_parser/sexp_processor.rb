@@ -144,10 +144,11 @@ module RipperRubyParser
       comment = @kept_comment + comment if @kept_comment
       @kept_comment = nil
       sexp = process(inner)
-      if sexp.sexp_type == :iter
-        @kept_comment = comment
-      else
+      case sexp.sexp_type
+      when :defs, :defn, :module, :class, :sclass
         sexp.comments = comment
+      else
+        @kept_comment = comment
       end
       sexp
     end
