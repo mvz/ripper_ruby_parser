@@ -16,6 +16,9 @@
 /2\302\275/
 "foo\u{101D1}bar"
 
+%Q(caf\xC3\xA9)
+"caf\xC3\xA9"
+
 # Encoding
 "日本語"
 /日本語/
@@ -63,6 +66,11 @@ BAR
 
 # Dedented heredocs with interpolation
 <<~FOO
+  #{bar} smurf
+FOO
+
+<<~FOO
+
   #{bar} smurf
 FOO
 
@@ -172,3 +180,10 @@ FOO
 "foo#{"bar#{"baz#{qux}"}"}"
 "foo#{"bar#{baz}"}foo#{"bar#{baz}"}"
 "foo#{bar}baz#{__FILE__}qux#{__LINE__}quuz#{zyxxy}"
+
+# Line break inside interpolation
+str = <<~FOO
+     bar#{1
+}  quz
+  qux
+  FOO
