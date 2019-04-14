@@ -22,7 +22,7 @@ The following incompatibilities cannot be changed:
 
 * RipperRubyParser won't handle non-UTF-8 files without an encoding comment,
   just like regular Ruby
-* RipperRubyParser does not attempt to match RubyParser's line numbering bugs
+* RipperRubyParser does not match RubyParser's line numbering
 * RipperRubyParser correctly dedents heredocs with interpolations
 
 The following incompatibilities can be made compatible by turning on

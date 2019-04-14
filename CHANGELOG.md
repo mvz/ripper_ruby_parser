@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+* Improve line numbering for some block structures ([#82])
+  - Fix line numbering for empty method bodies
+  - Assign correct line numbers to END blocks
+  - Assign correct line numbers to begin blocks
+  - Assign correct line numbers to BEGIN blocks
+* Fix line numbering for several literals ([#80])
+  - Fix line numbering for plain regexp literals
+  - Fix line numbering for backtick literals
+  - Fix line numbering for simple string literals
+  - Fix line numbering for keyword-like symbols
+
 ## 1.6.0 / 2019-04-12
 
 * Fix line numbering for range literals ([#79])
@@ -158,6 +171,8 @@
 * Initial release
 
 <!-- Pull request links -->
+[#82]: https://github.com/mvz/ripper_ruby_parser/pull/82
+[#80]: https://github.com/mvz/ripper_ruby_parser/pull/80
 [#79]: https://github.com/mvz/ripper_ruby_parser/pull/79
 [#78]: https://github.com/mvz/ripper_ruby_parser/pull/78
 [#77]: https://github.com/mvz/ripper_ruby_parser/pull/77
