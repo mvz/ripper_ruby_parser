@@ -45,6 +45,8 @@ module RipperRubyParser
       @in_method_body = false
       @kwrest = []
       @block_kwrest = []
+
+      @kept_comment = nil
     end
 
     include SexpHandlers
@@ -139,15 +141,21 @@ module RipperRubyParser
 
     def process_comment(exp)
       _, comment, inner = exp.shift 3
+      comment = @kept_comment + comment if @kept_comment
+      @kept_comment = nil
       sexp = process(inner)
-      sexp.comments = comment
+      if sexp.sexp_type == :iter
+        @kept_comment = comment
+      else
+        sexp.comments = comment
+      end
       sexp
     end
 
     def process_BEGIN(exp)
-      _, body = exp.shift 2
+      _, body, pos = exp.shift 3
       body = reject_void_stmt map_process_list body.sexp_body
-      s(:iter, s(:preexe), 0, *body)
+      with_position pos, s(:iter, s(:preexe), 0, *body)
     end
 
     def process_END(exp)

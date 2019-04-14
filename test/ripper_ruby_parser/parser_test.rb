@@ -155,6 +155,14 @@ describe RipperRubyParser::Parser do
         'BEGIN { }'.
           must_be_parsed_as s(:iter, s(:preexe), 0)
       end
+
+      it 'assigns correct line numbers' do
+        "BEGIN {\nfoo\n}".
+          must_be_parsed_as s(:iter,
+                              s(:preexe).line(1), 0,
+                              s(:call, nil, :foo).line(2)).line(1),
+                            with_line_numbers: true
+      end
     end
 
     describe 'for constant lookups' do
@@ -299,6 +307,35 @@ describe RipperRubyParser::Parser do
                             s(:sclass, s(:self),
                               s(:call, nil, :baz)))
         result.comments.must_equal "# Foo\n"
+      end
+
+      # TODO: Prefer assigning comment to the BEGIN instead
+      it 'assigns comments on BEGIN blocks to the following item' do
+        result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
+        result.must_equal s(:block,
+                            s(:iter, s(:preexe), 0),
+                            s(:class, :Bar, nil,
+                              s(:defn, :foo, s(:args), s(:nil))))
+        result[2].comments.must_equal "# Bar\n# Foo\n"
+        result[2][3].comments.must_equal "# foo\n"
+      end
+
+      it 'assigns comments on multiple BEGIN blocks to the following item' do
+        result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
+        result.must_equal s(:block,
+                            s(:iter, s(:preexe), 0),
+                            s(:iter, s(:preexe), 0),
+                            s(:defn, :foo, s(:args), s(:nil)))
+        result[3].comments.must_equal "# Bar\n# Baz\n# Foo\n"
+      end
+
+      it 'assigns comments on BEGIN blocks to the first following item' do
+        result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
+        result.must_equal s(:block,
+                            s(:iter, s(:preexe), 0),
+                            s(:iter, s(:preexe), 0),
+                            s(:defn, :foo, s(:args), s(:nil)))
+        result[3].comments.must_equal "# Bar\n# Baz\n# Foo\n"
       end
     end
 
