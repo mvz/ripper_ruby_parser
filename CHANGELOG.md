@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.6.1 / 2019-04-22
 
 * Improve line numbering for some block structures ([#82])
   - Fix line numbering for empty method bodies

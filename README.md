@@ -29,7 +29,7 @@ The following incompatibilities can be made compatible by turning on
 extra-compatible mode:
 
 * Operator assignment of a method call without parentheses to a collection
-  element uses and `:array` S-expression instead of `:arglist`
+  element uses an `:array` S-expression instead of `:arglist`
 * RipperRubyParser keeps carriage return characters in heredocs that include
   them
 
