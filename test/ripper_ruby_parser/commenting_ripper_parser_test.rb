@@ -15,7 +15,7 @@ describe RipperRubyParser::CommentingRipperParser do
   describe 'handling comments' do
     # Handle different results for dynamic symbol strings. This was changed in
     # Ruby 2.6.3 and up. See https://bugs.ruby-lang.org/issues/15670
-    let(:dsym_string_type) { RUBY_VERSION < "2.6.3" ? :xstring : :string_content }
+    let(:dsym_string_type) { RUBY_VERSION < '2.6.3' ? :xstring : :string_content }
 
     it 'produces a comment node surrounding a commented def' do
       result = parse_with_builder "# Foo\ndef foo; end"
