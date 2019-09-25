@@ -260,7 +260,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
                  s(:vcall, s(:@ident, 'foo', s(1, 0))),
                  :'>.',
                  s(:@ident, 'bar', s(1, 4)))
-        _(-> { processor.process(sexp) }).must_raise
+        _(-> { processor.process(sexp) }).must_raise KeyError
       end
     end
   end
