@@ -29,13 +29,13 @@ describe RipperRubyParser::SexpProcessor do
       it 'strips off the outer :program node' do
         sexp = s(:program, s(:stmts, s(:foo)))
         result = processor.process sexp
-        result.must_equal s(:foo_p)
+        _(result).must_equal s(:foo_p)
       end
 
       it 'transforms a multi-statement :program into a :block sexp' do
         sexp = s(:program, s(:stmts, s(:foo), s(:bar)))
         result = processor.process sexp
-        result.must_equal s(:block, s(:foo_p), s(:bar_p))
+        _(result).must_equal s(:block, s(:foo_p), s(:bar_p))
       end
     end
 
@@ -45,7 +45,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:string_content,
                    s(:@tstring_content, 'foo', s(1, 1), '"')))
         result = processor.process sexp
-        result.must_equal s(:str, 'foo')
+        _(result).must_equal s(:str, 'foo')
       end
     end
 
@@ -53,7 +53,7 @@ describe RipperRubyParser::SexpProcessor do
       it 'transforms a sexp to a :call' do
         sexp = s(:command, s(:@ident, 'foo', s(1, 0)), s(:arglist, s(:foo)))
         result = processor.process sexp
-        result.must_equal s(:call, nil, :foo, s(:foo_p))
+        _(result).must_equal s(:call, nil, :foo, s(:foo_p))
       end
     end
 
@@ -61,7 +61,7 @@ describe RipperRubyParser::SexpProcessor do
       it 'transforms the sexp to a :lvar sexp' do
         sexp = s(:var_ref, s(:@ident, 'bar', s(1, 4)))
         result = processor.process sexp
-        result.must_equal s(:lvar, :bar)
+        _(result).must_equal s(:lvar, :bar)
       end
     end
 
@@ -69,7 +69,7 @@ describe RipperRubyParser::SexpProcessor do
       it 'transforms the sexp to a :call sexp' do
         sexp = s(:vcall, s(:@ident, 'bar', s(1, 4)))
         result = processor.process sexp
-        result.must_equal s(:call, nil, :bar)
+        _(result).must_equal s(:call, nil, :bar)
       end
     end
 
@@ -79,7 +79,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))),
                  s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 3))), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo)
+        _(result).must_equal s(:module, :Foo)
       end
 
       it 'creates a single body element for a definition with one statement' do
@@ -87,7 +87,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))),
                  s(:bodystmt, s(:stmts, s(:foo)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo, s(:foo_p))
+        _(result).must_equal s(:module, :Foo, s(:foo_p))
       end
 
       it 'creates multiple body elements for a definition with more than one statement' do
@@ -95,7 +95,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))),
                  s(:bodystmt, s(:stmts, s(:foo), s(:bar)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:module, :Foo, s(:foo_p), s(:bar_p))
+        _(result).must_equal s(:module, :Foo, s(:foo_p), s(:bar_p))
       end
     end
 
@@ -105,7 +105,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))), nil,
                  s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 8))), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, nil)
+        _(result).must_equal s(:class, :Foo, nil)
       end
 
       it 'creates a single body element for a definition with one statement' do
@@ -113,7 +113,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))), nil,
                  s(:bodystmt, s(:stmts, s(:foo)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, nil, s(:foo_p))
+        _(result).must_equal s(:class, :Foo, nil, s(:foo_p))
       end
 
       it 'creates multiple body elements for a definition with more than one statement' do
@@ -121,7 +121,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:const_ref, s(:@const, 'Foo', s(1, 13))), nil,
                  s(:bodystmt, s(:stmts, s(:foo), s(:bar)), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, nil, s(:foo_p), s(:bar_p))
+        _(result).must_equal s(:class, :Foo, nil, s(:foo_p), s(:bar_p))
       end
 
       it 'passes on the given ancestor' do
@@ -130,7 +130,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:var_ref, s(:@const, 'Bar', s(1, 12))),
                  s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 7))), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:class, :Foo, s(:const, :Bar))
+        _(result).must_equal s(:class, :Foo, s(:const, :Bar))
       end
     end
 
@@ -138,13 +138,13 @@ describe RipperRubyParser::SexpProcessor do
       it 'creates a :block sexp when multiple statements are present' do
         sexp = s(:bodystmt, s(:stmts, s(:foo), s(:bar)), nil, nil, nil)
         result = processor.process sexp
-        result.must_equal s(:block, s(:foo_p), s(:bar_p))
+        _(result).must_equal s(:block, s(:foo_p), s(:bar_p))
       end
 
       it 'removes nested :void_stmt sexps' do
         sexp = s(:bodystmt, s(:stmts, s(:void_stmt), s(:foo)), nil, nil, nil)
         result = processor.process sexp
-        result.must_equal s(:foo_p)
+        _(result).must_equal s(:foo_p)
       end
     end
 
@@ -155,7 +155,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:params, nil, nil, nil, nil, nil),
                  s(:bodystmt, s(:stmts, s(:void_stmt, s(2, 3))), nil, nil, nil))
         result = processor.process sexp
-        result.must_equal s(:defn, :foo, s(:args), s(:nil))
+        _(result).must_equal s(:defn, :foo, s(:args), s(:nil))
       end
     end
 
@@ -164,7 +164,7 @@ describe RipperRubyParser::SexpProcessor do
         it 'creates :lvar sexps' do
           sexp =  s(:params, s(s(:@ident, 'bar', s(1, 8))), nil, nil, nil, nil)
           result = processor.process sexp
-          result.must_equal s(:args, s(:lvar, :bar))
+          _(result).must_equal s(:args, s(:lvar, :bar))
         end
       end
 
@@ -175,7 +175,7 @@ describe RipperRubyParser::SexpProcessor do
                     s(:@ident, 'bar', s(1, 8)),
                     nil)
           result = processor.process sexp
-          result.must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
+          _(result).must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
         end
       end
       describe 'with a ruby 2.5-style kwrest argument' do
@@ -185,7 +185,7 @@ describe RipperRubyParser::SexpProcessor do
                     s(:kwrest_param, s(:@ident, 'bar', s(1, 8))),
                     nil)
           result = processor.process sexp
-          result.must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
+          _(result).must_equal s(:args, s(:dsplat, s(:lvar, :bar)))
         end
       end
     end
@@ -196,7 +196,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:var_field, s(:@ident, 'a', s(1, 0))),
                  s(:@int, '1', s(1, 4)))
         result = processor.process sexp
-        result.must_equal s(:lasgn, :a, s(:lit, 1))
+        _(result).must_equal s(:lasgn, :a, s(:lit, 1))
       end
     end
 
@@ -204,7 +204,7 @@ describe RipperRubyParser::SexpProcessor do
       it 'creates a :call sexp' do
         sexp = s(:binary, s(:bar), :==, s(:foo))
         result = processor.process sexp
-        result.must_equal s(:call, s(:bar_p), :==, s(:foo_p))
+        _(result).must_equal s(:call, s(:bar_p), :==, s(:foo_p))
       end
     end
 
@@ -214,7 +214,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:call, s(:foo), :".", s(:@ident, 'baz', s(1, 2))),
                  s(:brace_block, nil, s(:stmts, s(:bar))))
         result = processor.process sexp
-        result.must_equal s(:iter,
+        _(result).must_equal s(:iter,
                             s(:call, s(:foo_p), :baz), 0,
                             s(:bar_p))
       end
@@ -229,7 +229,7 @@ describe RipperRubyParser::SexpProcessor do
                        nil),
                      s(:stmts, s(:bar))))
           result = processor.process sexp
-          result.must_equal s(:iter,
+          _(result).must_equal s(:iter,
                               s(:call, s(:foo_p), :baz),
                               s(:args, :i),
                               s(:bar_p))
@@ -242,7 +242,7 @@ describe RipperRubyParser::SexpProcessor do
         it 'uses the statement sexp as the body' do
           sexp = s(:if, s(:foo), s(:stmts, s(:bar)), nil)
           result = processor.process sexp
-          result.must_equal s(:if, s(:foo_p), s(:bar_p), nil)
+          _(result).must_equal s(:if, s(:foo_p), s(:bar_p), nil)
         end
       end
 
@@ -250,7 +250,7 @@ describe RipperRubyParser::SexpProcessor do
         it 'uses a block containing the statement sexps as the body' do
           sexp = s(:if, s(:foo), s(:stmts, s(:bar), s(:baz)), nil)
           result = processor.process sexp
-          result.must_equal s(:if, s(:foo_p), s(:block, s(:bar_p), s(:baz_p)), nil)
+          _(result).must_equal s(:if, s(:foo_p), s(:block, s(:bar_p), s(:baz_p)), nil)
         end
       end
     end
@@ -259,7 +259,7 @@ describe RipperRubyParser::SexpProcessor do
       it 'pulls up the element sexps' do
         sexp = s(:array, s(:words, s(:foo), s(:bar), s(:baz)))
         result = processor.process sexp
-        result.must_equal s(:array, s(:foo_p), s(:bar_p), s(:baz_p))
+        _(result).must_equal s(:array, s(:foo_p), s(:bar_p), s(:baz_p))
       end
     end
 
@@ -269,7 +269,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:var_ref, s(:@const, 'Foo', s(1, 0))),
                  s(:@const, 'Bar', s(1, 5)))
         result = processor.process sexp
-        result.must_equal s(:colon2, s(:const, :Foo), :Bar)
+        _(result).must_equal s(:colon2, s(:const, :Foo), :Bar)
       end
     end
 
@@ -279,7 +279,7 @@ describe RipperRubyParser::SexpProcessor do
                  s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)),
                    s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)), nil)))
         result = processor.process sexp
-        result.must_equal s(s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+        _(result).must_equal s(s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                             s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                             s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                             nil)
@@ -291,13 +291,13 @@ describe RipperRubyParser::SexpProcessor do
     it 'processes an lvar sexp to a bare symbol' do
       sexp = s(:lvar, 'foo')
       result = processor.send :extract_node_symbol, sexp
-      result.must_equal :foo
+      _(result).must_equal :foo
     end
 
     it 'processes a const sexp to a bare symbol' do
       sexp = s(:const, 'Foo')
       result = processor.send :extract_node_symbol, sexp
-      result.must_equal :Foo
+      _(result).must_equal :Foo
     end
   end
 end

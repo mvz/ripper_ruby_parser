@@ -49,11 +49,11 @@ describe 'Using RipperRubyParser and RubyParser' do
     end
 
     it 'gives the same result' do
-      imitation.must_equal original
+      _(imitation).must_equal original
     end
 
     it 'gives the same result with comments' do
-      to_comments(imitation).must_equal to_comments(original)
+      _(to_comments(imitation)).must_equal to_comments(original)
     end
   end
 end

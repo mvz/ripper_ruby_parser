@@ -7,41 +7,41 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
     describe 'for method calls' do
       describe 'without a receiver' do
         it 'works without parentheses' do
-          'foo bar'.
+          _('foo bar').
             must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar))
         end
 
         it 'works with parentheses' do
-          'foo(bar)'.
+          _('foo(bar)').
             must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar))
         end
 
         it 'works with an empty parameter list and no parentheses' do
-          'foo'.
+          _('foo').
             must_be_parsed_as s(:call, nil, :foo)
         end
 
         it 'works with parentheses around an empty parameter list' do
-          'foo()'.
+          _('foo()').
             must_be_parsed_as s(:call, nil, :foo)
         end
 
         it 'works for methods ending in a question mark' do
-          'foo?'.
+          _('foo?').
             must_be_parsed_as s(:call, nil, :foo?)
         end
 
         it 'works with nested calls without parentheses' do
-          'foo bar baz'.
+          _('foo bar baz').
             must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar,
                                   s(:call, nil, :baz)))
         end
 
         it 'works with a non-final splat argument' do
-          'foo(bar, *baz, qux)'.
+          _('foo(bar, *baz, qux)').
             must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
@@ -51,7 +51,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with a splat argument followed by several regular arguments' do
-          'foo(bar, *baz, qux, quuz)'.
+          _('foo(bar, *baz, qux, quuz)').
             must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
@@ -62,7 +62,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with a named argument' do
-          'foo(bar, baz: qux)'.
+          _('foo(bar, baz: qux)').
             must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
@@ -71,7 +71,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with several named arguments' do
-          'foo(bar, baz: qux, quux: quuz)'.
+          _('foo(bar, baz: qux, quux: quuz)').
             must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
@@ -82,7 +82,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with a double splat argument' do
-          'foo(bar, **baz)'.
+          _('foo(bar, **baz)').
             must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
@@ -92,7 +92,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with a named argument followed by a double splat argument' do
-          'foo(bar, baz: qux, **quuz)'.
+          _('foo(bar, baz: qux, **quuz)').
             must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
@@ -105,7 +105,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
 
       describe 'with a receiver' do
         it 'works without parentheses' do
-          'foo.bar baz'.
+          _('foo.bar baz').
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
@@ -113,7 +113,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with parentheses' do
-          'foo.bar(baz)'.
+          _('foo.bar(baz)').
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
@@ -121,7 +121,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with parentheses around a call with no parentheses' do
-          'foo.bar(baz qux)'.
+          _('foo.bar(baz qux)').
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
@@ -130,7 +130,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works with nested calls without parentheses' do
-          'foo.bar baz qux'.
+          _('foo.bar baz qux').
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
@@ -139,14 +139,14 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'does not keep :begin around a method receiver' do
-          'begin; foo; end.bar'.
+          _('begin; foo; end.bar').
             must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
         end
       end
 
       describe 'for collection indexing' do
         it 'works in the simple case' do
-          'foo[bar]'.
+          _('foo[bar]').
             must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :[],
@@ -154,23 +154,23 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works without any indexes' do
-          'foo[]'.must_be_parsed_as s(:call, s(:call, nil, :foo),
+          _('foo[]').must_be_parsed_as s(:call, s(:call, nil, :foo),
                                       :[])
         end
 
         it 'works with self[]' do
-          'self[foo]'.must_be_parsed_as s(:call, s(:self), :[],
+          _('self[foo]').must_be_parsed_as s(:call, s(:self), :[],
                                           s(:call, nil, :foo))
         end
       end
 
       describe 'safe call' do
         it 'works without arguments' do
-          'foo&.bar'.must_be_parsed_as s(:safe_call, s(:call, nil, :foo), :bar)
+          _('foo&.bar').must_be_parsed_as s(:safe_call, s(:call, nil, :foo), :bar)
         end
 
         it 'works with arguments' do
-          'foo&.bar baz'.
+          _('foo&.bar baz').
             must_be_parsed_as s(:safe_call,
                                 s(:call, nil, :foo),
                                 :bar,
@@ -180,7 +180,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
 
       describe 'with blocks' do
         it 'works for a do block' do
-          'foo.bar do baz; end'.
+          _('foo.bar do baz; end').
             must_be_parsed_as s(:iter,
                                 s(:call,
                                   s(:call, nil, :foo),
@@ -190,7 +190,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it 'works for a do block with several statements' do
-          'foo.bar do baz; qux; end'.
+          _('foo.bar do baz; qux; end').
             must_be_parsed_as s(:iter,
                                 s(:call,
                                   s(:call, nil, :foo),
@@ -204,24 +204,24 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
     end
 
     describe 'for calls to super' do
-      specify { 'super'.must_be_parsed_as s(:zsuper) }
+      specify { _('super').must_be_parsed_as s(:zsuper) }
       specify do
-        'super foo'.must_be_parsed_as s(:super,
+        _('super foo').must_be_parsed_as s(:super,
                                         s(:call, nil, :foo))
       end
       specify do
-        'super foo, bar'.must_be_parsed_as s(:super,
+        _('super foo, bar').must_be_parsed_as s(:super,
                                              s(:call, nil, :foo),
                                              s(:call, nil, :bar))
       end
       specify do
-        'super foo, *bar'.must_be_parsed_as s(:super,
+        _('super foo, *bar').must_be_parsed_as s(:super,
                                               s(:call, nil, :foo),
                                               s(:splat,
                                                 s(:call, nil, :bar)))
       end
       specify do
-        'super foo, *bar, &baz'.
+        _('super foo, *bar, &baz').
           must_be_parsed_as s(:super,
                               s(:call, nil, :foo),
                               s(:splat, s(:call, nil, :bar)),
@@ -230,7 +230,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
     end
 
     it 'handles calling a proc' do
-      'foo.()'.
+      _('foo.()').
         must_be_parsed_as s(:call, s(:call, nil, :foo), :call)
     end
   end
@@ -244,7 +244,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
                  s(:vcall, s(:@ident, 'foo', s(1, 0))),
                  :'.',
                  s(:@ident, 'bar', s(1, 4)))
-        processor.process(sexp).must_equal s(:call, s(:call, nil, :foo), :bar)
+        _(processor.process(sexp)).must_equal s(:call, s(:call, nil, :foo), :bar)
       end
 
       it 'processes a Ruby 2.6 style period Sexp' do
@@ -252,7 +252,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
                  s(:vcall, s(:@ident, 'foo', s(1, 0))),
                  s(:@period, '.', s(1, 3)),
                  s(:@ident, 'bar', s(1, 4)))
-        processor.process(sexp).must_equal s(:call, s(:call, nil, :foo), :bar)
+        _(processor.process(sexp)).must_equal s(:call, s(:call, nil, :foo), :bar)
       end
 
       it 'raises an error for an unknown call operator' do
@@ -260,7 +260,7 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
                  s(:vcall, s(:@ident, 'foo', s(1, 0))),
                  :'>.',
                  s(:@ident, 'bar', s(1, 4)))
-        -> { processor.process(sexp) }.must_raise
+        _(-> { processor.process(sexp) }).must_raise KeyError
       end
     end
   end

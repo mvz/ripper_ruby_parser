@@ -22,7 +22,7 @@ describe 'Using RipperRubyParser and RubyParser' do
         original = oldparser.parse program
         imitation = newparser.parse program
 
-        formatted(imitation).must_equal formatted(original)
+        _(formatted(imitation)).must_equal formatted(original)
       end
     end
   end
