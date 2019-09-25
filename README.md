@@ -11,27 +11,15 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
 * Requires MRI 2.3 or higher
-* Compatible with RubyParser 3.13.1
+* Compatible with RubyParser 3.14.0
 
 ## Known incompatibilities
 
-RipperRubyParser has some incompatibilities with RubyParser. For some of these,
-the behavior can be changed by turning on extra-compatible mode.
-
-The following incompatibilities cannot be changed:
+RipperRubyParser has a few incompatibilities with RubyParser.
 
 * RipperRubyParser won't handle non-UTF-8 files without an encoding comment,
   just like regular Ruby
-* RipperRubyParser does not match RubyParser's line numbering
-* RipperRubyParser correctly dedents heredocs with interpolations
-
-The following incompatibilities can be made compatible by turning on
-extra-compatible mode:
-
-* Operator assignment of a method call without parentheses to a collection
-  element uses an `:array` S-expression instead of `:arglist`
-* RipperRubyParser keeps carriage return characters in heredocs that include
-  them
+* RipperRubyParser does not always match RubyParser's line numbering
 
 ## Install
 
@@ -48,13 +36,6 @@ parser.parse "puts 'Hello World'"
 parser.parse "foo[bar] += baz qux"
 # => s(:op_asgn1, s(:call, nil, :foo),
 #      s(:arglist, s(:call, nil, :bar)),
-#      :+,
-#      s(:call, nil, :baz, s(:call, nil, :qux)))
-parser.extra_compatible = true
-
-parser.parse "foo[bar] += baz qux"
-# => s(:op_asgn1, s(:call, nil, :foo),
-#      s(:array, s(:call, nil, :bar)),
 #      :+,
 #      s(:call, nil, :baz, s(:call, nil, :qux)))
 ```
