@@ -290,20 +290,20 @@ describe RipperRubyParser::Parser do
       describe 'with interpolations without braces' do
         it 'works for ivars' do
           _("\"foo\#@bar\"").must_be_parsed_as s(:dstr,
-                                              'foo',
-                                              s(:evstr, s(:ivar, :@bar)))
+                                                 'foo',
+                                                 s(:evstr, s(:ivar, :@bar)))
         end
 
         it 'works for gvars' do
           _("\"foo\#$bar\"").must_be_parsed_as s(:dstr,
-                                              'foo',
-                                              s(:evstr, s(:gvar, :$bar)))
+                                                 'foo',
+                                                 s(:evstr, s(:gvar, :$bar)))
         end
 
         it 'works for cvars' do
           _("\"foo\#@@bar\"").must_be_parsed_as s(:dstr,
-                                               'foo',
-                                               s(:evstr, s(:cvar, :@@bar)))
+                                                  'foo',
+                                                  s(:evstr, s(:cvar, :@@bar)))
         end
       end
 
