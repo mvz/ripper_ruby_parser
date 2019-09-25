@@ -19,7 +19,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'produces a comment node surrounding a commented def' do
       result = parse_with_builder "# Foo\ndef foo; end"
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               "# Foo\n",
@@ -33,7 +33,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'produces a blank comment node surrounding a def that has no comment' do
       result = parse_with_builder 'def foo; end'
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               '',
@@ -47,7 +47,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'produces a comment node surrounding a commented class' do
       result = parse_with_builder "# Foo\nclass Foo; end"
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               "# Foo\n",
@@ -61,7 +61,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'produce a blank comment node surrounding a class that has no comment' do
       result = parse_with_builder 'class Foo; end'
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               '',
@@ -75,7 +75,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'produces a comment node surrounding a commented module' do
       result = parse_with_builder "# Foo\nmodule Foo; end"
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               "# Foo\n",
@@ -88,7 +88,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'produces a blank comment node surrounding a module that has no comment' do
       result = parse_with_builder 'module Foo; end'
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               '',
@@ -101,7 +101,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'is not confused by a symbol containing a keyword' do
       result = parse_with_builder ':class; def foo; end'
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:symbol_literal, s(:symbol, s(:@kw, 'class', s(1, 1)))),
                             s(:comment,
@@ -116,7 +116,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'is not confused by a dynamic symbol' do
       result = parse_with_builder ":'foo'; def bar; end"
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:dyna_symbol,
                               s(dsym_string_type, s(:@tstring_content, 'foo', s(1, 2), ":'"))),
@@ -132,7 +132,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'is not confused by a dynamic symbol containing a class definition' do
       result = parse_with_builder ":\"foo\#{class Bar;end}\""
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:dyna_symbol,
                               s(dsym_string_type,
@@ -151,7 +151,7 @@ describe RipperRubyParser::CommentingRipperParser do
 
     it 'turns an embedded document into a comment node' do
       result = parse_with_builder "=begin Hello\nthere\n=end\nclass Foo; end"
-      result.must_equal s(:program,
+      _(result).must_equal s(:program,
                           s(:stmts,
                             s(:comment,
                               "=begin Hello\nthere\n=end\n",
@@ -166,45 +166,31 @@ describe RipperRubyParser::CommentingRipperParser do
 
   describe 'handling syntax errors' do
     it 'raises an error for an incomplete source' do
-      proc {
-        parse_with_builder 'def foo'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'def foo' }).must_raise RipperRubyParser::SyntaxError
     end
 
     it 'raises an error for an invalid class name' do
-      proc {
-        parse_with_builder 'class foo; end'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'class foo; end' }).must_raise RipperRubyParser::SyntaxError
     end
 
     it 'raises an error aliasing $1 as foo' do
-      proc {
-        parse_with_builder 'alias foo $1'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'alias foo $1' }).must_raise RipperRubyParser::SyntaxError
     end
 
     it 'raises an error aliasing foo as $1' do
-      proc {
-        parse_with_builder 'alias $1 foo'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'alias $1 foo' }).must_raise RipperRubyParser::SyntaxError
     end
 
     it 'raises an error aliasing $2 as $1' do
-      proc {
-        parse_with_builder 'alias $1 $2'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'alias $1 $2' }).must_raise RipperRubyParser::SyntaxError
     end
 
     it 'raises an error assigning to $1' do
-      proc {
-        parse_with_builder '$1 = foo'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder '$1 = foo' }).must_raise RipperRubyParser::SyntaxError
     end
 
     it 'raises an error using an invalid parameter name' do
-      proc {
-        parse_with_builder 'def foo(BAR); end'
-      }.must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'def foo(BAR); end' }).must_raise RipperRubyParser::SyntaxError
     end
   end
 end
