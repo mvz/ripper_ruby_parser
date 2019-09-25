@@ -91,7 +91,7 @@ describe RipperRubyParser::Parser do
 
       it 'handles nested :|| with parentheses' do
         _('foo || (bar || baz) || qux').
-          must_be_parsed_as  s(:or,
+          must_be_parsed_as s(:or,
                                s(:call, nil, :foo),
                                s(:or,
                                  s(:or, s(:call, nil, :bar), s(:call, nil, :baz)),
