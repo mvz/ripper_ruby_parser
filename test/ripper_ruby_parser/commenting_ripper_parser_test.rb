@@ -119,7 +119,8 @@ describe RipperRubyParser::CommentingRipperParser do
       _(result).must_equal s(:program,
                              s(:stmts,
                                s(:dyna_symbol,
-                                 s(dsym_string_type, s(:@tstring_content, 'foo', s(1, 2), ":'"))),
+                                 s(dsym_string_type,
+                                   s(:@tstring_content, 'foo', s(1, 2), ":'"))),
                                s(:comment,
                                  '',
                                  s(:def,
@@ -145,7 +146,8 @@ describe RipperRubyParser::CommentingRipperParser do
                                            s(:const_ref, s(:@const, 'Bar', s(1, 13))),
                                            nil,
                                            s(:bodystmt,
-                                             s(:stmts, s(:void_stmt, s(1, 17))), nil, nil, nil),
+                                             s(:stmts, s(:void_stmt, s(1, 17))),
+                                             nil, nil, nil),
                                            s(1, 7)))))))))
     end
 
@@ -190,7 +192,8 @@ describe RipperRubyParser::CommentingRipperParser do
     end
 
     it 'raises an error using an invalid parameter name' do
-      _(proc { parse_with_builder 'def foo(BAR); end' }).must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder 'def foo(BAR); end' }).
+        must_raise RipperRubyParser::SyntaxError
     end
   end
 end
