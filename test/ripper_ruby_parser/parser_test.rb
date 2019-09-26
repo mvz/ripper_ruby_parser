@@ -205,8 +205,8 @@ describe RipperRubyParser::Parser do
 
       it 'works looking up a constant in a non-constant' do
         _('foo::Bar').must_be_parsed_as s(:colon2,
-                                       s(:call, nil, :foo),
-                                       :Bar)
+                                          s(:call, nil, :foo),
+                                          :Bar)
       end
     end
 
@@ -265,26 +265,26 @@ describe RipperRubyParser::Parser do
       it 'handles method comments' do
         result = parser.parse "# Foo\ndef foo; end"
         _(result).must_equal s(:defn,
-                            :foo,
-                            s(:args), s(:nil))
+                               :foo,
+                               s(:args), s(:nil))
         _(result.comments).must_equal "# Foo\n"
       end
 
       it 'handles comments for methods with explicit receiver' do
         result = parser.parse "# Foo\ndef foo.bar; end"
         _(result).must_equal s(:defs,
-                            s(:call, nil, :foo),
-                            :bar,
-                            s(:args),
-                            s(:nil))
+                               s(:call, nil, :foo),
+                               :bar,
+                               s(:args),
+                               s(:nil))
         _(result.comments).must_equal "# Foo\n"
       end
 
       it 'matches comments to the correct entity' do
         result = parser.parse "# Foo\nclass Foo\n# Bar\ndef bar\nend\nend"
         _(result).must_equal s(:class, :Foo, nil,
-                            s(:defn, :bar,
-                              s(:args), s(:nil)))
+                               s(:defn, :bar,
+                                 s(:args), s(:nil)))
         _(result.comments).must_equal "# Foo\n"
         defn = result[3]
         _(defn.sexp_type).must_equal :defn
@@ -294,8 +294,8 @@ describe RipperRubyParser::Parser do
       it 'combines multi-line comments' do
         result = parser.parse "# Foo\n# Bar\ndef foo; end"
         _(result).must_equal s(:defn,
-                            :foo,
-                            s(:args), s(:nil))
+                               :foo,
+                               s(:args), s(:nil))
         _(result.comments).must_equal "# Foo\n# Bar\n"
       end
 
@@ -315,10 +315,10 @@ describe RipperRubyParser::Parser do
           end
         END
         _(result).must_equal s(:class,
-                            :Foo,
-                            nil,
-                            s(:defn, :foo, s(:args), s(:call, nil, :bar)),
-                            s(:defn, :bar, s(:args), s(:call, nil, :baz)))
+                               :Foo,
+                               nil,
+                               s(:defn, :foo, s(:args), s(:call, nil, :bar)),
+                               s(:defn, :bar, s(:args), s(:call, nil, :baz)))
         _(result.comments).must_equal "# Foo\n"
         _(result[3].comments).must_equal "# foo\n"
         _(result[4].comments).must_equal "# bar\n"
@@ -327,10 +327,10 @@ describe RipperRubyParser::Parser do
       it 'handles use of singleton class inside methods' do
         result = parser.parse "# Foo\ndef bar\nclass << self\nbaz\nend\nend"
         _(result).must_equal s(:defn,
-                            :bar,
-                            s(:args),
-                            s(:sclass, s(:self),
-                              s(:call, nil, :baz)))
+                               :bar,
+                               s(:args),
+                               s(:sclass, s(:self),
+                                 s(:call, nil, :baz)))
         _(result.comments).must_equal "# Foo\n"
       end
 
@@ -338,9 +338,9 @@ describe RipperRubyParser::Parser do
       it 'assigns comments on BEGIN blocks to the following item' do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
         _(result).must_equal s(:block,
-                            s(:iter, s(:preexe), 0),
-                            s(:class, :Bar, nil,
-                              s(:defn, :foo, s(:args), s(:nil))))
+                               s(:iter, s(:preexe), 0),
+                               s(:class, :Bar, nil,
+                                 s(:defn, :foo, s(:args), s(:nil))))
         _(result[2].comments).must_equal "# Bar\n# Foo\n"
         _(result[2][3].comments).must_equal "# foo\n"
       end
@@ -348,18 +348,18 @@ describe RipperRubyParser::Parser do
       it 'assigns comments on multiple BEGIN blocks to the following item' do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
-                            s(:iter, s(:preexe), 0),
-                            s(:iter, s(:preexe), 0),
-                            s(:defn, :foo, s(:args), s(:nil)))
+                               s(:iter, s(:preexe), 0),
+                               s(:iter, s(:preexe), 0),
+                               s(:defn, :foo, s(:args), s(:nil)))
         _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
       end
 
       it 'assigns comments on BEGIN blocks to the first following item' do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
-                            s(:iter, s(:preexe), 0),
-                            s(:iter, s(:preexe), 0),
-                            s(:defn, :foo, s(:args), s(:nil)))
+                               s(:iter, s(:preexe), 0),
+                               s(:iter, s(:preexe), 0),
+                               s(:defn, :foo, s(:args), s(:nil)))
         _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
       end
     end
@@ -521,8 +521,8 @@ describe RipperRubyParser::Parser do
         it 'shifts all line numbers as appropriate' do
           result = parser.parse "foo\nbar\n", '(string)', 3
           _(result).must_equal s(:block,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
+                                 s(:call, nil, :foo),
+                                 s(:call, nil, :bar))
           _(result.line).must_equal 3
           _(result[1].line).must_equal 3
           _(result[2].line).must_equal 4

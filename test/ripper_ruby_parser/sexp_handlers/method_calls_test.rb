@@ -155,12 +155,12 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
 
         it 'works without any indexes' do
           _('foo[]').must_be_parsed_as s(:call, s(:call, nil, :foo),
-                                      :[])
+                                         :[])
         end
 
         it 'works with self[]' do
           _('self[foo]').must_be_parsed_as s(:call, s(:self), :[],
-                                          s(:call, nil, :foo))
+                                             s(:call, nil, :foo))
         end
       end
 
@@ -207,18 +207,18 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
       specify { _('super').must_be_parsed_as s(:zsuper) }
       specify do
         _('super foo').must_be_parsed_as s(:super,
-                                        s(:call, nil, :foo))
+                                           s(:call, nil, :foo))
       end
       specify do
         _('super foo, bar').must_be_parsed_as s(:super,
-                                             s(:call, nil, :foo),
-                                             s(:call, nil, :bar))
+                                                s(:call, nil, :foo),
+                                                s(:call, nil, :bar))
       end
       specify do
         _('super foo, *bar').must_be_parsed_as s(:super,
-                                              s(:call, nil, :foo),
-                                              s(:splat,
-                                                s(:call, nil, :bar)))
+                                                 s(:call, nil, :foo),
+                                                 s(:splat,
+                                                   s(:call, nil, :bar)))
       end
       specify do
         _('super foo, *bar, &baz').

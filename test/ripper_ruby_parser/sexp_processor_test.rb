@@ -215,8 +215,8 @@ describe RipperRubyParser::SexpProcessor do
                  s(:brace_block, nil, s(:stmts, s(:bar))))
         result = processor.process sexp
         _(result).must_equal s(:iter,
-                            s(:call, s(:foo_p), :baz), 0,
-                            s(:bar_p))
+                               s(:call, s(:foo_p), :baz), 0,
+                               s(:bar_p))
       end
 
       describe 'with a block parameter' do
@@ -230,9 +230,9 @@ describe RipperRubyParser::SexpProcessor do
                      s(:stmts, s(:bar))))
           result = processor.process sexp
           _(result).must_equal s(:iter,
-                              s(:call, s(:foo_p), :baz),
-                              s(:args, :i),
-                              s(:bar_p))
+                                 s(:call, s(:foo_p), :baz),
+                                 s(:args, :i),
+                                 s(:bar_p))
         end
       end
     end
@@ -280,9 +280,9 @@ describe RipperRubyParser::SexpProcessor do
                    s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)), nil)))
         result = processor.process sexp
         _(result).must_equal s(s(:when, s(:array, s(:foo_p)), s(:bar_p)),
-                            s(:when, s(:array, s(:foo_p)), s(:bar_p)),
-                            s(:when, s(:array, s(:foo_p)), s(:bar_p)),
-                            nil)
+                               s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+                               s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+                               nil)
       end
     end
   end

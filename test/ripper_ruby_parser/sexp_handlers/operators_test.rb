@@ -91,11 +91,11 @@ describe RipperRubyParser::Parser do
 
       it 'handles nested :|| with parentheses' do
         _('foo || (bar || baz) || qux').
-          must_be_parsed_as  s(:or,
-                               s(:call, nil, :foo),
-                               s(:or,
-                                 s(:or, s(:call, nil, :bar), s(:call, nil, :baz)),
-                                 s(:call, nil, :qux)))
+          must_be_parsed_as s(:or,
+                              s(:call, nil, :foo),
+                              s(:or,
+                                s(:or, s(:call, nil, :bar), s(:call, nil, :baz)),
+                                s(:call, nil, :qux)))
       end
 
       it 'converts :|| to :or' do
@@ -389,10 +389,10 @@ describe RipperRubyParser::Parser do
 
       it 'handles negated match operators' do
         _('foo !~ bar').must_be_parsed_as s(:not,
-                                         s(:call,
-                                           s(:call, nil, :foo),
-                                           :=~,
-                                           s(:call, nil, :bar)))
+                                            s(:call,
+                                              s(:call, nil, :foo),
+                                              :=~,
+                                              s(:call, nil, :bar)))
       end
     end
   end
