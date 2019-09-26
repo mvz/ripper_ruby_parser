@@ -49,6 +49,13 @@ FOO
 foo\rbar\tbaz\r
 FOO
 
+# Dedented heredocs
+foo = <<~BAR
+  baz
+  #{qux}
+  quuz
+BAR
+
 # Line continuation
 "foo\
 bar"

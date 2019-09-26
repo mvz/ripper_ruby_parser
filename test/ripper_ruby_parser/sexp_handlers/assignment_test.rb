@@ -604,46 +604,6 @@ describe RipperRubyParser::Parser do
                               :+,
                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)))
       end
-
-      it 'works with a function call without parentheses in extra compatible mode' do
-        _('foo[bar] += baz qux').
-          must_be_parsed_as s(:op_asgn1,
-                              s(:call, nil, :foo),
-                              s(:array, s(:call, nil, :bar)),
-                              :+,
-                              s(:call, nil, :baz, s(:call, nil, :qux))),
-                            extra_compatible: true
-      end
-
-      it 'works with a function call with parentheses in extra compatible mode' do
-        _('foo[bar] += baz(qux)').
-          must_be_parsed_as s(:op_asgn1,
-                              s(:call, nil, :foo),
-                              s(:arglist, s(:call, nil, :bar)),
-                              :+,
-                              s(:call, nil, :baz, s(:call, nil, :qux))),
-                            extra_compatible: true
-      end
-
-      it 'works with a method call without parentheses in extra compatible mode' do
-        _('foo[bar] += baz.qux quuz').
-          must_be_parsed_as s(:op_asgn1,
-                              s(:call, nil, :foo),
-                              s(:array, s(:call, nil, :bar)),
-                              :+,
-                              s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz))),
-                            extra_compatible: true
-      end
-
-      it 'works with a method call with parentheses in extra compatible mode' do
-        _('foo[bar] += baz.qux(quuz)').
-          must_be_parsed_as s(:op_asgn1,
-                              s(:call, nil, :foo),
-                              s(:arglist, s(:call, nil, :bar)),
-                              :+,
-                              s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz))),
-                            extra_compatible: true
-      end
     end
   end
 end

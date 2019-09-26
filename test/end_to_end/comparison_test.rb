@@ -35,8 +35,8 @@ describe 'Using RipperRubyParser and RubyParser' do
       END
     end
 
-    it 'gives the same result with line numbers' do
-      _(program).must_be_parsed_as_before with_line_numbers: true
+    it 'gives the same result' do
+      _(program).must_be_parsed_as_before
     end
   end
 

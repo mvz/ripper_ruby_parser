@@ -260,11 +260,7 @@ module RipperRubyParser
       def handle_string_unescaping(content, delim)
         case delim
         when INTERPOLATING_HEREDOC
-          if extra_compatible
-            unescape(content).delete("\r")
-          else
-            unescape(content)
-          end
+          unescape(content)
         when *INTERPOLATING_STRINGS
           unescape(content)
         when INTERPOLATING_WORD_LIST
