@@ -92,9 +92,9 @@ module RipperRubyParser
       end
 
       SPECIAL_ARG_MARKER = {
-        splat: '*',
-        dsplat: '**',
-        blockarg: '&'
+        splat: "*",
+        dsplat: "**",
+        blockarg: "&"
       }.freeze
 
       def convert_arguments(args)

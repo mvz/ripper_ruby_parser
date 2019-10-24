@@ -1,83 +1,83 @@
 # frozen_string_literal: true
 
-require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
+require File.expand_path("../test_helper.rb", File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
   let(:parser) { RipperRubyParser::Parser.new }
-  describe '#parse' do
-    it 'returns an s-expression' do
-      result = parser.parse 'foo'
+  describe "#parse" do
+    it "returns an s-expression" do
+      result = parser.parse "foo"
       _(result).must_be_instance_of Sexp
     end
 
-    describe 'for an empty program' do
-      it 'returns nil' do
-        _('').must_be_parsed_as nil
+    describe "for an empty program" do
+      it "returns nil" do
+        _("").must_be_parsed_as nil
       end
     end
 
-    describe 'for a class declaration' do
-      it 'works with a namespaced class name' do
-        _('class Foo::Bar; end').
+    describe "for a class declaration" do
+      it "works with a namespaced class name" do
+        _("class Foo::Bar; end").
           must_be_parsed_as s(:class,
                               s(:colon2, s(:const, :Foo), :Bar),
                               nil)
       end
 
-      it 'works for singleton classes' do
-        _('class << self; end').must_be_parsed_as s(:sclass, s(:self))
+      it "works for singleton classes" do
+        _("class << self; end").must_be_parsed_as s(:sclass, s(:self))
       end
     end
 
-    describe 'for a module declaration' do
-      it 'works with a simple module name' do
-        _('module Foo; end').
+    describe "for a module declaration" do
+      it "works with a simple module name" do
+        _("module Foo; end").
           must_be_parsed_as s(:module, :Foo)
       end
 
-      it 'works with a namespaced module name' do
-        _('module Foo::Bar; end').
+      it "works with a namespaced module name" do
+        _("module Foo::Bar; end").
           must_be_parsed_as s(:module,
                               s(:colon2, s(:const, :Foo), :Bar))
       end
     end
 
-    describe 'for empty parentheses' do
-      it 'works with lone ()' do
-        _('()').must_be_parsed_as s(:nil)
+    describe "for empty parentheses" do
+      it "works with lone ()" do
+        _("()").must_be_parsed_as s(:nil)
       end
     end
 
-    describe 'for a begin..end block' do
-      it 'works with no statements' do
-        _('begin; end').
+    describe "for a begin..end block" do
+      it "works with no statements" do
+        _("begin; end").
           must_be_parsed_as s(:nil)
       end
 
-      it 'works with one statement' do
-        _('begin; foo; end').
+      it "works with one statement" do
+        _("begin; foo; end").
           must_be_parsed_as s(:call, nil, :foo)
       end
 
-      it 'works with multiple statements' do
-        _('begin; foo; bar; end').
+      it "works with multiple statements" do
+        _("begin; foo; bar; end").
           must_be_parsed_as s(:block,
                               s(:call, nil, :foo),
                               s(:call, nil, :bar))
       end
     end
 
-    describe 'for arguments' do
-      it 'works for a simple case with splat' do
-        _('foo *bar').
+    describe "for arguments" do
+      it "works for a simple case with splat" do
+        _("foo *bar").
           must_be_parsed_as s(:call,
                               nil,
                               :foo,
                               s(:splat, s(:call, nil, :bar)))
       end
 
-      it 'works for a multi-argument case with splat' do
-        _('foo bar, *baz').
+      it "works for a multi-argument case with splat" do
+        _("foo bar, *baz").
           must_be_parsed_as s(:call,
                               nil,
                               :foo,
@@ -85,15 +85,15 @@ describe RipperRubyParser::Parser do
                               s(:splat, s(:call, nil, :baz)))
       end
 
-      it 'works for a simple case passing a block' do
-        _('foo &bar').
+      it "works for a simple case passing a block" do
+        _("foo &bar").
           must_be_parsed_as s(:call, nil, :foo,
                               s(:block_pass,
                                 s(:call, nil, :bar)))
       end
 
-      it 'works for a bare hash' do
-        _('foo bar => baz').
+      it "works for a bare hash" do
+        _("foo bar => baz").
           must_be_parsed_as s(:call, nil, :foo,
                               s(:hash,
                                 s(:call, nil, :bar),
@@ -101,50 +101,50 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for the __ENCODING__ keyword' do
-      it 'evaluates to the equivalent of Encoding::UTF_8' do
-        _('__ENCODING__').
+    describe "for the __ENCODING__ keyword" do
+      it "evaluates to the equivalent of Encoding::UTF_8" do
+        _("__ENCODING__").
           must_be_parsed_as s(:colon2, s(:const, :Encoding), :UTF_8)
       end
     end
 
-    describe 'for the __FILE__ keyword' do
-      describe 'when not passing a file name' do
+    describe "for the __FILE__ keyword" do
+      describe "when not passing a file name" do
         it "creates a string sexp with value '(string)'" do
-          _('__FILE__').
-            must_be_parsed_as s(:str, '(string)')
+          _("__FILE__").
+            must_be_parsed_as s(:str, "(string)")
         end
       end
 
-      describe 'when passing a file name' do
-        it 'creates a string sexp with the file name' do
-          result = parser.parse '__FILE__', 'foo'
-          _(result).must_equal s(:str, 'foo')
+      describe "when passing a file name" do
+        it "creates a string sexp with the file name" do
+          result = parser.parse "__FILE__", "foo"
+          _(result).must_equal s(:str, "foo")
         end
       end
     end
 
-    describe 'for the __LINE__ keyword' do
-      it 'creates a literal sexp with value of the line number' do
-        _('__LINE__').
+    describe "for the __LINE__ keyword" do
+      it "creates a literal sexp with value of the line number" do
+        _("__LINE__").
           must_be_parsed_as s(:lit, 1)
         _("\n__LINE__").
           must_be_parsed_as s(:lit, 2)
       end
     end
 
-    describe 'for the END keyword' do
-      it 'converts to a :postexe iterator' do
-        _('END { foo }').
+    describe "for the END keyword" do
+      it "converts to a :postexe iterator" do
+        _("END { foo }").
           must_be_parsed_as s(:iter, s(:postexe), 0, s(:call, nil, :foo))
       end
 
-      it 'works with an empty block' do
-        _('END { }').
+      it "works with an empty block" do
+        _("END { }").
           must_be_parsed_as s(:iter, s(:postexe), 0)
       end
 
-      it 'assigns correct line numbers' do
+      it "assigns correct line numbers" do
         _("END {\nfoo\n}").
           must_be_parsed_as s(:iter,
                               s(:postexe).line(1), 0,
@@ -152,7 +152,7 @@ describe RipperRubyParser::Parser do
                             with_line_numbers: true
       end
 
-      it 'assigns correct line numbers to a embedded begin block' do
+      it "assigns correct line numbers to a embedded begin block" do
         _("END {\nbegin\nfoo\nend\n}").
           must_be_parsed_as s(:iter,
                               s(:postexe).line(1), 0,
@@ -161,18 +161,18 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for the BEGIN keyword' do
-      it 'converts to a :preexe iterator' do
-        _('BEGIN { foo }').
+    describe "for the BEGIN keyword" do
+      it "converts to a :preexe iterator" do
+        _("BEGIN { foo }").
           must_be_parsed_as s(:iter, s(:preexe), 0, s(:call, nil, :foo))
       end
 
-      it 'works with an empty block' do
-        _('BEGIN { }').
+      it "works with an empty block" do
+        _("BEGIN { }").
           must_be_parsed_as s(:iter, s(:preexe), 0)
       end
 
-      it 'assigns correct line numbers' do
+      it "assigns correct line numbers" do
         _("BEGIN {\nfoo\n}").
           must_be_parsed_as s(:iter,
                               s(:preexe).line(1), 0,
@@ -180,7 +180,7 @@ describe RipperRubyParser::Parser do
                             with_line_numbers: true
       end
 
-      it 'assigns correct line numbers to a embedded begin block' do
+      it "assigns correct line numbers to a embedded begin block" do
         _("BEGIN {\nbegin\nfoo\nend\n}").
           must_be_parsed_as s(:iter,
                               s(:preexe).line(1), 0,
@@ -190,59 +190,59 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    describe 'for constant lookups' do
-      it 'works when explicitely starting from the root namespace' do
-        _('::Foo').
+    describe "for constant lookups" do
+      it "works when explicitely starting from the root namespace" do
+        _("::Foo").
           must_be_parsed_as s(:colon3, :Foo)
       end
 
-      it 'works with a three-level constant lookup' do
-        _('Foo::Bar::Baz').
+      it "works with a three-level constant lookup" do
+        _("Foo::Bar::Baz").
           must_be_parsed_as s(:colon2,
                               s(:colon2, s(:const, :Foo), :Bar),
                               :Baz)
       end
 
-      it 'works looking up a constant in a non-constant' do
-        _('foo::Bar').must_be_parsed_as s(:colon2,
+      it "works looking up a constant in a non-constant" do
+        _("foo::Bar").must_be_parsed_as s(:colon2,
                                           s(:call, nil, :foo),
                                           :Bar)
       end
     end
 
-    describe 'for variable references' do
-      it 'works for self' do
-        _('self').
+    describe "for variable references" do
+      it "works for self" do
+        _("self").
           must_be_parsed_as s(:self)
       end
 
-      it 'works for instance variables' do
-        _('@foo').
+      it "works for instance variables" do
+        _("@foo").
           must_be_parsed_as s(:ivar, :@foo)
       end
 
-      it 'works for global variables' do
-        _('$foo').
+      it "works for global variables" do
+        _("$foo").
           must_be_parsed_as s(:gvar, :$foo)
       end
 
-      it 'works for regexp match references' do
-        _('$1').
+      it "works for regexp match references" do
+        _("$1").
           must_be_parsed_as s(:nth_ref, 1)
       end
 
       specify { _("$'").must_be_parsed_as s(:back_ref, :"'") }
-      specify { _('$&').must_be_parsed_as s(:back_ref, :"&") }
+      specify { _("$&").must_be_parsed_as s(:back_ref, :"&") }
 
-      it 'works for class variables' do
-        _('@@foo').
+      it "works for class variables" do
+        _("@@foo").
           must_be_parsed_as s(:cvar, :@@foo)
       end
     end
 
-    describe 'for expressions' do
-      it 'handles assignment inside binary operator expressions' do
-        _('foo + (bar = baz)').
+    describe "for expressions" do
+      it "handles assignment inside binary operator expressions" do
+        _("foo + (bar = baz)").
           must_be_parsed_as s(:call,
                               s(:call, nil, :foo),
                               :+,
@@ -251,8 +251,8 @@ describe RipperRubyParser::Parser do
                                 s(:call, nil, :baz)))
       end
 
-      it 'handles assignment inside unary operator expressions' do
-        _('+(foo = bar)').
+      it "handles assignment inside unary operator expressions" do
+        _("+(foo = bar)").
           must_be_parsed_as s(:call,
                               s(:lasgn, :foo, s(:call, nil, :bar)),
                               :+@)
@@ -261,8 +261,8 @@ describe RipperRubyParser::Parser do
 
     # Note: differences in the handling of comments are not caught by Sexp's
     # implementation of equality.
-    describe 'for comments' do
-      it 'handles method comments' do
+    describe "for comments" do
+      it "handles method comments" do
         result = parser.parse "# Foo\ndef foo; end"
         _(result).must_equal s(:defn,
                                :foo,
@@ -270,7 +270,7 @@ describe RipperRubyParser::Parser do
         _(result.comments).must_equal "# Foo\n"
       end
 
-      it 'handles comments for methods with explicit receiver' do
+      it "handles comments for methods with explicit receiver" do
         result = parser.parse "# Foo\ndef foo.bar; end"
         _(result).must_equal s(:defs,
                                s(:call, nil, :foo),
@@ -280,7 +280,7 @@ describe RipperRubyParser::Parser do
         _(result.comments).must_equal "# Foo\n"
       end
 
-      it 'matches comments to the correct entity' do
+      it "matches comments to the correct entity" do
         result = parser.parse "# Foo\nclass Foo\n# Bar\ndef bar\nend\nend"
         _(result).must_equal s(:class, :Foo, nil,
                                s(:defn, :bar,
@@ -291,7 +291,7 @@ describe RipperRubyParser::Parser do
         _(defn.comments).must_equal "# Bar\n"
       end
 
-      it 'combines multi-line comments' do
+      it "combines multi-line comments" do
         result = parser.parse "# Foo\n# Bar\ndef foo; end"
         _(result).must_equal s(:defn,
                                :foo,
@@ -299,7 +299,7 @@ describe RipperRubyParser::Parser do
         _(result.comments).must_equal "# Foo\n# Bar\n"
       end
 
-      it 'drops comments inside method bodies' do
+      it "drops comments inside method bodies" do
         result = parser.parse <<-END
           # Foo
           class Foo
@@ -324,7 +324,7 @@ describe RipperRubyParser::Parser do
         _(result[4].comments).must_equal "# bar\n"
       end
 
-      it 'handles use of singleton class inside methods' do
+      it "handles use of singleton class inside methods" do
         result = parser.parse "# Foo\ndef bar\nclass << self\nbaz\nend\nend"
         _(result).must_equal s(:defn,
                                :bar,
@@ -335,7 +335,7 @@ describe RipperRubyParser::Parser do
       end
 
       # TODO: Prefer assigning comment to the BEGIN instead
-      it 'assigns comments on BEGIN blocks to the following item' do
+      it "assigns comments on BEGIN blocks to the following item" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
@@ -345,7 +345,7 @@ describe RipperRubyParser::Parser do
         _(result[2][3].comments).must_equal "# foo\n"
       end
 
-      it 'assigns comments on multiple BEGIN blocks to the following item' do
+      it "assigns comments on multiple BEGIN blocks to the following item" do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
@@ -354,7 +354,7 @@ describe RipperRubyParser::Parser do
         _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
       end
 
-      it 'assigns comments on BEGIN blocks to the first following item' do
+      it "assigns comments on BEGIN blocks to the first following item" do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
@@ -366,33 +366,33 @@ describe RipperRubyParser::Parser do
 
     # Note: differences in the handling of line numbers are not caught by
     # Sexp's implementation of equality.
-    describe 'assigning line numbers' do
-      it 'works for a plain method call' do
-        result = parser.parse 'foo'
+    describe "assigning line numbers" do
+      it "works for a plain method call" do
+        result = parser.parse "foo"
         _(result.line).must_equal 1
       end
 
-      it 'works for a method call with parentheses' do
-        result = parser.parse 'foo()'
+      it "works for a method call with parentheses" do
+        result = parser.parse "foo()"
         _(result.line).must_equal 1
       end
 
-      it 'works for a method call with receiver' do
-        result = parser.parse 'foo.bar'
+      it "works for a method call with receiver" do
+        result = parser.parse "foo.bar"
         _(result.line).must_equal 1
       end
 
-      it 'works for a method call with receiver and arguments' do
-        result = parser.parse 'foo.bar baz'
+      it "works for a method call with receiver and arguments" do
+        result = parser.parse "foo.bar baz"
         _(result.line).must_equal 1
       end
 
-      it 'works for a method call with arguments' do
-        result = parser.parse 'foo bar'
+      it "works for a method call with arguments" do
+        result = parser.parse "foo bar"
         _(result.line).must_equal 1
       end
 
-      it 'works for a block with two lines' do
+      it "works for a block with two lines" do
         result = parser.parse "foo\nbar\n"
         _(result.sexp_type).must_equal :block
         _(result[1].line).must_equal 1
@@ -400,27 +400,27 @@ describe RipperRubyParser::Parser do
         _(result.line).must_equal 1
       end
 
-      it 'works for a constant reference' do
-        result = parser.parse 'Foo'
+      it "works for a constant reference" do
+        result = parser.parse "Foo"
         _(result.line).must_equal 1
       end
 
-      it 'works for an instance variable' do
-        result = parser.parse '@foo'
+      it "works for an instance variable" do
+        result = parser.parse "@foo"
         _(result.line).must_equal 1
       end
 
-      it 'works for a global variable' do
-        result = parser.parse '$foo'
+      it "works for a global variable" do
+        result = parser.parse "$foo"
         _(result.line).must_equal 1
       end
 
-      it 'works for a class variable' do
-        result = parser.parse '@@foo'
+      it "works for a class variable" do
+        result = parser.parse "@@foo"
         _(result.line).must_equal 1
       end
 
-      it 'works for a local variable' do
+      it "works for a local variable" do
         _("foo = bar\nfoo\n").
           must_be_parsed_as s(:block,
                               s(:lasgn, :foo, s(:call, nil, :bar).line(1)).line(1),
@@ -428,87 +428,87 @@ describe RipperRubyParser::Parser do
                             with_line_numbers: true
       end
 
-      it 'works for an integer literal' do
-        result = parser.parse '42'
+      it "works for an integer literal" do
+        result = parser.parse "42"
         _(result.line).must_equal 1
       end
 
-      it 'works for a float literal' do
-        result = parser.parse '3.14'
+      it "works for a float literal" do
+        result = parser.parse "3.14"
         _(result.line).must_equal 1
       end
 
-      it 'works for a range literal' do
-        result = parser.parse '0..4'
+      it "works for a range literal" do
+        result = parser.parse "0..4"
         _(result.line).must_equal 1
       end
 
-      it 'works for an exclusive range literal' do
-        result = parser.parse '0...4'
+      it "works for an exclusive range literal" do
+        result = parser.parse "0...4"
         _(result.line).must_equal 1
       end
 
-      it 'works for a symbol literal' do
-        result = parser.parse ':foo'
+      it "works for a symbol literal" do
+        result = parser.parse ":foo"
         _(result.line).must_equal 1
       end
 
-      it 'works for a keyword-like symbol literal' do
-        result = parser.parse ':and'
+      it "works for a keyword-like symbol literal" do
+        result = parser.parse ":and"
         _(result.line).must_equal 1
       end
 
-      it 'works for a string literal' do
+      it "works for a string literal" do
         result = parser.parse '"foo"'
         _(result.line).must_equal 1
       end
 
-      it 'works for a backtick string literal' do
-        result = parser.parse '`foo`'
+      it "works for a backtick string literal" do
+        result = parser.parse "`foo`"
         _(result.line).must_equal 1
       end
 
-      it 'works for a plain regexp literal' do
-        result = parser.parse '/foo/'
+      it "works for a plain regexp literal" do
+        result = parser.parse "/foo/"
         _(result.line).must_equal 1
       end
 
-      it 'works for a regular expression back reference' do
-        result = parser.parse '$1'
+      it "works for a regular expression back reference" do
+        result = parser.parse "$1"
         _(result.line).must_equal 1
       end
 
-      it 'works for self' do
-        result = parser.parse 'self'
+      it "works for self" do
+        result = parser.parse "self"
         _(result.line).must_equal 1
       end
 
-      it 'works for __FILE__' do
-        result = parser.parse '__FILE__'
+      it "works for __FILE__" do
+        result = parser.parse "__FILE__"
         _(result.line).must_equal 1
       end
 
-      it 'works for nil' do
-        result = parser.parse 'nil'
+      it "works for nil" do
+        result = parser.parse "nil"
         _(result.line).must_equal 1
       end
 
-      it 'works for a class definition' do
-        result = parser.parse 'class Foo; end'
+      it "works for a class definition" do
+        result = parser.parse "class Foo; end"
         _(result.line).must_equal 1
       end
 
-      it 'works for a module definition' do
-        result = parser.parse 'module Foo; end'
+      it "works for a module definition" do
+        result = parser.parse "module Foo; end"
         _(result.line).must_equal 1
       end
 
-      it 'works for a method definition' do
-        result = parser.parse 'def foo; end'
+      it "works for a method definition" do
+        result = parser.parse "def foo; end"
         _(result.line).must_equal 1
       end
 
-      it 'assigns line numbers to nested sexps without their own line numbers' do
+      it "assigns line numbers to nested sexps without their own line numbers" do
         _("foo(bar) do\nnext baz\nend\n").
           must_be_parsed_as s(:iter,
                               s(:call, nil, :foo, s(:call, nil, :bar).line(1)).line(1),
@@ -517,9 +517,9 @@ describe RipperRubyParser::Parser do
                             with_line_numbers: true
       end
 
-      describe 'when a line number is passed' do
-        it 'shifts all line numbers as appropriate' do
-          result = parser.parse "foo\nbar\n", '(string)', 3
+      describe "when a line number is passed" do
+        it "shifts all line numbers as appropriate" do
+          result = parser.parse "foo\nbar\n", "(string)", 3
           _(result).must_equal s(:block,
                                  s(:call, nil, :foo),
                                  s(:call, nil, :bar))
@@ -531,8 +531,8 @@ describe RipperRubyParser::Parser do
     end
   end
 
-  describe '#trickle_up_line_numbers' do
-    it 'works through several nested levels' do
+  describe "#trickle_up_line_numbers" do
+    it "works through several nested levels" do
       inner = s(:foo)
       outer = s(:bar, s(:baz, s(:qux, inner)))
       outer.line = 42
@@ -541,8 +541,8 @@ describe RipperRubyParser::Parser do
     end
   end
 
-  describe '#trickle_down_line_numbers' do
-    it 'works through several nested levels' do
+  describe "#trickle_down_line_numbers" do
+    it "works through several nested levels" do
       inner = s(:foo)
       inner.line = 42
       outer = s(:bar, s(:baz, s(:qux, inner)))

@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
-require 'ruby_parser'
+require File.expand_path("../test_helper.rb", File.dirname(__FILE__))
+require "ruby_parser"
 
-describe 'Using RipperRubyParser and RubyParser' do
-  describe 'for a simple well known program' do
+describe "Using RipperRubyParser and RubyParser" do
+  describe "for a simple well known program" do
     let :program do
       "puts 'Hello World'"
     end
 
-    it 'gives the same result with line numbers' do
+    it "gives the same result with line numbers" do
       _(program).must_be_parsed_as_before with_line_numbers: true
     end
   end
 
-  describe 'for a more complex program' do
+  describe "for a more complex program" do
     let :program do
       <<-END
       module Quux
@@ -35,22 +35,22 @@ describe 'Using RipperRubyParser and RubyParser' do
       END
     end
 
-    it 'gives the same result' do
+    it "gives the same result" do
       _(program).must_be_parsed_as_before
     end
   end
 
-  describe 'for an example with yield from Reek' do
+  describe "for an example with yield from Reek" do
     let :program do
-      'def fred() yield(3) if block_given?; end'
+      "def fred() yield(3) if block_given?; end"
     end
 
-    it 'gives the same result with line numbers' do
+    it "gives the same result with line numbers" do
       _(program).must_be_parsed_as_before with_line_numbers: true
     end
   end
 
-  describe 'for an example with floats from Reek' do
+  describe "for an example with floats from Reek" do
     let :program do
       <<-END
         def total_envy
@@ -63,12 +63,12 @@ describe 'Using RipperRubyParser and RubyParser' do
       END
     end
 
-    it 'gives the same result' do
+    it "gives the same result" do
       _(program).must_be_parsed_as_before
     end
   end
 
-  describe 'for an example with operators and explicit block parameter from Reek' do
+  describe "for an example with operators and explicit block parameter from Reek" do
     let :program do
       <<-END
         def parse(arg, argv, &error)
@@ -87,17 +87,17 @@ describe 'Using RipperRubyParser and RubyParser' do
       END
     end
 
-    it 'gives the same result' do
+    it "gives the same result" do
       _(program).must_be_parsed_as_before
     end
   end
 
-  describe 'for an example of a complex regular expression from Reek' do
+  describe "for an example of a complex regular expression from Reek" do
     let :program do
       "/(\#{@types})\\s*(\\w+)\\s*\\(([^)]*)\\)/"
     end
 
-    it 'gives the same result with line numbers' do
+    it "gives the same result with line numbers" do
       _(program).must_be_parsed_as_before with_line_numbers: true
     end
   end
