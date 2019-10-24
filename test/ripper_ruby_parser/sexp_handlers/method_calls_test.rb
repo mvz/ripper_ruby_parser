@@ -7,42 +7,42 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
     describe "for method calls" do
       describe "without a receiver" do
         it "works without parentheses" do
-          _("foo bar").
-            must_be_parsed_as s(:call, nil, :foo,
+          _("foo bar")
+            .must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar))
         end
 
         it "works with parentheses" do
-          _("foo(bar)").
-            must_be_parsed_as s(:call, nil, :foo,
+          _("foo(bar)")
+            .must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar))
         end
 
         it "works with an empty parameter list and no parentheses" do
-          _("foo").
-            must_be_parsed_as s(:call, nil, :foo)
+          _("foo")
+            .must_be_parsed_as s(:call, nil, :foo)
         end
 
         it "works with parentheses around an empty parameter list" do
-          _("foo()").
-            must_be_parsed_as s(:call, nil, :foo)
+          _("foo()")
+            .must_be_parsed_as s(:call, nil, :foo)
         end
 
         it "works for methods ending in a question mark" do
-          _("foo?").
-            must_be_parsed_as s(:call, nil, :foo?)
+          _("foo?")
+            .must_be_parsed_as s(:call, nil, :foo?)
         end
 
         it "works with nested calls without parentheses" do
-          _("foo bar baz").
-            must_be_parsed_as s(:call, nil, :foo,
+          _("foo bar baz")
+            .must_be_parsed_as s(:call, nil, :foo,
                                 s(:call, nil, :bar,
                                   s(:call, nil, :baz)))
         end
 
         it "works with a non-final splat argument" do
-          _("foo(bar, *baz, qux)").
-            must_be_parsed_as s(:call,
+          _("foo(bar, *baz, qux)")
+            .must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
                                 s(:call, nil, :bar),
@@ -51,8 +51,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with a splat argument followed by several regular arguments" do
-          _("foo(bar, *baz, qux, quuz)").
-            must_be_parsed_as s(:call,
+          _("foo(bar, *baz, qux, quuz)")
+            .must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
                                 s(:call, nil, :bar),
@@ -62,8 +62,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with a named argument" do
-          _("foo(bar, baz: qux)").
-            must_be_parsed_as s(:call,
+          _("foo(bar, baz: qux)")
+            .must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
                                 s(:call, nil, :bar),
@@ -71,8 +71,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with several named arguments" do
-          _("foo(bar, baz: qux, quux: quuz)").
-            must_be_parsed_as s(:call,
+          _("foo(bar, baz: qux, quux: quuz)")
+            .must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
                                 s(:call, nil, :bar),
@@ -82,8 +82,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with a double splat argument" do
-          _("foo(bar, **baz)").
-            must_be_parsed_as s(:call,
+          _("foo(bar, **baz)")
+            .must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
                                 s(:call, nil, :bar),
@@ -92,8 +92,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with a named argument followed by a double splat argument" do
-          _("foo(bar, baz: qux, **quuz)").
-            must_be_parsed_as s(:call,
+          _("foo(bar, baz: qux, **quuz)")
+            .must_be_parsed_as s(:call,
                                 nil,
                                 :foo,
                                 s(:call, nil, :bar),
@@ -105,24 +105,24 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
 
       describe "with a receiver" do
         it "works without parentheses" do
-          _("foo.bar baz").
-            must_be_parsed_as s(:call,
+          _("foo.bar baz")
+            .must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
                                 s(:call, nil, :baz))
         end
 
         it "works with parentheses" do
-          _("foo.bar(baz)").
-            must_be_parsed_as s(:call,
+          _("foo.bar(baz)")
+            .must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
                                 s(:call, nil, :baz))
         end
 
         it "works with parentheses around a call with no parentheses" do
-          _("foo.bar(baz qux)").
-            must_be_parsed_as s(:call,
+          _("foo.bar(baz qux)")
+            .must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
                                 s(:call, nil, :baz,
@@ -130,8 +130,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with nested calls without parentheses" do
-          _("foo.bar baz qux").
-            must_be_parsed_as s(:call,
+          _("foo.bar baz qux")
+            .must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :bar,
                                 s(:call, nil, :baz,
@@ -139,15 +139,15 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "does not keep :begin around a method receiver" do
-          _("begin; foo; end.bar").
-            must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
+          _("begin; foo; end.bar")
+            .must_be_parsed_as s(:call, s(:call, nil, :foo), :bar)
         end
       end
 
       describe "for collection indexing" do
         it "works in the simple case" do
-          _("foo[bar]").
-            must_be_parsed_as s(:call,
+          _("foo[bar]")
+            .must_be_parsed_as s(:call,
                                 s(:call, nil, :foo),
                                 :[],
                                 s(:call, nil, :bar))
@@ -170,8 +170,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works with arguments" do
-          _("foo&.bar baz").
-            must_be_parsed_as s(:safe_call,
+          _("foo&.bar baz")
+            .must_be_parsed_as s(:safe_call,
                                 s(:call, nil, :foo),
                                 :bar,
                                 s(:call, nil, :baz))
@@ -180,8 +180,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
 
       describe "with blocks" do
         it "works for a do block" do
-          _("foo.bar do baz; end").
-            must_be_parsed_as s(:iter,
+          _("foo.bar do baz; end")
+            .must_be_parsed_as s(:iter,
                                 s(:call,
                                   s(:call, nil, :foo),
                                   :bar),
@@ -190,8 +190,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         end
 
         it "works for a do block with several statements" do
-          _("foo.bar do baz; qux; end").
-            must_be_parsed_as s(:iter,
+          _("foo.bar do baz; qux; end")
+            .must_be_parsed_as s(:iter,
                                 s(:call,
                                   s(:call, nil, :foo),
                                   :bar),
@@ -221,8 +221,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
                                                    s(:call, nil, :bar)))
       end
       specify do
-        _("super foo, *bar, &baz").
-          must_be_parsed_as s(:super,
+        _("super foo, *bar, &baz")
+          .must_be_parsed_as s(:super,
                               s(:call, nil, :foo),
                               s(:splat, s(:call, nil, :bar)),
                               s(:block_pass, s(:call, nil, :baz)))
@@ -230,8 +230,8 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
     end
 
     it "handles calling a proc" do
-      _("foo.()").
-        must_be_parsed_as s(:call, s(:call, nil, :foo), :call)
+      _("foo.()")
+        .must_be_parsed_as s(:call, s(:call, nil, :foo), :call)
     end
   end
 

@@ -192,8 +192,8 @@ describe RipperRubyParser::CommentingRipperParser do
     end
 
     it "raises an error using an invalid parameter name" do
-      _(proc { parse_with_builder "def foo(BAR); end" }).
-        must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder "def foo(BAR); end" })
+        .must_raise RipperRubyParser::SyntaxError
     end
   end
 end
