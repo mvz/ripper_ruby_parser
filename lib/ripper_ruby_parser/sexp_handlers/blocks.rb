@@ -91,13 +91,9 @@ module RipperRubyParser
         main = wrap_in_block reject_void_stmt main_list
         body << main if main
 
-        if rescue_block
-          body.push(*process(rescue_block))
-          body << process(else_block) if else_block
-          body = s(s(:rescue, *body))
-        elsif else_block
-          body << process(else_block)
-        end
+        body.push(*process(rescue_block)) if rescue_block
+        body << process(else_block) if else_block
+        body = s(s(:rescue, *body)) if rescue_block
 
         if ensure_block
           body << process(ensure_block)
