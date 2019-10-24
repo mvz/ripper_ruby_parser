@@ -6,7 +6,7 @@ require "ruby_parser"
 describe "Using RipperRubyParser and RubyParser" do
   describe "for a multi-line program" do
     let :program do
-      <<-END
+      <<-RUBY
       class Foo
         def foo()
           bar()
@@ -17,7 +17,7 @@ describe "Using RipperRubyParser and RubyParser" do
       module Bar
         @@baz = {}
       end
-      END
+      RUBY
     end
 
     it "gives the same result" do

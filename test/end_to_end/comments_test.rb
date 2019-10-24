@@ -14,7 +14,7 @@ describe "Using RipperRubyParser and RubyParser" do
 
   describe "for a program with quite some comments" do
     let :program do
-      <<-END
+      <<-RUBY
       # Foo
       class Foo
         # The foo
@@ -37,7 +37,7 @@ describe "Using RipperRubyParser and RubyParser" do
           end
         end
       end
-      END
+      RUBY
     end
 
     let :original do
