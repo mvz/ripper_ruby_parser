@@ -185,7 +185,8 @@ describe RipperRubyParser::Parser do
         it "works with a method call with argument without brackets" do
           expected = if RUBY_VERSION < "2.4.0"
                        s(:rescue,
-                         s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                         s(:lasgn, :foo,
+                           s(:call, nil, :bar, s(:call, nil, :baz))),
                          s(:resbody, s(:array), s(:call, nil, :qux)))
                      else
                        s(:lasgn, :foo,
@@ -199,7 +200,8 @@ describe RipperRubyParser::Parser do
         it "works with a class method call with argument without brackets" do
           expected = if RUBY_VERSION < "2.4.0"
                        s(:rescue,
-                         s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                         s(:lasgn, :foo,
+                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
                          s(:resbody, s(:array), s(:call, nil, :quuz)))
                      else
                        s(:lasgn, :foo,
@@ -214,7 +216,8 @@ describe RipperRubyParser::Parser do
         it "works with a method call with argument without brackets" do
           expected = if RUBY_VERSION < "2.4.0"
                        s(:rescue,
-                         s(:lasgn, :foo, s(:call, nil, :bar, s(:call, nil, :baz))),
+                         s(:lasgn, :foo,
+                           s(:call, nil, :bar, s(:call, nil, :baz))),
                          s(:resbody, s(:array), s(:call, nil, :qux)))
                      else
                        s(:lasgn, :foo,
@@ -228,7 +231,8 @@ describe RipperRubyParser::Parser do
         it "works with a class method call with argument without brackets" do
           expected = if RUBY_VERSION < "2.4.0"
                        s(:rescue,
-                         s(:lasgn, :foo, s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
+                         s(:lasgn, :foo,
+                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
                          s(:resbody, s(:array), s(:call, nil, :quuz)))
                      else
                        s(:lasgn, :foo,

@@ -172,7 +172,8 @@ describe RipperRubyParser::CommentingRipperParser do
     end
 
     it "raises an error for an invalid class name" do
-      _(proc { parse_with_builder "class foo; end" }).must_raise RipperRubyParser::SyntaxError
+      _(proc { parse_with_builder "class foo; end" })
+        .must_raise RipperRubyParser::SyntaxError
     end
 
     it "raises an error aliasing $1 as foo" do
