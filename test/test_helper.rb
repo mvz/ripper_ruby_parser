@@ -40,7 +40,9 @@ module MiniTest
     end
 
     def fix_lines(exp)
-      return s(:lit, :__LINE__).line(exp.line) if exp.sexp_type == :lit && exp.line == exp[1]
+      if exp.sexp_type == :lit && exp.line == exp[1]
+        return s(:lit, :__LINE__).line(exp.line)
+      end
 
       exp.sexp_body = exp.sexp_body.map do |sub_exp|
         if sub_exp.is_a? Sexp
