@@ -9,13 +9,13 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         it "works without parentheses" do
           _("foo bar")
             .must_be_parsed_as s(:call, nil, :foo,
-                                s(:call, nil, :bar))
+                                 s(:call, nil, :bar))
         end
 
         it "works with parentheses" do
           _("foo(bar)")
             .must_be_parsed_as s(:call, nil, :foo,
-                                s(:call, nil, :bar))
+                                 s(:call, nil, :bar))
         end
 
         it "works with an empty parameter list and no parentheses" do
@@ -36,70 +36,70 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         it "works with nested calls without parentheses" do
           _("foo bar baz")
             .must_be_parsed_as s(:call, nil, :foo,
-                                s(:call, nil, :bar,
-                                  s(:call, nil, :baz)))
+                                 s(:call, nil, :bar,
+                                   s(:call, nil, :baz)))
         end
 
         it "works with a non-final splat argument" do
           _("foo(bar, *baz, qux)")
             .must_be_parsed_as s(:call,
-                                nil,
-                                :foo,
-                                s(:call, nil, :bar),
-                                s(:splat, s(:call, nil, :baz)),
-                                s(:call, nil, :qux))
+                                 nil,
+                                 :foo,
+                                 s(:call, nil, :bar),
+                                 s(:splat, s(:call, nil, :baz)),
+                                 s(:call, nil, :qux))
         end
 
         it "works with a splat argument followed by several regular arguments" do
           _("foo(bar, *baz, qux, quuz)")
             .must_be_parsed_as s(:call,
-                                nil,
-                                :foo,
-                                s(:call, nil, :bar),
-                                s(:splat, s(:call, nil, :baz)),
-                                s(:call, nil, :qux),
-                                s(:call, nil, :quuz))
+                                 nil,
+                                 :foo,
+                                 s(:call, nil, :bar),
+                                 s(:splat, s(:call, nil, :baz)),
+                                 s(:call, nil, :qux),
+                                 s(:call, nil, :quuz))
         end
 
         it "works with a named argument" do
           _("foo(bar, baz: qux)")
             .must_be_parsed_as s(:call,
-                                nil,
-                                :foo,
-                                s(:call, nil, :bar),
-                                s(:hash, s(:lit, :baz), s(:call, nil, :qux)))
+                                 nil,
+                                 :foo,
+                                 s(:call, nil, :bar),
+                                 s(:hash, s(:lit, :baz), s(:call, nil, :qux)))
         end
 
         it "works with several named arguments" do
           _("foo(bar, baz: qux, quux: quuz)")
             .must_be_parsed_as s(:call,
-                                nil,
-                                :foo,
-                                s(:call, nil, :bar),
-                                s(:hash,
-                                  s(:lit, :baz), s(:call, nil, :qux),
-                                  s(:lit, :quux), s(:call, nil, :quuz)))
+                                 nil,
+                                 :foo,
+                                 s(:call, nil, :bar),
+                                 s(:hash,
+                                   s(:lit, :baz), s(:call, nil, :qux),
+                                   s(:lit, :quux), s(:call, nil, :quuz)))
         end
 
         it "works with a double splat argument" do
           _("foo(bar, **baz)")
             .must_be_parsed_as s(:call,
-                                nil,
-                                :foo,
-                                s(:call, nil, :bar),
-                                s(:hash,
-                                  s(:kwsplat, s(:call, nil, :baz))))
+                                 nil,
+                                 :foo,
+                                 s(:call, nil, :bar),
+                                 s(:hash,
+                                   s(:kwsplat, s(:call, nil, :baz))))
         end
 
         it "works with a named argument followed by a double splat argument" do
           _("foo(bar, baz: qux, **quuz)")
             .must_be_parsed_as s(:call,
-                                nil,
-                                :foo,
-                                s(:call, nil, :bar),
-                                s(:hash,
-                                  s(:lit, :baz), s(:call, nil, :qux),
-                                  s(:kwsplat, s(:call, nil, :quuz))))
+                                 nil,
+                                 :foo,
+                                 s(:call, nil, :bar),
+                                 s(:hash,
+                                   s(:lit, :baz), s(:call, nil, :qux),
+                                   s(:kwsplat, s(:call, nil, :quuz))))
         end
       end
 
@@ -107,35 +107,35 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         it "works without parentheses" do
           _("foo.bar baz")
             .must_be_parsed_as s(:call,
-                                s(:call, nil, :foo),
-                                :bar,
-                                s(:call, nil, :baz))
+                                 s(:call, nil, :foo),
+                                 :bar,
+                                 s(:call, nil, :baz))
         end
 
         it "works with parentheses" do
           _("foo.bar(baz)")
             .must_be_parsed_as s(:call,
-                                s(:call, nil, :foo),
-                                :bar,
-                                s(:call, nil, :baz))
+                                 s(:call, nil, :foo),
+                                 :bar,
+                                 s(:call, nil, :baz))
         end
 
         it "works with parentheses around a call with no parentheses" do
           _("foo.bar(baz qux)")
             .must_be_parsed_as s(:call,
-                                s(:call, nil, :foo),
-                                :bar,
-                                s(:call, nil, :baz,
-                                  s(:call, nil, :qux)))
+                                 s(:call, nil, :foo),
+                                 :bar,
+                                 s(:call, nil, :baz,
+                                   s(:call, nil, :qux)))
         end
 
         it "works with nested calls without parentheses" do
           _("foo.bar baz qux")
             .must_be_parsed_as s(:call,
-                                s(:call, nil, :foo),
-                                :bar,
-                                s(:call, nil, :baz,
-                                  s(:call, nil, :qux)))
+                                 s(:call, nil, :foo),
+                                 :bar,
+                                 s(:call, nil, :baz,
+                                   s(:call, nil, :qux)))
         end
 
         it "does not keep :begin around a method receiver" do
@@ -148,9 +148,9 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         it "works in the simple case" do
           _("foo[bar]")
             .must_be_parsed_as s(:call,
-                                s(:call, nil, :foo),
-                                :[],
-                                s(:call, nil, :bar))
+                                 s(:call, nil, :foo),
+                                 :[],
+                                 s(:call, nil, :bar))
         end
 
         it "works without any indexes" do
@@ -172,9 +172,9 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         it "works with arguments" do
           _("foo&.bar baz")
             .must_be_parsed_as s(:safe_call,
-                                s(:call, nil, :foo),
-                                :bar,
-                                s(:call, nil, :baz))
+                                 s(:call, nil, :foo),
+                                 :bar,
+                                 s(:call, nil, :baz))
         end
       end
 
@@ -182,23 +182,23 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         it "works for a do block" do
           _("foo.bar do baz; end")
             .must_be_parsed_as s(:iter,
-                                s(:call,
-                                  s(:call, nil, :foo),
-                                  :bar),
-                                0,
-                                s(:call, nil, :baz))
+                                 s(:call,
+                                   s(:call, nil, :foo),
+                                   :bar),
+                                 0,
+                                 s(:call, nil, :baz))
         end
 
         it "works for a do block with several statements" do
           _("foo.bar do baz; qux; end")
             .must_be_parsed_as s(:iter,
-                                s(:call,
-                                  s(:call, nil, :foo),
-                                  :bar),
-                                0,
-                                s(:block,
-                                  s(:call, nil, :baz),
-                                  s(:call, nil, :qux)))
+                                 s(:call,
+                                   s(:call, nil, :foo),
+                                   :bar),
+                                 0,
+                                 s(:block,
+                                   s(:call, nil, :baz),
+                                   s(:call, nil, :qux)))
         end
       end
     end
@@ -223,9 +223,9 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
       specify do
         _("super foo, *bar, &baz")
           .must_be_parsed_as s(:super,
-                              s(:call, nil, :foo),
-                              s(:splat, s(:call, nil, :bar)),
-                              s(:block_pass, s(:call, nil, :baz)))
+                               s(:call, nil, :foo),
+                               s(:splat, s(:call, nil, :bar)),
+                               s(:block_pass, s(:call, nil, :baz)))
       end
     end
 

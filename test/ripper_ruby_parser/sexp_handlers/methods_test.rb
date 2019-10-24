@@ -8,55 +8,55 @@ describe RipperRubyParser::Parser do
       it "treats kwargs as a local variable" do
         _("def foo(**bar); bar; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :"**bar"),
-                              s(:lvar, :bar))
+                               :foo,
+                               s(:args, :"**bar"),
+                               s(:lvar, :bar))
       end
 
       it "treats kwargs as a local variable when other arguments are present" do
         _("def foo(bar, **baz); baz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :bar, :"**baz"),
-                              s(:lvar, :baz))
+                               :foo,
+                               s(:args, :bar, :"**baz"),
+                               s(:lvar, :baz))
       end
 
       it "treats kwargs as a local variable when an explicit block is present" do
         _("def foo(**bar, &baz); bar; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :"**bar", :"&baz"),
-                              s(:lvar, :bar))
+                               :foo,
+                               s(:args, :"**bar", :"&baz"),
+                               s(:lvar, :bar))
       end
 
       it "treats block kwargs as lvars" do
         _("def foo(**bar); baz { |**qux| bar; qux }; end")
           .must_be_parsed_as s(:defn, :foo,
-                              s(:args, :"**bar"),
-                              s(:iter,
-                                s(:call, nil, :baz),
-                                s(:args, :"**qux"),
-                                s(:block,
-                                  s(:lvar, :bar),
-                                  s(:lvar, :qux))))
+                               s(:args, :"**bar"),
+                               s(:iter,
+                                 s(:call, nil, :baz),
+                                 s(:args, :"**qux"),
+                                 s(:block,
+                                   s(:lvar, :bar),
+                                   s(:lvar, :qux))))
       end
 
       it "works with a method argument with a default value" do
         _("def foo bar=nil; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, s(:lasgn, :bar, s(:nil))),
-                              s(:nil))
+                               :foo,
+                               s(:args, s(:lasgn, :bar, s(:nil))),
+                               s(:nil))
       end
 
       it "works with several method arguments with default values" do
         _("def foo bar=1, baz=2; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:lasgn, :bar, s(:lit, 1)),
-                                s(:lasgn, :baz, s(:lit, 2))),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:lasgn, :bar, s(:lit, 1)),
+                                 s(:lasgn, :baz, s(:lit, 2))),
+                               s(:nil))
       end
 
       it "works with parentheses around the parameter list" do
@@ -77,141 +77,141 @@ describe RipperRubyParser::Parser do
       it "works with a nameless splat" do
         _("def foo *; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :"*"),
-                              s(:nil))
+                               :foo,
+                               s(:args, :"*"),
+                               s(:nil))
       end
 
       it "works for a simple case with explicit block parameter" do
         _("def foo &bar; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :"&bar"),
-                              s(:nil))
+                               :foo,
+                               s(:args, :"&bar"),
+                               s(:nil))
       end
 
       it "works with a regular argument plus explicit block parameter" do
         _("def foo bar, &baz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :bar, :"&baz"),
-                              s(:nil))
+                               :foo,
+                               s(:args, :bar, :"&baz"),
+                               s(:nil))
       end
 
       it "works with a default value plus explicit block parameter" do
         _("def foo bar=1, &baz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:lasgn, :bar, s(:lit, 1)),
-                                :"&baz"),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:lasgn, :bar, s(:lit, 1)),
+                                 :"&baz"),
+                               s(:nil))
       end
 
       it "works with a default value plus mandatory argument" do
         _("def foo bar=1, baz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:lasgn, :bar, s(:lit, 1)),
-                                :baz),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:lasgn, :bar, s(:lit, 1)),
+                                 :baz),
+                               s(:nil))
       end
 
       it "works with a splat plus explicit block parameter" do
         _("def foo *bar, &baz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :"*bar", :"&baz"),
-                              s(:nil))
+                               :foo,
+                               s(:args, :"*bar", :"&baz"),
+                               s(:nil))
       end
 
       it "works with a default value plus splat" do
         _("def foo bar=1, *baz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:lasgn, :bar, s(:lit, 1)),
-                                :"*baz"),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:lasgn, :bar, s(:lit, 1)),
+                                 :"*baz"),
+                               s(:nil))
       end
 
       it "works with a default value, splat, plus final mandatory arguments" do
         _("def foo bar=1, *baz, qux, quuz; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:lasgn, :bar, s(:lit, 1)),
-                                :"*baz", :qux, :quuz),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:lasgn, :bar, s(:lit, 1)),
+                                 :"*baz", :qux, :quuz),
+                               s(:nil))
       end
 
       it "works with a named argument with a default value" do
         _("def foo bar: 1; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:kwarg, :bar, s(:lit, 1))),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:kwarg, :bar, s(:lit, 1))),
+                               s(:nil))
       end
 
       it "works with a named argument with no default value" do
         _("def foo bar:; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args,
-                                s(:kwarg, :bar)),
-                              s(:nil))
+                               :foo,
+                               s(:args,
+                                 s(:kwarg, :bar)),
+                               s(:nil))
       end
 
       it "works with a double splat" do
         _("def foo **bar; end")
           .must_be_parsed_as s(:defn,
-                              :foo,
-                              s(:args, :'**bar'),
-                              s(:nil))
+                               :foo,
+                               s(:args, :'**bar'),
+                               s(:nil))
       end
 
       it "works with argument destructuring" do
         _("def foo((bar, baz)); end")
           .must_be_parsed_as s(:defn, :foo,
-                              s(:args, s(:masgn, :bar, :baz)),
-                              s(:nil))
+                               s(:args, s(:masgn, :bar, :baz)),
+                               s(:nil))
       end
 
       it "works with argument destructuring including splat" do
         _("def foo((bar, *baz)); end")
           .must_be_parsed_as s(:defn, :foo,
-                              s(:args, s(:masgn, :bar, :'*baz')),
-                              s(:nil))
+                               s(:args, s(:masgn, :bar, :'*baz')),
+                               s(:nil))
       end
 
       it "works with nested argument destructuring" do
         _("def foo((bar, (baz, qux))); end")
           .must_be_parsed_as s(:defn, :foo,
-                              s(:args, s(:masgn, :bar, s(:masgn, :baz, :qux))),
-                              s(:nil))
+                               s(:args, s(:masgn, :bar, s(:masgn, :baz, :qux))),
+                               s(:nil))
       end
 
       it "works when the method name is an operator" do
         _("def +; end")
           .must_be_parsed_as s(:defn, :+, s(:args),
-                              s(:nil))
+                               s(:nil))
       end
 
       it "works when the method name is a keyword" do
         _("def for; end")
           .must_be_parsed_as s(:defn, :for, s(:args),
-                              s(:nil))
+                               s(:nil))
       end
 
       it "assigns correct line numbers when the body is empty" do
         _("def bar\nend")
           .must_be_parsed_as s(:defn,
-                              :bar,
-                              s(:args).line(1),
-                              s(:nil).line(2)).line(1),
-                            with_line_numbers: true
+                               :bar,
+                               s(:args).line(1),
+                               s(:nil).line(2)).line(1),
+                             with_line_numbers: true
       end
     end
 
@@ -219,37 +219,37 @@ describe RipperRubyParser::Parser do
       it "works with empty body" do
         _("def foo.bar; end")
           .must_be_parsed_as s(:defs,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:args),
-                              s(:nil))
+                               s(:call, nil, :foo),
+                               :bar,
+                               s(:args),
+                               s(:nil))
       end
 
       it "works with a body with multiple statements" do
         _("def foo.bar; baz; qux; end")
           .must_be_parsed_as s(:defs,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:args),
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux))
+                               s(:call, nil, :foo),
+                               :bar,
+                               s(:args),
+                               s(:call, nil, :baz),
+                               s(:call, nil, :qux))
       end
 
       it "works with a simple splat" do
         _("def foo.bar *baz; end")
           .must_be_parsed_as s(:defs,
-                              s(:call, nil, :foo),
-                              :bar,
-                              s(:args, :"*baz"),
-                              s(:nil))
+                               s(:call, nil, :foo),
+                               :bar,
+                               s(:args, :"*baz"),
+                               s(:nil))
       end
 
       it "works when the method name is a keyword" do
         _("def foo.for; end")
           .must_be_parsed_as s(:defs,
-                              s(:call, nil, :foo),
-                              :for, s(:args),
-                              s(:nil))
+                               s(:call, nil, :foo),
+                               :for, s(:args),
+                               s(:nil))
       end
     end
 
@@ -257,19 +257,19 @@ describe RipperRubyParser::Parser do
       it "works with regular barewords" do
         _("alias foo bar")
           .must_be_parsed_as s(:alias,
-                              s(:lit, :foo), s(:lit, :bar))
+                               s(:lit, :foo), s(:lit, :bar))
       end
 
       it "works with symbols" do
         _("alias :foo :bar")
           .must_be_parsed_as s(:alias,
-                              s(:lit, :foo), s(:lit, :bar))
+                               s(:lit, :foo), s(:lit, :bar))
       end
 
       it "works with operator barewords" do
         _("alias + -")
           .must_be_parsed_as s(:alias,
-                              s(:lit, :+), s(:lit, :-))
+                               s(:lit, :+), s(:lit, :-))
       end
 
       it "treats keywords as symbols" do
@@ -297,15 +297,15 @@ describe RipperRubyParser::Parser do
       it "works with multiple bareword identifiers" do
         _("undef foo, bar")
           .must_be_parsed_as s(:block,
-                              s(:undef, s(:lit, :foo)),
-                              s(:undef, s(:lit, :bar)))
+                               s(:undef, s(:lit, :foo)),
+                               s(:undef, s(:lit, :bar)))
       end
 
       it "works with multiple bareword symbols" do
         _("undef :foo, :bar")
           .must_be_parsed_as s(:block,
-                              s(:undef, s(:lit, :foo)),
-                              s(:undef, s(:lit, :bar)))
+                               s(:undef, s(:lit, :foo)),
+                               s(:undef, s(:lit, :bar)))
       end
     end
 
@@ -318,46 +318,46 @@ describe RipperRubyParser::Parser do
       it "works with one argument" do
         _("return foo")
           .must_be_parsed_as s(:return,
-                              s(:call, nil, :foo))
+                               s(:call, nil, :foo))
       end
 
       it "works with a splat argument" do
         _("return *foo")
           .must_be_parsed_as s(:return,
-                              s(:svalue,
-                                s(:splat,
-                                  s(:call, nil, :foo))))
+                               s(:svalue,
+                                 s(:splat,
+                                   s(:call, nil, :foo))))
       end
 
       it "works with multiple arguments" do
         _("return foo, bar")
           .must_be_parsed_as s(:return,
-                              s(:array,
-                                s(:call, nil, :foo),
-                                s(:call, nil, :bar)))
+                               s(:array,
+                                 s(:call, nil, :foo),
+                                 s(:call, nil, :bar)))
       end
 
       it "works with a regular argument and a splat argument" do
         _("return foo, *bar")
           .must_be_parsed_as s(:return,
-                              s(:array,
-                                s(:call, nil, :foo),
-                                s(:splat,
-                                  s(:call, nil, :bar))))
+                               s(:array,
+                                 s(:call, nil, :foo),
+                                 s(:splat,
+                                   s(:call, nil, :bar))))
       end
 
       it "works with a function call with parentheses" do
         _("return foo(bar)")
           .must_be_parsed_as s(:return,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
+                               s(:call, nil, :foo,
+                                 s(:call, nil, :bar)))
       end
 
       it "works with a function call without parentheses" do
         _("return foo bar")
           .must_be_parsed_as s(:return,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
+                               s(:call, nil, :foo,
+                                 s(:call, nil, :bar)))
       end
     end
 
@@ -385,36 +385,36 @@ describe RipperRubyParser::Parser do
       it "works with multiple arguments and no parentheses" do
         _("yield foo, bar")
           .must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar))
       end
 
       it "works with multiple arguments and parentheses" do
         _("yield(foo, bar)")
           .must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar))
       end
 
       it "works with splat" do
         _("yield foo, *bar")
           .must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo),
-                              s(:splat, s(:call, nil, :bar)))
+                               s(:call, nil, :foo),
+                               s(:splat, s(:call, nil, :bar)))
       end
 
       it "works with a function call with parentheses" do
         _("yield foo(bar)")
           .must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
+                               s(:call, nil, :foo,
+                                 s(:call, nil, :bar)))
       end
 
       it "works with a function call without parentheses" do
         _("yield foo bar")
           .must_be_parsed_as s(:yield,
-                              s(:call, nil, :foo,
-                                s(:call, nil, :bar)))
+                               s(:call, nil, :foo,
+                                 s(:call, nil, :bar)))
       end
     end
   end

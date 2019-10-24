@@ -73,72 +73,72 @@ describe RipperRubyParser::Parser do
         it "works for a simple interpolation" do
           _('/foo#{bar}baz/')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "baz"))
+                                 "foo",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "baz"))
         end
 
         it "works for a regex literal with flags and interpolation" do
           _('/foo#{bar}/ixm')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr, s(:call, nil, :bar)),
-                                7)
+                                 "foo",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 7)
         end
 
         it "works with the no-encoding flag" do
           _('/foo#{bar}/n')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr,
-                                  s(:call, nil, :bar)), 32)
+                                 "foo",
+                                 s(:evstr,
+                                   s(:call, nil, :bar)), 32)
         end
 
         it "works with the unicode-encoding flag" do
           _('/foo#{bar}/u')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr,
-                                  s(:call, nil, :bar)), 16)
+                                 "foo",
+                                 s(:evstr,
+                                   s(:call, nil, :bar)), 16)
         end
 
         it "works with unicode flag plus other flag" do
           _('/foo#{bar}/un')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr,
-                                  s(:call, nil, :bar)), 48)
+                                 "foo",
+                                 s(:evstr,
+                                   s(:call, nil, :bar)), 48)
         end
 
         it "works with the euc-encoding flag" do
           _('/foo#{bar}/e')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr,
-                                  s(:call, nil, :bar)), 16)
+                                 "foo",
+                                 s(:evstr,
+                                   s(:call, nil, :bar)), 16)
         end
 
         it "works with the sjis-encoding flag" do
           _('/foo#{bar}/s')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr,
-                                  s(:call, nil, :bar)), 16)
+                                 "foo",
+                                 s(:evstr,
+                                   s(:call, nil, :bar)), 16)
         end
 
         it "works for a regex literal with interpolate-once flag" do
           _('/foo#{bar}/o')
             .must_be_parsed_as s(:dregx_once,
-                                "foo",
-                                s(:evstr, s(:call, nil, :bar)))
+                                 "foo",
+                                 s(:evstr, s(:call, nil, :bar)))
         end
 
         it "works with an empty interpolation" do
           _('/foo#{}bar/')
             .must_be_parsed_as s(:dregx,
-                                "foo",
-                                s(:evstr),
-                                s(:str, "bar"))
+                                 "foo",
+                                 s(:evstr),
+                                 s(:str, "bar"))
         end
 
         describe "containing just a literal string" do
@@ -269,7 +269,7 @@ describe RipperRubyParser::Parser do
         it "does not convert to unicode if result is not valid" do
           _('"2\x82\302\275"')
             .must_be_parsed_as s(:str,
-                                (+"2\x82\xC2\xBD").force_encoding("ascii-8bit"))
+                                 (+"2\x82\xC2\xBD").force_encoding("ascii-8bit"))
         end
       end
 
@@ -311,75 +311,75 @@ describe RipperRubyParser::Parser do
         it "works for trivial interpolated strings" do
           _('"#{foo}"')
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr,
-                                  s(:call, nil, :foo)))
+                                 "",
+                                 s(:evstr,
+                                   s(:call, nil, :foo)))
         end
 
         it "works for basic interpolated strings" do
           _('"foo#{bar}"')
             .must_be_parsed_as s(:dstr,
-                                "foo",
-                                s(:evstr,
-                                  s(:call, nil, :bar)))
+                                 "foo",
+                                 s(:evstr,
+                                   s(:call, nil, :bar)))
         end
 
         it "works for strings with several interpolations" do
           _('"foo#{bar}baz#{qux}"')
             .must_be_parsed_as s(:dstr,
-                                "foo",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "baz"),
-                                s(:evstr, s(:call, nil, :qux)))
+                                 "foo",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "baz"),
+                                 s(:evstr, s(:call, nil, :qux)))
         end
 
         it "correctly handles two interpolations in a row" do
           _("\"\#{bar}\#{qux}\"")
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:evstr, s(:call, nil, :qux)))
+                                 "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:evstr, s(:call, nil, :qux)))
         end
 
         it "works with an empty interpolation" do
           _("\"foo\#{}bar\"")
             .must_be_parsed_as s(:dstr,
-                                "foo",
-                                s(:evstr),
-                                s(:str, "bar"))
+                                 "foo",
+                                 s(:evstr),
+                                 s(:str, "bar"))
         end
 
         it "correctly handles interpolation with __FILE__ before another interpolation" do
           _("\"foo\#{__FILE__}\#{bar}\"")
             .must_be_parsed_as s(:dstr,
-                                "foo(string)",
-                                s(:evstr, s(:call, nil, :bar)))
+                                 "foo(string)",
+                                 s(:evstr, s(:call, nil, :bar)))
         end
 
         it "correctly handles interpolation with __FILE__ after another interpolation" do
           _("\"\#{bar}foo\#{__FILE__}\"")
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "foo"),
-                                s(:str, "(string)"))
+                                 "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "foo"),
+                                 s(:str, "(string)"))
         end
 
         it "correctly handles nested interpolation" do
           _('"foo#{"bar#{baz}"}"')
             .must_be_parsed_as s(:dstr,
-                                "foobar",
-                                s(:evstr, s(:call, nil, :baz)))
+                                 "foobar",
+                                 s(:evstr, s(:call, nil, :baz)))
         end
 
         it "correctly handles consecutive nested interpolation" do
           _('"foo#{"bar#{baz}"}foo#{"bar#{baz}"}"')
             .must_be_parsed_as s(:dstr,
-                                "foobar",
-                                s(:evstr, s(:call, nil, :baz)),
-                                s(:str, "foo"),
-                                s(:str, "bar"),
-                                s(:evstr, s(:call, nil, :baz)))
+                                 "foobar",
+                                 s(:evstr, s(:call, nil, :baz)),
+                                 s(:str, "foo"),
+                                 s(:str, "bar"),
+                                 s(:evstr, s(:call, nil, :baz)))
         end
       end
 
@@ -387,41 +387,41 @@ describe RipperRubyParser::Parser do
         it "works when interpolations are followed by escape sequences" do
           _('"#{foo}\\n"')
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "\n"))
+                                 "",
+                                 s(:evstr, s(:call, nil, :foo)),
+                                 s(:str, "\n"))
         end
 
         it "works when interpolations contain a mix of other string-like literals" do
           _('"#{[:foo, \'bar\']}\\n"')
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:array, s(:lit, :foo), s(:str, "bar"))),
-                                s(:str, "\n"))
+                                 "",
+                                 s(:evstr, s(:array, s(:lit, :foo), s(:str, "bar"))),
+                                 s(:str, "\n"))
         end
 
         it "converts to unicode after interpolation" do
           _('"#{foo}2\302\275"')
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "2½"))
+                                 "",
+                                 s(:evstr, s(:call, nil, :foo)),
+                                 s(:str, "2½"))
         end
 
         it "convert single null byte to unicode after interpolation" do
           _('"#{foo}\0"')
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "\u0000"))
+                                 "",
+                                 s(:evstr, s(:call, nil, :foo)),
+                                 s(:str, "\u0000"))
         end
 
         it "converts string with null to unicode after interpolation" do
           _('"#{foo}bar\0"')
             .must_be_parsed_as s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :foo)),
-                                s(:str, "bar\x00"))
+                                 "",
+                                 s(:evstr, s(:call, nil, :foo)),
+                                 s(:str, "bar\x00"))
         end
       end
 
@@ -531,25 +531,25 @@ describe RipperRubyParser::Parser do
         it "performs the concatenation when the right string has interpolations" do
           _("\"foo\" \"bar\#{baz}\"")
             .must_be_parsed_as s(:dstr,
-                                "foobar",
-                                s(:evstr, s(:call, nil, :baz)))
+                                 "foobar",
+                                 s(:evstr, s(:call, nil, :baz)))
         end
 
         describe "when the left string has interpolations" do
           it "performs the concatenation" do
             _("\"foo\#{bar}\" \"baz\"")
               .must_be_parsed_as s(:dstr,
-                                  "foo",
-                                  s(:evstr, s(:call, nil, :bar)),
-                                  s(:str, "baz"))
+                                   "foo",
+                                   s(:evstr, s(:call, nil, :bar)),
+                                   s(:str, "baz"))
           end
 
           it "performs the concatenation with an empty string" do
             _("\"foo\#{bar}\" \"\"")
               .must_be_parsed_as s(:dstr,
-                                  "foo",
-                                  s(:evstr, s(:call, nil, :bar)),
-                                  s(:str, ""))
+                                   "foo",
+                                   s(:evstr, s(:call, nil, :bar)),
+                                   s(:str, ""))
           end
         end
 
@@ -557,18 +557,18 @@ describe RipperRubyParser::Parser do
           it "performs the concatenation" do
             _("\"foo\#{bar}\" \"baz\#{qux}\"")
               .must_be_parsed_as s(:dstr,
-                                  "foo",
-                                  s(:evstr, s(:call, nil, :bar)),
-                                  s(:str, "baz"),
-                                  s(:evstr, s(:call, nil, :qux)))
+                                   "foo",
+                                   s(:evstr, s(:call, nil, :bar)),
+                                   s(:str, "baz"),
+                                   s(:evstr, s(:call, nil, :qux)))
           end
 
           it "removes empty substrings from the concatenation" do
             _("\"foo\#{bar}\" \"\#{qux}\"")
               .must_be_parsed_as s(:dstr,
-                                  "foo",
-                                  s(:evstr, s(:call, nil, :bar)),
-                                  s(:evstr, s(:call, nil, :qux)))
+                                   "foo",
+                                   s(:evstr, s(:call, nil, :bar)),
+                                   s(:evstr, s(:call, nil, :qux)))
           end
         end
       end
@@ -642,22 +642,22 @@ describe RipperRubyParser::Parser do
         it "handles interpolation" do
           _("<<FOO\n\#{bar}\nFOO")
             .must_be_parsed_as s(:dstr, "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "\n"))
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "\n"))
         end
 
         it "handles line continuation after interpolation" do
           _("<<FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "\nbazqux\n"))
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "\nbazqux\n"))
         end
 
         it "handles line continuation after interpolation for the indentable case" do
           _("<<-FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "\nbazqux\n"))
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "\nbazqux\n"))
         end
       end
     end
@@ -698,34 +698,34 @@ describe RipperRubyParser::Parser do
       it "correctly handles interpolation" do
         _("%W(foo \#{bar} baz)")
           .must_be_parsed_as  s(:array,
-                               s(:str, "foo"),
-                               s(:dstr, "", s(:evstr, s(:call, nil, :bar))),
-                               s(:str, "baz"))
+                                s(:str, "foo"),
+                                s(:dstr, "", s(:evstr, s(:call, nil, :bar))),
+                                s(:str, "baz"))
       end
 
       it "correctly handles braceless interpolation" do
         _("%W(foo \#@bar baz)")
           .must_be_parsed_as  s(:array,
-                               s(:str, "foo"),
-                               s(:dstr, "", s(:evstr, s(:ivar, :@bar))),
-                               s(:str, "baz"))
+                                s(:str, "foo"),
+                                s(:dstr, "", s(:evstr, s(:ivar, :@bar))),
+                                s(:str, "baz"))
       end
 
       it "correctly handles in-word interpolation" do
         _("%W(foo \#{bar}baz)")
           .must_be_parsed_as s(:array,
-                              s(:str, "foo"),
-                              s(:dstr,
-                                "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "baz")))
+                               s(:str, "foo"),
+                               s(:dstr,
+                                 "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "baz")))
       end
 
       it "correctly handles escape sequences" do
         _('%W(foo\nbar baz)')
           .must_be_parsed_as s(:array,
-                              s(:str, "foo\nbar"),
-                              s(:str, "baz"))
+                               s(:str, "foo\nbar"),
+                               s(:str, "baz"))
       end
 
       it "converts to unicode if possible" do
@@ -735,16 +735,16 @@ describe RipperRubyParser::Parser do
       it "correctly handles line continuation" do
         _("%W(foo\\\nbar baz)")
           .must_be_parsed_as s(:array,
-                              s(:str, "foo\nbar"),
-                              s(:str, "baz"))
+                               s(:str, "foo\nbar"),
+                               s(:str, "baz"))
       end
 
       it "correctly handles multiple lines" do
         _("%W(foo\nbar baz)")
           .must_be_parsed_as s(:array,
-                              s(:str, "foo"),
-                              s(:str, "bar"),
-                              s(:str, "baz"))
+                               s(:str, "foo"),
+                               s(:str, "bar"),
+                               s(:str, "baz"))
       end
     end
 
@@ -774,41 +774,41 @@ describe RipperRubyParser::Parser do
       it "correctly handles escape sequences" do
         _('%I(foo\nbar baz)')
           .must_be_parsed_as s(:array,
-                              s(:lit, :"foo\nbar"),
-                              s(:lit, :baz))
+                               s(:lit, :"foo\nbar"),
+                               s(:lit, :baz))
       end
 
       it "correctly handles interpolation" do
         _("%I(foo \#{bar} baz)")
           .must_be_parsed_as s(:array,
-                              s(:lit, :foo),
-                              s(:dsym, "", s(:evstr, s(:call, nil, :bar))),
-                              s(:lit, :baz))
+                               s(:lit, :foo),
+                               s(:dsym, "", s(:evstr, s(:call, nil, :bar))),
+                               s(:lit, :baz))
       end
 
       it "correctly handles in-word interpolation" do
         _("%I(foo \#{bar}baz)")
           .must_be_parsed_as s(:array,
-                              s(:lit, :foo),
-                              s(:dsym,
-                                "",
-                                s(:evstr, s(:call, nil, :bar)),
-                                s(:str, "baz")))
+                               s(:lit, :foo),
+                               s(:dsym,
+                                 "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, "baz")))
       end
 
       it "correctly handles line continuation" do
         _("%I(foo\\\nbar baz)")
           .must_be_parsed_as s(:array,
-                              s(:lit, :"foo\nbar"),
-                              s(:lit, :baz))
+                               s(:lit, :"foo\nbar"),
+                               s(:lit, :baz))
       end
 
       it "correctly handles multiple lines" do
         _("%I(foo\nbar baz)")
           .must_be_parsed_as s(:array,
-                              s(:lit, :foo),
-                              s(:lit, :bar),
-                              s(:lit, :baz))
+                               s(:lit, :foo),
+                               s(:lit, :bar),
+                               s(:lit, :baz))
       end
     end
 
@@ -896,15 +896,15 @@ describe RipperRubyParser::Parser do
       it "works for dsyms with interpolations" do
         _(':"foo#{bar}"')
           .must_be_parsed_as s(:dsym,
-                              "foo",
-                              s(:evstr, s(:call, nil, :bar)))
+                               "foo",
+                               s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for dsyms with interpolations at the start" do
         _(':"#{bar}"')
           .must_be_parsed_as s(:dsym,
-                              "",
-                              s(:evstr, s(:call, nil, :bar)))
+                               "",
+                               s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for dsyms with escape sequences" do
@@ -950,7 +950,7 @@ describe RipperRubyParser::Parser do
       it "works with barewords that need to be interpreted as symbols" do
         _("alias foo bar")
           .must_be_parsed_as s(:alias,
-                              s(:lit, :foo), s(:lit, :bar))
+                               s(:lit, :foo), s(:lit, :bar))
       end
 
       it "assigns a line number to the result" do
@@ -968,14 +968,14 @@ describe RipperRubyParser::Parser do
       it "works for interpolated backtick strings" do
         _('`foo#{bar}`')
           .must_be_parsed_as s(:dxstr,
-                              "foo",
-                              s(:evstr, s(:call, nil, :bar)))
+                               "foo",
+                               s(:evstr, s(:call, nil, :bar)))
       end
 
       it "works for backtick strings interpolated at the start" do
         _('`#{foo}`')
           .must_be_parsed_as s(:dxstr, "",
-                              s(:evstr, s(:call, nil, :foo)))
+                               s(:evstr, s(:call, nil, :foo)))
       end
 
       it "works for backtick strings with escape sequences" do
@@ -1003,14 +1003,14 @@ describe RipperRubyParser::Parser do
       it "works for a simple case with splat" do
         _("[*foo]")
           .must_be_parsed_as s(:array,
-                              s(:splat, s(:call, nil, :foo)))
+                               s(:splat, s(:call, nil, :foo)))
       end
 
       it "works for a multi-element case with splat" do
         _("[foo, *bar]")
           .must_be_parsed_as s(:array,
-                              s(:call, nil, :foo),
-                              s(:splat, s(:call, nil, :bar)))
+                               s(:call, nil, :foo),
+                               s(:splat, s(:call, nil, :bar)))
       end
     end
 
@@ -1023,41 +1023,41 @@ describe RipperRubyParser::Parser do
       it "works for a hash with one pair" do
         _("{foo => bar}")
           .must_be_parsed_as s(:hash,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar))
       end
 
       it "works for a hash with multiple pairs" do
         _("{foo => bar, baz => qux}")
           .must_be_parsed_as s(:hash,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar),
-                              s(:call, nil, :baz),
-                              s(:call, nil, :qux))
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar),
+                               s(:call, nil, :baz),
+                               s(:call, nil, :qux))
       end
 
       it "works for a hash with label keys" do
         _("{foo: bar, baz: qux}")
           .must_be_parsed_as s(:hash,
-                              s(:lit, :foo),
-                              s(:call, nil, :bar),
-                              s(:lit, :baz),
-                              s(:call, nil, :qux))
+                               s(:lit, :foo),
+                               s(:call, nil, :bar),
+                               s(:lit, :baz),
+                               s(:call, nil, :qux))
       end
 
       it "works for a hash with dynamic label keys" do
         _("{'foo': bar}")
           .must_be_parsed_as s(:hash,
-                              s(:lit, :foo),
-                              s(:call, nil, :bar))
+                               s(:lit, :foo),
+                               s(:call, nil, :bar))
       end
 
       it "works for a hash with splat" do
         _("{foo: bar, baz: qux, **quux}")
           .must_be_parsed_as s(:hash,
-                              s(:lit, :foo), s(:call, nil, :bar),
-                              s(:lit, :baz), s(:call, nil, :qux),
-                              s(:kwsplat, s(:call, nil, :quux)))
+                               s(:lit, :foo), s(:call, nil, :bar),
+                               s(:lit, :baz), s(:call, nil, :qux),
+                               s(:kwsplat, s(:call, nil, :quux)))
       end
     end
 

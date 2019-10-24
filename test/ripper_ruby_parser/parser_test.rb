@@ -20,8 +20,8 @@ describe RipperRubyParser::Parser do
       it "works with a namespaced class name" do
         _("class Foo::Bar; end")
           .must_be_parsed_as s(:class,
-                              s(:colon2, s(:const, :Foo), :Bar),
-                              nil)
+                               s(:colon2, s(:const, :Foo), :Bar),
+                               nil)
       end
 
       it "works for singleton classes" do
@@ -38,7 +38,7 @@ describe RipperRubyParser::Parser do
       it "works with a namespaced module name" do
         _("module Foo::Bar; end")
           .must_be_parsed_as s(:module,
-                              s(:colon2, s(:const, :Foo), :Bar))
+                               s(:colon2, s(:const, :Foo), :Bar))
       end
     end
 
@@ -62,8 +62,8 @@ describe RipperRubyParser::Parser do
       it "works with multiple statements" do
         _("begin; foo; bar; end")
           .must_be_parsed_as s(:block,
-                              s(:call, nil, :foo),
-                              s(:call, nil, :bar))
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar))
       end
     end
 
@@ -71,33 +71,33 @@ describe RipperRubyParser::Parser do
       it "works for a simple case with splat" do
         _("foo *bar")
           .must_be_parsed_as s(:call,
-                              nil,
-                              :foo,
-                              s(:splat, s(:call, nil, :bar)))
+                               nil,
+                               :foo,
+                               s(:splat, s(:call, nil, :bar)))
       end
 
       it "works for a multi-argument case with splat" do
         _("foo bar, *baz")
           .must_be_parsed_as s(:call,
-                              nil,
-                              :foo,
-                              s(:call, nil, :bar),
-                              s(:splat, s(:call, nil, :baz)))
+                               nil,
+                               :foo,
+                               s(:call, nil, :bar),
+                               s(:splat, s(:call, nil, :baz)))
       end
 
       it "works for a simple case passing a block" do
         _("foo &bar")
           .must_be_parsed_as s(:call, nil, :foo,
-                              s(:block_pass,
-                                s(:call, nil, :bar)))
+                               s(:block_pass,
+                                 s(:call, nil, :bar)))
       end
 
       it "works for a bare hash" do
         _("foo bar => baz")
           .must_be_parsed_as s(:call, nil, :foo,
-                              s(:hash,
-                                s(:call, nil, :bar),
-                                s(:call, nil, :baz)))
+                               s(:hash,
+                                 s(:call, nil, :bar),
+                                 s(:call, nil, :baz)))
       end
     end
 
@@ -147,17 +147,17 @@ describe RipperRubyParser::Parser do
       it "assigns correct line numbers" do
         _("END {\nfoo\n}")
           .must_be_parsed_as s(:iter,
-                              s(:postexe).line(1), 0,
-                              s(:call, nil, :foo).line(2)).line(1),
-                            with_line_numbers: true
+                               s(:postexe).line(1), 0,
+                               s(:call, nil, :foo).line(2)).line(1),
+                             with_line_numbers: true
       end
 
       it "assigns correct line numbers to a embedded begin block" do
         _("END {\nbegin\nfoo\nend\n}")
           .must_be_parsed_as s(:iter,
-                              s(:postexe).line(1), 0,
-                              s(:call, nil, :foo).line(3)).line(1),
-                            with_line_numbers: true
+                               s(:postexe).line(1), 0,
+                               s(:call, nil, :foo).line(3)).line(1),
+                             with_line_numbers: true
       end
     end
 
@@ -175,18 +175,18 @@ describe RipperRubyParser::Parser do
       it "assigns correct line numbers" do
         _("BEGIN {\nfoo\n}")
           .must_be_parsed_as s(:iter,
-                              s(:preexe).line(1), 0,
-                              s(:call, nil, :foo).line(2)).line(1),
-                            with_line_numbers: true
+                               s(:preexe).line(1), 0,
+                               s(:call, nil, :foo).line(2)).line(1),
+                             with_line_numbers: true
       end
 
       it "assigns correct line numbers to a embedded begin block" do
         _("BEGIN {\nbegin\nfoo\nend\n}")
           .must_be_parsed_as s(:iter,
-                              s(:preexe).line(1), 0,
-                              s(:begin,
-                                s(:call, nil, :foo).line(3)).line(2)).line(1),
-                            with_line_numbers: true
+                               s(:preexe).line(1), 0,
+                               s(:begin,
+                                 s(:call, nil, :foo).line(3)).line(2)).line(1),
+                             with_line_numbers: true
       end
     end
 
@@ -199,8 +199,8 @@ describe RipperRubyParser::Parser do
       it "works with a three-level constant lookup" do
         _("Foo::Bar::Baz")
           .must_be_parsed_as s(:colon2,
-                              s(:colon2, s(:const, :Foo), :Bar),
-                              :Baz)
+                               s(:colon2, s(:const, :Foo), :Bar),
+                               :Baz)
       end
 
       it "works looking up a constant in a non-constant" do
@@ -244,18 +244,18 @@ describe RipperRubyParser::Parser do
       it "handles assignment inside binary operator expressions" do
         _("foo + (bar = baz)")
           .must_be_parsed_as s(:call,
-                              s(:call, nil, :foo),
-                              :+,
-                              s(:lasgn,
-                                :bar,
-                                s(:call, nil, :baz)))
+                               s(:call, nil, :foo),
+                               :+,
+                               s(:lasgn,
+                                 :bar,
+                                 s(:call, nil, :baz)))
       end
 
       it "handles assignment inside unary operator expressions" do
         _("+(foo = bar)")
           .must_be_parsed_as s(:call,
-                              s(:lasgn, :foo, s(:call, nil, :bar)),
-                              :+@)
+                               s(:lasgn, :foo, s(:call, nil, :bar)),
+                               :+@)
       end
     end
 
@@ -423,9 +423,9 @@ describe RipperRubyParser::Parser do
       it "works for a local variable" do
         _("foo = bar\nfoo\n")
           .must_be_parsed_as s(:block,
-                              s(:lasgn, :foo, s(:call, nil, :bar).line(1)).line(1),
-                              s(:lvar, :foo).line(2)).line(1),
-                            with_line_numbers: true
+                               s(:lasgn, :foo, s(:call, nil, :bar).line(1)).line(1),
+                               s(:lvar, :foo).line(2)).line(1),
+                             with_line_numbers: true
       end
 
       it "works for an integer literal" do
@@ -511,10 +511,10 @@ describe RipperRubyParser::Parser do
       it "assigns line numbers to nested sexps without their own line numbers" do
         _("foo(bar) do\nnext baz\nend\n")
           .must_be_parsed_as s(:iter,
-                              s(:call, nil, :foo, s(:call, nil, :bar).line(1)).line(1),
-                              0,
-                              s(:next, s(:call, nil, :baz).line(2)).line(2)).line(1),
-                            with_line_numbers: true
+                               s(:call, nil, :foo, s(:call, nil, :bar).line(1)).line(1),
+                               0,
+                               s(:next, s(:call, nil, :baz).line(2)).line(2)).line(1),
+                             with_line_numbers: true
       end
 
       describe "when a line number is passed" do
