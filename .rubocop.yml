@@ -1,4 +1,7 @@
-require: rubocop-performance
+inherit_from: .rubocop_todo.yml
+
+require:
+  - rubocop-performance
 
 AllCops:
   Exclude:
@@ -6,23 +9,27 @@ AllCops:
     - 'tmp/**/*'
   TargetRubyVersion: 2.4
 
-# Dot at end of line makes it clearer that the line is not done
-Layout/DotPosition:
-  EnforcedStyle: trailing
-
 # Don't force lonely closing parentheses
 Layout/MultilineMethodCallBraceLayout:
   EnforcedStyle: same_line
 
+# Multi-line method calls should be simply indented. Aligning them makes it
+# even harder to keep a sane line length.
+Layout/MultilineMethodCallIndentation:
+  EnforcedStyle: indented
+
+# Multi-line assignment should be simply indented. Aligning them makes it even
+# harder to keep a sane line length.
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
+
+# Force consistent spacing independent of block contents
+Layout/SpaceBeforeBlockBraces:
+  EnforcedStyleForEmptyBraces: space
+
 # Allow if (foo = get_foo) style
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
-
-# These test files contain many literal strings that represent Ruby source with
-# interpolation.
-Lint/InterpolationCheck:
-  Exclude:
-    - 'test/**/*.rb'
 
 # Test describe blocks can be any size
 Metrics/BlockLength:
@@ -31,16 +38,7 @@ Metrics/BlockLength:
 
 # Set a lenient line length limit
 Metrics/LineLength:
-  Max: 95
-
-# Allow any name: It's just a string
-Naming/HeredocDelimiterNaming:
-  Enabled: false
-
-# Allow process_BEGIN and friends
-# FIXME: Should be able to disable this inline!
-Naming/MethodName:
-  Enabled: false
+  Max: 92
 
 # Allow and/or for control flow only
 Style/AndOr:
@@ -50,28 +48,40 @@ Style/AndOr:
 Style/GuardClause:
   MinBodyLength: 2
 
-# Avoid offenses on s().
-Style/MethodCallWithoutArgsParentheses:
-  IgnoredMethods: ['s']
-
 # This cop gives confusing results for objects that may not be numbers.
 Style/NumericPredicate:
   Enabled: false
+
+# Use older RuboCop default
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%w': ()
 
 # Allow explicit return with multiple return values
 Style/RedundantReturn:
   AllowMultipleReturnValues: true
 
-# Always use raise to raise exceptions
-Style/SignalException:
-  EnforcedStyle: only_raise
-
-# This cop gives too many false positives
-Style/FormatStringToken:
-  Enabled: false
+# Do not commit to use of interpolation
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
 
 # Prefer symbols to look like symbols
 Style/SymbolArray:
   EnforcedStyle: brackets
 
-inherit_from: .rubocop_todo.yml
+# Project-specific configuration goes here.
+
+# These test files contain many literal strings that represent Ruby source with
+# interpolation.
+Lint/InterpolationCheck:
+  Exclude:
+    - 'test/**/*.rb'
+
+# Allow process_BEGIN and friends
+# FIXME: Should be able to disable this inline!
+Naming/MethodName:
+  Enabled: false
+
+# Avoid offenses on s().
+Style/MethodCallWithoutArgsParentheses:
+  IgnoredMethods: ['s']
