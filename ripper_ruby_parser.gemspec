@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency("minitest", ["~> 5.6"])
   s.add_development_dependency("rake", ["~> 13.0"])
-  s.add_development_dependency("ruby_parser", ["~> 3.14.0"])
+  s.add_development_dependency("ruby_parser", ["~> 3.14.1"])
   s.add_development_dependency("simplecov")
 
   s.require_paths = ["lib"]
