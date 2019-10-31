@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require File.expand_path('../test_helper.rb', File.dirname(__FILE__))
-require 'ruby_parser'
+require File.expand_path("../test_helper.rb", File.dirname(__FILE__))
+require "ruby_parser"
 
-describe 'Using RipperRubyParser and RubyParser' do
-  describe 'for a multi-line program' do
+describe "Using RipperRubyParser and RubyParser" do
+  describe "for a multi-line program" do
     let :program do
-      <<-END
+      <<-RUBY
       class Foo
         def foo()
           bar()
@@ -17,14 +17,14 @@ describe 'Using RipperRubyParser and RubyParser' do
       module Bar
         @@baz = {}
       end
-      END
+      RUBY
     end
 
-    it 'gives the same result' do
+    it "gives the same result" do
       _(program).must_be_parsed_as_before
     end
 
-    it 'gives the same result with line numbers' do
+    it "gives the same result with line numbers" do
       _(program).must_be_parsed_as_before with_line_numbers: true
     end
   end

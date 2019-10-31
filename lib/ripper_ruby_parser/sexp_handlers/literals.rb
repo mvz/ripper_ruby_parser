@@ -31,16 +31,16 @@ module RipperRubyParser
         when :str, :dstr
           val
         when :void_stmt
-          s(:dstr, '', s(:evstr))
+          s(:dstr, "", s(:evstr))
         else
-          s(:dstr, '', s(:evstr, val))
+          s(:dstr, "", s(:evstr, val))
         end
       end
 
       def process_string_dvar(exp)
         _, list = exp.shift 2
         val = process(list)
-        s(:dstr, '', s(:evstr, val))
+        s(:dstr, "", s(:evstr, val))
       end
 
       def process_string_concat(exp)
@@ -121,11 +121,11 @@ module RipperRubyParser
 
       INTERPOLATING_HEREDOC = /^<<[-~]?[^-~']/.freeze
       NON_INTERPOLATING_HEREDOC = /^<<[-~]?'/.freeze
-      INTERPOLATING_STRINGS = ['"', '`', ':"', /^%Q.$/, /^%.$/].freeze
+      INTERPOLATING_STRINGS = ['"', "`", ':"', /^%Q.$/, /^%.$/].freeze
       NON_INTERPOLATING_STRINGS = ["'", ":'", /^%q.$/].freeze
       INTERPOLATING_WORD_LIST = /^%[WI].$/.freeze
       NON_INTERPOLATING_WORD_LIST = /^%[wi].$/.freeze
-      REGEXP_LITERALS = ['/', /^%r.$/].freeze
+      REGEXP_LITERALS = ["/", /^%r.$/].freeze
 
       def process_at_tstring_content(exp)
         _, content, pos, delim = exp.shift 4
@@ -166,7 +166,7 @@ module RipperRubyParser
       private
 
       def extract_string_parts(list)
-        return nil, '', [] if list.empty?
+        return nil, "", [] if list.empty?
 
         list = merge_raw_string_literals list
         list = map_process_list list
@@ -184,7 +184,7 @@ module RipperRubyParser
           end
         end
 
-        string = ''
+        string = ""
         while parts.first&.sexp_type == :str
           str = parts.shift
           line ||= str.line

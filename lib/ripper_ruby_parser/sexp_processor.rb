@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'sexp_processor'
-require 'ripper_ruby_parser/sexp_handlers'
-require 'ripper_ruby_parser/unescape'
+require "sexp_processor"
+require "ripper_ruby_parser/sexp_handlers"
+require "ripper_ruby_parser/unescape"
 
 module RipperRubyParser
   # Processes the sexp created by Ripper to what RubyParser would produce.

@@ -58,27 +58,23 @@ module RipperRubyParser
         rescue_block = map_process_list_compact block.sexp_body
         rescue_block << nil if rescue_block.empty?
 
-        capture = if eclass
-                    if eclass.first.is_a? Symbol
-                      eclass = process(eclass)
-                      body = eclass.sexp_body
-                      if eclass.sexp_type == :mrhs
-                        body.first
-                      else
-                        s(:array, *body)
-                      end
+        capture = if eclass.nil?
+                    s(:array)
+                  elsif eclass.first.is_a? Symbol
+                    eclass = process(eclass)
+                    body = eclass.sexp_body
+                    if eclass.sexp_type == :mrhs
+                      body.first
                     else
-                      s(:array, process(eclass.first))
+                      s(:array, *body)
                     end
                   else
-                    s(:array)
+                    s(:array, process(eclass.first))
                   end
 
         capture << create_assignment_sub_type(process(evar), s(:gvar, :$!)) if evar
 
-        s(
-          s(:resbody, capture, *rescue_block),
-          *process(after))
+        s(s(:resbody, capture, *rescue_block), *process(after))
       end
 
       def process_bodystmt(exp)
@@ -91,13 +87,9 @@ module RipperRubyParser
         main = wrap_in_block reject_void_stmt main_list
         body << main if main
 
-        if rescue_block
-          body.push(*process(rescue_block))
-          body << process(else_block) if else_block
-          body = s(s(:rescue, *body))
-        elsif else_block
-          body << process(else_block)
-        end
+        body.push(*process(rescue_block)) if rescue_block
+        body << process(else_block) if else_block
+        body = s(s(:rescue, *body)) if rescue_block
 
         if ensure_block
           body << process(ensure_block)

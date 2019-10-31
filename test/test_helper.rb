@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'simplecov'
+require "simplecov"
 SimpleCov.start do
-  add_filter '/test/'
+  add_filter "/test/"
 end
 
-require 'minitest/autorun'
+require "minitest/autorun"
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
-require 'ripper_ruby_parser'
+require "ripper_ruby_parser"
 
 module MiniTest
   class Spec
@@ -40,7 +40,9 @@ module MiniTest
     end
 
     def fix_lines(exp)
-      return s(:lit, :__LINE__).line(exp.line) if exp.sexp_type == :lit && exp.line == exp[1]
+      if exp.sexp_type == :lit && exp.line == exp[1]
+        return s(:lit, :__LINE__).line(exp.line)
+      end
 
       exp.sexp_body = exp.sexp_body.map do |sub_exp|
         if sub_exp.is_a? Sexp

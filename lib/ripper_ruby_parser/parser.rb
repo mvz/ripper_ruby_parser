@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'ripper_ruby_parser/commenting_ripper_parser'
-require 'ripper_ruby_parser/sexp_processor'
+require "ripper_ruby_parser/commenting_ripper_parser"
+require "ripper_ruby_parser/sexp_processor"
 
 module RipperRubyParser
   # Main parser class. Brings together Ripper and our
@@ -13,7 +13,7 @@ module RipperRubyParser
       @extra_compatible = false
     end
 
-    def parse(source, filename = '(string)', lineno = 1)
+    def parse(source, filename = "(string)", lineno = 1)
       parser = CommentingRipperParser.new(source, filename, lineno)
       exp = parser.parse
 
