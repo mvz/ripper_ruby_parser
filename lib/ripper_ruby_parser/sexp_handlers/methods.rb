@@ -98,6 +98,7 @@ module RipperRubyParser
       }.freeze
 
       def convert_arguments(args)
+        args.line ||= args.sexp_body.first&.line
         args.map! do |item|
           if item.is_a? Symbol
             item

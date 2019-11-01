@@ -79,10 +79,12 @@ module RipperRubyParser
 
     def process_stmts(exp)
       _, *statements = shift_all(exp)
-      statements = map_process_list_compact statements
+      statements = map_unwrap_begin_list map_process_list statements
+      line = statements.first.line
+      statements = reject_void_stmt statements
       case statements.count
       when 0
-        s(:void_stmt)
+        s(:void_stmt).line(line)
       when 1
         statements.first
       else
