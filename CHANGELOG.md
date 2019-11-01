@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.0 / 2019-11-01
+
+* Make results compatible with RubyParser 3.14.0 ([#85])
+  - Remove obsolete extra-compatible behavior
+  - Parse stabby lambda as :lambda-typed sexp
+  - Emit nil argument for block arguments with trailing comma
+* Require Ruby 2.4 or higher ([#86])
+
 ## 1.6.1 / 2019-04-22
 
 * Improve line numbering for some block structures ([#82])
