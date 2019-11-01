@@ -42,7 +42,7 @@ parser.parse "foo[bar] += baz qux"
 
 ## Requirements
 
-* Ruby 2.3 or higher
+* Ruby 2.4 or higher
 * `sexp_processor`
 
 ## Hacking and contributing
