@@ -656,6 +656,22 @@ describe RipperRubyParser::Parser do
                                  s(:call, nil, :bar),
                                  s(:call, nil, :baz)))
       end
+
+      it "sets line numbers correctly for lambdas with empty bodies" do
+        _("->(foo) { }\nbar")
+          .must_be_parsed_as s(:block,
+                               s(:iter, s(:lambda).line(1), s(:args, :foo).line(1)).line(1),
+                               s(:call, nil, :bar).line(2)).line(1),
+                             with_line_numbers: true
+      end
+
+      it "sets line numbers correctly for empty lambdas" do
+        _("->() { }\nfoo")
+          .must_be_parsed_as s(:block,
+                               s(:iter, s(:lambda).line(1), s(:args).line(1)).line(1),
+                               s(:call, nil, :foo).line(2)).line(1),
+                             with_line_numbers: true
+      end
     end
 
     describe "for lambda keyword" do

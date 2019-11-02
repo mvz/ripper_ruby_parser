@@ -132,12 +132,16 @@ module RipperRubyParser
 
       def process_lambda(exp)
         _, args, statements = exp.shift 3
+
         old_type = args.sexp_type
         args = convert_arguments(process(args))
+        statements = process(statements)
+        line = args.line || statements.line
         args = nil if args == s(:args) && old_type == :params
-        make_iter(s(:lambda),
-                  args,
-                  safe_unwrap_void_stmt(process(statements)))
+        call = s(:lambda)
+        call.line = line
+
+        make_iter call, args, safe_unwrap_void_stmt(statements)
       end
 
       private
