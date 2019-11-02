@@ -285,12 +285,23 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with a rescue modifier" do
+        expected = if RUBY_VERSION < "2.7.0"
+                     s(:rescue,
+                       s(:masgn,
+                         s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                         s(:to_ary, s(:call, nil, :baz))),
+                       s(:resbody, s(:array), s(:call, nil, :qux)))
+                   else
+                     s(:masgn,
+                       s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
+                       s(:to_ary,
+                         s(:rescue,
+                           s(:call, nil, :baz),
+                           s(:resbody, s(:array), s(:call, nil, :qux)))))
+                   end
+
         _("foo, bar = baz rescue qux")
-          .must_be_parsed_as s(:rescue,
-                               s(:masgn,
-                                 s(:array, s(:lasgn, :foo), s(:lasgn, :bar)),
-                                 s(:to_ary, s(:call, nil, :baz))),
-                               s(:resbody, s(:array), s(:call, nil, :qux)))
+          .must_be_parsed_as expected
       end
 
       it "works the same number of items on each side" do
