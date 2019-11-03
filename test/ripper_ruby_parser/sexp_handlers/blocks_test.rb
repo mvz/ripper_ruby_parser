@@ -170,6 +170,14 @@ describe RipperRubyParser::Parser do
                                  s(:lvar, :bar)))
       end
 
+      it "works with a nameless kwrest argument" do
+        _("foo do |**|; bar; end")
+          .must_be_parsed_as s(:iter,
+                               s(:call, nil, :foo),
+                               s(:args, :**),
+                               s(:call, nil, :bar))
+      end
+
       it "works with a regular argument after a splat argument" do
         _("foo do |*bar, baz|; end")
           .must_be_parsed_as s(:iter,
