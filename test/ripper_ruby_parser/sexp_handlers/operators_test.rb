@@ -227,6 +227,14 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :foo),
                                s(:call, nil, :bar))
       end
+
+      it "handles endless range literals" do
+        if RUBY_VERSION < "2.6.0"
+          skip "This Ruby version does not support endless ranges"
+        end
+        _("1..")
+          .must_be_parsed_as s(:dot2, s(:lit, 1), nil)
+      end
     end
 
     describe "for the exclusive range operator" do

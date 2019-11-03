@@ -41,7 +41,7 @@ module RipperRubyParser
       end
 
       def integer_literal?(exp)
-        exp.sexp_type == :lit && exp[1].is_a?(Integer)
+        exp && exp.sexp_type == :lit && exp[1].is_a?(Integer)
       end
 
       def reject_void_stmt(body)
