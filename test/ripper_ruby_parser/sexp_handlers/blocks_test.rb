@@ -194,6 +194,15 @@ describe RipperRubyParser::Parser do
                                  s(:lvar, :bar),
                                  s(:lvar, :baz)))
       end
+
+      it "works with a combination of regular arguments and an anonymous kwrest argument" do
+        _("foo do |bar, **|; qux bar; end")
+          .must_be_parsed_as s(:iter,
+                               s(:call, nil, :foo),
+                               s(:args, :bar, :"**"),
+                               s(:call, nil, :qux,
+                                 s(:lvar, :bar)))
+      end
     end
 
     describe "for begin" do
