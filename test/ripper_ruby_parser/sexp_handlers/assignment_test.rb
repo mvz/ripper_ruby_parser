@@ -183,65 +183,35 @@ describe RipperRubyParser::Parser do
         end
 
         it "works with a method call with argument without brackets" do
-          expected = if RUBY_VERSION < "2.4.0"
-                       s(:rescue,
-                         s(:lasgn, :foo,
-                           s(:call, nil, :bar, s(:call, nil, :baz))),
-                         s(:resbody, s(:array), s(:call, nil, :qux)))
-                     else
-                       s(:lasgn, :foo,
-                         s(:rescue,
-                           s(:call, nil, :bar, s(:call, nil, :baz)),
-                           s(:resbody, s(:array), s(:call, nil, :qux))))
-                     end
-          _("foo = bar baz rescue qux").must_be_parsed_as expected
+          _("foo = bar baz rescue qux")
+            .must_be_parsed_as s(:lasgn, :foo,
+                                 s(:rescue,
+                                   s(:call, nil, :bar, s(:call, nil, :baz)),
+                                   s(:resbody, s(:array), s(:call, nil, :qux))))
         end
 
         it "works with a class method call with argument without brackets" do
-          expected = if RUBY_VERSION < "2.4.0"
-                       s(:rescue,
-                         s(:lasgn, :foo,
-                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                         s(:resbody, s(:array), s(:call, nil, :quuz)))
-                     else
-                       s(:lasgn, :foo,
-                         s(:rescue,
-                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
-                           s(:resbody, s(:array), s(:call, nil, :quuz))))
-                     end
           _("foo = Bar.baz qux rescue quuz")
-            .must_be_parsed_as expected
+            .must_be_parsed_as s(:lasgn, :foo,
+                                 s(:rescue,
+                                   s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                                   s(:resbody, s(:array), s(:call, nil, :quuz))))
         end
 
         it "works with a method call with argument without brackets" do
-          expected = if RUBY_VERSION < "2.4.0"
-                       s(:rescue,
-                         s(:lasgn, :foo,
-                           s(:call, nil, :bar, s(:call, nil, :baz))),
-                         s(:resbody, s(:array), s(:call, nil, :qux)))
-                     else
-                       s(:lasgn, :foo,
-                         s(:rescue,
-                           s(:call, nil, :bar, s(:call, nil, :baz)),
-                           s(:resbody, s(:array), s(:call, nil, :qux))))
-                     end
-          _("foo = bar baz rescue qux").must_be_parsed_as expected
+          _("foo = bar baz rescue qux")
+            .must_be_parsed_as s(:lasgn, :foo,
+                                 s(:rescue,
+                                   s(:call, nil, :bar, s(:call, nil, :baz)),
+                                   s(:resbody, s(:array), s(:call, nil, :qux))))
         end
 
         it "works with a class method call with argument without brackets" do
-          expected = if RUBY_VERSION < "2.4.0"
-                       s(:rescue,
-                         s(:lasgn, :foo,
-                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux))),
-                         s(:resbody, s(:array), s(:call, nil, :quuz)))
-                     else
-                       s(:lasgn, :foo,
-                         s(:rescue,
-                           s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
-                           s(:resbody, s(:array), s(:call, nil, :quuz))))
-                     end
           _("foo = Bar.baz qux rescue quuz")
-            .must_be_parsed_as expected
+            .must_be_parsed_as s(:lasgn, :foo,
+                                 s(:rescue,
+                                   s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
+                                   s(:resbody, s(:array), s(:call, nil, :quuz))))
         end
       end
 
