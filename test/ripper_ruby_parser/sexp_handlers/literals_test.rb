@@ -262,6 +262,14 @@ describe RipperRubyParser::Parser do
           _('"foo\\u{273b}bar"').must_be_parsed_as s(:str, "foo✻bar")
         end
 
+        it "works with unicode escapes with braces with 5 hex chars" do
+          _('"foo\\u{101D1}bar"').must_be_parsed_as s(:str, "foo𐇑bar")
+        end
+
+        it "works with unicode escapes with braces with 6 hex chars" do
+          _('"foo\\u{10FFFF}bar"').must_be_parsed_as s(:str, "foo\u{10FFFF}bar")
+        end
+
         it "converts to unicode if possible" do
           _('"2\302\275"').must_be_parsed_as s(:str, "2½")
         end
