@@ -82,6 +82,14 @@ describe RipperRubyParser::Parser do
                                s(:nil))
       end
 
+      it "works with a nameless kwrest argument" do
+        _("def foo **; end")
+          .must_be_parsed_as s(:defn,
+                               :foo,
+                               s(:args, :"**"),
+                               s(:nil))
+      end
+
       it "works for a simple case with explicit block parameter" do
         _("def foo &bar; end")
           .must_be_parsed_as s(:defn,
