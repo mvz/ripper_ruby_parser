@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.1 / 2019-11-03
+
+* Handle unicode escapes with five or six hex digits ([#94])
+* Handle safe attribute assignment ([#92])
+* Handle endless ranges on Ruby 2.6+ ([#90])
+* Add preliminary support for Ruby 2.7 ([#89])
+* Improve line number handling for stabby lambdas ([#88])
+
 ## 1.7.0 / 2019-11-01
 
 * Make results compatible with RubyParser 3.14.0 ([#85])
@@ -179,6 +187,13 @@
 * Initial release
 
 <!-- Pull request links -->
+[#94]: https://github.com/mvz/ripper_ruby_parser/pull/94
+[#92]: https://github.com/mvz/ripper_ruby_parser/pull/92
+[#90]: https://github.com/mvz/ripper_ruby_parser/pull/90
+[#89]: https://github.com/mvz/ripper_ruby_parser/pull/89
+[#88]: https://github.com/mvz/ripper_ruby_parser/pull/88
+[#86]: https://github.com/mvz/ripper_ruby_parser/pull/86
+[#85]: https://github.com/mvz/ripper_ruby_parser/pull/85
 [#82]: https://github.com/mvz/ripper_ruby_parser/pull/82
 [#80]: https://github.com/mvz/ripper_ruby_parser/pull/80
 [#79]: https://github.com/mvz/ripper_ruby_parser/pull/79
