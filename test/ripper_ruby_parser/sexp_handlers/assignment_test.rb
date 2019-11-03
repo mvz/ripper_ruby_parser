@@ -104,6 +104,14 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :baz))
       end
 
+      it "works when safe-assigning to an attribute" do
+        _("foo&.bar = baz")
+          .must_be_parsed_as s(:safe_attrasgn,
+                               s(:call, nil, :foo),
+                               :bar=,
+                               s(:call, nil, :baz))
+      end
+
       describe "when assigning to a class variable" do
         it "works outside a method" do
           _("@@foo = bar")
@@ -434,6 +442,14 @@ describe RipperRubyParser::Parser do
                                :[]=,
                                s(:call, nil, :bar),
                                s(:call, nil, :baz),
+                               s(:call, nil, :qux))
+      end
+
+      it "handles safe-assigning to an attribute of the collection element" do
+        _("foo[bar]&.baz = qux")
+          .must_be_parsed_as s(:safe_attrasgn,
+                               s(:call, s(:call, nil, :foo), :[], s(:call, nil, :bar)),
+                               :baz=,
                                s(:call, nil, :qux))
       end
     end
