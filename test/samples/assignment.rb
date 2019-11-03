@@ -15,3 +15,8 @@ foo, (bar, baz) = qux
 foo, ((bar, baz)) = qux
 foo, (((bar, baz))) = qux
 foo, (bar, (baz, qux)) = quuz
+
+# Safe attribute assignment
+foo&.bar = baz
+foo[bar]&.baz = qux
+foo[bar, baz]&.qux = quuz

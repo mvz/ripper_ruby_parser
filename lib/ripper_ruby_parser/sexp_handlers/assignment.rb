@@ -150,8 +150,13 @@ module RipperRubyParser
           arglist.shift
           s(:attrasgn, arr, :[]=, *arglist)
         when :field
-          _, obj, _, (_, field) = lvalue
-          s(:attrasgn, obj, :"#{field}=", value)
+          _, obj, call_op, (_, field) = lvalue
+          case call_op
+          when :"&.", s(:op, :"&.") # Handle both 2.5 and 2.6 style ops
+            s(:safe_attrasgn, obj, :"#{field}=", value)
+          else
+            s(:attrasgn, obj, :"#{field}=", value)
+          end
         else
           create_assignment_sub_type lvalue, value
         end
