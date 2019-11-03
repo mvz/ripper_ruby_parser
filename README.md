@@ -20,6 +20,8 @@ RipperRubyParser has a few incompatibilities with RubyParser.
 * RipperRubyParser won't handle non-UTF-8 files without an encoding comment,
   just like regular Ruby
 * RipperRubyParser does not always match RubyParser's line numbering
+* RipperRubyParser dedents auto-dedenting heredocs
+* RipperRubyParser does not include postfix comments
 
 ## Install
 
