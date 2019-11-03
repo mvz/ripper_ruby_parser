@@ -229,9 +229,7 @@ describe RipperRubyParser::Parser do
       end
 
       it "handles endless range literals" do
-        if RUBY_VERSION < "2.6.0"
-          skip "This Ruby version does not support endless ranges"
-        end
+        skip "This Ruby version does not support endless ranges" if RUBY_VERSION < "2.6.0"
         _("1..")
           .must_be_parsed_as s(:dot2, s(:lit, 1), nil)
       end
