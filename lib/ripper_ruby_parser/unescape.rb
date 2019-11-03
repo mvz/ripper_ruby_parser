@@ -7,19 +7,19 @@ module RipperRubyParser
   module Unescape
     ESCAPE_SEQUENCE_REGEXP =
       /\\(
-        [0-7]{1,3}        | # octal character
-        x[0-9a-fA-F]{1,2} | # hex byte
-        u[0-9a-fA-F]+     | # unicode character
-        u{[0-9a-fA-F]{4}} | # unicode character
-        M-\\C-.           | # meta-ctrl
-        C-\\M-.           | # ctrl-meta
-        M-\\c.            | # meta-ctrl (shorthand)
-        c\\M-.            | # ctrl-meta (shorthand)
-        C-.               | # control (regular)
-        c.                | # control (shorthand)
-        M-.               | # meta
-        \n                | # line continuation
-        .                   # single-character
+        [0-7]{1,3}          | # octal character
+        x[0-9a-fA-F]{1,2}   | # hex byte
+        u[0-9a-fA-F]+       | # unicode character
+        u{[0-9a-fA-F]{4,6}} | # unicode character
+        M-\\C-.             | # meta-ctrl
+        C-\\M-.             | # ctrl-meta
+        M-\\c.              | # meta-ctrl (shorthand)
+        c\\M-.              | # ctrl-meta (shorthand)
+        C-.                 | # control (regular)
+        c.                  | # control (shorthand)
+        M-.                 | # meta
+        \n                  | # line continuation
+        .                     # single-character
       )/x.freeze
 
     SINGLE_LETTER_ESCAPES = {
