@@ -5,7 +5,7 @@ require File.expand_path("../../test_helper.rb", File.dirname(__FILE__))
 describe RipperRubyParser::Parser do
   describe "#parse" do
     describe "for instance method definitions" do
-      it "treats kwargs as a local variable" do
+      it "treats kwrest argument as a local variable" do
         _("def foo(**bar); bar; end")
           .must_be_parsed_as s(:defn,
                                :foo,
@@ -13,7 +13,7 @@ describe RipperRubyParser::Parser do
                                s(:lvar, :bar))
       end
 
-      it "treats kwargs as a local variable when other arguments are present" do
+      it "treats kwrest argument as a local variable when other arguments are present" do
         _("def foo(bar, **baz); baz; end")
           .must_be_parsed_as s(:defn,
                                :foo,
@@ -21,7 +21,7 @@ describe RipperRubyParser::Parser do
                                s(:lvar, :baz))
       end
 
-      it "treats kwargs as a local variable when an explicit block is present" do
+      it "treats kwrest argument as a local variable when an explicit block is present" do
         _("def foo(**bar, &baz); bar; end")
           .must_be_parsed_as s(:defn,
                                :foo,
@@ -29,7 +29,7 @@ describe RipperRubyParser::Parser do
                                s(:lvar, :bar))
       end
 
-      it "treats block kwargs as lvars" do
+      it "treats block kwrest argument as an lvar" do
         _("def foo(**bar); baz { |**qux| bar; qux }; end")
           .must_be_parsed_as s(:defn, :foo,
                                s(:args, :"**bar"),
