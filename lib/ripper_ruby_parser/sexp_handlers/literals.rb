@@ -64,11 +64,13 @@ module RipperRubyParser
       def process_xstring(exp)
         _, *rest = shift_all exp
         line, string, rest = extract_string_parts(rest)
-        if rest.empty?
-          s(:xstr, string).line(line)
-        else
-          s(:dxstr, string, *rest)
-        end
+        result = if rest.empty?
+                   s(:xstr, string)
+                 else
+                   s(:dxstr, string, *rest)
+                 end
+        result.line = line
+        result
       end
 
       def process_regexp_literal(exp)

@@ -188,6 +188,9 @@ class Foo
     puts [foo, bar]
   end
 
+  def foobarbaz(**)
+  end
+
   # rescue
   def barfoo
     foo
@@ -279,3 +282,4 @@ end
 
 # Blocks
 foo do |bar, | end
+foo do |bar, **| end

@@ -35,7 +35,7 @@ module RipperRubyParser
 
       def process_kwrest_param(exp)
         _, sym, = exp.shift 3
-        process(sym)
+        process(sym) || s(:lvar, :"")
       end
 
       def process_block_var(exp)
@@ -189,7 +189,12 @@ module RipperRubyParser
       def handle_double_splat(doublesplat)
         return [] unless doublesplat
 
-        [s(:dsplat, process(doublesplat))]
+        # Anonymous kwrest arguments are parsed into an Integer in Ruby 2.4
+        if RUBY_VERSION < "2.5.0" && doublesplat.is_a?(Integer)
+          [s(:dsplat, s(:lvar, :""))]
+        else
+          [s(:dsplat, process(doublesplat))]
+        end
       end
 
       def handle_block_argument(block)
