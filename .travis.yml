@@ -1,13 +1,22 @@
 language: ruby
+
+dist: xenial
+
+cache:
+  bundler: true
+
 bundler_args: --without local_development
+
 rvm:
   - 2.4
   - 2.5
   - 2.6
   - ruby-head
+
 matrix:
   allow_failures:
     - rvm: ruby-head
+
 branches:
   only:
     - master
