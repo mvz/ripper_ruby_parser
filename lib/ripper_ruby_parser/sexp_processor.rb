@@ -172,25 +172,6 @@ module RipperRubyParser
       with_position pos, s(:iter, s(:postexe), 0, *body)
     end
 
-    # number literals
-    def process_at_int(exp)
-      make_literal(exp) { |val| Integer(val) }
-    end
-
-    def process_at_float(exp)
-      make_literal(exp, &:to_f)
-    end
-
-    def process_at_rational(exp)
-      make_literal(exp, &:to_r)
-    end
-
-    # character literals
-    def process_at_CHAR(exp)
-      _, val, pos = exp.shift 3
-      with_position(pos, s(:str, unescape(val[1..-1])))
-    end
-
     def process_at_label(exp)
       make_literal(exp) { |val| val.chop.to_sym }
     end
