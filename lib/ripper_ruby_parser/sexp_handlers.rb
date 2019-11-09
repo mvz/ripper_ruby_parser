@@ -10,6 +10,7 @@ require "ripper_ruby_parser/sexp_handlers/loops"
 require "ripper_ruby_parser/sexp_handlers/method_calls"
 require "ripper_ruby_parser/sexp_handlers/methods"
 require "ripper_ruby_parser/sexp_handlers/operators"
+require "ripper_ruby_parser/sexp_handlers/string_literals"
 
 module RipperRubyParser
   # Umbrella module for handlers of particular sexp types
@@ -28,6 +29,7 @@ module RipperRubyParser
         include MethodCalls
         include Methods
         include Operators
+        include StringLiterals
       end
     end
   end
