@@ -4,6 +4,12 @@ module RipperRubyParser
   module SexpHandlers
     # Sexp handlers for literals
     module Literals
+      # character literals
+      def process_at_CHAR(exp)
+        _, val, pos = exp.shift 3
+        with_position(pos, s(:str, unescape(val[1..-1])))
+      end
+
       def process_array(exp)
         _, elems = exp.shift 2
         return s(:array) if elems.nil?
@@ -31,6 +37,19 @@ module RipperRubyParser
       def process_assoc_splat(exp)
         _, param = exp.shift 2
         s(:kwsplat, process(param))
+      end
+
+      # number literals
+      def process_at_int(exp)
+        make_literal(exp) { |val| Integer(val) }
+      end
+
+      def process_at_float(exp)
+        make_literal(exp, &:to_f)
+      end
+
+      def process_at_rational(exp)
+        make_literal(exp, &:to_r)
       end
 
       private
