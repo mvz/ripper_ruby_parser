@@ -59,7 +59,7 @@ module RipperRubyParser
         result = s()
         elems.each do |sub_exp|
           if sub_exp.sexp_type == :assoc_new
-            sub_exp.sexp_body.each { |elem| result << process(elem) }
+            result += process(sub_exp).sexp_body
           else # :assoc_splat
             result << process(sub_exp)
           end
