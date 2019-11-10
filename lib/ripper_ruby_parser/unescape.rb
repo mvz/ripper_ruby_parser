@@ -9,7 +9,7 @@ module RipperRubyParser
       /\\(
         [0-7]{1,3}          | # octal character
         x[0-9a-fA-F]{1,2}   | # hex byte
-        u[0-9a-fA-F]+       | # unicode character
+        u[0-9a-fA-F]{4}     | # unicode character
         u{[0-9a-fA-F]{4,6}} | # unicode character
         M-\\C-.             | # meta-ctrl
         C-\\M-.             | # ctrl-meta
@@ -18,8 +18,8 @@ module RipperRubyParser
         C-.                 | # control (regular)
         c.                  | # control (shorthand)
         M-.                 | # meta
-        \n                  | # line continuation
-        .                     # single-character
+        \n                  | # line break
+        .                     # other single character
       )/x.freeze
 
     SINGLE_LETTER_ESCAPES = {
@@ -106,7 +106,7 @@ module RipperRubyParser
       when /^u\{/
         hex_to_unicode_char(bare[2..-2])
       when /^u/
-        hex_to_unicode_char(bare[1..4]) + bare[5..-1]
+        hex_to_unicode_char(bare[1..4])
       when /^(c|C-).$/
         control(bare[-1].ord).chr
       when /^M-.$/
