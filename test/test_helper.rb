@@ -73,9 +73,8 @@ module MiniTest
       end
     end
 
-    def assert_parsed_as(sexp, code, extra_compatible: false, with_line_numbers: false)
+    def assert_parsed_as(sexp, code, with_line_numbers: false)
       parser = RipperRubyParser::Parser.new
-      parser.extra_compatible = extra_compatible
       result = parser.parse code
       if sexp.nil?
         assert_nil result
@@ -100,8 +99,13 @@ module MiniTest
     end
   end
 
-  module Expectations
-    infect_an_assertion :assert_parsed_as, :must_be_parsed_as
-    infect_an_assertion :assert_parsed_as_before, :must_be_parsed_as_before, :unary
+  Expectation.class_eval do
+    def must_be_parsed_as(sexp, with_line_numbers: false)
+      ctx.assert_parsed_as(sexp, target, with_line_numbers: with_line_numbers)
+    end
+
+    def must_be_parsed_as_before(with_line_numbers: false)
+      ctx.assert_parsed_as_before(target, with_line_numbers: with_line_numbers)
+    end
   end
 end
