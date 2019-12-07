@@ -448,7 +448,10 @@ describe RipperRubyParser::Parser do
       it "handles safe-assigning to an attribute of the collection element" do
         _("foo[bar]&.baz = qux")
           .must_be_parsed_as s(:safe_attrasgn,
-                               s(:call, s(:call, nil, :foo), :[], s(:call, nil, :bar)),
+                               s(:call,
+                                 s(:call, nil, :foo),
+                                 :[],
+                                 s(:call, nil, :bar)),
                                :baz=,
                                s(:call, nil, :qux))
       end
