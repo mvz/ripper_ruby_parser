@@ -46,3 +46,8 @@ end
 # One-line pattern matching (experimental)
 1 in foo
 2 in bar => baz
+
+# Numbered block parameters
+# NOTE: Not yet implemented in ruby_parser
+# foos.each do _1.bar; end
+# foos.each { _1.bar }

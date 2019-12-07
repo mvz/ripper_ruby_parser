@@ -217,9 +217,19 @@ module RipperRubyParser
         end
       end
 
+      LVAR_MATCHER = Sexp::Matcher.new(:lvar, Sexp._)
+      NUMBERED_PARAMS = (1..9).map { |it| :"_#{it}" }.freeze
+
       def make_iter(call, args, stmt)
         args[-1] = nil if args && args.last == s(:excessed_comma)
+
+        if args.nil? && RUBY_VERSION >= "2.7.0"
+          lvar_names = (LVAR_MATCHER / stmt).map { |it| it[1] }
+          args = (NUMBERED_PARAMS & lvar_names).length
+        end
+
         args ||= 0
+
         if stmt.empty?
           s(:iter, call, args)
         else
