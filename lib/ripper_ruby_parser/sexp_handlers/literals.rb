@@ -52,6 +52,10 @@ module RipperRubyParser
         make_literal(exp, &:to_r)
       end
 
+      def process_at_imaginary(exp)
+        make_literal(exp, &:to_c)
+      end
+
       private
 
       # Process list of items that can be either :assoc_new or :assoc_splat

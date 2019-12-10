@@ -155,6 +155,11 @@ describe RipperRubyParser::Parser do
         _("1000r")
           .must_be_parsed_as s(:lit, 1000r)
       end
+
+      it "works for imaginary numbers" do
+        _("1i")
+          .must_be_parsed_as s(:lit, 1i)
+      end
     end
   end
 end

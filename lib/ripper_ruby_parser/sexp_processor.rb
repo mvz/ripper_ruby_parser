@@ -20,6 +20,7 @@ module RipperRubyParser
       @processors[:@int] = :process_at_int
       @processors[:@float] = :process_at_float
       @processors[:@rational] = :process_at_rational
+      @processors[:@imaginary] = :process_at_imaginary
       @processors[:@CHAR] = :process_at_CHAR
       @processors[:@label] = :process_at_label
 
