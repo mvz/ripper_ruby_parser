@@ -324,6 +324,15 @@ describe RipperRubyParser::Parser do
         _(result[4].comments).must_equal "# bar\n"
       end
 
+      it "handles the use of symbols that are keywords" do
+        result = parser.parse "# Foo\ndef bar\n:class\nend"
+        _(result).must_equal s(:defn,
+                               :bar,
+                               s(:args),
+                               s(:lit, :class))
+        _(result.comments).must_equal "# Foo\n"
+      end
+
       it "handles use of singleton class inside methods" do
         result = parser.parse "# Foo\ndef bar\nclass << self\nbaz\nend\nend"
         _(result).must_equal s(:defn,
@@ -336,13 +345,11 @@ describe RipperRubyParser::Parser do
 
       # TODO: Prefer assigning comment to the BEGIN instead
       it "assigns comments on BEGIN blocks to the following item" do
-        result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
+        result = parser.parse "# Bar\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
-                               s(:class, :Bar, nil,
-                                 s(:defn, :foo, s(:args), s(:nil))))
+                               s(:defn, :foo, s(:args), s(:nil)))
         _(result[2].comments).must_equal "# Bar\n# Foo\n"
-        _(result[2][3].comments).must_equal "# foo\n"
       end
 
       it "assigns comments on multiple BEGIN blocks to the following item" do
@@ -355,12 +362,13 @@ describe RipperRubyParser::Parser do
       end
 
       it "assigns comments on BEGIN blocks to the first following item" do
-        result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
+        result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
-                               s(:iter, s(:preexe), 0),
-                               s(:defn, :foo, s(:args), s(:nil)))
-        _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
+                               s(:class, :Bar, nil,
+                                 s(:defn, :foo, s(:args), s(:nil))))
+        _(result[2].comments).must_equal "# Bar\n# Foo\n"
+        _(result[2][3].comments).must_equal "# foo\n"
       end
     end
 
@@ -493,6 +501,11 @@ describe RipperRubyParser::Parser do
         _(result.line).must_equal 1
       end
 
+      it "works for a symbol literal" do
+        result = parser.parse ":foo"
+        _(result.line).must_equal 1
+      end
+
       it "works for a class definition" do
         result = parser.parse "class Foo; end"
         _(result.line).must_equal 1
@@ -505,6 +518,16 @@ describe RipperRubyParser::Parser do
 
       it "works for a method definition" do
         result = parser.parse "def foo; end"
+        _(result.line).must_equal 1
+      end
+
+      it "works for assignment of the empty hash" do
+        result = parser.parse "foo = {}"
+        _(result.line).must_equal 1
+      end
+
+      it "works for multiple assignment of empty hashes" do
+        result = parser.parse "foo, bar = {}, {}"
         _(result.line).must_equal 1
       end
 

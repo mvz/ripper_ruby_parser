@@ -37,6 +37,11 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:lit, /foo/x)
       end
 
+      it "works for multi-line regex literals" do
+        _("/foo\nbar/")
+          .must_be_parsed_as s(:lit, Regexp.new("foo\nbar"))
+      end
+
       it "works for a regex literal with the ignorecase flag" do
         _("/foo/i")
           .must_be_parsed_as s(:lit, /foo/i)
@@ -61,6 +66,11 @@ describe RipperRubyParser::Parser do
         it "works for the simple case with escape sequences" do
           _('%r[foo\nbar]')
             .must_be_parsed_as s(:lit, /foo\nbar/)
+        end
+
+        it "works for a multi-line regex" do
+          _("%r[foo\nbar]")
+            .must_be_parsed_as s(:lit, Regexp.new("foo\nbar"))
         end
 
         it "works with odd delimiters and escape sequences" do

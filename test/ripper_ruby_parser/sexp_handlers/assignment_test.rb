@@ -205,22 +205,6 @@ describe RipperRubyParser::Parser do
                                    s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
                                    s(:resbody, s(:array), s(:call, nil, :quuz))))
         end
-
-        it "works with a method call with argument without brackets" do
-          _("foo = bar baz rescue qux")
-            .must_be_parsed_as s(:lasgn, :foo,
-                                 s(:rescue,
-                                   s(:call, nil, :bar, s(:call, nil, :baz)),
-                                   s(:resbody, s(:array), s(:call, nil, :qux))))
-        end
-
-        it "works with a class method call with argument without brackets" do
-          _("foo = Bar.baz qux rescue quuz")
-            .must_be_parsed_as s(:lasgn, :foo,
-                                 s(:rescue,
-                                   s(:call, s(:const, :Bar), :baz, s(:call, nil, :qux)),
-                                   s(:resbody, s(:array), s(:call, nil, :quuz))))
-        end
       end
 
       it "sets the correct line numbers" do
