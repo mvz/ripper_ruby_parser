@@ -234,34 +234,4 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
         .must_be_parsed_as s(:call, s(:call, nil, :foo), :call)
     end
   end
-
-  describe "when processing a Sexp" do
-    let(:processor) { RipperRubyParser::SexpProcessor.new }
-
-    describe "#process_command_call" do
-      it "processes a Ruby 2.5 style period Sexp" do
-        sexp = s(:call,
-                 s(:vcall, s(:@ident, "foo", s(1, 0))),
-                 :'.',
-                 s(:@ident, "bar", s(1, 4)))
-        _(processor.process(sexp)).must_equal s(:call, s(:call, nil, :foo), :bar)
-      end
-
-      it "processes a Ruby 2.6 style period Sexp" do
-        sexp = s(:call,
-                 s(:vcall, s(:@ident, "foo", s(1, 0))),
-                 s(:@period, ".", s(1, 3)),
-                 s(:@ident, "bar", s(1, 4)))
-        _(processor.process(sexp)).must_equal s(:call, s(:call, nil, :foo), :bar)
-      end
-
-      it "raises an error for an unknown call operator" do
-        sexp = s(:call,
-                 s(:vcall, s(:@ident, "foo", s(1, 0))),
-                 :'>.',
-                 s(:@ident, "bar", s(1, 4)))
-        _(-> { processor.process(sexp) }).must_raise KeyError
-      end
-    end
-  end
 end
