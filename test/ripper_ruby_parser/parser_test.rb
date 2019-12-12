@@ -336,13 +336,11 @@ describe RipperRubyParser::Parser do
 
       # TODO: Prefer assigning comment to the BEGIN instead
       it "assigns comments on BEGIN blocks to the following item" do
-        result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
+        result = parser.parse "# Bar\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
-                               s(:class, :Bar, nil,
-                                 s(:defn, :foo, s(:args), s(:nil))))
+                               s(:defn, :foo, s(:args), s(:nil)))
         _(result[2].comments).must_equal "# Bar\n# Foo\n"
-        _(result[2][3].comments).must_equal "# foo\n"
       end
 
       it "assigns comments on multiple BEGIN blocks to the following item" do
@@ -355,12 +353,13 @@ describe RipperRubyParser::Parser do
       end
 
       it "assigns comments on BEGIN blocks to the first following item" do
-        result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
+        result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
-                               s(:iter, s(:preexe), 0),
-                               s(:defn, :foo, s(:args), s(:nil)))
-        _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
+                               s(:class, :Bar, nil,
+                                 s(:defn, :foo, s(:args), s(:nil))))
+        _(result[2].comments).must_equal "# Bar\n# Foo\n"
+        _(result[2][3].comments).must_equal "# foo\n"
       end
     end
 
