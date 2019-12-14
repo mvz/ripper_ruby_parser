@@ -17,26 +17,11 @@ module RipperRubyParser
     def initialize(filename: nil, extra_compatible: nil)
       super()
 
-      @processors[:@int] = :process_at_int
-      @processors[:@float] = :process_at_float
-      @processors[:@rational] = :process_at_rational
-      @processors[:@imaginary] = :process_at_imaginary
-      @processors[:@CHAR] = :process_at_CHAR
-      @processors[:@label] = :process_at_label
-
-      @processors[:@const] = :process_at_const
-      @processors[:@ident] = :process_at_ident
-      @processors[:@cvar] = :process_at_cvar
-      @processors[:@gvar] = :process_at_gvar
-      @processors[:@ivar] = :process_at_ivar
-      @processors[:@kw] = :process_at_kw
-      @processors[:@op] = :process_at_op
-      @processors[:@backref] = :process_at_backref
-
-      @processors[:@backtick] = :process_at_backtick
-      @processors[:@period] = :process_at_period
-
-      @processors[:@tstring_content] = :process_at_tstring_content
+      public_methods.each do |name|
+        if name =~ /^process_at_(.*)/
+          @processors["@#{Regexp.last_match(1)}".to_sym] = name.to_sym
+        end
+      end
 
       @filename = filename
       @extra_compatible = extra_compatible
