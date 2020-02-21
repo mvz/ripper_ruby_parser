@@ -9,7 +9,7 @@ AllCops:
     - 'tmp/**/*'
   TargetRubyVersion: 2.4
 
-# Set a lenient line length limit
+# Be lenient with line length
 Layout/LineLength:
   Max: 92
 
@@ -31,6 +31,10 @@ Layout/MultilineOperationIndentation:
 Layout/SpaceBeforeBlockBraces:
   EnforcedStyleForEmptyBraces: space
 
+# Assume the programmer knows how bracketed block syntax works
+Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
 # Allow if (foo = get_foo) style
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
@@ -48,6 +52,15 @@ Style/AndOr:
 Style/GuardClause:
   MinBodyLength: 2
 
+Style/HashEachMethods:
+  Enabled: true
+
+Style/HashTransformKeys:
+  Enabled: true
+
+Style/HashTransformValues:
+  Enabled: true
+
 # This cop gives confusing results for objects that may not be numbers.
 Style/NumericPredicate:
   Enabled: false
@@ -55,6 +68,7 @@ Style/NumericPredicate:
 # Use older RuboCop default
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
+    '%W': ()
     '%w': ()
 
 # Allow explicit return with multiple return values
