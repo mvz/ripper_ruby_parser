@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.7.2 / 2020-02-28
+
+### Bug fixes
+
+* Support imaginary number literals ([#100])
+* Handle anonymous kwrest arguments ([#95])
+
+### Internal changes
+
+* Update tests ([#101])
+* Prepare for testing on Ruby 2.7 ([#99])
+* Various improvements ([#98])
+* Split long module ([#97])
+
 ## 1.7.1 / 2019-11-03
 
 * Handle unicode escapes with five or six hex digits ([#94])
@@ -187,6 +201,12 @@
 * Initial release
 
 <!-- Pull request links -->
+[#101]: https://github.com/mvz/ripper_ruby_parser/pull/101
+[#100]: https://github.com/mvz/ripper_ruby_parser/pull/100
+[#99]: https://github.com/mvz/ripper_ruby_parser/pull/99
+[#98]: https://github.com/mvz/ripper_ruby_parser/pull/98
+[#97]: https://github.com/mvz/ripper_ruby_parser/pull/97
+[#95]: https://github.com/mvz/ripper_ruby_parser/pull/95
 [#94]: https://github.com/mvz/ripper_ruby_parser/pull/94
 [#92]: https://github.com/mvz/ripper_ruby_parser/pull/92
 [#90]: https://github.com/mvz/ripper_ruby_parser/pull/90
