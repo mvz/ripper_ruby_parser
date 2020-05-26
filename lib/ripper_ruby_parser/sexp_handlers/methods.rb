@@ -99,23 +99,20 @@ module RipperRubyParser
 
       def convert_arguments(args)
         args.line ||= args.sexp_body.first&.line
-        args.map! { |item| convert_argument item }
+        args.sexp_body = args.sexp_body.map { |item| convert_argument item }
+        args
       end
 
       def convert_argument(item)
-        if item.is_a? Symbol
-          item
+        case item.sexp_type
+        when :lvar
+          item.last
+        when *SPECIAL_ARG_MARKER.keys
+          convert_marked_argument(item)
+        when :masgn
+          convert_masgn_argument(item)
         else
-          case item.sexp_type
-          when :lvar
-            item.last
-          when *SPECIAL_ARG_MARKER.keys
-            convert_marked_argument(item)
-          when :masgn
-            convert_masgn_argument(item)
-          else
-            item
-          end
+          item
         end
       end
 
