@@ -17,7 +17,7 @@ module RipperRubyParser
 
       def process_arg_paren(exp)
         _, args = exp.shift 2
-        return s() if args.nil?
+        return s(:arglist) if args.nil?
 
         process(args)
       end
