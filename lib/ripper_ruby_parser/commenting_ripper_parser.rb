@@ -27,6 +27,8 @@ module RipperRubyParser
       Sexp.from_array(result)
     end
 
+    private
+
     def on_backtick(delimiter)
       @delimiter_stack.push delimiter
       super
@@ -312,8 +314,6 @@ module RipperRubyParser
     def on_param_error(*args)
       raise SyntaxError, *args
     end
-
-    private
 
     def commentize(_name, exp)
       (_, _kw, loc), comment = @comment_stack.pop
