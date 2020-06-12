@@ -70,10 +70,9 @@ module RipperRubyParser
 
         body_list = []
 
-        main_list = map_unwrap_begin_list map_process_list main.sexp_body
-        line = main_list.first.line
-        main = wrap_in_block reject_void_stmt main_list
-        body_list << main if main
+        main_block = process(main)
+        line = main_block.line
+        body_list << main_block if main_block.sexp_type != :void_stmt
 
         body_list.push(*process(rescue_block)) if rescue_block
         body_list << process(else_block) if else_block
