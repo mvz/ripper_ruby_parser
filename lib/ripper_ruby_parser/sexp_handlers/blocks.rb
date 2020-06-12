@@ -58,19 +58,7 @@ module RipperRubyParser
         rescue_block = map_process_list_compact block.sexp_body
         rescue_block << nil if rescue_block.empty?
 
-        capture = if eclass.nil?
-                    s(:array)
-                  elsif eclass.first.is_a? Symbol
-                    eclass = process(eclass)
-                    body = eclass.sexp_body
-                    if eclass.sexp_type == :mrhs
-                      body.first
-                    else
-                      s(:array, *body)
-                    end
-                  else
-                    s(:array, process(eclass.first))
-                  end
+        capture = handle_rescue_class_list eclass
 
         capture << create_assignment_sub_type(process(evar), s(:gvar, :$!)) if evar
 
@@ -201,6 +189,22 @@ module RipperRubyParser
         return [] unless block
 
         [process(block)]
+      end
+
+      def handle_rescue_class_list(eclass)
+        if eclass.nil?
+          s(:array)
+        elsif eclass.first.is_a? Symbol
+          eclass = process(eclass)
+          body = eclass.sexp_body
+          if eclass.sexp_type == :mrhs
+            body.first
+          else
+            s(:array, *body)
+          end
+        else
+          s(:array, process(eclass.first))
+        end
       end
 
       def convert_empty_to_nil_symbol(block)
