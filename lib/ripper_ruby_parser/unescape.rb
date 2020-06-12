@@ -107,22 +107,49 @@ module RipperRubyParser
       when SINGLE_LETTER_ESCAPES_REGEXP
         SINGLE_LETTER_ESCAPES[bare]
       when /^x/
-        hex_to_char(bare[1..-1])
-      when /^u\{/
-        hex_to_unicode_char(bare[2..-2])
+        unescape_hex_char bare
       when /^u/
-        hex_to_unicode_char(bare[1..4])
+        unescape_unicode_char bare
       when /^(c|C-).$/
-        control(bare[-1].ord).chr
+        unescape_control bare
       when /^M-.$/
-        meta(bare[-1].ord).chr
+        unescape_meta bare
       when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
-        meta(control(bare[-1].ord)).chr
+        unescape_meta_control bare
       when /^[0-7]+/
-        bare.to_i(8).chr
+        unescape_octal bare
       else
         bare
       end
+    end
+
+    def unescape_hex_char(bare)
+      hex_to_char(bare[1..-1])
+    end
+
+    def unescape_unicode_char(bare)
+      hex_chars = if bare.start_with? "u{"
+                    bare[2..-2]
+                  else
+                    bare[1..4]
+                  end
+      hex_to_unicode_char(hex_chars)
+    end
+
+    def unescape_control(bare)
+      control(bare[-1].ord).chr
+    end
+
+    def unescape_meta(bare)
+      meta(bare[-1].ord).chr
+    end
+
+    def unescape_meta_control(bare)
+      meta(control(bare[-1].ord)).chr
+    end
+
+    def unescape_octal(bare)
+      bare.to_i(8).chr
     end
 
     def hex_to_unicode_char(str)
