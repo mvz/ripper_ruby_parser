@@ -17,13 +17,14 @@ module RipperRubyParser
       def process_params(exp)
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
-        args = handle_normal_arguments normal
-        args += handle_default_arguments defaults
-        args += handle_splat splat
-        args += handle_normal_arguments rest
-        args += handle_kwargs kwargs
-        args += handle_double_splat doublesplat
-        args += handle_block_argument block
+        args =
+          handle_normal_arguments(normal) +
+          handle_default_arguments(defaults) +
+          handle_splat(splat) +
+          handle_normal_arguments(rest) +
+          handle_kwargs(kwargs) +
+          handle_double_splat(doublesplat) +
+          handle_block_argument(block)
 
         s(:args, *args)
       end
