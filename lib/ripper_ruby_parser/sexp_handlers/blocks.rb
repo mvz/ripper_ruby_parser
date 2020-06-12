@@ -83,7 +83,7 @@ module RipperRubyParser
           body_list = [s(:ensure, *body_list)]
         end
 
-        wrap_in_block(body_list) || s(:void_stmt).line(line)
+        wrap_in_block(body_list, line)
       end
 
       def process_rescue_mod(exp)
@@ -213,17 +213,6 @@ module RipperRubyParser
           s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
-        end
-      end
-
-      def wrap_in_block(statements)
-        case statements.length
-        when 0
-          nil
-        when 1
-          statements.first
-        else
-          s(:block, *statements)
         end
       end
     end

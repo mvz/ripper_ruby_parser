@@ -68,15 +68,7 @@ module RipperRubyParser
       statements = map_unwrap_begin_list map_process_list statements
       line = statements.first.line
       statements = reject_void_stmt statements
-      case statements.count
-      when 0
-        s(:void_stmt).line(line)
-      when 1
-        statements.first
-      else
-        first = statements.shift
-        s(:block, *unwrap_block(first), *statements)
-      end
+      wrap_in_block(statements, line)
     end
 
     def process_var_ref(exp)
