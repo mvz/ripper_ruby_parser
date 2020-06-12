@@ -110,11 +110,7 @@ module RipperRubyParser
         unescape_hex_char bare
       when /^u/
         unescape_unicode_char bare
-      when /^(c|C-).$/
-        unescape_control bare
-      when /^M-.$/
-        unescape_meta bare
-      when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
+      when /^(c|C-|M-|M-\\C-|C-\\M-|M-\\c|c\\M-).$/
         unescape_meta_control bare
       when /^[0-7]+/
         unescape_octal bare
@@ -136,16 +132,17 @@ module RipperRubyParser
       hex_to_unicode_char(hex_chars)
     end
 
-    def unescape_control(bare)
-      control(bare[-1].ord).chr
-    end
-
-    def unescape_meta(bare)
-      meta(bare[-1].ord).chr
-    end
-
     def unescape_meta_control(bare)
-      meta(control(bare[-1].ord)).chr
+      base_value = bare[-1].ord
+      value = case bare
+              when /^(c|C-).$/
+                control(base_value)
+              when /^M-.$/
+                meta(base_value)
+              when /^(M-\\C-|C-\\M-|M-\\c|c\\M-).$/
+                meta(control(base_value))
+              end
+      value.chr
     end
 
     def unescape_octal(bare)
