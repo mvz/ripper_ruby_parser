@@ -135,28 +135,8 @@ module RipperRubyParser
 
         list = merge_raw_string_literals list
         list = map_process_list list
-
-        parts = list.flat_map do |item|
-          type, val, *rest = item
-          if type == :dstr
-            if val.empty?
-              rest
-            else
-              [s(:str, val), *rest]
-            end
-          else
-            [item]
-          end
-        end
-
-        string = ""
-        while parts.first&.sexp_type == :str
-          str = parts.shift
-          line ||= str.line
-          string += str.last
-        end
-
-        return line, string, parts
+        parts = unpack_dstr list
+        merge_initial_string_literals(parts)
       end
 
       def merge_raw_string_literals(list)
@@ -170,6 +150,32 @@ module RipperRubyParser
             items
           end
         end
+      end
+
+      def unpack_dstr(list)
+        list.flat_map do |item|
+          type, val, *rest = item
+          if type == :dstr
+            if val.empty?
+              rest
+            else
+              [s(:str, val), *rest]
+            end
+          else
+            [item]
+          end
+        end
+      end
+
+      def merge_initial_string_literals(parts)
+        string = ""
+        while parts.first&.sexp_type == :str
+          str = parts.shift
+          line ||= str.line
+          string += str.last
+        end
+
+        return line, string, parts
       end
 
       def character_flags_to_numerical(flags)
