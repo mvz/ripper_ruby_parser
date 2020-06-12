@@ -49,7 +49,7 @@ module RipperRubyParser
       def process_begin(exp)
         _, body, pos = exp.shift 3
 
-        body = convert_empty_to_nil_symbol process(body)
+        body = convert_void_stmt_to_nil_symbol process(body)
         with_position pos, s(:begin, body)
       end
 
@@ -83,7 +83,7 @@ module RipperRubyParser
           body_list = [s(:ensure, *body_list)]
         end
 
-        wrap_in_block(body_list) || s().line(line)
+        wrap_in_block(body_list) || s(:void_stmt).line(line)
       end
 
       def process_rescue_mod(exp)
@@ -203,15 +203,6 @@ module RipperRubyParser
           end
         else
           s(:array, process(eclass.first))
-        end
-      end
-
-      def convert_empty_to_nil_symbol(block)
-        case block.length
-        when 0
-          s(:nil)
-        else
-          block
         end
       end
 

@@ -125,11 +125,7 @@ module RipperRubyParser
     def process_paren(exp)
       _, body = exp.shift 2
       result = process body
-      if result.sexp_type == :void_stmt
-        s(:nil)
-      else
-        result
-      end
+      convert_void_stmt_to_nil_symbol result
     end
 
     def process_comment(exp)
@@ -234,7 +230,7 @@ module RipperRubyParser
     def class_or_module_body(exp)
       body = process(exp)
 
-      return body if body.empty?
+      return [] if body.sexp_type == :void_stmt
 
       unwrap_block body
     end

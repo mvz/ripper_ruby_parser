@@ -83,8 +83,8 @@ module RipperRubyParser
 
       def method_body(exp)
         block = process exp
-        case block.length
-        when 0
+        case block.sexp_type
+        when :void_stmt
           [s(:nil).line(block.line)]
         else
           unwrap_block block

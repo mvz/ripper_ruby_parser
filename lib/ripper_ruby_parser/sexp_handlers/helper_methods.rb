@@ -88,6 +88,24 @@ module RipperRubyParser
         end
       end
 
+      def convert_void_stmt_to_nil_symbol(block)
+        case block.sexp_type
+        when :void_stmt
+          s(:nil)
+        else
+          block
+        end
+      end
+
+      def convert_empty_to_nil_symbol(block)
+        case block.length
+        when 0
+          s(:nil)
+        else
+          block
+        end
+      end
+
       def handle_return_argument_list(arglist)
         args = process(arglist).sexp_body
 
