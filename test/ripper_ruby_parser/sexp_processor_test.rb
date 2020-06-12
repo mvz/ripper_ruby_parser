@@ -279,7 +279,8 @@ describe RipperRubyParser::SexpProcessor do
                  s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)),
                    s(:when, s(:args, s(:foo)), s(:stmts, s(:bar)), nil)))
         result = processor.process sexp
-        _(result).must_equal s(s(:when, s(:array, s(:foo_p)), s(:bar_p)),
+        _(result).must_equal s(:case_body,
+                               s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                                s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                                s(:when, s(:array, s(:foo_p)), s(:bar_p)),
                                nil)
