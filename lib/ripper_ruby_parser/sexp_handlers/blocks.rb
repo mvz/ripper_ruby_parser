@@ -17,13 +17,14 @@ module RipperRubyParser
       def process_params(exp)
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
-        args = handle_normal_arguments normal
-        args += handle_default_arguments defaults
-        args += handle_splat splat
-        args += handle_normal_arguments rest
-        args += handle_kwargs kwargs
-        args += handle_double_splat doublesplat
-        args += handle_block_argument block
+        args =
+          handle_normal_arguments(normal) +
+          handle_default_arguments(defaults) +
+          handle_splat(splat) +
+          handle_normal_arguments(rest) +
+          handle_kwargs(kwargs) +
+          handle_double_splat(doublesplat) +
+          handle_block_argument(block)
 
         s(:args, *args)
       end
@@ -49,7 +50,7 @@ module RipperRubyParser
       def process_begin(exp)
         _, body, pos = exp.shift 3
 
-        body = convert_empty_to_nil_symbol process(body)
+        body = convert_void_stmt_to_nil_symbol process(body)
         with_position pos, s(:begin, body)
       end
 
@@ -58,19 +59,7 @@ module RipperRubyParser
         rescue_block = map_process_list_compact block.sexp_body
         rescue_block << nil if rescue_block.empty?
 
-        capture = if eclass.nil?
-                    s(:array)
-                  elsif eclass.first.is_a? Symbol
-                    eclass = process(eclass)
-                    body = eclass.sexp_body
-                    if eclass.sexp_type == :mrhs
-                      body.first
-                    else
-                      s(:array, *body)
-                    end
-                  else
-                    s(:array, process(eclass.first))
-                  end
+        capture = handle_rescue_class_list eclass
 
         capture << create_assignment_sub_type(process(evar), s(:gvar, :$!)) if evar
 
@@ -80,23 +69,22 @@ module RipperRubyParser
       def process_bodystmt(exp)
         _, main, rescue_block, else_block, ensure_block = exp.shift 5
 
-        body = s()
+        body_list = []
 
-        main_list = map_unwrap_begin_list map_process_list main.sexp_body
-        line = main_list.first.line
-        main = wrap_in_block reject_void_stmt main_list
-        body << main if main
+        main_block = process(main)
+        line = main_block.line
+        body_list << main_block if main_block.sexp_type != :void_stmt
 
-        body.push(*process(rescue_block)) if rescue_block
-        body << process(else_block) if else_block
-        body = s(s(:rescue, *body)) if rescue_block
+        body_list.push(*process(rescue_block)) if rescue_block
+        body_list << process(else_block) if else_block
+        body_list = [s(:rescue, *body_list)] if rescue_block
 
         if ensure_block
-          body << process(ensure_block)
-          body = s(s(:ensure, *body))
+          body_list << process(ensure_block)
+          body_list = [s(:ensure, *body_list)]
         end
 
-        wrap_in_block(body) || s().line(line)
+        wrap_in_block(body_list, line)
       end
 
       def process_rescue_mod(exp)
@@ -203,12 +191,19 @@ module RipperRubyParser
         [process(block)]
       end
 
-      def convert_empty_to_nil_symbol(block)
-        case block.length
-        when 0
-          s(:nil)
+      def handle_rescue_class_list(eclass)
+        if eclass.nil?
+          s(:array)
+        elsif eclass.first.is_a? Symbol
+          eclass = process(eclass)
+          body = eclass.sexp_body
+          if eclass.sexp_type == :mrhs
+            body.first
+          else
+            s(:array, *body)
+          end
         else
-          block
+          s(:array, process(eclass.first))
         end
       end
 
@@ -219,17 +214,6 @@ module RipperRubyParser
           s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
-        end
-      end
-
-      def wrap_in_block(statements)
-        case statements.length
-        when 0
-          nil
-        when 1
-          statements.first
-        else
-          s(:block, *statements)
         end
       end
     end

@@ -68,15 +68,7 @@ module RipperRubyParser
       statements = map_unwrap_begin_list map_process_list statements
       line = statements.first.line
       statements = reject_void_stmt statements
-      case statements.count
-      when 0
-        s(:void_stmt).line(line)
-      when 1
-        statements.first
-      else
-        first = statements.shift
-        s(:block, *unwrap_block(first), *statements)
-      end
+      wrap_in_block(statements, line)
     end
 
     def process_var_ref(exp)
@@ -125,11 +117,7 @@ module RipperRubyParser
     def process_paren(exp)
       _, body = exp.shift 2
       result = process body
-      if result.sexp_type == :void_stmt
-        s(:nil)
-      else
-        result
-      end
+      convert_void_stmt_to_nil_symbol result
     end
 
     def process_comment(exp)
@@ -234,7 +222,7 @@ module RipperRubyParser
     def class_or_module_body(exp)
       body = process(exp)
 
-      return body if body.empty?
+      return [] if body.sexp_type == :void_stmt
 
       unwrap_block body
     end

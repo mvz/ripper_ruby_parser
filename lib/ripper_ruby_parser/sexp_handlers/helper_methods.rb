@@ -81,10 +81,43 @@ module RipperRubyParser
       end
 
       def unwrap_block(exp)
-        if exp.sexp_type == :block
+        case exp.sexp_type
+        when :block
           exp.sexp_body
+        when :void_stmt
+          [nil]
         else
           [exp]
+        end
+      end
+
+      def wrap_in_block(statements, line)
+        case statements.length
+        when 0
+          s(:void_stmt).line(line)
+        when 1
+          statements.first
+        else
+          first = statements.shift
+          s(:block, *unwrap_block(first), *statements)
+        end
+      end
+
+      def convert_void_stmt_to_nil_symbol(block)
+        case block.sexp_type
+        when :void_stmt
+          s(:nil)
+        else
+          block
+        end
+      end
+
+      def convert_empty_to_nil_symbol(block)
+        case block.length
+        when 0
+          s(:nil)
+        else
+          block
         end
       end
 

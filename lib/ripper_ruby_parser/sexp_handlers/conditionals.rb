@@ -47,33 +47,20 @@ module RipperRubyParser
 
       def process_case(exp)
         _, expr, clauses = exp.shift 3
-        s(:case, process(expr), *process(clauses))
+        s(:case, process(expr), *process(clauses).sexp_body)
       end
 
       def process_when(exp)
         _, values, truepart, falsepart = exp.shift 4
 
-        falsepart = process(falsepart)
-        falsepart = unwrap_nil falsepart if falsepart
+        falsepart ||= s(:void_stmt)
 
-        if falsepart.nil?
-          falsepart = [nil]
-        elsif falsepart.first.is_a? Symbol
-          falsepart = s(falsepart)
-        end
-
+        falsepart = unwrap_case_body process(falsepart)
         values = process(values).sexp_body
+        truepart = unwrap_block process(truepart)
 
-        truepart = map_process_list_compact truepart.sexp_body
-        truepart = if truepart.empty?
-                     [nil]
-                   else
-                     unwrap_block(truepart.shift) + truepart
-                   end
-
-        s(s(:when,
-            s(:array, *values),
-            *truepart),
+        s(:case_body,
+          s(:when, s(:array, *values), *truepart),
           *falsepart)
       end
 
@@ -107,6 +94,17 @@ module RipperRubyParser
           s(:if, inner, falsepart, truepart)
         else
           s(:if, cond, truepart, falsepart)
+        end
+      end
+
+      def unwrap_case_body(exp)
+        case exp.sexp_type
+        when :case_body
+          exp.sexp_body
+        when :void_stmt
+          [nil]
+        else
+          [exp]
         end
       end
     end
