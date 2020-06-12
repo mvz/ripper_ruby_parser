@@ -68,23 +68,23 @@ module RipperRubyParser
       def process_bodystmt(exp)
         _, main, rescue_block, else_block, ensure_block = exp.shift 5
 
-        body = s()
+        body_list = []
 
         main_list = map_unwrap_begin_list map_process_list main.sexp_body
         line = main_list.first.line
         main = wrap_in_block reject_void_stmt main_list
-        body << main if main
+        body_list << main if main
 
-        body.push(*process(rescue_block)) if rescue_block
-        body << process(else_block) if else_block
-        body = s(s(:rescue, *body)) if rescue_block
+        body_list.push(*process(rescue_block)) if rescue_block
+        body_list << process(else_block) if else_block
+        body_list = [s(:rescue, *body_list)] if rescue_block
 
         if ensure_block
-          body << process(ensure_block)
-          body = s(s(:ensure, *body))
+          body_list << process(ensure_block)
+          body_list = [s(:ensure, *body_list)]
         end
 
-        wrap_in_block(body) || s().line(line)
+        wrap_in_block(body_list) || s().line(line)
       end
 
       def process_rescue_mod(exp)
