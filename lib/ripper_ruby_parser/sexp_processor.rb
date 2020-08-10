@@ -11,8 +11,7 @@ module RipperRubyParser
   class SexpProcessor < ::SexpProcessor
     include Unescape
 
-    attr_reader :filename
-    attr_reader :extra_compatible
+    attr_reader :filename, :extra_compatible
 
     def initialize(filename: nil, extra_compatible: nil)
       super()
