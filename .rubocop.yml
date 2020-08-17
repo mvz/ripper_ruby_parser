@@ -41,9 +41,10 @@ Lint/AmbiguousBlockAssociation:
 Lint/AssignmentInCondition:
   AllowSafeAssignment: true
 
-# Test describe blocks can be any size
+# Test describe blocks and gem specification blocks can be any size
 Metrics/BlockLength:
   Exclude:
+    - '*.gemspec'
     - 'test/**/*'
 
 Performance/StartWith:

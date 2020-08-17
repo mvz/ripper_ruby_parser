@@ -1,40 +1,40 @@
 # frozen_string_literal: true
 
-require File.join(File.dirname(__FILE__), "lib/ripper_ruby_parser/version.rb")
+require_relative "lib/ripper_ruby_parser/version"
 
-Gem::Specification.new do |s|
-  s.name = "ripper_ruby_parser"
-  s.version = RipperRubyParser::VERSION
+Gem::Specification.new do |spec|
+  spec.name = "ripper_ruby_parser"
+  spec.version = RipperRubyParser::VERSION
+  spec.authors = ["Matijs van Zuijlen"]
+  spec.email = ["matijs@matijs.net"]
 
-  s.summary = "Parse with Ripper, produce sexps that are compatible with RubyParser."
-  s.required_ruby_version = ">= 2.5.0"
-
-  s.authors = ["Matijs van Zuijlen"]
-  s.email = ["matijs@matijs.net"]
-  s.homepage = "http://www.github.com/mvz/ripper_ruby_parser"
-
-  s.license = "MIT"
-
-  s.description = <<-DESC
+  spec.summary = "Parse with Ripper, produce sexps that are compatible with RubyParser."
+  spec.description = <<~DESC
     RipperRubyParser is a parser for Ruby based on Ripper that aims to be a
     drop-in replacement for RubyParser.
   DESC
+  spec.homepage = "http://www.github.com/mvz/ripper_ruby_parser"
+  spec.license = "MIT"
 
-  s.rdoc_options = ["--main", "README.md"]
+  spec.required_ruby_version = ">= 2.5.0"
 
-  s.files = Dir["{lib,test}/**/*", "*.md", "Rakefile"] & `git ls-files -z`.split("\0")
-  s.extra_rdoc_files = ["README.md"]
-  s.test_files = `git ls-files -z -- test`.split("\0")
+  spec.metadata["homepage_uri"] = spec.homepage
+  spec.metadata["source_code_uri"] = "https://github.com/mvz/ripper_ruby_parser"
+  spec.metadata["changelog_uri"] = "https://github.com/mvz/ripper_ruby_parser/blob/master/CHANGELOG.md"
 
-  s.add_dependency("sexp_processor", ["~> 4.10"])
+  spec.files = File.read("Manifest.txt").split
+  spec.rdoc_options = ["--main", "README.md"]
+  spec.extra_rdoc_files = ["README.md"]
+  spec.require_paths = ["lib"]
 
-  s.add_development_dependency("minitest", ["~> 5.6"])
-  s.add_development_dependency("rake", ["~> 13.0"])
-  s.add_development_dependency("rubocop", ["~> 0.88.0"])
-  s.add_development_dependency("rubocop-minitest", ["~> 0.10.0"])
-  s.add_development_dependency("rubocop-performance", ["~> 1.7.1"])
-  s.add_development_dependency("ruby_parser", ["~> 3.14.1"])
-  s.add_development_dependency("simplecov")
+  spec.add_dependency "sexp_processor", "~> 4.10"
 
-  s.require_paths = ["lib"]
+  spec.add_development_dependency "minitest", "~> 5.6"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rake-manifest", "~> 0.1.0"
+  spec.add_development_dependency "rubocop", "~> 0.88.0"
+  spec.add_development_dependency "rubocop-minitest", "~> 0.10.0"
+  spec.add_development_dependency "rubocop-performance", "~> 1.7.1"
+  spec.add_development_dependency "ruby_parser", "~> 3.14.1"
+  spec.add_development_dependency "simplecov"
 end

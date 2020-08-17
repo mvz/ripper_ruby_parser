@@ -2,7 +2,14 @@
 
 require "rake/clean"
 require "bundler/gem_tasks"
+require "rake/manifest/task"
 require "rake/testtask"
+
+Rake::Manifest::Task.new do |t|
+  t.patterns = ["lib/**/*", "*.md"]
+end
+
+task build: "manifest:check"
 
 namespace :test do
   Rake::TestTask.new(:unit) do |t|
