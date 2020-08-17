@@ -22,7 +22,7 @@ Gem::Specification.new do |spec|
   spec.metadata["source_code_uri"] = "https://github.com/mvz/ripper_ruby_parser"
   spec.metadata["changelog_uri"] = "https://github.com/mvz/ripper_ruby_parser/blob/master/CHANGELOG.md"
 
-  spec.files = Dir["{lib,test}/**/*", "*.md", "Rakefile"] & `git ls-files -z`.split("\0")
+  spec.files = File.read("Manifest.txt").split
   spec.rdoc_options = ["--main", "README.md"]
   spec.extra_rdoc_files = ["README.md"]
   spec.require_paths = ["lib"]
@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "minitest", "~> 5.6"
   spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rake-manifest", "~> 0.1.0"
   spec.add_development_dependency "rubocop", "~> 0.88.0"
   spec.add_development_dependency "rubocop-minitest", "~> 0.10.0"
   spec.add_development_dependency "rubocop-performance", "~> 1.7.1"
