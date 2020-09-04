@@ -10,8 +10,8 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
-* Requires Ruby 2.4 or higher
-* Compatible with RubyParser 3.14.0
+* Requires Ruby 2.5 or higher
+* Compatible with RubyParser 3.15.0
 
 ## Known incompatibilities
 
@@ -64,7 +64,7 @@ If you want to send pull requests or patches, please:
 
 (The MIT License)
 
-Copyright (c) 2012, 2014-2019 Matijs van Zuijlen
+Copyright (c) 2012, 2014-2020 Matijs van Zuijlen
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
