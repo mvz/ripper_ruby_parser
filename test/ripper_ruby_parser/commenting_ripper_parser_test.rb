@@ -174,6 +174,19 @@ describe RipperRubyParser::CommentingRipperParser do
                                      s(:stmts, s(:void_stmt, s(4, 10))), nil, nil, nil),
                                    s(4, 0)))))
     end
+
+    it "handles interpolation with subsequent whitespace for dedented heredocs" do
+      result = parse_with_builder "<<~FOO\n  \#{bar} baz\nFOO"
+      _(result).must_equal s(:program,
+                             s(:stmts,
+                               s(:string_literal,
+                                 s(:string_content,
+                                   s(:@tstring_content, "", s(2, 2), "<<~FOO"),
+                                   s(:string_embexpr,
+                                     s(:stmts,
+                                       s(:vcall, s(:@ident, "bar", s(2, 4))))),
+                                   s(:@tstring_content, " baz\n", s(2, 8), "<<~FOO")))))
+    end
   end
 
   describe "handling syntax errors" do
