@@ -664,6 +664,20 @@ describe RipperRubyParser::Parser do
                                  s(:str, "\n"))
         end
 
+        it "handles interpolation with subsequent whitespace" do
+          _("<<FOO\n\#{bar} baz\nFOO")
+            .must_be_parsed_as s(:dstr, "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, " baz\n"))
+        end
+
+        it "handles interpolation with subsequent whitespace for dedented heredocs" do
+          _("<<~FOO\n  \#{bar} baz\nFOO")
+            .must_be_parsed_as s(:dstr, "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, " baz\n"))
+        end
+
         it "handles line continuation after interpolation" do
           _("<<FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",

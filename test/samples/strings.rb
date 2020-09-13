@@ -56,6 +56,11 @@ foo = <<~BAR
   quuz
 BAR
 
+# Dedented heredocs with interpolation
+<<~FOO
+  #{bar} smurf
+FOO
+
 # Line continuation
 "foo\
 bar"

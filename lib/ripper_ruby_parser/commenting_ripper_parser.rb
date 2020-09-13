@@ -103,6 +103,18 @@ module RipperRubyParser
       @delimiter_stack.push delimiter
     end
 
+    def on_heredoc_dedent(val, width)
+      next_dedent = true
+      val.map! do |e|
+        if e.is_a?(Array) && e[0] == :@tstring_content
+          e = dedent_element(e, width) if next_dedent
+          next_dedent = e[1].end_with? "\n"
+        end
+        e
+      end
+      val
+    end
+
     def on_heredoc_end(_delimiter)
       @delimiter_stack.pop
     end
