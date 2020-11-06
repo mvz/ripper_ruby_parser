@@ -1,0 +1,74 @@
+version: 2.1
+
+commands:
+  build:
+    description: "Set up the build environment"
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - bundle-{{ checksum "ripper_ruby_parser.gemspec" }}-{{ .Branch }}
+            - bundle-{{ checksum "ripper_ruby_parser.gemspec" }}
+            - bundle-
+      - run:
+          name: Install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+            bundle clean
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: bundle-{{ checksum "ripper_ruby_parser.gemspec" }}-{{ .Branch }}
+
+  test:
+    description: "Run the tests"
+    steps:
+      - run:
+          name: Run tests
+          command: bundle exec rake
+
+  rubocop:
+    description: "Check code with RuboCop"
+    steps:
+      - run:
+          name: Run rubocop
+          command: bundle exec rubocop -P
+
+jobs:
+  build-ruby-2_5:
+    docker:
+      - image: cimg/ruby:2.5
+    steps:
+      - build
+      - test
+
+  build-ruby-2_6:
+    docker:
+      - image: cimg/ruby:2.6
+    steps:
+      - build
+      - test
+
+  build-ruby-2_7:
+    docker:
+      - image: cimg/ruby:2.7
+    steps:
+      - build
+      - test
+
+  check-rubocop:
+    docker:
+      - image: cimg/ruby:2.7
+    steps:
+      - build
+      - rubocop
+
+workflows:
+  version: 2
+
+  build:
+    jobs:
+      - build-ruby-2_5
+      - build-ruby-2_6
+      - build-ruby-2_7
+      - check-rubocop
