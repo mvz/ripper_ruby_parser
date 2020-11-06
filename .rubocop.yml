@@ -52,6 +52,10 @@ Metrics/BlockLength:
     - '*.gemspec'
     - 'test/**/*'
 
+# Allow semantic variation in and/or external determination of symbols
+Naming/VariableNumber:
+  CheckSymbols: false
+
 Performance/StartWith:
   AutoCorrect: true
 
