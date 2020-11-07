@@ -25,16 +25,6 @@ jobs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby }}
-    - uses: actions/cache@v2
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-gems-${{ matrix.ruby }}-${{ hashFiles('**/Gemfile', '**/*.gemspec') }}-${{ github.ref }}
-        restore-keys: |
-          ${{ runner.os }}-gems-${{ matrix.ruby }}-${{ hashFiles('**/Gemfile', '**/*.gemspec') }}-
-          ${{ runner.os }}-gems-${{ matrix.ruby }}-
-    - name: Install dependencies
-      run: |
-        bundle config path vendor/bundle
-        bundle install
+        bundler-cache: true
     - name: Run tests
       run: bundle exec rake
