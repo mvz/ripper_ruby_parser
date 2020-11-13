@@ -259,7 +259,7 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    # Note: differences in the handling of comments are not caught by Sexp's
+    # NOTE: differences in the handling of comments are not caught by Sexp's
     # implementation of equality.
     describe "for comments" do
       it "handles method comments" do
@@ -372,7 +372,7 @@ describe RipperRubyParser::Parser do
       end
     end
 
-    # Note: differences in the handling of line numbers are not caught by
+    # NOTE: differences in the handling of line numbers are not caught by
     # Sexp's implementation of equality.
     describe "assigning line numbers" do
       it "works for a plain method call" do
