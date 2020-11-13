@@ -18,9 +18,8 @@ describe RipperRubyParser::CommentingRipperParser do
     #
     # See https://bugs.ruby-lang.org/issues/15670
     let(:dsym_string_type) do
-      if RUBY_VERSION >= "2.6.3"
-        :string_content
-      elsif RUBY_VERSION < "2.6.0" && RUBY_VERSION >= "2.5.8"
+      if RUBY_VERSION >= "2.6.3" ||
+         RUBY_VERSION < "2.6.0" && RUBY_VERSION >= "2.5.8"
         :string_content
       else
         :xstring
