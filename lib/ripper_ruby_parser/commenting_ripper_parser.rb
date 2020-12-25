@@ -307,24 +307,24 @@ module RipperRubyParser
       commentize(:END, super)
     end
 
-    def on_parse_error(*args)
-      raise SyntaxError, *args
+    def on_parse_error(message)
+      raise SyntaxError, message
     end
 
-    def on_class_name_error(*args)
-      raise SyntaxError, *args
+    def on_class_name_error(message, *)
+      raise SyntaxError, message
     end
 
-    def on_alias_error(*args)
-      raise SyntaxError, *args
+    def on_alias_error(message, *)
+      raise SyntaxError, message
     end
 
-    def on_assign_error(*args)
-      raise SyntaxError, *args
+    def on_assign_error(message, *)
+      raise SyntaxError, message
     end
 
-    def on_param_error(*args)
-      raise SyntaxError, *args
+    def on_param_error(message, *)
+      raise SyntaxError, message
     end
 
     def commentize(_name, exp)
