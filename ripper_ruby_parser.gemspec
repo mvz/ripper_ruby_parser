@@ -40,5 +40,5 @@ Gem::Specification.new do |spec|
   # For testing, require sexp_processor 4.13, 4.14 or 4.15 so its test cases
   # match version 3.14.0 of ruby_parser.
   spec.add_development_dependency "sexp_processor", [">= 4.13.0", "< 4.16"]
-  spec.add_development_dependency "simplecov", "~> 0.20.0"
+  spec.add_development_dependency "simplecov", "~> 0.21.0"
 end
