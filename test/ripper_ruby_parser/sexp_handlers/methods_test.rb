@@ -78,7 +78,7 @@ describe RipperRubyParser::Parser do
         _("def foo *; end")
           .must_be_parsed_as s(:defn,
                                :foo,
-                               s(:args, :"*"),
+                               s(:args, :*),
                                s(:nil))
       end
 
@@ -86,7 +86,7 @@ describe RipperRubyParser::Parser do
         _("def foo **; end")
           .must_be_parsed_as s(:defn,
                                :foo,
-                               s(:args, :"**"),
+                               s(:args, :**),
                                s(:nil))
       end
 

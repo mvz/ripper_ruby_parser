@@ -69,7 +69,7 @@ describe RipperRubyParser::Parser do
         _("foo do |bar,*| end")
           .must_be_parsed_as s(:iter,
                                s(:call, nil, :foo),
-                               s(:args, :bar, :"*"))
+                               s(:args, :bar, :*))
       end
 
       specify do
@@ -199,7 +199,7 @@ describe RipperRubyParser::Parser do
         _("foo do |bar, **|; qux bar; end")
           .must_be_parsed_as s(:iter,
                                s(:call, nil, :foo),
-                               s(:args, :bar, :"**"),
+                               s(:args, :bar, :**),
                                s(:call, nil, :qux,
                                  s(:lvar, :bar)))
       end
