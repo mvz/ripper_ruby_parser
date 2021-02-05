@@ -232,7 +232,7 @@ describe RipperRubyParser::Parser do
       end
 
       specify { _("$'").must_be_parsed_as s(:back_ref, :"'") }
-      specify { _("$&").must_be_parsed_as s(:back_ref, :"&") }
+      specify { _("$&").must_be_parsed_as s(:back_ref, :&) }
 
       it "works for class variables" do
         _("@@foo")
