@@ -95,7 +95,7 @@ module RipperRubyParser
         when "\n"
           ""
         else
-          '\\\\'
+          "\\\\"
         end
       end
     end
