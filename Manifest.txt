@@ -1,8 +1,6 @@
-lib/ripper_ruby_parser
 lib/ripper_ruby_parser.rb
 lib/ripper_ruby_parser/commenting_ripper_parser.rb
 lib/ripper_ruby_parser/parser.rb
-lib/ripper_ruby_parser/sexp_handlers
 lib/ripper_ruby_parser/sexp_handlers.rb
 lib/ripper_ruby_parser/sexp_handlers/assignment.rb
 lib/ripper_ruby_parser/sexp_handlers/blocks.rb
