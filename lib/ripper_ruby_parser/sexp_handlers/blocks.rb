@@ -177,12 +177,7 @@ module RipperRubyParser
       def handle_double_splat(doublesplat)
         return [] unless doublesplat
 
-        # Anonymous kwrest arguments are parsed into an Integer in Ruby 2.4
-        if RUBY_VERSION < "2.5.0" && doublesplat.is_a?(Integer)
-          [s(:dsplat, s(:lvar, :""))]
-        else
-          [s(:dsplat, process(doublesplat))]
-        end
+        [s(:dsplat, process(doublesplat))]
       end
 
       def handle_block_argument(block)
