@@ -1,5 +1,21 @@
 # Changelog
 
+Notable changes to this project will be documented in this file.
+
+This project adheres to [Semantic Versioning 2.0.0][1].
+
+This document is formatted based on [Keep A CHANGELOG][2].
+
+## 1.8.0 / 2021-05-18
+
+### Changes
+
+* Drop support for Ruby 2.4 ([2cf6b4050] and [#145])
+* Update RubyParser compatibility target to 3.15.0 ([#105])
+* Fix handling of dedented heredoc ([#106])
+* Add support for running on Ruby 3.0 ([#123])
+* Various code improvements and other internal changes
+
 ## 1.7.2 / 2020-02-28
 
 ### Bug fixes
@@ -201,6 +217,10 @@
 * Initial release
 
 <!-- Pull request links -->
+[#145]: https://github.com/mvz/ripper_ruby_parser/pull/145
+[#123]: https://github.com/mvz/ripper_ruby_parser/pull/123
+[#106]: https://github.com/mvz/ripper_ruby_parser/pull/106
+[#105]: https://github.com/mvz/ripper_ruby_parser/pull/105
 [#101]: https://github.com/mvz/ripper_ruby_parser/pull/101
 [#100]: https://github.com/mvz/ripper_ruby_parser/pull/100
 [#99]: https://github.com/mvz/ripper_ruby_parser/pull/99
@@ -231,3 +251,11 @@
 [#67]: https://github.com/mvz/ripper_ruby_parser/pull/67
 [#66]: https://github.com/mvz/ripper_ruby_parser/pull/66
 [#65]: https://github.com/mvz/ripper_ruby_parser/pull/65
+
+<!-- Git sha links -->
+[2cf6b4050]: https://github.com/mvz/ripper_ruby_parser/commit/2cf6b40501576003b916196e23222276b51aa53c
+
+<!-- Other links -->
+
+[1]:  https://semver.org/spec/v2.0.0.html
+[2]:  https://keepachangelog.com/en/1.0.0/
