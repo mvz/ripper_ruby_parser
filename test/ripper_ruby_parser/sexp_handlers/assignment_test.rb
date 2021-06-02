@@ -522,7 +522,7 @@ describe RipperRubyParser::Parser do
         _("foo.bar ||= baz")
           .must_be_parsed_as s(:op_asgn2,
                                s(:call, nil, :foo),
-                               :bar=, :'||',
+                               :bar=, :"||",
                                s(:call, nil, :baz))
       end
     end

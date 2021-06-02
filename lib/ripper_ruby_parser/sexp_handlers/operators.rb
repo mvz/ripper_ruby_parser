@@ -5,8 +5,8 @@ module RipperRubyParser
     # Sexp handlers for operators
     module Operators
       BINARY_OPERATOR_MAP = {
-        '&&': :and,
-        '||': :or,
+        "&&": :and,
+        "||": :or,
         and: :and,
         or: :or
       }.freeze
@@ -16,7 +16,7 @@ module RipperRubyParser
       }.freeze
 
       NEGATED_BINARY_OPERATOR_MAP = {
-        '!~': :=~
+        "!~": :=~
       }.freeze
 
       SHIFT_OPERATORS = [:<<, :>>].freeze

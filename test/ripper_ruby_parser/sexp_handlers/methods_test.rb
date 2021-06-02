@@ -176,7 +176,7 @@ describe RipperRubyParser::Parser do
         _("def foo **bar; end")
           .must_be_parsed_as s(:defn,
                                :foo,
-                               s(:args, :'**bar'),
+                               s(:args, :"**bar"),
                                s(:nil))
       end
 
@@ -190,7 +190,7 @@ describe RipperRubyParser::Parser do
       it "works with argument destructuring including splat" do
         _("def foo((bar, *baz)); end")
           .must_be_parsed_as s(:defn, :foo,
-                               s(:args, s(:masgn, :bar, :'*baz')),
+                               s(:args, s(:masgn, :bar, :"*baz")),
                                s(:nil))
       end
 
