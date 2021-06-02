@@ -290,7 +290,7 @@ describe RipperRubyParser::SexpProcessor do
     it "processes a Ruby 2.5 style period Sexp" do
       sexp = s(:call,
                s(:vcall, s(:@ident, "foo", s(1, 0))),
-               :'.',
+               :".",
                s(:@ident, "bar", s(1, 4)))
       _(processor.process(sexp)).must_equal s(:call, s(:call, nil, :foo), :bar)
     end
@@ -306,7 +306,7 @@ describe RipperRubyParser::SexpProcessor do
     it "raises an error for an unknown call operator" do
       sexp = s(:call,
                s(:vcall, s(:@ident, "foo", s(1, 0))),
-               :'>.',
+               :">.",
                s(:@ident, "bar", s(1, 4)))
       _(-> { processor.process(sexp) }).must_raise KeyError
     end
