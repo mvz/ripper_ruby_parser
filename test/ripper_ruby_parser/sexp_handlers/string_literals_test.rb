@@ -607,11 +607,6 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:str, "  bar\n")
         end
 
-        it "works for the automatically outdenting case" do
-          _("  <<~FOO\n  bar\n  FOO")
-            .must_be_parsed_as s(:str, "bar\n")
-        end
-
         it "works for escape sequences" do
           _("<<FOO\nbar\\tbaz\nFOO")
             .must_be_parsed_as s(:str, "bar\tbaz\n")
@@ -635,11 +630,6 @@ describe RipperRubyParser::Parser do
         it "does not unescape with indentable single quoted version" do
           _("<<-'FOO'\n  bar\\tbaz\n  FOO")
             .must_be_parsed_as s(:str, "  bar\\tbaz\n")
-        end
-
-        it "does not unescape the automatically outdenting single quoted version" do
-          _("<<~'FOO'\n  bar\\tbaz\n  FOO")
-            .must_be_parsed_as s(:str, "bar\\tbaz\n")
         end
 
         it "handles line continuation" do
@@ -671,13 +661,6 @@ describe RipperRubyParser::Parser do
                                  s(:str, " baz\n"))
         end
 
-        it "handles interpolation with subsequent whitespace for dedented heredocs" do
-          _("<<~FOO\n  \#{bar} baz\nFOO")
-            .must_be_parsed_as s(:dstr, "",
-                                 s(:evstr, s(:call, nil, :bar)),
-                                 s(:str, " baz\n"))
-        end
-
         it "handles line continuation after interpolation" do
           _("<<FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",
@@ -690,6 +673,25 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:dstr, "",
                                  s(:evstr, s(:call, nil, :bar)),
                                  s(:str, "\nbazqux\n"))
+        end
+      end
+
+      describe "for squiggly heredocs" do
+        it "works for the simple case" do
+          _("  <<~FOO\n  bar\n  FOO")
+            .must_be_parsed_as s(:str, "bar\n")
+        end
+
+        it "does not unescape the single quoted version" do
+          _("<<~'FOO'\n  bar\\tbaz\n  FOO")
+            .must_be_parsed_as s(:str, "bar\\tbaz\n")
+        end
+
+        it "handles interpolation with subsequent whitespace" do
+          _("<<~FOO\n  \#{bar} baz\nFOO")
+            .must_be_parsed_as s(:dstr, "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, " baz\n"))
         end
       end
     end
