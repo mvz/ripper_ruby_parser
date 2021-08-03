@@ -21,6 +21,7 @@
 /日本語/
 "\xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E"  # => "日本語"
 "\xAB\xE6\x97\xA5"                      # Invalid in UTF8
+"abc\u3042\x81"                         # Invalid in UTF8
 
 <<EOS
 日本語

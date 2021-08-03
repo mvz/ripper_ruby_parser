@@ -72,12 +72,14 @@ module RipperRubyParser
     end
 
     def unescape(string)
+      string = string.dup if string.frozen?
+      string.force_encoding("ASCII-8BIT")
       string.gsub(ESCAPE_SEQUENCE_REGEXP) do
         bare = Regexp.last_match[1]
         if bare == "\n"
           ""
         else
-          unescaped_value(bare)
+          unescaped_value(bare).force_encoding("ASCII-8BIT")
         end
       end
     end
@@ -114,7 +116,7 @@ module RipperRubyParser
     def unescaped_value(bare)
       case bare
       when SINGLE_LETTER_ESCAPES_REGEXP
-        SINGLE_LETTER_ESCAPES[bare]
+        SINGLE_LETTER_ESCAPES[bare].dup
       when /^x/
         unescape_hex_char bare
       when /^u/
