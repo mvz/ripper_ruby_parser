@@ -300,6 +300,12 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:str,
                                  (+"2\x82\xC2\xBD").force_encoding("ascii-8bit"))
         end
+
+        it "handles switch to invalid bytes after utf8 escape sequence" do
+          _("\"abc\\u3042\\x81\"")
+            .must_be_parsed_as s(:str,
+                                 (+"abc\xE3\x81\x82\x81").force_encoding("ascii-8bit"))
+        end
       end
 
       describe "with interpolations containing just a literal string" do
