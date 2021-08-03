@@ -64,6 +64,18 @@ module RipperRubyParser
           *falsepart)
       end
 
+      def process_in(exp)
+        _, pattern, truepart, falsepart = exp.shift 4
+
+        raise "Not supported" unless falsepart.nil?
+
+        pattern = process(pattern)
+
+        s(:case_body,
+          s(:in, pattern, process(truepart)),
+          nil)
+      end
+
       def process_else(exp)
         _, body = exp.shift 2
         process(body)

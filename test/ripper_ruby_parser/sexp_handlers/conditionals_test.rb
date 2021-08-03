@@ -383,7 +383,7 @@ describe RipperRubyParser::Parser do
                                  s(:call, nil, :quuz), nil))
       end
 
-      it "does not rewrite the negative match operator" do
+      it "handles the negative match operator" do
         _("if foo; bar; elsif baz !~ qux; quuz; end")
           .must_be_parsed_as s(:if,
                                s(:call, nil, :foo),
@@ -530,6 +530,27 @@ describe RipperRubyParser::Parser do
                                s(:block,
                                  s(:call, nil, :qux),
                                  s(:call, nil, :quuz)))
+      end
+    end
+
+    describe "for one-line pattern matching" do
+      before do
+        skip "This Ruby version does not support pattern matching" if RUBY_VERSION < "2.7.0"
+      end
+
+      it "works for the simple case" do
+        _("1 in foo").must_be_parsed_as s(:case,
+                                          s(:lit, 1),
+                                          s(:in,
+                                            s(:lvar, :foo), nil), nil)
+      end
+
+      it "works for secondary assignment of matched expression" do
+        _("1 in foo => bar").must_be_parsed_as s(:case,
+                                                 s(:lit, 1),
+                                                 s(:in,
+                                                   s(:lasgn, :bar,
+                                                     s(:lvar, :foo)), nil), nil)
       end
     end
   end

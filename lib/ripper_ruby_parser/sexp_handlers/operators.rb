@@ -32,6 +32,8 @@ module RipperRubyParser
           make_boolean_operator(left, mapped, right)
         elsif SHIFT_OPERATORS.include? op
           s(:call, unwrap_begin(process(left)), op, unwrap_begin(process(right)))
+        elsif op == :"=>"
+          s(:lasgn, process(right)[1], process(left))
         else
           s(:call, process(left), op, process(right))
         end
