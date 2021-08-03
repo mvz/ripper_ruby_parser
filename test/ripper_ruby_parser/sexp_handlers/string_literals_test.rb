@@ -195,6 +195,17 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:str, "foo\\\nbar")
       end
 
+      # NOTE: This behavior is odd since Ruby removes the carriage return
+      it "keeps carriage return/line feed combinations" do
+        _("\"bar\r\n\"")
+          .must_be_parsed_as s(:str, "bar\r\n")
+      end
+
+      it "keeps carriage returns without line feeds" do
+        _("\"bar\rbaz\r\n\"")
+          .must_be_parsed_as s(:str, "bar\rbaz\r\n")
+      end
+
       describe "with double-quoted strings with escape sequences" do
         it "works for strings with escape sequences" do
           _('"\\n"')
@@ -498,9 +509,49 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:str, "bar")
         end
 
-        it "does not handle for escape sequences" do
-          _('%q[foo\\nbar]')
-            .must_be_parsed_as s(:str, 'foo\nbar')
+        it "does not unescape escape sequences" do
+          _("%q[foo\\nbar]")
+            .must_be_parsed_as s(:str, "foo\\nbar")
+        end
+
+        it "does not unescape invalid escape sequences" do
+          _("%q[foo\\ubar]")
+            .must_be_parsed_as s(:str, "foo\\ubar")
+        end
+
+        it "handles escaped delimiters for brackets" do
+          _("%q[foo\\[bar\\]baz]")
+            .must_be_parsed_as s(:str, "foo[bar]baz")
+        end
+
+        it "handles escaped delimiters for parentheses" do
+          _("%q(foo\\(bar\\)baz)")
+            .must_be_parsed_as s(:str, "foo(bar)baz")
+        end
+
+        it "handles escaped delimiters for braces" do
+          _("%q{foo\\{bar\\}baz}")
+            .must_be_parsed_as s(:str, "foo{bar}baz")
+        end
+
+        it "handles escaped delimiters for angle brackets" do
+          _("%q<foo\\<bar\\>baz>")
+            .must_be_parsed_as s(:str, "foo<bar>baz")
+        end
+
+        it "handles escaped delimiters for slashes" do
+          _("%q/foo\\/bar]baz/")
+            .must_be_parsed_as s(:str, "foo/bar]baz")
+        end
+
+        it "does not unescape unused delimiters" do
+          _("%q[foo\\{\\}\\<\\>\\(\\)baz]")
+            .must_be_parsed_as s(:str, "foo\\{\\}\\<\\>\\(\\)baz")
+        end
+
+        it "does not unescape escape sequences for single quotes" do
+          _("%q[foo\\'bar]")
+            .must_be_parsed_as s(:str, "foo\\'bar")
         end
 
         it "works for multi-line strings" do
@@ -602,16 +653,6 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:str, "bar\nbaz\n")
         end
 
-        it "works for the indentable case" do
-          _("<<-FOO\n  bar\n  FOO")
-            .must_be_parsed_as s(:str, "  bar\n")
-        end
-
-        it "works for the automatically outdenting case" do
-          _("  <<~FOO\n  bar\n  FOO")
-            .must_be_parsed_as s(:str, "bar\n")
-        end
-
         it "works for escape sequences" do
           _("<<FOO\nbar\\tbaz\nFOO")
             .must_be_parsed_as s(:str, "bar\tbaz\n")
@@ -619,6 +660,17 @@ describe RipperRubyParser::Parser do
 
         it 'converts \r to carriage returns' do
           _("<<FOO\nbar\\rbaz\\r\nFOO")
+            .must_be_parsed_as s(:str, "bar\rbaz\r\n")
+        end
+
+        # NOTE: This behavior is odd since Ruby removes the carriage return
+        it "keeps carriage return/line feed combinations" do
+          _("<<FOO\nbar\r\nFOO")
+            .must_be_parsed_as s(:str, "bar\r\n")
+        end
+
+        it "keeps carriage returns without line feeds" do
+          _("<<FOO\nbar\rbaz\r\nFOO")
             .must_be_parsed_as s(:str, "bar\rbaz\r\n")
         end
 
@@ -630,16 +682,6 @@ describe RipperRubyParser::Parser do
         it "works with multiple lines with the single quoted version" do
           _("<<'FOO'\nbar\nbaz\nFOO")
             .must_be_parsed_as s(:str, "bar\nbaz\n")
-        end
-
-        it "does not unescape with indentable single quoted version" do
-          _("<<-'FOO'\n  bar\\tbaz\n  FOO")
-            .must_be_parsed_as s(:str, "  bar\\tbaz\n")
-        end
-
-        it "does not unescape the automatically outdenting single quoted version" do
-          _("<<~'FOO'\n  bar\\tbaz\n  FOO")
-            .must_be_parsed_as s(:str, "bar\\tbaz\n")
         end
 
         it "handles line continuation" do
@@ -671,25 +713,49 @@ describe RipperRubyParser::Parser do
                                  s(:str, " baz\n"))
         end
 
-        it "handles interpolation with subsequent whitespace for dedented heredocs" do
-          _("<<~FOO\n  \#{bar} baz\nFOO")
-            .must_be_parsed_as s(:dstr, "",
-                                 s(:evstr, s(:call, nil, :bar)),
-                                 s(:str, " baz\n"))
-        end
-
         it "handles line continuation after interpolation" do
           _("<<FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",
                                  s(:evstr, s(:call, nil, :bar)),
                                  s(:str, "\nbazqux\n"))
         end
+      end
 
-        it "handles line continuation after interpolation for the indentable case" do
+      describe "for indentable heredocs" do
+        it "works for the simple case" do
+          _("<<-FOO\n  bar\n  FOO")
+            .must_be_parsed_as s(:str, "  bar\n")
+        end
+
+        it "does not unescape the single quoted version" do
+          _("<<-'FOO'\n  bar\\tbaz\n  FOO")
+            .must_be_parsed_as s(:str, "  bar\\tbaz\n")
+        end
+
+        it "handles line continuation after interpolation" do
           _("<<-FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",
                                  s(:evstr, s(:call, nil, :bar)),
                                  s(:str, "\nbazqux\n"))
+        end
+      end
+
+      describe "for squiggly heredocs" do
+        it "works for the simple case" do
+          _("  <<~FOO\n  bar\n  FOO")
+            .must_be_parsed_as s(:str, "bar\n")
+        end
+
+        it "does not unescape the single quoted version" do
+          _("<<~'FOO'\n  bar\\tbaz\n  FOO")
+            .must_be_parsed_as s(:str, "bar\\tbaz\n")
+        end
+
+        it "handles interpolation with subsequent whitespace" do
+          _("<<~FOO\n  \#{bar} baz\nFOO")
+            .must_be_parsed_as s(:dstr, "",
+                                 s(:evstr, s(:call, nil, :bar)),
+                                 s(:str, " baz\n"))
         end
       end
     end
@@ -713,6 +779,41 @@ describe RipperRubyParser::Parser do
       it "handles escaped spaces" do
         _('%w(foo bar\ baz)')
           .must_be_parsed_as s(:array, s(:str, "foo"), s(:str, "bar baz"))
+      end
+
+      it "handles escaped delimiters for brackets" do
+        _("%w[foo \\[bar\\] baz]")
+          .must_be_parsed_as s(:array, s(:str, "foo"), s(:str, "[bar]"), s(:str, "baz"))
+      end
+
+      it "handles escaped delimiters for parentheses" do
+        _("%w(foo\\(bar\\)baz)")
+          .must_be_parsed_as s(:array, s(:str, "foo(bar)baz"))
+      end
+
+      it "handles escaped delimiters for braces" do
+        _("%w{foo\\{bar\\}baz}")
+          .must_be_parsed_as s(:array, s(:str, "foo{bar}baz"))
+      end
+
+      it "handles escaped delimiters for angle brackets" do
+        _("%w<foo\\<bar\\>baz>")
+          .must_be_parsed_as s(:array, s(:str, "foo<bar>baz"))
+      end
+
+      it "handles escaped delimiters for slashes" do
+        _("%w/foo\\/bar]baz/")
+          .must_be_parsed_as s(:array, s(:str, "foo/bar]baz"))
+      end
+
+      it "does not unescape unused delimiters" do
+        _("%w[foo\\{\\}\\<\\>\\(\\)baz]")
+          .must_be_parsed_as s(:array, s(:str, "foo\\{\\}\\<\\>\\(\\)baz"))
+      end
+
+      it "does not unescape escape sequences for single quotes" do
+        _("%w[foo\\'bar]")
+          .must_be_parsed_as s(:array, s(:str, "foo\\'bar"))
       end
     end
 
