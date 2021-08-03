@@ -533,6 +533,70 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for a case block with in clauses" do
+      before do
+        skip "This Ruby version does not support pattern matching" if RUBY_VERSION < "2.7.0"
+      end
+
+      it "works with a single in clause" do
+        _("case foo; in bar; qux bar; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:lvar, :bar),
+                                 s(:call, nil, :qux,
+                                   s(:lvar, :bar))), nil)
+      end
+
+      it "works with a multiple in clauses" do
+        _("case foo; in [\"a\"]; bar; in qux; quuz qux; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:array_pat, nil, s(:str, "a")),
+                                 s(:call, nil, :bar)),
+                               s(:in,
+                                 s(:lvar, :qux),
+                                 s(:call, nil, :quuz, s(:lvar, :qux))), nil)
+      end
+
+      it "works with an in clause for array matching" do
+        _("case foo; in [bar, baz]; qux bar, baz; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:array_pat, nil, s(:lvar, :bar), s(:lvar, :baz)),
+                                 s(:call, nil, :qux, s(:lvar, :bar), s(:lvar, :baz))), nil)
+      end
+
+      it "works with an in clause with rest argument" do
+        _("case foo; in bar, *baz; qux bar, baz; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:array_pat, nil, s(:lvar, :bar), :"*baz"),
+                                 s(:call, nil, :qux, s(:lvar, :bar), s(:lvar, :baz))), nil)
+      end
+
+      it "works with an in clause for hash matching" do
+        _("case foo; in { bar: baz }; qux baz; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:hash_pat, nil, s(:lit, :bar), s(:lvar, :baz)),
+                                 s(:call, nil, :qux, s(:lvar, :baz))), nil)
+      end
+
+      it "works with an in clause for abbreviated hash matching" do
+        _("case foo; in { bar: }; baz bar; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:hash_pat, nil, s(:lit, :bar), nil),
+                                 s(:call, nil, :baz, s(:lvar, :bar))), nil)
+      end
+    end
+
     describe "for one-line pattern matching" do
       before do
         skip "This Ruby version does not support pattern matching" if RUBY_VERSION < "2.7.0"
