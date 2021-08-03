@@ -243,11 +243,11 @@ module RipperRubyParser
         when INTERPOLATING_WORD_LIST
           unescape_wordlist_word(content)
         when *NON_INTERPOLATING_STRINGS
-          simple_unescape(content)
+          simple_unescape(content, delim)
         when *REGEXP_LITERALS
           unescape_regexp(content)
         when NON_INTERPOLATING_WORD_LIST
-          simple_unescape_wordlist_word(content)
+          simple_unescape_wordlist_word(content, delim)
         else
           content
         end
