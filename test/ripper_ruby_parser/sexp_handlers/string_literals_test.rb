@@ -602,11 +602,6 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:str, "bar\nbaz\n")
         end
 
-        it "works for the indentable case" do
-          _("<<-FOO\n  bar\n  FOO")
-            .must_be_parsed_as s(:str, "  bar\n")
-        end
-
         it "works for escape sequences" do
           _("<<FOO\nbar\\tbaz\nFOO")
             .must_be_parsed_as s(:str, "bar\tbaz\n")
@@ -625,11 +620,6 @@ describe RipperRubyParser::Parser do
         it "works with multiple lines with the single quoted version" do
           _("<<'FOO'\nbar\nbaz\nFOO")
             .must_be_parsed_as s(:str, "bar\nbaz\n")
-        end
-
-        it "does not unescape with indentable single quoted version" do
-          _("<<-'FOO'\n  bar\\tbaz\n  FOO")
-            .must_be_parsed_as s(:str, "  bar\\tbaz\n")
         end
 
         it "handles line continuation" do
@@ -667,8 +657,20 @@ describe RipperRubyParser::Parser do
                                  s(:evstr, s(:call, nil, :bar)),
                                  s(:str, "\nbazqux\n"))
         end
+      end
 
-        it "handles line continuation after interpolation for the indentable case" do
+      describe "for indentable heredocs" do
+        it "works for the simple case" do
+          _("<<-FOO\n  bar\n  FOO")
+            .must_be_parsed_as s(:str, "  bar\n")
+        end
+
+        it "does not unescape the single quoted version" do
+          _("<<-'FOO'\n  bar\\tbaz\n  FOO")
+            .must_be_parsed_as s(:str, "  bar\\tbaz\n")
+        end
+
+        it "handles line continuation after interpolation" do
           _("<<-FOO\n\#{bar}\nbaz\\\nqux\nFOO")
             .must_be_parsed_as s(:dstr, "",
                                  s(:evstr, s(:call, nil, :bar)),
