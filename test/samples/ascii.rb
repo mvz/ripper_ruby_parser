@@ -2,5 +2,8 @@
 # frozen_string_literal: true
 
 %Q[foo\n\0\nbar]
-
 "\u00a4"
+"あ"
+"\あ"
+%q{\あ}
+'\あ'

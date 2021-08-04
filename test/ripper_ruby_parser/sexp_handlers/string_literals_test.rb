@@ -206,14 +206,21 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:str, "bar\rbaz\r\n")
       end
 
-      it "creates UTF-8 strings even if encoding comment is used" do
-        _("# encoding: ascii-8bit\n\"\\0\"")
-          .must_be_parsed_as s(:str, "\u0000")
-      end
+      describe "when an encoding comment is used" do
+        it "creates UTF-8 strings regardless" do
+          _("# encoding: ascii-8bit\n\"\\0\"")
+            .must_be_parsed_as s(:str, "\u0000")
+        end
 
-      it "uses UTF8 if multi-byte escapes are used" do
-        _("# encoding: ascii-8bit\n\"\\u00a4\"")
-          .must_be_parsed_as s(:str, "\u00a4")
+        it "uses UTF8 if multi-byte escapes are used" do
+          _("# encoding: ascii-8bit\n\"\\u00a4\"")
+            .must_be_parsed_as s(:str, "\u00a4")
+        end
+
+        it "keeps unicode encoding for escape multi-byte characters" do
+          _("# encoding: ascii-8bit\n'\\あ'")
+            .must_be_parsed_as s(:str, "\\あ")
+        end
       end
 
       describe "with double-quoted strings with escape sequences" do
