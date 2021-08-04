@@ -5,4 +5,7 @@
 ..foo
 
 # Argument forwarding
-def foo(...); bar(...); end
+def foo(...)
+  bar(...)
+  bar(qux, ...)
+end
