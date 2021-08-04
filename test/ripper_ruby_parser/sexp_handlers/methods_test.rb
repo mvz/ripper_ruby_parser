@@ -213,6 +213,16 @@ describe RipperRubyParser::Parser do
                                s(:nil))
       end
 
+      it "works with argument forwarding" do
+        if RUBY_VERSION < "2.7.0"
+          skip "This Ruby version does not support argument forwarding"
+        end
+        _("def foo(...); bar(...); end")
+          .must_be_parsed_as s(:defn, :foo,
+                               s(:args, s(:forward_args)),
+                               s(:call, nil, :bar, s(:forward_args)))
+      end
+
       it "assigns correct line numbers when the body is empty" do
         _("def bar\nend")
           .must_be_parsed_as s(:defn,

@@ -6,6 +6,7 @@ SimpleCov.start do
 end
 
 require "minitest/autorun"
+require "minitest/focus"
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
