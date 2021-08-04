@@ -26,7 +26,11 @@ module RipperRubyParser
         _, call, parens = exp.shift 3
         call = process(call)
         parens = process(parens)
-        call.push(*parens.sexp_body)
+        if parens.sexp_type == :forward_args
+          call.push(parens)
+        else
+          call.push(*parens.sexp_body)
+        end
       end
 
       # Handle implied hashes, such as at the end of argument lists.

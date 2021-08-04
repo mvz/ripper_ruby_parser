@@ -72,6 +72,11 @@ module RipperRubyParser
         s(:alias, process(left), process(right))
       end
 
+      def process_args_forward(exp)
+        _ = exp.shift
+        s(:forward_args)
+      end
+
       private
 
       def in_method
