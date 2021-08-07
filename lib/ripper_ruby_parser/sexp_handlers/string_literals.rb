@@ -123,8 +123,7 @@ module RipperRubyParser
 
       def process_at_tstring_content(exp)
         _, content, pos, delim = exp.shift 4
-        string = handle_string_unescaping(content, delim)
-        string = handle_string_encoding(string, delim)
+        string = fix_encoding handle_string_unescaping(content, delim)
         with_position(pos, s(:str, string))
       end
 
@@ -250,15 +249,6 @@ module RipperRubyParser
           simple_unescape_wordlist_word(content, delim)
         else
           content
-        end
-      end
-
-      def handle_string_encoding(string, delim)
-        case delim
-        when INTERPOLATING_HEREDOC, INTERPOLATING_WORD_LIST, *INTERPOLATING_STRINGS
-          fix_encoding string
-        else
-          string
         end
       end
     end
