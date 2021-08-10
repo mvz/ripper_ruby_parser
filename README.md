@@ -11,7 +11,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
 * Requires Ruby 2.5 or higher
-* Compatible with RubyParser 3.15.0
+* Compatible with RubyParser 3.17.0
 
 ## Known incompatibilities
 

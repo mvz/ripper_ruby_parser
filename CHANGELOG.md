@@ -6,6 +6,15 @@ This project adheres to [Semantic Versioning 2.0.0][1].
 
 This document is formatted based on [Keep A CHANGELOG][2].
 
+## 1.9.0 / 2021-08-10
+
+* Fix escape sequence handling in non-interpolating strings and word lists
+  ([#152])
+* Handle strings with mixed valid and invalid utf8 ([#153])
+* Handle argument forwarding, updating the RubyParser compatibility target to
+  3.17.0 ([#154])
+* Fix encoding for non-interpolating strings as well ([#155])
+
 ## 1.8.0 / 2021-05-18
 
 ### Changes
@@ -217,6 +226,10 @@ This document is formatted based on [Keep A CHANGELOG][2].
 * Initial release
 
 <!-- Pull request links -->
+[#155]: https://github.com/mvz/ripper_ruby_parser/pull/155
+[#154]: https://github.com/mvz/ripper_ruby_parser/pull/154
+[#153]: https://github.com/mvz/ripper_ruby_parser/pull/153
+[#152]: https://github.com/mvz/ripper_ruby_parser/pull/152
 [#145]: https://github.com/mvz/ripper_ruby_parser/pull/145
 [#123]: https://github.com/mvz/ripper_ruby_parser/pull/123
 [#106]: https://github.com/mvz/ripper_ruby_parser/pull/106
