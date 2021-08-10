@@ -217,7 +217,7 @@ describe RipperRubyParser::Parser do
             .must_be_parsed_as s(:str, "\u00a4")
         end
 
-        it "keeps unicode encoding for escape multi-byte characters" do
+        it "keeps unicode encoding for escaped multi-byte characters" do
           _("# encoding: ascii-8bit\n'\\あ'")
             .must_be_parsed_as s(:str, "\\あ")
         end
@@ -1069,6 +1069,11 @@ describe RipperRubyParser::Parser do
         _("alias foo bar")
           .must_be_parsed_as s(:alias,
                                s(:lit, :foo), s(:lit, :bar))
+      end
+
+      it "works for empty dsyms" do
+        _(':""')
+          .must_be_parsed_as s(:lit, :"")
       end
 
       it "assigns a line number to the result" do

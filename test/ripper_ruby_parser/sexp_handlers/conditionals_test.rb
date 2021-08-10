@@ -520,7 +520,7 @@ describe RipperRubyParser::Parser do
                                nil)
       end
 
-      it "keeps up a multi-statement begin..end in the else clause" do
+      it "cleans up a multi-statement begin..end in the else clause" do
         _("case foo; when bar; baz; else; begin; qux; quuz; end; end")
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),

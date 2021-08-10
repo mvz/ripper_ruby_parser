@@ -46,6 +46,14 @@ describe RipperRubyParser::Parser do
       it "works with lone ()" do
         _("()").must_be_parsed_as s(:nil)
       end
+
+      it "works with simple wrapping ()" do
+        _("(bar)").must_be_parsed_as s(:call, nil, :bar)
+      end
+
+      it "works with multiple wrapping ()" do
+        _("((bar))").must_be_parsed_as s(:call, nil, :bar)
+      end
     end
 
     describe "for a begin..end block" do
@@ -190,6 +198,13 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for the defined? keyword" do
+      it "works for the simple case" do
+        _("defined? foo")
+          .must_be_parsed_as s(:defined, s(:call, nil, :foo))
+      end
+    end
+
     describe "for constant lookups" do
       it "works when explicitely starting from the root namespace" do
         _("::Foo")
@@ -241,7 +256,7 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for expressions" do
-      it "handles assignment inside binary operator expressions" do
+      it "handles assignment in the right-hand side of binary operator expressions" do
         _("foo + (bar = baz)")
           .must_be_parsed_as s(:call,
                                s(:call, nil, :foo),
@@ -249,6 +264,14 @@ describe RipperRubyParser::Parser do
                                s(:lasgn,
                                  :bar,
                                  s(:call, nil, :baz)))
+      end
+
+      it "handles assignment in the left-hand side of binary operator expressions" do
+        _("(foo = bar) + baz")
+          .must_be_parsed_as s(:call,
+                               s(:lasgn, :foo,
+                                 s(:call, nil, :bar)), :+,
+                               s(:call, nil, :baz))
       end
 
       it "handles assignment inside unary operator expressions" do
