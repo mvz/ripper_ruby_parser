@@ -16,3 +16,10 @@ foo..bar
 0.0...4.0
 foo...bar
 0...4.0
+
+# Regex matching
+/foo/ =~ bar
+foo =~ /bar/
+foo =~ bar
+/#{foo}/ =~ bar
+/(?<foo>bar)/ =~ baz; foo

@@ -228,10 +228,23 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :bar))
       end
 
+      it "handles parentheses" do
+        _("(foo)..(bar)")
+          .must_be_parsed_as s(:dot2,
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar))
+      end
+
       it "handles endless range literals" do
         skip "This Ruby version does not support endless ranges" if RUBY_VERSION < "2.6.0"
         _("1..")
           .must_be_parsed_as s(:dot2, s(:lit, 1), nil)
+      end
+
+      it "handles beginless range literals" do
+        skip "This Ruby version does not support beginless ranges" if RUBY_VERSION < "2.7.0"
+        _("..1")
+          .must_be_parsed_as s(:dot2, nil, s(:lit, 1))
       end
     end
 
@@ -279,6 +292,25 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:dot3,
                                s(:call, nil, :foo),
                                s(:call, nil, :bar))
+      end
+
+      it "handles parentheses" do
+        _("(foo)...(bar)")
+          .must_be_parsed_as s(:dot3,
+                               s(:call, nil, :foo),
+                               s(:call, nil, :bar))
+      end
+
+      it "handles endless range literals" do
+        skip "This Ruby version does not support endless ranges" if RUBY_VERSION < "2.6.0"
+        _("1...")
+          .must_be_parsed_as s(:dot3, s(:lit, 1), nil)
+      end
+
+      it "handles beginless range literals" do
+        skip "This Ruby version does not support beginless ranges" if RUBY_VERSION < "2.7.0"
+        _("...1")
+          .must_be_parsed_as s(:dot3, nil, s(:lit, 1))
       end
     end
 
@@ -379,11 +411,54 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :bar))
       end
 
-      it "handles :=~ with literal regexp on the left hand side" do
-        _("/foo/ =~ bar")
-          .must_be_parsed_as s(:match2,
-                               s(:lit, /foo/),
-                               s(:call, nil, :bar))
+      describe "with a regexp literal on the left hand side" do
+        it "handles :=~ with a simple regexp literal" do
+          _("/foo/ =~ bar")
+            .must_be_parsed_as s(:match2,
+                                 s(:lit, /foo/),
+                                 s(:call, nil, :bar))
+        end
+
+        it "handles :=~ with statically interpolated regexp" do
+          _("/foo\#{'bar'}/ =~ baz")
+            .must_be_parsed_as s(:match2,
+                                 s(:lit, /foobar/),
+                                 s(:call, nil, :baz))
+        end
+
+        it "handles :=~ with variable-assigning regexp" do
+          _("/(?<foo>bar)/ =~ baz; foo")
+            .must_be_parsed_as s(:block,
+                                 s(:match2,
+                                   s(:lit, /(?<foo>bar)/),
+                                   s(:call, nil, :baz)),
+                                 s(:call, nil, :foo))
+        end
+
+        it "handles :=~ with statically interpolated variable-assigning regexp" do
+          _("/(?<foo>\#{'bar'})/ =~ baz; foo")
+            .must_be_parsed_as s(:block,
+                                 s(:match2,
+                                   s(:lit, /(?<foo>bar)/),
+                                   s(:call, nil, :baz)),
+                                 s(:call, nil, :foo))
+        end
+
+        it "handles :=~ with interpolated regexp" do
+          _("/\#{foo}/ =~ bar")
+            .must_be_parsed_as s(:match2,
+                                 s(:dregx, "", s(:evstr, s(:call, nil, :foo))),
+                                 s(:call, nil, :bar))
+        end
+
+        it "handles :=~ with multi-part interpolated regexp" do
+          _("/foo\#{bar}baz/ =~ qux")
+            .must_be_parsed_as s(:match2,
+                                 s(:dregx, "foo",
+                                   s(:evstr, s(:call, nil, :bar)),
+                                   s(:str, "baz")),
+                                 s(:call, nil, :qux))
+        end
       end
 
       it "handles :=~ with literal regexp on the right hand side" do

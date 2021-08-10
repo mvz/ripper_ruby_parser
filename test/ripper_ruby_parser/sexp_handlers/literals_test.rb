@@ -3,8 +3,6 @@
 require File.expand_path("../../test_helper.rb", File.dirname(__FILE__))
 
 describe RipperRubyParser::Parser do
-  let(:parser) { RipperRubyParser::Parser.new }
-
   describe "#parse" do
     describe "for character literals" do
       it "works for simple character literals" do
