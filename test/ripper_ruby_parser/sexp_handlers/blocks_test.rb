@@ -203,6 +203,22 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :qux,
                                  s(:lvar, :bar)))
       end
+
+      it "works with one regular and one shadow argument" do
+        _("foo do |bar; baz| end")
+          .must_be_parsed_as s(:iter,
+                               s(:call, nil, :foo),
+                               s(:args, :bar,
+                                 s(:shadow, :baz)))
+      end
+
+      it "works with several regular and one shadow argument" do
+        _("foo do |bar, baz; qux| end")
+          .must_be_parsed_as s(:iter,
+                               s(:call, nil, :foo),
+                               s(:args, :bar, :baz,
+                                 s(:shadow, :qux)))
+      end
     end
 
     describe "for begin" do

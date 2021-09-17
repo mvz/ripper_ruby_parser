@@ -40,9 +40,14 @@ module RipperRubyParser
       end
 
       def process_block_var(exp)
-        _, args, = exp.shift 3
+        _, args, shadowargs = exp.shift 3
 
         names = process(args)
+
+        if shadowargs
+          shadowargs = map_process_list(shadowargs).map { |item| item[1] }
+          names << s(:shadow, *shadowargs)
+        end
 
         convert_arguments names
       end
