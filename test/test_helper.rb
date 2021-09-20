@@ -23,7 +23,7 @@ module MiniTest
         end
       end
 
-      plain = "s(#{parts.join(', ')})"
+      plain = "s(#{parts.join(", ")})"
       if exp.line
         "#{plain}.line(#{exp.line})"
       else
