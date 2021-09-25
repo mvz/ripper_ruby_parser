@@ -131,7 +131,7 @@ module RipperRubyParser
     end
 
     def unescape_hex_char(bare)
-      hex_to_char(bare[1..-1])
+      hex_to_char(bare[1..])
     end
 
     def unescape_unicode_char(bare)
