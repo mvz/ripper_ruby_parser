@@ -195,7 +195,7 @@ module RipperRubyParser
 
     def process_at_backref(exp)
       _, str, pos = exp.shift 3
-      name = str[1..-1]
+      name = str[1..]
       with_position pos do
         if /[0-9]/.match?(name)
           s(:nth_ref, name.to_i)

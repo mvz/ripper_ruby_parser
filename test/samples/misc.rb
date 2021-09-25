@@ -293,3 +293,9 @@ foo do |bar, baz; qux, quuz| end
 if defined? foo
   bar
 end
+
+# Endless ranges
+1..
+
+foobar = 2
+foobar..
