@@ -11,37 +11,37 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for escaped character literals" do
-        _('?\\n')
+        _("?\\n")
           .must_be_parsed_as s(:str, "\n")
       end
 
       it "works for escaped character literals with ctrl" do
-        _('?\\C-a')
+        _("?\\C-a")
           .must_be_parsed_as s(:str, "\u0001")
       end
 
       it "works for escaped character literals with meta" do
-        _('?\\M-a')
+        _("?\\M-a")
           .must_be_parsed_as s(:str, (+"\xE1").force_encoding("ascii-8bit"))
       end
 
       it "works for escaped character literals with meta plus shorthand ctrl" do
-        _('?\\M-\\ca')
+        _("?\\M-\\ca")
           .must_be_parsed_as s(:str, (+"\x81").force_encoding("ascii-8bit"))
       end
 
       it "works for escaped character literals with shorthand ctrl plus meta" do
-        _('?\\c\\M-a')
+        _("?\\c\\M-a")
           .must_be_parsed_as s(:str, (+"\x81").force_encoding("ascii-8bit"))
       end
 
       it "works for escaped character literals with meta plus ctrl" do
-        _('?\\M-\\C-a')
+        _("?\\M-\\C-a")
           .must_be_parsed_as s(:str, (+"\x81").force_encoding("ascii-8bit"))
       end
 
       it "works for escaped character literals with ctrl plus meta" do
-        _('?\\C-\\M-a')
+        _("?\\C-\\M-a")
           .must_be_parsed_as s(:str, (+"\x81").force_encoding("ascii-8bit"))
       end
     end
