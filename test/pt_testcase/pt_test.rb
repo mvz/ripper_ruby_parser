@@ -2,10 +2,13 @@
 
 require File.expand_path("../test_helper.rb", File.dirname(__FILE__))
 require "pt_testcase"
+require "timeout"
 
 class TestParser < RipperRubyParser::Parser
-  def process(input)
-    parse input
+  def process(input, filename, time)
+    Timeout.timeout time do
+      parse input, filename
+    end
   end
 end
 

@@ -37,9 +37,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop", "~> 1.22.1"
   spec.add_development_dependency "rubocop-minitest", "~> 0.15.0"
   spec.add_development_dependency "rubocop-performance", "~> 1.11.0"
-  spec.add_development_dependency "ruby_parser", "~> 3.17.0"
-  # For testing, require sexp_processor 4.13, 4.14 or 4.15 so its test cases
-  # match version 3.14.0 of ruby_parser.
-  spec.add_development_dependency "sexp_processor", [">= 4.13.0", "< 4.16"]
+  spec.add_development_dependency "ruby_parser", "~> 3.18.0"
+  # Ensure sexp_processor's test cases match version 3.18.0 of ruby_parser.
+  spec.add_development_dependency "sexp_processor", "~> 4.16.0"
   spec.add_development_dependency "simplecov", "~> 0.21.0"
 end
