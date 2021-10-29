@@ -28,8 +28,7 @@ module RipperRubyParser
       @errors = []
 
       @in_method_body = false
-      @kwrest = []
-      @block_kwrest = []
+      @local_variables = []
 
       @kept_comment = nil
     end

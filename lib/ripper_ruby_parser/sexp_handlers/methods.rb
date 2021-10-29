@@ -12,7 +12,7 @@ module RipperRubyParser
         in_method do
           params = convert_arguments(process(params))
           kwrest = kwrest_param(params)
-          body = with_kwrest(kwrest) { method_body(body) }
+          body = with_new_lvar_scope(kwrest) { method_body(body) }
         end
 
         with_position(pos, s(:defn, ident, params, *body))
@@ -26,7 +26,7 @@ module RipperRubyParser
         in_method do
           params = convert_arguments(process(params))
           kwrest = kwrest_param(params)
-          body = with_kwrest(kwrest) { method_body(body) }
+          body = with_new_lvar_scope(kwrest) { method_body(body) }
         end
 
         s(:defs, process(receiver), ident, params, *body)
@@ -151,15 +151,16 @@ module RipperRubyParser
         Regexp.last_match[1].to_sym if found
       end
 
-      def with_kwrest(kwrest)
-        @kwrest.push kwrest
+      def with_new_lvar_scope(extra_variable)
+        old_lvars = @local_variables.dup
+        @local_variables.push extra_variable if extra_variable
         result = yield
-        @kwrest.pop
+        @local_variables = old_lvars
         result
       end
 
       def kwrest_arg?(method)
-        @kwrest.include?(method)
+        @local_variables.include?(method)
       end
     end
   end
