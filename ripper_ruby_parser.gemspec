@@ -5,6 +5,7 @@ require_relative "lib/ripper_ruby_parser/version"
 Gem::Specification.new do |spec|
   spec.name = "ripper_ruby_parser"
   spec.version = RipperRubyParser::VERSION
+
   spec.authors = ["Matijs van Zuijlen"]
   spec.email = ["matijs@matijs.net"]
 
@@ -21,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/mvz/ripper_ruby_parser"
   spec.metadata["changelog_uri"] = "https://github.com/mvz/ripper_ruby_parser/blob/master/CHANGELOG.md"
+  spec.metadata["rubygems_mfa_required"] = "true"
 
   spec.files = File.read("Manifest.txt").split
   spec.rdoc_options = ["--main", "README.md"]
@@ -34,7 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.14.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rake-manifest", "~> 0.2.0"
-  spec.add_development_dependency "rubocop", "~> 1.22.1"
+  spec.add_development_dependency "rubocop", "~> 1.23.0"
   spec.add_development_dependency "rubocop-minitest", "~> 0.16.0"
   spec.add_development_dependency "rubocop-packaging", "~> 0.5.1"
   spec.add_development_dependency "rubocop-performance", "~> 1.12.0"
