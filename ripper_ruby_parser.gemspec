@@ -5,7 +5,6 @@ require_relative "lib/ripper_ruby_parser/version"
 Gem::Specification.new do |spec|
   spec.name = "ripper_ruby_parser"
   spec.version = RipperRubyParser::VERSION
-
   spec.authors = ["Matijs van Zuijlen"]
   spec.email = ["matijs@matijs.net"]
 
@@ -16,7 +15,6 @@ Gem::Specification.new do |spec|
   DESC
   spec.homepage = "http://www.github.com/mvz/ripper_ruby_parser"
   spec.license = "MIT"
-
   spec.required_ruby_version = ">= 2.6.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
@@ -29,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files = ["README.md"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "sexp_processor", "~> 4.10"
+  spec.add_runtime_dependency "sexp_processor", "~> 4.10"
 
   spec.add_development_dependency "minitest", "~> 5.6"
   spec.add_development_dependency "minitest-focus", "~> 1.3.1"
