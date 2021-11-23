@@ -35,7 +35,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rake-manifest", "~> 0.2.0"
   spec.add_development_dependency "rubocop", "~> 1.23.0"
-  spec.add_development_dependency "rubocop-minitest", "~> 0.16.0"
+  spec.add_development_dependency "rubocop-minitest", "~> 0.17.0"
   spec.add_development_dependency "rubocop-packaging", "~> 0.5.1"
   spec.add_development_dependency "rubocop-performance", "~> 1.12.0"
   spec.add_development_dependency "ruby_parser", "~> 3.18.0"
