@@ -30,16 +30,16 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "sexp_processor", "~> 4.10"
 
   spec.add_development_dependency "minitest", "~> 5.6"
-  spec.add_development_dependency "minitest-focus", "~> 1.3.1"
+  spec.add_development_dependency "minitest-focus", ["~> 1.3", ">= 1.3.1"]
   spec.add_development_dependency "pry", "~> 0.14.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rake-manifest", "~> 0.2.0"
-  spec.add_development_dependency "rubocop", "~> 1.25.0"
+  spec.add_development_dependency "rubocop", "~> 1.25"
   spec.add_development_dependency "rubocop-minitest", "~> 0.17.0"
   spec.add_development_dependency "rubocop-packaging", "~> 0.5.1"
-  spec.add_development_dependency "rubocop-performance", "~> 1.13.0"
-  spec.add_development_dependency "ruby_parser", "~> 3.18.0"
+  spec.add_development_dependency "rubocop-performance", "~> 1.13"
+  spec.add_development_dependency "ruby_parser", "~> 3.18"
   # Ensure sexp_processor's test cases match version 3.18.0 of ruby_parser.
-  spec.add_development_dependency "sexp_processor", "~> 4.16.0"
+  spec.add_development_dependency "sexp_processor", "~> 4.16"
   spec.add_development_dependency "simplecov", "~> 0.21.0"
 end
