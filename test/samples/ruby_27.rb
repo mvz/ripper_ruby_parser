@@ -38,14 +38,26 @@ end
 #   quz = bar(baz) + baz
 # end
 
-case foo
-  in { bar: }
-  quz = quuz(bar)
+def foo
+  case bar
+    in { baz: }
+    quz = quuz(baz)
+  end
+end
+
+# Pattern matching with types
+def foo
+  case bar
+    in [Hash => baz, String => quz]
+    qux = baz + quz
+  end
 end
 
 # One-line pattern matching (experimental)
-1 in foo
-2 in bar => baz
+def foo
+  1 in bar
+  2 in baz => qux
+end
 
 # Numbered block parameters
 # NOTE: Not yet implemented in ruby_parser
