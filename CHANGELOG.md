@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning 2.0.0][1].
 
 This document is formatted based on [Keep A CHANGELOG][2].
 
+## 1.10.0 / 2022-03-13
+
+* Handle shadow arguments ([#161])
+* Drop support for Ruby 2.5 ([#165])
+* Support running on Ruby 3.1([#180])
+
 ## 1.9.0 / 2021-08-10
 
 * Fix escape sequence handling in non-interpolating strings and word lists
@@ -226,6 +232,9 @@ This document is formatted based on [Keep A CHANGELOG][2].
 * Initial release
 
 <!-- Pull request links -->
+[#180]: https://github.com/mvz/ripper_ruby_parser/pull/180
+[#165]: https://github.com/mvz/ripper_ruby_parser/pull/165
+[#161]: https://github.com/mvz/ripper_ruby_parser/pull/161
 [#155]: https://github.com/mvz/ripper_ruby_parser/pull/155
 [#154]: https://github.com/mvz/ripper_ruby_parser/pull/154
 [#153]: https://github.com/mvz/ripper_ruby_parser/pull/153
