@@ -103,6 +103,8 @@ module RipperRubyParser
       }.freeze
 
       def convert_arguments(args)
+        return s(:args) if args.nil?
+
         args.line ||= args.sexp_body.first&.line
         args.sexp_body = args.sexp_body.map { |item| convert_argument item }
         args
