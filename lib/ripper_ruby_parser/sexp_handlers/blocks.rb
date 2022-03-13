@@ -14,6 +14,9 @@ module RipperRubyParser
         make_iter call, args, safe_unwrap_void_stmt(stmt)
       end
 
+      # NOTE: Argument forwarding is handled differently in Ruby 3.0 and 3.1
+      # 3.0: s(:params, nil, nil, s(:args_forward), nil, nil, nil, nil)
+      # 3.1: s(:params, nil, nil, nil, nil, nil, s(:args_forward), :&)
       def process_params(exp)
         _, normal, defaults, splat, rest, kwargs, doublesplat, block = exp.shift 8
 
@@ -182,11 +185,18 @@ module RipperRubyParser
       def handle_double_splat(doublesplat)
         return [] unless doublesplat
 
-        [s(:dsplat, process(doublesplat))]
+        contents = process(doublesplat)
+        case contents.sexp_type
+        when :forward_args # Argument forwarding in Ruby 3.1
+          [contents]
+        else
+          [s(:dsplat, contents)]
+        end
       end
 
       def handle_block_argument(block)
         return [] unless block
+        return [] if block == :& # Part of argument forwarding in Ruby 3.1; ignore
 
         [process(block)]
       end
