@@ -233,6 +233,35 @@ describe RipperRubyParser::Parser do
       end
     end
 
+    describe "for endless instance method definitions" do
+      before do
+        skip "This Ruby version does not support endless methods" if RUBY_VERSION < "3.0.0"
+      end
+
+      it "works for a method with simple arguments" do
+        _("def foo(bar) = baz(bar)")
+          .must_be_parsed_as s(:defn,
+                               :foo,
+                               s(:args, :bar),
+                               s(:call, nil, :baz, s(:lvar, :bar)))
+      end
+
+      it "works for a method with rescue" do
+        _("def foo(bar) = baz(bar) rescue qux")
+          .must_be_parsed_as s(:defn,
+                               :foo,
+                               s(:args, :bar),
+                               s(:rescue,
+                                 s(:call, nil, :baz, s(:lvar, :bar)),
+                                 s(:resbody, s(:array), s(:call, nil, :qux))))
+      end
+
+      it "works for a method without arguments" do
+        _("def foo = bar")
+          .must_be_parsed_as s(:defn, :foo, s(:args), s(:call, nil, :bar))
+      end
+    end
+
     describe "for singleton method definitions" do
       it "works with empty body" do
         _("def foo.bar; end")
@@ -268,6 +297,37 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :foo),
                                :for, s(:args),
                                s(:nil))
+      end
+    end
+
+    describe "for endless singleton method definitions" do
+      before do
+        skip "This Ruby version does not support endless methods" if RUBY_VERSION < "3.0.0"
+      end
+
+      it "works for a method with simple arguments" do
+        _("def self.foo(bar) = baz(bar)")
+          .must_be_parsed_as s(:defs,
+                               s(:self),
+                               :foo,
+                               s(:args, :bar),
+                               s(:call, nil, :baz, s(:lvar, :bar)))
+      end
+
+      it "works for a method with rescue" do
+        _("def self.foo(bar) = baz(bar) rescue qux")
+          .must_be_parsed_as s(:defs,
+                               s(:self),
+                               :foo,
+                               s(:args, :bar),
+                               s(:rescue,
+                                 s(:call, nil, :baz, s(:lvar, :bar)),
+                                 s(:resbody, s(:array), s(:call, nil, :qux))))
+      end
+
+      it "works for a method without arguments" do
+        _("def self.foo = bar")
+          .must_be_parsed_as s(:defs, s(:self), :foo, s(:args), s(:call, nil, :bar))
       end
     end
 
