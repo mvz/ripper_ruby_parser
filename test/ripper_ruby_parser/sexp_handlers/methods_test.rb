@@ -260,6 +260,12 @@ describe RipperRubyParser::Parser do
         _("def foo = bar")
           .must_be_parsed_as s(:defn, :foo, s(:args), s(:call, nil, :bar))
       end
+
+      it "works when the body calls a method without parentheses" do
+        skip "This Ruby version does not support this syntax" if RUBY_VERSION < "3.1.0"
+        _("def foo = bar 42")
+          .must_be_parsed_as s(:defn, :foo, s(:args), s(:call, nil, :bar, s(:lit, 42)))
+      end
     end
 
     describe "for singleton method definitions" do
