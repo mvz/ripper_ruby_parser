@@ -153,7 +153,7 @@ module RipperRubyParser
 
         defaults.map do |sym, val|
           s(:lasgn,
-            extract_node_symbol(process(sym)),
+            make_symbol(process(sym)),
             process(val))
         end
       end
@@ -173,7 +173,7 @@ module RipperRubyParser
         return [] unless kwargs
 
         kwargs.map do |sym, val|
-          symbol = extract_node_symbol process(sym)
+          symbol = make_symbol process(sym)
           if val
             s(:kwarg, symbol, process(val))
           else

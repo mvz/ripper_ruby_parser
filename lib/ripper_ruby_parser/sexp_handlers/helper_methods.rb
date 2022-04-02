@@ -4,12 +4,17 @@ module RipperRubyParser
   module SexpHandlers
     # Utility methods used in several of the sexp handler modules
     module HelperMethods
+      def extract_node_symbol(exp)
+        ident, = extract_node_symbol_with_position(exp)
+        ident
+      end
+
       def extract_node_symbol_with_position(exp)
         _, ident, pos = exp.shift 3
         return ident.to_sym, pos
       end
 
-      def extract_node_symbol(exp)
+      def make_symbol(exp)
         return nil if exp.nil?
         raise "Unexpected number of children: #{exp.length}" if exp.length != 2
 
