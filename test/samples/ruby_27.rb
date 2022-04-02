@@ -9,3 +9,7 @@ def foo(...)
   bar(...)
   bar(qux, ...)
 end
+
+# One-line pattern matching (experimental)
+1 in foo
+2 in bar => baz

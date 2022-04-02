@@ -11,12 +11,10 @@ module RipperRubyParser
         or: :or
       }.freeze
 
+      BINARY_LOGICAL_OPERATORS = BINARY_OPERATOR_MAP.keys.freeze
+
       UNARY_OPERATOR_MAP = {
         not: :!
-      }.freeze
-
-      NEGATED_BINARY_OPERATOR_MAP = {
-        "!~": :=~
       }.freeze
 
       SHIFT_OPERATORS = [:<<, :>>].freeze
@@ -24,14 +22,17 @@ module RipperRubyParser
       def process_binary(exp)
         _, left, op, right = exp.shift 4
 
-        if op == :=~
+        case op
+        when :=~
           make_regexp_match_operator(left, op, right)
-        elsif (mapped = NEGATED_BINARY_OPERATOR_MAP[op])
-          s(:not, make_regexp_match_operator(left, mapped, right))
-        elsif (mapped = BINARY_OPERATOR_MAP[op])
-          make_boolean_operator(left, mapped, right)
-        elsif SHIFT_OPERATORS.include? op
+        when :!~
+          s(:not, make_regexp_match_operator(left, :=~, right))
+        when *BINARY_LOGICAL_OPERATORS
+          make_boolean_operator(left, op, right)
+        when *SHIFT_OPERATORS
           s(:call, unwrap_begin(process(left)), op, unwrap_begin(process(right)))
+        when :"=>"
+          make_rightward_assignment(left, right)
         else
           s(:call, process(left), op, process(right))
         end
@@ -77,6 +78,7 @@ module RipperRubyParser
       private
 
       def make_boolean_operator(left, operator, right)
+        operator = BINARY_OPERATOR_MAP[operator]
         _, left, _, right = rebalance_binary(left, operator, right)
         s(operator, unwrap_begin(process(left)), process(right))
       end
@@ -89,6 +91,10 @@ module RipperRubyParser
         else
           s(:call, process(left), operator, process(right))
         end
+      end
+
+      def make_rightward_assignment(left, right)
+        s(:lasgn, process(right)[1], process(left))
       end
 
       def rebalance_binary(left, operator, right)
