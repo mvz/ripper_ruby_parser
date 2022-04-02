@@ -67,18 +67,46 @@ module RipperRubyParser
       def process_in(exp)
         _, pattern, truepart, falsepart = exp.shift 4
 
-        raise "Not supported" unless falsepart.nil?
-
+        falsepart = process(falsepart)
+        falsepart = if falsepart.nil?
+                      [nil]
+                    else
+                      falsepart.sexp_body
+                    end
         pattern = process(pattern)
 
         s(:case_body,
           s(:in, pattern, process(truepart)),
-          nil)
+          *falsepart)
       end
 
       def process_else(exp)
         _, body = exp.shift 2
         process(body)
+      end
+
+      def process_aryptn(exp)
+        _, _, body, rest, = exp.shift 5
+
+        elements = body.map { |it| process(it) }
+        if rest
+          rest_var = handle_pattern(rest)
+          elements << convert_marked_argument(s(:splat, rest_var))
+        end
+        s(:array_pat, nil, *elements)
+      end
+
+      def process_hshptn(exp)
+        _, _, body, = exp.shift 4
+
+        elements = body.flat_map do |key, value|
+          if value
+            [process(key), process(value)]
+          else
+            [handle_pattern(key), nil]
+          end
+        end
+        s(:hash_pat, nil, *elements)
       end
 
       private
@@ -98,6 +126,15 @@ module RipperRubyParser
 
       def handle_consequent(exp)
         unwrap_nil process(exp) if exp
+      end
+
+      def handle_pattern(exp)
+        pattern = process(exp)
+        case pattern.sexp_type
+        when :lvar, :lit
+          @local_variables << pattern[1]
+        end
+        pattern
       end
 
       def construct_conditional(cond, truepart, falsepart)
