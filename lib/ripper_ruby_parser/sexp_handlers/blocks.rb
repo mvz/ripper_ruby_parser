@@ -223,18 +223,22 @@ module RipperRubyParser
       def make_iter(call, args, stmt)
         args[-1] = nil if args && args.last == s(:excessed_comma)
 
-        if args.nil? && RUBY_VERSION >= "2.7.0"
-          lvar_names = (LVAR_MATCHER / stmt).map { |it| it[1] }
-          args = (NUMBERED_PARAMS & lvar_names).length
-        end
-
-        args ||= 0
+        args ||= if RUBY_VERSION >= "2.7.0"
+                   count_numbered_lvars(stmt)
+                 else
+                   0
+                 end
 
         if stmt.empty?
           s(:iter, call, args)
         else
           s(:iter, call, args, stmt)
         end
+      end
+
+      def count_numbered_lvars(stmt)
+        lvar_names = (LVAR_MATCHER / stmt).map { |it| it[1] }
+        (NUMBERED_PARAMS & lvar_names).length
       end
     end
   end
