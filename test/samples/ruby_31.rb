@@ -23,3 +23,10 @@ def foo
     qux = baz
   end
 end
+
+def foo
+  case bar
+    in [^@a, ^$b, ^@@c]
+    qux = quuz(@a, @b, @@c)
+  end
+end

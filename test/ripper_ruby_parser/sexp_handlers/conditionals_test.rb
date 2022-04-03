@@ -623,6 +623,17 @@ describe RipperRubyParser::Parser do
                                  s(:array_pat, nil, s(:call, nil, :baz)),
                                  s(:call, nil, :qux, s(:call, nil, :baz))), nil)
       end
+
+      it "works with an in clause with carets with instance, class and global variables" do
+        skip "This Ruby version does not support caret + parens" if RUBY_VERSION < "3.1.0"
+        _("case foo; in [^@a, ^$b, ^@@c]; qux baz; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:array_pat, nil,
+                                   s(:ivar, :@a), s(:gvar, :$b), s(:cvar, :@@c)),
+                                 s(:call, nil, :qux, s(:call, nil, :baz))), nil)
+      end
     end
 
     describe "for one-line pattern matching" do
