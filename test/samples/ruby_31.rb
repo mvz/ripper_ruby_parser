@@ -5,3 +5,28 @@ def foo # Avoid comment attaching to next method
 end
 
 def foo = bar 42
+
+# Hash shorthand
+def foo(bar)
+  { bar: }
+end
+
+# Bare block parameters
+def foo(&)
+  bar
+end
+
+# Pattern matching changes
+def foo
+  case bar
+    in [^(baz)]
+    qux = baz
+  end
+end
+
+def foo
+  case bar
+    in [^@a, ^$b, ^@@c]
+    qux = quuz(@a, @b, @@c)
+  end
+end
