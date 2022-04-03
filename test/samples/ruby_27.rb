@@ -45,7 +45,7 @@ def foo
   end
 end
 
-# Pattern matching with types
+# Pattern matching with rightward assignment
 def foo
   case bar
     in [Hash => baz, String => quz]

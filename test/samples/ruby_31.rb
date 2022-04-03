@@ -11,6 +11,7 @@ def foo(bar)
   { bar: }
 end
 
+# Bare block parameters
 def foo(&)
   bar
 end
