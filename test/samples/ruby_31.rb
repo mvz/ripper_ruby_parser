@@ -5,3 +5,8 @@ def foo # Avoid comment attaching to next method
 end
 
 def foo = bar 42
+
+# Hash shorthand
+def foo(bar)
+  { bar: }
+end

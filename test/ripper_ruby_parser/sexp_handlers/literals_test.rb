@@ -111,6 +111,14 @@ describe RipperRubyParser::Parser do
                                s(:lit, :baz), s(:call, nil, :qux),
                                s(:kwsplat, s(:call, nil, :quux)))
       end
+
+      it "works for shorthand hash syntax" do
+        if RUBY_VERSION < "3.1.0"
+          skip "This Ruby version does not support shorthand hash syntax"
+        end
+        _("{ foo: }")
+          .must_be_parsed_as s(:hash, s(:lit, :foo), nil)
+      end
     end
 
     describe "for number literals" do
