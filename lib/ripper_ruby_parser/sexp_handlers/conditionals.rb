@@ -88,7 +88,7 @@ module RipperRubyParser
       def process_aryptn(exp)
         _, _, body, rest, = exp.shift 5
 
-        elements = body.map { |it| process(it) }
+        elements = body.map { |it| unwrap_begin process(it) }
         if rest
           rest_var = handle_pattern(rest)
           elements << convert_marked_argument(s(:splat, rest_var))

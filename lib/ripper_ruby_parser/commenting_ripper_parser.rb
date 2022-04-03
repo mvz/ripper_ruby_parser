@@ -35,7 +35,16 @@ module RipperRubyParser
     end
 
     def on_begin(*args)
-      commentize("begin", super)
+      result = super
+
+      # Some begin blocks are not created by the 'begin' keyword. Skip
+      # commenting for those kinds of blocks.
+      (_, kw,), = @comment_stack.last
+      if kw == "begin"
+        commentize("begin", result)
+      else
+        result
+      end
     end
 
     def on_void_stmt

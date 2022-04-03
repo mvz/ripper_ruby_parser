@@ -15,3 +15,11 @@ end
 def foo(&)
   bar
 end
+
+# Pattern matching changes
+def foo
+  case bar
+    in [^(baz)]
+    qux = baz
+  end
+end

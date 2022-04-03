@@ -45,6 +45,13 @@ def foo
   end
 end
 
+def foo
+  case bar
+    in [^baz]
+    qux = baz
+  end
+end
+
 # Pattern matching with rightward assignment
 def foo
   case bar
