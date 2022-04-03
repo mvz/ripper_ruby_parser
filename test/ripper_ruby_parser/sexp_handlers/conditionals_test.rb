@@ -595,6 +595,15 @@ describe RipperRubyParser::Parser do
                                  s(:hash_pat, nil, s(:lit, :bar), nil),
                                  s(:call, nil, :baz, s(:lvar, :bar))), nil)
       end
+
+      it "works with an in clause with rightward assignment" do
+        _("case foo; in [String => baz]; qux baz; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:array_pat, nil, s(:lasgn, :baz, s(:const, :String))),
+                                 s(:call, nil, :qux, s(:lvar, :baz))), nil)
+      end
     end
 
     describe "for one-line pattern matching" do
