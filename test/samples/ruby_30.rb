@@ -1,7 +1,9 @@
 # Samples that need Ruby 3.0 or higher
 
 # Right-ward assignment
-42 => foo
+def foo
+  42 => bar
+end
 
 # Argument forwarding with leading argument
 def foo(bar, ...)
@@ -10,7 +12,7 @@ def foo(bar, ...)
 end
 
 # Endless methods
-def foo # Avoid comment attaching to next method
+def foo # FIXME: Avoid comment attaching to next method
 end
 
 def foo(bar) = baz(bar)
