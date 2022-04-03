@@ -35,7 +35,7 @@ module RipperRubyParser
     end
 
     def on_begin(*args)
-      commentize(:begin, super)
+      commentize("begin", super)
     end
 
     def on_void_stmt
@@ -72,23 +72,23 @@ module RipperRubyParser
     end
 
     def on_module(*args)
-      commentize(:module, super)
+      commentize("module", super)
     end
 
     def on_class(*args)
-      commentize(:class, super)
+      commentize("class", super)
     end
 
     def on_sclass(*args)
-      commentize(:class, super)
+      commentize("class", super)
     end
 
     def on_def(*args)
-      commentize(:def, super)
+      commentize("def", super)
     end
 
     def on_defs(*args)
-      commentize(:def, super)
+      commentize("def", super)
     end
 
     def on_args_new
@@ -300,11 +300,11 @@ module RipperRubyParser
     end
 
     def on_BEGIN(*args)
-      commentize(:BEGIN, super)
+      commentize("BEGIN", super)
     end
 
     def on_END(*args)
-      commentize(:END, super)
+      commentize("END", super)
     end
 
     def on_parse_error(message)
@@ -327,8 +327,12 @@ module RipperRubyParser
       raise SyntaxError, message
     end
 
-    def commentize(_name, exp)
-      (_, _kw, loc), comment = @comment_stack.pop
+    def commentize(name, exp)
+      (_, kw, loc), comment = @comment_stack.pop
+      if kw != name
+        raise "Comment subject mismatch: expected #{name.inspect}, found #{kw.inspect}"
+      end
+
       @comment = ""
       exp.push loc
       [:comment, comment, exp]
