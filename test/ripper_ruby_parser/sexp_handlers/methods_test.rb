@@ -134,6 +134,17 @@ describe RipperRubyParser::Parser do
                                s(:nil))
       end
 
+      it "works for a bare block parameter" do
+        if RUBY_VERSION < "3.1.0"
+          skip "This Ruby version does not support bare block parameters"
+        end
+        _("def foo &; end")
+          .must_be_parsed_as s(:defn,
+                               :foo,
+                               s(:args, :&),
+                               s(:nil))
+      end
+
       it "works with a default value plus splat" do
         _("def foo bar=1, *baz; end")
           .must_be_parsed_as s(:defn,

@@ -10,3 +10,7 @@ def foo = bar 42
 def foo(bar)
   { bar: }
 end
+
+def foo(&)
+  bar
+end
