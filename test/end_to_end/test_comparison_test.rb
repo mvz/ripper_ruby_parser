@@ -4,6 +4,8 @@ require File.expand_path("../test_helper.rb", File.dirname(__FILE__))
 require "ruby_parser"
 
 describe "Using RipperRubyParser and RubyParser" do
+  make_my_diffs_pretty!
+
   Dir.glob("test/ripper_ruby_parser/**/*.rb").each do |file|
     describe "for #{file}" do
       let :program do

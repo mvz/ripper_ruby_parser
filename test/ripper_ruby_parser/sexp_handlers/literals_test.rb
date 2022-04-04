@@ -142,6 +142,13 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:lit, -1)
       end
 
+      it "works for negative integers with earlier spaces" do
+        _("foo bar(1), baz(-1)")
+          .must_be_parsed_as s(:call, nil, :foo,
+                               s(:call, nil, :bar, s(:lit, 1)),
+                               s(:call, nil, :baz, s(:lit, -1)))
+      end
+
       it "handles negative sign for floats" do
         _("-3.14")
           .must_be_parsed_as s(:lit, -3.14)
@@ -162,9 +169,33 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:lit, 1000r)
       end
 
+      it "handles negative sign for rationals" do
+        _("-1r")
+          .must_be_parsed_as s(:lit, -1r)
+      end
+
+      it "works for negative rational numbers with earlier spaces" do
+        _("foo bar(1), baz(-1r)")
+          .must_be_parsed_as s(:call, nil, :foo,
+                               s(:call, nil, :bar, s(:lit, 1)),
+                               s(:call, nil, :baz, s(:lit, -1r)))
+      end
+
       it "works for imaginary numbers" do
         _("1i")
           .must_be_parsed_as s(:lit, 1i)
+      end
+
+      it "handles negative sign for imaginary numbers" do
+        _("-1i")
+          .must_be_parsed_as s(:lit, -1i)
+      end
+
+      it "works for negative imaginary numbers with earlier spaces" do
+        _("foo bar(1), baz(-1i)")
+          .must_be_parsed_as s(:call, nil, :foo,
+                               s(:call, nil, :bar, s(:lit, 1)),
+                               s(:call, nil, :baz, s(:lit, -1i)))
       end
     end
   end
