@@ -12,9 +12,6 @@ def foo(bar, ...)
 end
 
 # Endless methods
-def foo # FIXME: Avoid comment attaching to next method
-end
-
 def foo(bar) = baz(bar)
 def foo(bar) = baz(bar) rescue qux
 def baz = qux
