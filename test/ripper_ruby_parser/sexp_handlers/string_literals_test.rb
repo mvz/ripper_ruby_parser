@@ -1053,6 +1053,12 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:lit, :foobar)
       end
 
+      it "works for dsyms containing raw byte escape sequences" do
+        expected_symbol = (+"Variet\303\240").force_encoding("ascii-8bit").to_sym
+        _(":\"Variet\\303\\240\"")
+          .must_be_parsed_as s(:lit, expected_symbol)
+      end
+
       it "works with single quoted dsyms" do
         _(":'foo'")
           .must_be_parsed_as s(:lit, :foo)
