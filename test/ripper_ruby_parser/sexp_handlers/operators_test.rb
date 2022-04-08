@@ -457,12 +457,44 @@ describe RipperRubyParser::Parser do
                                    s(:str, "baz")),
                                  s(:call, nil, :qux))
         end
+
+        it "handles :=~ with a bracketed regexp literal" do
+          _("(/foo/) =~ bar")
+            .must_be_parsed_as s(:match2,
+                                 s(:lit, /foo/),
+                                 s(:call, nil, :bar))
+        end
       end
 
-      it "handles :=~ with literal regexp on the right hand side" do
-        _("foo =~ /bar/")
-          .must_be_parsed_as s(:match3,
-                               s(:lit, /bar/),
+      describe "with a regexp literal on the right hand side" do
+        it "handles :=~ with a simple regexp literal" do
+          _("foo =~ /bar/")
+            .must_be_parsed_as s(:match3,
+                                 s(:lit, /bar/),
+                                 s(:call, nil, :foo))
+        end
+
+        it "handles :=~ with a bracketed regexp literal" do
+          _("foo =~ (/bar/)")
+            .must_be_parsed_as s(:match3,
+                                 s(:lit, /bar/),
+                                 s(:call, nil, :foo))
+        end
+      end
+
+      it "handles :=~ with a non-regexp literal on the right hand side" do
+        _("foo =~ 42")
+          .must_be_parsed_as s(:call,
+                               s(:call, nil, :foo),
+                               :=~,
+                               s(:lit, 42))
+      end
+
+      it "handles :=~ with a non-regexp literal on the left hand side" do
+        _("42 =~ foo")
+          .must_be_parsed_as s(:call,
+                               s(:lit, 42),
+                               :=~,
                                s(:call, nil, :foo))
       end
 
