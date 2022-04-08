@@ -280,6 +280,15 @@ end
 # Special symbols
 [:`, :|, :*, :&, :%, :'^', :-@, :+@, :'~@']
 
+# Non-ascii symbols
+[:cosí, :😎]
+
+class Foö
+  def bär
+    "Röär!"
+  end
+end
+
 # Blocks
 foo do |bar| end
 foo do |bar, | end

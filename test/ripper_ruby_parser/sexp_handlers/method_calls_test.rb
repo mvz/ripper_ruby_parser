@@ -101,6 +101,12 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
                                    s(:lit, :baz), s(:call, nil, :qux),
                                    s(:kwsplat, s(:call, nil, :quuz))))
         end
+
+        it "works for method names with non-ascii characters" do
+          _("foö bär")
+            .must_be_parsed_as s(:call, nil, :foö,
+                                 s(:call, nil, :bär))
+        end
       end
 
       describe "with a receiver" do
