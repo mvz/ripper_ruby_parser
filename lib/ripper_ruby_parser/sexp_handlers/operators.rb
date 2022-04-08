@@ -84,13 +84,21 @@ module RipperRubyParser
       end
 
       def make_regexp_match_operator(left, operator, right)
-        if left.sexp_type == :regexp_literal
-          s(:match2, process(left), process(right))
-        elsif right.sexp_type == :regexp_literal
-          s(:match3, process(right), process(left))
+        left = process(left)
+        right = process(right)
+
+        if regexp? left
+          s(:match2, left, right)
+        elsif regexp? right
+          s(:match3, right, left)
         else
-          s(:call, process(left), operator, process(right))
+          s(:call, left, operator, right)
         end
+      end
+
+      def regexp?(exp)
+        exp.sexp_type == :dregx ||
+          exp.sexp_type == :lit && exp.sexp_body.first.is_a?(Regexp)
       end
 
       def make_rightward_assignment(left, right)
