@@ -8,6 +8,7 @@ module RipperRubyParser
   # Variant of Ripper's SexpBuilder parser class that inserts comments as
   # Sexps into the built parse tree.
   #
+  # rubocop: disable Metrics/ClassLength
   # @api private
   class CommentingRipperParser < Ripper::SexpBuilder
     def initialize(*args)
@@ -357,4 +358,5 @@ module RipperRubyParser
       [:comment, comment, exp]
     end
   end
+  # rubocop: enable Metrics/ClassLength
 end

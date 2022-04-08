@@ -12,7 +12,7 @@ Metrics/AbcSize:
 
 # Configuration parameters: CountComments, CountAsOne.
 Metrics/ClassLength:
-  Max: 263
+  Max: 180
 
 # Configuration parameters: CountComments, CountAsOne, ExcludedMethods, IgnoredMethods.
 Metrics/MethodLength:
