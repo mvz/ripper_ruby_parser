@@ -986,6 +986,11 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:lit, :foo)
       end
 
+      it "works for symbols containing non-ascii characters" do
+        _(":cosí")
+          .must_be_parsed_as s(:lit, :cosí)
+      end
+
       it "works for symbols that look like instance variable names" do
         _(":@foo")
           .must_be_parsed_as s(:lit, :@foo)
