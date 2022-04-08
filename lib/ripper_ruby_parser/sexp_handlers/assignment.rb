@@ -95,11 +95,20 @@ module RipperRubyParser
       def process_opassign(exp)
         _, lvalue, (_, operator,), value = exp.shift 4
 
+        value_type = value.sexp_type
+
         lvalue = process(lvalue)
         value = process(value)
         operator = operator.chop.to_sym
 
-        create_operator_assignment_sub_type lvalue, value, operator
+        case lvalue.sexp_type
+        when :aref_field
+          create_aref_operator_assignment_sub_type(lvalue, value, operator)
+        when :field
+          create_field_operator_assignment_sub_type(lvalue, value, operator, value_type)
+        else
+          create_regular_operator_assignment_sub_type(lvalue, value, operator)
+        end
       end
 
       private
@@ -117,28 +126,36 @@ module RipperRubyParser
         item
       end
 
+      def create_aref_operator_assignment_sub_type(lvalue, value, operator)
+        _, arr, arglist = lvalue
+        arglist.sexp_type = :arglist
+        s(:op_asgn1, arr, arglist, operator, value)
+      end
+
+      def create_field_operator_assignment_sub_type(lvalue, value, operator, value_type)
+        # Structure of lvalue will be something like this:
+        # s(:field, receiver, s(:period, "."), s(:lvar, field))
+        _, receiver, _, (_, field) = lvalue
+        case value_type
+        when :command, :command_call
+          s(:op_asgn, receiver, value, field, operator)
+        else
+          s(:op_asgn2, receiver, :"#{field}=", operator, value)
+        end
+      end
+
       OPERATOR_ASSIGNMENT_MAP = {
         "||": :op_asgn_or,
         "&&": :op_asgn_and
       }.freeze
 
-      def create_operator_assignment_sub_type(lvalue, value, operator)
-        case lvalue.sexp_type
-        when :aref_field
-          _, arr, arglist = lvalue
-          arglist.sexp_type = :arglist
-          s(:op_asgn1, arr, arglist, operator, value)
-        when :field
-          _, obj, _, (_, field) = lvalue
-          s(:op_asgn2, obj, :"#{field}=", operator, value)
+      def create_regular_operator_assignment_sub_type(lvalue, value, operator)
+        value = unwrap_begin(value)
+        if (mapped = OPERATOR_ASSIGNMENT_MAP[operator])
+          s(mapped, lvalue, create_assignment_sub_type(lvalue, value))
         else
-          value = unwrap_begin(value)
-          if (mapped = OPERATOR_ASSIGNMENT_MAP[operator])
-            s(mapped, lvalue, create_assignment_sub_type(lvalue, value))
-          else
-            operator_call = s(:call, lvalue, operator, value)
-            create_assignment_sub_type lvalue, operator_call
-          end
+          operator_call = s(:call, lvalue, operator, value)
+          create_assignment_sub_type lvalue, operator_call
         end
       end
 
