@@ -525,6 +525,58 @@ describe RipperRubyParser::Parser do
                                :bar=, :"||",
                                s(:call, nil, :baz))
       end
+
+      # FIXME: Incompatibility
+      it "works with += with a function call without parentheses" do
+        _("foo.bar += baz qux")
+          .must_be_parsed_as s(:op_asgn2,
+                               s(:call, nil, :foo),
+                               :bar=, :+,
+                               s(:call, nil, :baz, s(:call, nil, :qux)))
+      end
+
+      it "works with += with a function call with parentheses" do
+        _("foo.bar += baz(qux)")
+          .must_be_parsed_as s(:op_asgn2,
+                               s(:call, nil, :foo),
+                               :bar=, :+,
+                               s(:call, nil, :baz, s(:call, nil, :qux)))
+      end
+
+      # FIXME: Incompatibility
+      it "works with ||= with a method call without parentheses" do
+        _("foo.bar += baz.qux quuz")
+          .must_be_parsed_as s(:op_asgn2,
+                               s(:call, nil, :foo),
+                               :bar=, :+,
+                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)))
+      end
+
+      # FIXME: Incompatibility
+      it "works with ||= with a function call without parentheses" do
+        _("foo.bar ||= baz qux")
+          .must_be_parsed_as s(:op_asgn2,
+                               s(:call, nil, :foo),
+                               :bar=, :"||",
+                               s(:call, nil, :baz, s(:call, nil, :qux)))
+      end
+
+      it "works with ||= with a function call with parentheses" do
+        _("foo.bar ||= baz(qux)")
+          .must_be_parsed_as s(:op_asgn2,
+                               s(:call, nil, :foo),
+                               :bar=, :"||",
+                               s(:call, nil, :baz, s(:call, nil, :qux)))
+      end
+
+      # FIXME: Incompatibility
+      it "works with ||= with a method call without parentheses" do
+        _("foo.bar ||= baz.qux quuz")
+          .must_be_parsed_as s(:op_asgn2,
+                               s(:call, nil, :foo),
+                               :bar=, :"||",
+                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)))
+      end
     end
 
     describe "for operator assignment to a collection element" do
