@@ -31,6 +31,10 @@ EOS
 \xE6\x97\xA5\xE6\x9C\xAC\xE8\xAA\x9E
 EOS
 
+"\C-a"
+"\C-z"
+"\C-?"
+
 # Quotes around heredoc names
 <<'FOO'
 \n

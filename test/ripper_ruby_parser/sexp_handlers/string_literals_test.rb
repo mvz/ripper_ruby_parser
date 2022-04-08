@@ -287,9 +287,17 @@ describe RipperRubyParser::Parser do
           _('"foo\\cZbar"').must_be_parsed_as s(:str, "foo\cZbar")
         end
 
+        it "works for the short hand DEL control sequence escape" do
+          _('"foo\\c?bar"').must_be_parsed_as s(:str, "foo\c?bar")
+        end
+
         it "works with simple regular control sequence escapes" do
           _('"foo\\C-abar"').must_be_parsed_as s(:str, "foo\C-abar")
           _('"foo\\C-Zbar"').must_be_parsed_as s(:str, "foo\C-Zbar")
+        end
+
+        it "works for the regular DEL control sequence escape" do
+          _('"foo\\C-?bar"').must_be_parsed_as s(:str, "foo\C-?bar")
         end
 
         it "works with unicode escapes" do
