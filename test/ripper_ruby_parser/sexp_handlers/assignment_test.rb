@@ -526,13 +526,12 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :baz))
       end
 
-      # FIXME: Incompatibility
       it "works with += with a function call without parentheses" do
         _("foo.bar += baz qux")
-          .must_be_parsed_as s(:op_asgn2,
+          .must_be_parsed_as s(:op_asgn,
                                s(:call, nil, :foo),
-                               :bar=, :+,
-                               s(:call, nil, :baz, s(:call, nil, :qux)))
+                               s(:call, nil, :baz, s(:call, nil, :qux)),
+                               :bar, :+)
       end
 
       it "works with += with a function call with parentheses" do
@@ -543,22 +542,20 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :baz, s(:call, nil, :qux)))
       end
 
-      # FIXME: Incompatibility
       it "works with ||= with a method call without parentheses" do
         _("foo.bar += baz.qux quuz")
-          .must_be_parsed_as s(:op_asgn2,
+          .must_be_parsed_as s(:op_asgn,
                                s(:call, nil, :foo),
-                               :bar=, :+,
-                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)))
+                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)),
+                               :bar, :+)
       end
 
-      # FIXME: Incompatibility
       it "works with ||= with a function call without parentheses" do
         _("foo.bar ||= baz qux")
-          .must_be_parsed_as s(:op_asgn2,
+          .must_be_parsed_as s(:op_asgn,
                                s(:call, nil, :foo),
-                               :bar=, :"||",
-                               s(:call, nil, :baz, s(:call, nil, :qux)))
+                               s(:call, nil, :baz, s(:call, nil, :qux)),
+                               :bar, :"||")
       end
 
       it "works with ||= with a function call with parentheses" do
@@ -569,13 +566,12 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :baz, s(:call, nil, :qux)))
       end
 
-      # FIXME: Incompatibility
       it "works with ||= with a method call without parentheses" do
         _("foo.bar ||= baz.qux quuz")
-          .must_be_parsed_as s(:op_asgn2,
+          .must_be_parsed_as s(:op_asgn,
                                s(:call, nil, :foo),
-                               :bar=, :"||",
-                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)))
+                               s(:call, s(:call, nil, :baz), :qux, s(:call, nil, :quuz)),
+                               :bar, :"||")
       end
     end
 
