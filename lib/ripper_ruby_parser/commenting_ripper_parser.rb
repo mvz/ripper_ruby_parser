@@ -349,9 +349,6 @@ module RipperRubyParser
 
     def commentize(name, exp)
       (_, kw, loc), comment = @comment_stack.pop
-      if kw != name
-        raise "Comment subject mismatch: expected #{name.inspect}, found #{kw.inspect}"
-      end
 
       @comment = ""
       exp.push loc

@@ -242,6 +242,11 @@ describe RipperRubyParser::Parser do
                                s(:nil).line(2)).line(1),
                              with_line_numbers: true
       end
+
+      it "handles a method named 'class'" do
+        _("def class; end")
+          .must_be_parsed_as s(:defn, :class, s(:args), s(:nil))
+      end
     end
 
     describe "for endless instance method definitions" do

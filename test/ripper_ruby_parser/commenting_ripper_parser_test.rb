@@ -122,6 +122,19 @@ describe RipperRubyParser::CommentingRipperParser do
                                    s(1, 8)))))
     end
 
+    it "does not crash on a method named 'class'" do
+      result = parse_with_builder "def class; end"
+      _(result).must_equal s(:program,
+                             s(:stmts,
+                               s(:comment, "",
+                                 s(:def,
+                                   s(:@kw, "class", s(1, 4)),
+                                   empty_params_list,
+                                   s(:bodystmt,
+                                     s(:stmts, s(:void_stmt, s(1, 14))), nil, nil, nil),
+                                   s(1, 4)))))
+    end
+
     it "is not confused by a dynamic symbol" do
       result = parse_with_builder ":'foo'; def bar; end"
       _(result).must_equal s(:program,
