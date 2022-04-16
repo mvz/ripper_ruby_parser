@@ -314,6 +314,12 @@ class Bar
   def class
     "Woof!"
   end
+
+  # Foo
+  def def
+    # Bar
+    self.def.def;
+  end
 end
 
 # Endless ranges
