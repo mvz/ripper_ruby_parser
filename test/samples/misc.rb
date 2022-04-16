@@ -303,6 +303,19 @@ if defined? foo
   bar
 end
 
+# Methods with names that are also keywords
+class Bar
+  # Command A
+  def begin
+    foo.end.begin
+  end
+
+  # Command B
+  def class
+    "Woof!"
+  end
+end
+
 # Endless ranges
 1..
 
