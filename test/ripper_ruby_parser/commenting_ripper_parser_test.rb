@@ -18,7 +18,7 @@ describe RipperRubyParser::CommentingRipperParser do
     #
     # See https://bugs.ruby-lang.org/issues/15670
     let(:dsym_string_type) do
-      if RUBY_VERSION >= "2.6.3"
+      if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new("2.6.3")
         :string_content
       else
         :xstring
@@ -122,6 +122,19 @@ describe RipperRubyParser::CommentingRipperParser do
                                    s(1, 8)))))
     end
 
+    it "does not crash on a method named 'class'" do
+      result = parse_with_builder "def class; end"
+      _(result).must_equal s(:program,
+                             s(:stmts,
+                               s(:comment, "",
+                                 s(:def,
+                                   s(:@kw, "class", s(1, 4)),
+                                   empty_params_list,
+                                   s(:bodystmt,
+                                     s(:stmts, s(:void_stmt, s(1, 14))), nil, nil, nil),
+                                   s(1, 0)))))
+    end
+
     it "is not confused by a dynamic symbol" do
       result = parse_with_builder ":'foo'; def bar; end"
       _(result).must_equal s(:program,
@@ -178,7 +191,7 @@ describe RipperRubyParser::CommentingRipperParser do
       _(result).must_equal s(:program,
                              s(:stmts,
                                s(:string_literal,
-                                 s(:string_content,
+                                 s(dsym_string_type,
                                    s(:@tstring_content, "", s(2, 2), "<<~FOO"),
                                    s(:string_embexpr,
                                      s(:stmts,

@@ -93,12 +93,14 @@ module RipperRubyParser
       commentize("class", super)
     end
 
-    def on_def(*args)
-      commentize("def", super)
+    def on_def(name, *args)
+      (_, _, loc) = name
+      commentize("def", super, loc)
     end
 
-    def on_defs(*args)
-      commentize("def", super)
+    def on_defs(receiver, period, name, *rest)
+      (_, _, loc) = name
+      commentize("def", super, loc)
     end
 
     def on_args_new
@@ -347,11 +349,14 @@ module RipperRubyParser
       raise SyntaxError, message
     end
 
-    def commentize(name, exp)
-      (_, kw, loc), comment = @comment_stack.pop
-      if kw != name
-        raise "Comment subject mismatch: expected #{name.inspect}, found #{kw.inspect}"
+    def commentize(name, exp, target_loc = nil)
+      if target_loc
+        (_, kw, loc), comment = @comment_stack.pop until (loc <=> target_loc) == -1
+      else
+        (_, kw, loc), comment = @comment_stack.pop
       end
+
+      warn "Comment stack mismatch: expected #{kw} to equal #{name}" unless kw == name
 
       @comment = ""
       exp.push loc

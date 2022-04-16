@@ -366,6 +366,35 @@ describe RipperRubyParser::Parser do
         _(result.comments).must_equal "# Foo\n"
       end
 
+      it "assigns comments correctly when method name is def" do
+        result = parser.parse <<~RUBY
+          # Bar
+          def def
+          end
+        RUBY
+        _(result).must_equal s(:defn, :def, s(:args), s(:nil))
+        _(result.comments).must_equal "# Bar\n"
+      end
+
+      it "assigns comments correctly when method name is class" do
+        result = parser.parse <<~RUBY
+          # Foo
+          class Foo
+            # Bar
+            self.class
+
+            # Baz
+            def class
+            end
+          end
+        RUBY
+        _(result).must_equal s(:class, :Foo, nil,
+                               s(:call, s(:self), :class),
+                               s(:defn, :class, s(:args), s(:nil)))
+        _(result.comments).must_equal "# Foo\n"
+        _(result[4].comments).must_equal "# Bar\n# Baz\n"
+      end
+
       # TODO: Prefer assigning comment to the BEGIN instead
       it "assigns comments on BEGIN blocks to the following item" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\ndef foo; end"
