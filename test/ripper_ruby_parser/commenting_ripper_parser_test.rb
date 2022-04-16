@@ -132,7 +132,7 @@ describe RipperRubyParser::CommentingRipperParser do
                                    empty_params_list,
                                    s(:bodystmt,
                                      s(:stmts, s(:void_stmt, s(1, 14))), nil, nil, nil),
-                                   s(1, 4)))))
+                                   s(1, 0)))))
     end
 
     it "is not confused by a dynamic symbol" do

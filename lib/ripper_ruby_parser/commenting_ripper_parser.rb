@@ -348,7 +348,7 @@ module RipperRubyParser
     end
 
     def commentize(name, exp)
-      (_, kw, loc), comment = @comment_stack.pop
+      (_, kw, loc), comment = @comment_stack.pop while kw != name
 
       @comment = ""
       exp.push loc
