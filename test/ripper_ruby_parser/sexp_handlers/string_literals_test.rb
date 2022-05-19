@@ -436,6 +436,13 @@ describe RipperRubyParser::Parser do
                                  s(:evstr, s(:call, nil, :baz)))
         end
 
+        it "handles interpolation with __LINE__" do
+          _('"foo#{__LINE__}"')
+            .must_be_parsed_as s(:dstr,
+                                 "foo",
+                                 s(:evstr, s(:lit, 1)))
+        end
+
         it "correctly handles consecutive nested interpolation" do
           _('"foo#{"bar#{baz}"}foo#{"bar#{baz}"}"')
             .must_be_parsed_as s(:dstr,

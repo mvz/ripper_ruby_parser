@@ -171,3 +171,4 @@ FOO
 "foo#{"bar#{baz}"}"
 "foo#{"bar#{"baz#{qux}"}"}"
 "foo#{"bar#{baz}"}foo#{"bar#{baz}"}"
+"foo#{bar}baz#{__FILE__}qux#{__LINE__}quuz#{zyxxy}"
