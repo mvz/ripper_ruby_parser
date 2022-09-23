@@ -6,6 +6,23 @@ This project adheres to [Semantic Versioning 2.0.0][1].
 
 This document is formatted based on [Keep A CHANGELOG][2].
 
+## Unreleased
+
+* Support single-line pattern matching ([#188])
+* Support rightward assignment ([#189])
+* Support endless methods with Ruby 3.0 syntax ([#191])
+* Support arguments without parentheses in endless method body ([#193])
+* Add support for pattern matching ([#172])
+* Add tentative support for numbered parameters ([#163])
+* Support several new Ruby 3.1 syntax features ([#196])
+* Bump `ruby_parser` compatibility to 3.19.1 ([#199])
+* Support negative rational and imaginary literals ([#197])
+* Correctly handle match operator with regexp literals in parentheses ([#200])
+* Improve operator assignment handling ([#201])
+* Handle literal Ctrl-? (DEL) character correctly ([#202])
+* Handle method names that are keywords in method definitions ([#204])
+* Improve dsym handling compatibility ([#203], [#210])
+
 ## 1.10.0 / 2022-03-13
 
 * Handle shadow arguments ([#161])
@@ -232,7 +249,22 @@ This document is formatted based on [Keep A CHANGELOG][2].
 * Initial release
 
 <!-- Pull request links -->
+[#210]: https://github.com/mvz/ripper_ruby_parser/pull/210
+[#204]: https://github.com/mvz/ripper_ruby_parser/pull/204
+[#203]: https://github.com/mvz/ripper_ruby_parser/pull/203
+[#202]: https://github.com/mvz/ripper_ruby_parser/pull/202
+[#201]: https://github.com/mvz/ripper_ruby_parser/pull/201
+[#200]: https://github.com/mvz/ripper_ruby_parser/pull/200
+[#199]: https://github.com/mvz/ripper_ruby_parser/pull/199
+[#197]: https://github.com/mvz/ripper_ruby_parser/pull/197
+[#196]: https://github.com/mvz/ripper_ruby_parser/pull/196
+[#193]: https://github.com/mvz/ripper_ruby_parser/pull/193
+[#191]: https://github.com/mvz/ripper_ruby_parser/pull/191
+[#189]: https://github.com/mvz/ripper_ruby_parser/pull/189
+[#188]: https://github.com/mvz/ripper_ruby_parser/pull/188
 [#180]: https://github.com/mvz/ripper_ruby_parser/pull/180
+[#172]: https://github.com/mvz/ripper_ruby_parser/pull/172
+[#163]: https://github.com/mvz/ripper_ruby_parser/pull/163
 [#165]: https://github.com/mvz/ripper_ruby_parser/pull/165
 [#161]: https://github.com/mvz/ripper_ruby_parser/pull/161
 [#155]: https://github.com/mvz/ripper_ruby_parser/pull/155
