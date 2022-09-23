@@ -239,9 +239,9 @@ module RipperRubyParser
       def handle_string_unescaping(content, delim)
         case delim
         when INTERPOLATING_HEREDOC, *INTERPOLATING_STRINGS
-          fix_encoding unescape(content)
-        when INTERPOLATING_DSYM
           unescape(content)
+        when INTERPOLATING_DSYM
+          unescape_dsym(content)
         when INTERPOLATING_WORD_LIST
           fix_encoding unescape_wordlist_word(content)
         when *NON_INTERPOLATING_STRINGS

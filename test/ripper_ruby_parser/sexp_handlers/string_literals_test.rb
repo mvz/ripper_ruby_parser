@@ -1066,6 +1066,16 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:lit, expected_symbol)
       end
 
+      it "works for dsyms containing non-ascii characters" do
+        _(":\"cosí\"")
+          .must_be_parsed_as s(:lit, :cosí)
+      end
+
+      it "works for dsyms containing non-latin characters" do
+        _(":\"проверка\"")
+          .must_be_parsed_as s(:lit, :проверка)
+      end
+
       it "works with single quoted dsyms" do
         _(":'foo'")
           .must_be_parsed_as s(:lit, :foo)
