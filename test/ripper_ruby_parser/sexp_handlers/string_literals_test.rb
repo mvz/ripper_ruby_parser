@@ -1061,9 +1061,8 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for dsyms containing raw byte escape sequences" do
-        expected_symbol = (+"Variet\303\240").force_encoding("ascii-8bit").to_sym
         _(":\"Variet\\303\\240\"")
-          .must_be_parsed_as s(:lit, expected_symbol)
+          .must_be_parsed_as s(:lit, :Varietà)
       end
 
       it "works for dsyms containing non-ascii characters" do

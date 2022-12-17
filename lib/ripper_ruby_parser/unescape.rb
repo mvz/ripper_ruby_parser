@@ -92,25 +92,6 @@ module RipperRubyParser
       end
     end
 
-    def unescape_dsym(string)
-      string = string.dup if string.frozen?
-      old_encoding = string.encoding
-      restore_encoding = true
-      string.force_encoding("ASCII-8BIT")
-      unescaped = string.gsub(ESCAPE_SEQUENCE_REGEXP) do
-        bare = Regexp.last_match[1]
-        if bare == "\n"
-          ""
-        else
-          replacement = unescaped_value(bare)
-          replacement.force_encoding old_encoding
-          restore_encoding = false unless replacement.valid_encoding?
-          replacement.force_encoding("ASCII-8BIT")
-        end
-      end
-      restore_encoding ? unescaped.force_encoding(old_encoding) : unescaped
-    end
-
     def fix_encoding(string)
       unless string.encoding == Encoding::UTF_8
         dup = string.dup.force_encoding Encoding::UTF_8
