@@ -74,6 +74,7 @@ module RipperRubyParser
                       falsepart.sexp_body
                     end
         pattern = process(pattern)
+        adjust_rightward_assignment_pattern(pattern)
 
         s(:case_body,
           s(:in, pattern, process(truepart)),
@@ -135,6 +136,15 @@ module RipperRubyParser
           @local_variables << pattern[1]
         end
         pattern
+      end
+
+      def adjust_rightward_assignment_pattern(exp)
+        case exp.sexp_type
+        when :lvar
+          exp.sexp_type = :lasgn
+        when :lasgn
+          adjust_rightward_assignment_pattern(exp.sexp_body.last)
+        end
       end
 
       def construct_conditional(cond, truepart, falsepart)

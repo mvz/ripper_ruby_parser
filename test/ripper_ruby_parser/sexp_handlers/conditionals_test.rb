@@ -543,7 +543,7 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
                                s(:in,
-                                 s(:lvar, :bar),
+                                 s(:lasgn, :bar),
                                  s(:call, nil, :qux,
                                    s(:lvar, :bar))), nil)
       end
@@ -556,7 +556,7 @@ describe RipperRubyParser::Parser do
                                  s(:array_pat, nil, s(:str, "a")),
                                  s(:call, nil, :bar)),
                                s(:in,
-                                 s(:lvar, :qux),
+                                 s(:lasgn, :qux),
                                  s(:call, nil, :quuz, s(:lvar, :qux))), nil)
       end
 
@@ -645,7 +645,7 @@ describe RipperRubyParser::Parser do
         _("1 in foo").must_be_parsed_as s(:case,
                                           s(:lit, 1),
                                           s(:in,
-                                            s(:lvar, :foo), nil), nil)
+                                            s(:lasgn, :foo), nil), nil)
       end
 
       it "works for secondary assignment of matched expression" do
@@ -653,7 +653,16 @@ describe RipperRubyParser::Parser do
                                                  s(:lit, 1),
                                                  s(:in,
                                                    s(:lasgn, :bar,
-                                                     s(:lvar, :foo)), nil), nil)
+                                                     s(:lasgn, :foo)), nil), nil)
+      end
+
+      it "works for tertiary assignment of matched expression" do
+        _("1 in foo => bar => baz").must_be_parsed_as s(:case,
+                                                        s(:lit, 1),
+                                                        s(:in,
+                                                          s(:lasgn, :baz,
+                                                            s(:lasgn, :bar,
+                                                              s(:lasgn, :foo))), nil), nil)
       end
     end
   end

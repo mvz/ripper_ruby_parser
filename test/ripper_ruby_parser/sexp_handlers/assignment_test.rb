@@ -651,7 +651,7 @@ describe RipperRubyParser::Parser do
 
       it "works for the simple case" do
         _("42 => foo")
-          .must_be_parsed_as s(:case, s(:lit, 42), s(:in, s(:lvar, :foo), nil), nil)
+          .must_be_parsed_as s(:case, s(:lit, 42), s(:in, s(:lasgn, :foo), nil), nil)
       end
     end
   end
