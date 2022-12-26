@@ -241,7 +241,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "handles beginless range literals" do
-        skip "This Ruby version does not support beginless ranges" if RUBY_VERSION < "2.7.0"
         _("..1")
           .must_be_parsed_as s(:dot2, nil, s(:lit, 1))
       end
@@ -306,7 +305,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "handles beginless range literals" do
-        skip "This Ruby version does not support beginless ranges" if RUBY_VERSION < "2.7.0"
         _("...1")
           .must_be_parsed_as s(:dot3, nil, s(:lit, 1))
       end

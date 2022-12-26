@@ -225,9 +225,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with argument forwarding" do
-        if RUBY_VERSION < "2.7.0"
-          skip "This Ruby version does not support argument forwarding"
-        end
         _("def foo(...); bar(...); end")
           .must_be_parsed_as s(:defn, :foo,
                                s(:args, s(:forward_args)),
