@@ -534,10 +534,6 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for a case block with in clauses" do
-      before do
-        skip "This Ruby version does not support pattern matching" if RUBY_VERSION < "2.7.0"
-      end
-
       it "works with a single in clause" do
         _("case foo; in bar; qux bar; end")
           .must_be_parsed_as s(:case,
@@ -637,10 +633,6 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for one-line pattern matching" do
-      before do
-        skip "This Ruby version does not support pattern matching" if RUBY_VERSION < "2.7.0"
-      end
-
       it "works for the simple case" do
         _("1 in foo").must_be_parsed_as s(:case,
                                           s(:lit, 1),
