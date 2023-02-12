@@ -123,4 +123,4 @@ Naming/MethodName:
 
 # Avoid offenses on s().
 Style/MethodCallWithoutArgsParentheses:
-  IgnoredMethods: ['s']
+  AllowedMethods: ['s']
