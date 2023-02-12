@@ -83,7 +83,7 @@ module RipperRubyParser
           return with_line_number(content.line, s(:lit, Regexp.new(content.last, numflags)))
         end
 
-        content.sexp_type = :dregx_once if /o/.match?(flags)
+        content.sexp_type = :dregx_once if flags.include?("o")
         content << numflags unless numflags == 0
         content
       end
@@ -180,11 +180,11 @@ module RipperRubyParser
       def character_flags_to_numerical(flags)
         numflags = 0
 
-        numflags = Regexp::MULTILINE if /m/.match?(flags)
-        numflags |= Regexp::EXTENDED if /x/.match?(flags)
-        numflags |= Regexp::IGNORECASE if /i/.match?(flags)
+        numflags = Regexp::MULTILINE if flags.include?("m")
+        numflags |= Regexp::EXTENDED if flags.include?("x")
+        numflags |= Regexp::IGNORECASE if flags.include?("i")
 
-        numflags |= Regexp::NOENCODING if /n/.match?(flags)
+        numflags |= Regexp::NOENCODING if flags.include?("n")
         numflags |= Regexp::FIXEDENCODING if /[ues]/.match?(flags)
 
         numflags
