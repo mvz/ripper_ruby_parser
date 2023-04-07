@@ -222,11 +222,10 @@ describe RipperRubyParser::Parser do
 
       it "works with numbered parameters" do
         _("foo do _1.bar(_2); end")
-          .must_be_parsed_as \
-            s(:iter,
-              s(:call, nil, :foo),
-              2,
-              s(:call, s(:lvar, :_1), :bar, s(:lvar, :_2)))
+          .must_be_parsed_as s(:iter,
+                               s(:call, nil, :foo),
+                               2,
+                               s(:call, s(:lvar, :_1), :bar, s(:lvar, :_2)))
       end
     end
 
