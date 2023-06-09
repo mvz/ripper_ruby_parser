@@ -231,6 +231,20 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :bar, s(:forward_args)))
       end
 
+      it "works with an anonymous splat argument" do
+        _("def foo(*); end")
+          .must_be_parsed_as s(:defn, :foo,
+                               s(:args, :*),
+                               s(:nil))
+      end
+
+      it "works with an anonymous double splat argument" do
+        _("def foo(**); end")
+          .must_be_parsed_as s(:defn, :foo,
+                               s(:args, :**),
+                               s(:nil))
+      end
+
       it "assigns correct line numbers when the body is empty" do
         _("def bar\nend")
           .must_be_parsed_as s(:defn,

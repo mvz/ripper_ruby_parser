@@ -41,7 +41,11 @@ module RipperRubyParser
       def generic_add_star(exp)
         _, args, splatarg, *rest = shift_all exp
         items = process args
-        items.push s(:splat, unwrap_begin(process(splatarg)))
+        if splatarg
+          items.push s(:splat, unwrap_begin(process(splatarg)))
+        else
+          items.push s(:splat)
+        end
         items.push(*map_process_list(rest))
       end
 

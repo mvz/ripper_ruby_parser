@@ -36,7 +36,11 @@ module RipperRubyParser
       #   s(:assoc_splat, s(:vcall, s(:@ident, "bar")))
       def process_assoc_splat(exp)
         _, param = exp.shift 2
-        s(:kwsplat, process(param))
+        if param
+          s(:kwsplat, process(param))
+        else
+          s(:kwsplat)
+        end
       end
 
       # number literals
