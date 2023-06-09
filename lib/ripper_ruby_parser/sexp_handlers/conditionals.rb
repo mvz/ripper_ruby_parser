@@ -76,8 +76,11 @@ module RipperRubyParser
         pattern = process(pattern)
         adjust_rightward_assignment_pattern(pattern)
 
+        truepart = process(truepart)
+        truepart = unwrap_nil(truepart) if truepart
+
         s(:case_body,
-          s(:in, pattern, process(truepart)),
+          s(:in, pattern, truepart),
           *falsepart)
       end
 

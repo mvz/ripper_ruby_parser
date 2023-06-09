@@ -544,6 +544,14 @@ describe RipperRubyParser::Parser do
                                    s(:lvar, :bar))), nil)
       end
 
+      it "works with a single in clause with no body" do
+        _("case foo; in bar; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in, s(:lasgn, :bar), nil),
+                               nil)
+      end
+
       it "works with a multiple in clauses" do
         _("case foo; in [\"a\"]; bar; in qux; quuz qux; end")
           .must_be_parsed_as s(:case,

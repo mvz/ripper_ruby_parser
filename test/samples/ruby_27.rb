@@ -12,11 +12,11 @@ end
 
 # Pattern matching (experimental)
 
-## NOTE: ruby_parser treats matched variables as methods in this case
-# case foo
-#   in blub
-#   p blub
-# end
+case foo
+in blub
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # p blub
+end
 
 ## NOTE: ruby_parser treats matched variables as methods in this case
 # case foo
