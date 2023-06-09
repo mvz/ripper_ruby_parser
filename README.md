@@ -66,7 +66,7 @@ If you want to send pull requests or patches, please:
 
 (The MIT License)
 
-Copyright (c) 2012, 2014-2022 Matijs van Zuijlen
+Copyright (c) 2012, 2014-2023 Matijs van Zuijlen
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
