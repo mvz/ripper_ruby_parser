@@ -107,6 +107,24 @@ describe RipperRubyParser::SexpHandlers::MethodCalls do
             .must_be_parsed_as s(:call, nil, :foö,
                                  s(:call, nil, :bär))
         end
+
+        it "works with an anonymous splat argument" do
+          skip "This Ruby version does not support this syntax" if RUBY_VERSION < "3.2.0"
+          _("foo(*)")
+            .must_be_parsed_as s(:call,
+                                 nil,
+                                 :foo,
+                                 s(:splat))
+        end
+
+        it "works with an anonymous double splat argument" do
+          skip "This Ruby version does not support this syntax" if RUBY_VERSION < "3.2.0"
+          _("foo(**)")
+            .must_be_parsed_as s(:call,
+                                 nil,
+                                 :foo,
+                                 s(:hash, s(:kwsplat)))
+        end
       end
 
       describe "with a receiver" do
