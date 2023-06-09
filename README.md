@@ -10,7 +10,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
-* Requires Ruby 2.6 or higher
+* Requires Ruby 2.7 or higher
 * Compatible with RubyParser 3.19.2
 
 ## Known incompatibilities
@@ -46,7 +46,7 @@ parser.parse "foo[bar] += baz qux"
 
 ## Requirements
 
-* Ruby 2.5 or higher
+* Ruby 2.7 or higher
 * `sexp_processor`
 
 ## Hacking and contributing
