@@ -10,7 +10,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
-* Requires Ruby 2.6 or higher
+* Requires Ruby 2.7 or higher
 * Compatible with RubyParser 3.19.2
 
 ## Known incompatibilities
@@ -25,7 +25,9 @@ RipperRubyParser has a few incompatibilities with RubyParser.
 
 ## Install
 
-    gem install ripper_ruby_parser
+```bash
+gem install ripper_ruby_parser
+```
 
 ## Synopsis
 
@@ -44,7 +46,7 @@ parser.parse "foo[bar] += baz qux"
 
 ## Requirements
 
-* Ruby 2.5 or higher
+* Ruby 2.7 or higher
 * `sexp_processor`
 
 ## Hacking and contributing
@@ -64,7 +66,7 @@ If you want to send pull requests or patches, please:
 
 (The MIT License)
 
-Copyright (c) 2012, 2014-2022 Matijs van Zuijlen
+Copyright (c) 2012, 2014-2023 Matijs van Zuijlen
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
