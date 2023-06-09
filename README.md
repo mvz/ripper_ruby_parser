@@ -25,7 +25,9 @@ RipperRubyParser has a few incompatibilities with RubyParser.
 
 ## Install
 
-    gem install ripper_ruby_parser
+```bash
+gem install ripper_ruby_parser
+```
 
 ## Synopsis
 
