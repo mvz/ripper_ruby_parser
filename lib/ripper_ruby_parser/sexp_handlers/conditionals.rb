@@ -92,7 +92,13 @@ module RipperRubyParser
       def process_aryptn(exp)
         _, _, body, rest, = exp.shift 5
 
-        elements = body.map { |it| unwrap_begin process(it) }
+        elements = body.map do |elem|
+          if elem.sexp_type == :var_field
+            create_valueless_assignment_sub_type process(elem)
+          else
+            unwrap_begin process(elem)
+          end
+        end
         if rest
           rest_var = handle_pattern(rest)
           elements << convert_marked_argument(s(:splat, rest_var))

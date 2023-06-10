@@ -18,11 +18,11 @@ in blub
   # p blub
 end
 
-## NOTE: ruby_parser treats matched variables as methods in this case
-# case foo
-#   in [bar, baz]
-#   quz = bar + baz
-# end
+case foo
+in [bar, baz]
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # quz = bar + baz
+end
 
 ## NOTE: ruby_parser treats matched variables as methods in this case
 # case foo

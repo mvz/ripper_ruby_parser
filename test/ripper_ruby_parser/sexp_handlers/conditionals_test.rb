@@ -569,7 +569,7 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
                                s(:in,
-                                 s(:array_pat, nil, s(:lvar, :bar), s(:lvar, :baz)),
+                                 s(:array_pat, nil, s(:lasgn, :bar), s(:lasgn, :baz)),
                                  s(:call, nil, :qux, s(:lvar, :bar), s(:lvar, :baz))), nil)
       end
 
@@ -578,7 +578,7 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
                                s(:in,
-                                 s(:array_pat, nil, s(:lvar, :bar), :"*baz"),
+                                 s(:array_pat, nil, s(:lasgn, :bar), :"*baz"),
                                  s(:call, nil, :qux, s(:lvar, :bar), s(:lvar, :baz))), nil)
       end
 
