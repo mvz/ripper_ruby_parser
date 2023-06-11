@@ -231,6 +231,46 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :bar, s(:forward_args)))
       end
 
+      it "works with argument forwarding with leading call arguments" do
+        # Implemented in 3.0 and backported to 2.7.3.
+        # See https://bugs.ruby-lang.org/issues/16378
+        if RUBY_VERSION < "2.7.3"
+          skip "This Ruby version does not support this style of argument forwarding"
+        end
+        _("def foo(...); bar(baz, ...); end")
+          .must_be_parsed_as s(:defn, :foo,
+                               s(:args, s(:forward_args)),
+                               s(:call, nil, :bar,
+                                 s(:call, nil, :baz), s(:forward_args)))
+      end
+
+      it "works with argument forwarding with leading method arguments" do
+        # Implemented in 3.0 and backported to 2.7.3.
+        # See https://bugs.ruby-lang.org/issues/16378
+        if RUBY_VERSION < "2.7.3"
+          skip "This Ruby version does not support this style of argument forwarding"
+        end
+        _("def foo(bar, ...); baz(...); end")
+          .must_be_parsed_as s(:defn, :foo,
+                               s(:args, :bar, s(:forward_args)),
+                               s(:call, nil, :baz,
+                                 s(:forward_args)))
+      end
+
+      it "works for multi-statement method body with argument forwarding" \
+         " with leading method arguments" do
+        # Implemented in 3.0 and backported to 2.7.3.
+        # See https://bugs.ruby-lang.org/issues/16378
+        if RUBY_VERSION < "2.7.3"
+          skip "This Ruby version does not support this style of argument forwarding"
+        end
+        _("def foo(bar, ...); baz bar; qux(...); end")
+          .must_be_parsed_as s(:defn, :foo,
+                               s(:args, :bar, s(:forward_args)),
+                               s(:call, nil, :baz, s(:lvar, :bar)),
+                               s(:call, nil, :qux, s(:forward_args)))
+      end
+
       it "works with an anonymous splat argument" do
         _("def foo(*); end")
           .must_be_parsed_as s(:defn, :foo,

@@ -11,6 +11,12 @@ def foo(bar, ...)
   qux(...)
 end
 
+# Argument forwarding with leading argument in call
+def foo(...)
+  bar(...)
+  bar(qux, ...)
+end
+
 # Endless methods
 def foo(bar) = baz(bar)
 def foo(bar) = baz(bar) rescue qux
