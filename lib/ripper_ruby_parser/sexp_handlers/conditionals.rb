@@ -120,8 +120,9 @@ module RipperRubyParser
       end
 
       def process_fndptn(exp)
-        _, _, before, patterns, after = exp.shift 5
+        _, wrapper, before, patterns, after = exp.shift 5
 
+        wrapper = process(wrapper)
         before = make_splat process(before)
         after = make_splat process(after)
         patterns = patterns.map do |elem|
@@ -132,7 +133,7 @@ module RipperRubyParser
           end
         end
 
-        s(:find_pat, nil, before, *patterns, after)
+        s(:find_pat, wrapper, before, *patterns, after)
       end
 
       private

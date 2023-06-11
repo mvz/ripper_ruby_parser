@@ -659,6 +659,28 @@ describe RipperRubyParser::Parser do
                                    :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
                                  nil), nil)
       end
+
+      it "works with the find pattern with constant wrapper with square brackets" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in Array[*bar, :baz, qux, *quuz]; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, s(:const, :Array),
+                                   :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
+                                 nil), nil)
+      end
+
+      it "works with the find pattern with constant wrapper with parentheses" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in Array(*bar, :baz, qux, *quuz); end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, s(:const, :Array),
+                                   :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
+                                 nil), nil)
+      end
     end
 
     describe "for one-line pattern matching" do

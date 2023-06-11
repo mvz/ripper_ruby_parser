@@ -19,6 +19,8 @@ end
 
 # New pattern matching options
 case foo
+in Array(*bar, :baz1, qux, *quuz)
+in Array[*bar, :baz2, qux, *quuz]
 in [*, :baz3, qux, *]
 end
 
