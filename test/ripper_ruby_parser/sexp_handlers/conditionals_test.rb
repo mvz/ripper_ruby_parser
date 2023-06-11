@@ -544,6 +544,14 @@ describe RipperRubyParser::Parser do
                                    s(:lvar, :bar))), nil)
       end
 
+      it "works with a single in clause with no body" do
+        _("case foo; in bar; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in, s(:lasgn, :bar), nil),
+                               nil)
+      end
+
       it "works with a multiple in clauses" do
         _("case foo; in [\"a\"]; bar; in qux; quuz qux; end")
           .must_be_parsed_as s(:case,
@@ -561,7 +569,7 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
                                s(:in,
-                                 s(:array_pat, nil, s(:lvar, :bar), s(:lvar, :baz)),
+                                 s(:array_pat, nil, s(:lasgn, :bar), s(:lasgn, :baz)),
                                  s(:call, nil, :qux, s(:lvar, :bar), s(:lvar, :baz))), nil)
       end
 
@@ -570,7 +578,7 @@ describe RipperRubyParser::Parser do
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
                                s(:in,
-                                 s(:array_pat, nil, s(:lvar, :bar), :"*baz"),
+                                 s(:array_pat, nil, s(:lasgn, :bar), :"*baz"),
                                  s(:call, nil, :qux, s(:lvar, :bar), s(:lvar, :baz))), nil)
       end
 
@@ -629,6 +637,49 @@ describe RipperRubyParser::Parser do
                                  s(:array_pat, nil,
                                    s(:ivar, :@a), s(:gvar, :$b), s(:cvar, :@@c)),
                                  s(:call, nil, :qux, s(:call, nil, :baz))), nil)
+      end
+
+      it "works with the find pattern" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in [*, :baz, qux, *]; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, nil, :*, s(:lit, :baz), s(:lasgn, :qux), :*),
+                                 nil), nil)
+      end
+
+      it "works with the find pattern with splat variables" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in [*bar, :baz, qux, *quuz]; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, nil,
+                                   :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
+                                 nil), nil)
+      end
+
+      it "works with the find pattern with constant wrapper with square brackets" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in Array[*bar, :baz, qux, *quuz]; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, s(:const, :Array),
+                                   :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
+                                 nil), nil)
+      end
+
+      it "works with the find pattern with constant wrapper with parentheses" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in Array(*bar, :baz, qux, *quuz); end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, s(:const, :Array),
+                                   :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
+                                 nil), nil)
       end
     end
 

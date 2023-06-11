@@ -76,8 +76,11 @@ module RipperRubyParser
         pattern = process(pattern)
         adjust_rightward_assignment_pattern(pattern)
 
+        truepart = process(truepart)
+        truepart = unwrap_nil(truepart) if truepart
+
         s(:case_body,
-          s(:in, pattern, process(truepart)),
+          s(:in, pattern, truepart),
           *falsepart)
       end
 
@@ -89,7 +92,13 @@ module RipperRubyParser
       def process_aryptn(exp)
         _, _, body, rest, = exp.shift 5
 
-        elements = body.map { |it| unwrap_begin process(it) }
+        elements = body.map do |elem|
+          if elem.sexp_type == :var_field
+            create_valueless_assignment_sub_type process(elem)
+          else
+            unwrap_begin process(elem)
+          end
+        end
         if rest
           rest_var = handle_pattern(rest)
           elements << convert_marked_argument(s(:splat, rest_var))
@@ -108,6 +117,23 @@ module RipperRubyParser
           end
         end
         s(:hash_pat, nil, *elements)
+      end
+
+      def process_fndptn(exp)
+        _, wrapper, before, patterns, after = exp.shift 5
+
+        wrapper = process(wrapper)
+        before = make_splat process(before)
+        after = make_splat process(after)
+        patterns = patterns.map do |elem|
+          if elem.sexp_type == :var_field
+            create_valueless_assignment_sub_type process(elem)
+          else
+            unwrap_begin process(elem)
+          end
+        end
+
+        s(:find_pat, wrapper, before, *patterns, after)
       end
 
       private
@@ -165,6 +191,10 @@ module RipperRubyParser
         else
           [exp]
         end
+      end
+
+      def make_splat(exp)
+        :"*#{exp[1]}"
       end
     end
   end

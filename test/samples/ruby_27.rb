@@ -12,31 +12,38 @@ end
 
 # Pattern matching (experimental)
 
-## NOTE: ruby_parser treats matched variables as methods in this case
-# case foo
-#   in blub
-#   p blub
-# end
+case foo
+in blub
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # p blub
+end
 
-## NOTE: ruby_parser treats matched variables as methods in this case
-# case foo
-#   in [bar, baz]
-#   quz = bar + baz
-# end
+case foo
+in [bar, baz]
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # quz = bar + baz
+end
 
-## NOTE: ruby_parser treats matched variables as methods in this case
-# case foo
-#   in [bar, baz]
-#   quz = bar + baz
-#   in blub
-#   p blub
-# end
+case foo
+in [bar, baz]
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # quz = bar + baz
+in blub
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # p blub
+end
 
-## NOTE: ruby_parser treats matched variables as methods in this case
-# case foo
-#   in { bar: [baz, qux] }
-#   quz = bar(baz) + baz
-# end
+case foo
+in bar, *quuz
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # qux bar, quuz
+end
+
+case foo
+in { bar: [baz, qux] }
+  ## NOTE: ruby_parser treats matched variables as methods in this case
+  # quz = bar(baz) + baz
+end
 
 def foo
   case bar

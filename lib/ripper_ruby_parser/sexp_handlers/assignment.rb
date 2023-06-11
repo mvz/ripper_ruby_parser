@@ -115,13 +115,20 @@ module RipperRubyParser
 
       def create_multiple_assignment_sub_types(sexp_list)
         sexp_list.map! do |item|
-          create_valueless_assignment_sub_type item
+          create_valueless_regular_assignment_sub_type item
         end
+      end
+
+      def create_valueless_regular_assignment_sub_type(item)
+        item = with_line_number(item.line,
+                                create_regular_assignment_sub_type(item, nil))
+        item.pop
+        item
       end
 
       def create_valueless_assignment_sub_type(item)
         item = with_line_number(item.line,
-                                create_regular_assignment_sub_type(item, nil))
+                                create_assignment_sub_type(item, nil))
         item.pop
         item
       end
