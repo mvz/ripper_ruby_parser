@@ -159,10 +159,7 @@ module RipperRubyParser
       end
 
       def handle_splat(splat)
-        if splat == 0
-          # Only relevant for Ruby < 2.6
-          [s(:excessed_comma)]
-        elsif splat
+        if splat
           [process(splat)]
         else
           []
