@@ -17,6 +17,11 @@ def foo(...)
   bar(qux, ...)
 end
 
+# New pattern matching options
+case foo
+in [*, :baz3, qux, *]
+end
+
 # Endless methods
 def foo(bar) = baz(bar)
 def foo(bar) = baz(bar) rescue qux

@@ -76,7 +76,7 @@ module RipperRubyParser
 
     def process_var_field(exp)
       _, contents = exp.shift 2
-      process(contents)
+      process(contents) || s(:lvar, nil)
     end
 
     def process_var_alias(exp)

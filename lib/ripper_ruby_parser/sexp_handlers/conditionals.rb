@@ -119,6 +119,22 @@ module RipperRubyParser
         s(:hash_pat, nil, *elements)
       end
 
+      def process_fndptn(exp)
+        _, _, before, patterns, after = exp.shift 5
+
+        before = make_splat process(before)
+        after = make_splat process(after)
+        patterns = patterns.map do |elem|
+          if elem.sexp_type == :var_field
+            create_valueless_assignment_sub_type process(elem)
+          else
+            unwrap_begin process(elem)
+          end
+        end
+
+        s(:find_pat, nil, before, *patterns, after)
+      end
+
       private
 
       def handle_condition(cond)
@@ -174,6 +190,10 @@ module RipperRubyParser
         else
           [exp]
         end
+      end
+
+      def make_splat(exp)
+        :"*#{exp[1]}"
       end
     end
   end

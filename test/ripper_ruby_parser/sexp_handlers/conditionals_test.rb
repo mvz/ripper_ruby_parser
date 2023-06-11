@@ -638,6 +638,27 @@ describe RipperRubyParser::Parser do
                                    s(:ivar, :@a), s(:gvar, :$b), s(:cvar, :@@c)),
                                  s(:call, nil, :qux, s(:call, nil, :baz))), nil)
       end
+
+      it "works with the find pattern" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in [*, :baz, qux, *]; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, nil, :*, s(:lit, :baz), s(:lasgn, :qux), :*),
+                                 nil), nil)
+      end
+
+      it "works with the find pattern with splat variables" do
+        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
+        _("case foo; in [*bar, :baz, qux, *quuz]; end")
+          .must_be_parsed_as s(:case,
+                               s(:call, nil, :foo),
+                               s(:in,
+                                 s(:find_pat, nil,
+                                   :"*bar", s(:lit, :baz), s(:lasgn, :qux), :"*quuz"),
+                                 nil), nil)
+      end
     end
 
     describe "for one-line pattern matching" do
