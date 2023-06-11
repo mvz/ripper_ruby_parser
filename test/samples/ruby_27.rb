@@ -2,12 +2,12 @@
 
 # Beginless ranges
 ..1
+foo = 2
 ..foo
 
 # Argument forwarding
 def foo(...)
   bar(...)
-  bar(qux, ...)
 end
 
 # Pattern matching (experimental)
