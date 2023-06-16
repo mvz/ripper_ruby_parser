@@ -17,6 +17,17 @@ foo..bar
 foo...bar
 0...4.0
 
+# endless ranges
+1..
+
+foo = 2
+foo..
+
+# beginless ranges
+..1
+foo = 2
+..foo
+
 # Regex matching
 /foo/ =~ bar
 foo =~ /bar/

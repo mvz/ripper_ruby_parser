@@ -292,15 +292,6 @@ class Foö
   end
 end
 
-# Blocks
-foo do |bar| end
-foo do |bar, | end
-foo do |bar, **| end
-foo do |(bar, baz)| end
-foo do |bar; baz| end
-foo do |bar, baz; qux| end
-foo do |bar, baz; qux, quuz| end
-
 # defined? keyword
 if defined? foo
   bar
@@ -324,9 +315,3 @@ class Bar
     self.def.def;
   end
 end
-
-# Endless ranges
-1..
-
-foobar = 2
-foobar..
