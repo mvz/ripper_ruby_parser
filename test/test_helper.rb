@@ -37,7 +37,7 @@ module MiniTest
                    else
                      exp.inspect
                    end
-      inspection.gsub(/\), /, "),\n")
+      inspection.gsub("), ", "),\n")
     end
 
     def fix_lines(exp)
