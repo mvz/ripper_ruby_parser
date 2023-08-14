@@ -12,7 +12,7 @@ $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
 
 require "ripper_ruby_parser"
 
-module MiniTest
+module Minitest
   class Spec
     def inspect_with_line_numbers(exp)
       parts = exp.map do |sub_exp|
