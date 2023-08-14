@@ -34,10 +34,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "pry", "~> 0.14.0"
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rake-manifest", "~> 0.2.0"
-  spec.add_development_dependency "rubocop", "~> 1.52"
+  spec.add_development_dependency "rubocop", "~> 1.56"
   spec.add_development_dependency "rubocop-minitest", "~> 0.31.0"
   spec.add_development_dependency "rubocop-packaging", "~> 0.5.2"
-  spec.add_development_dependency "rubocop-performance", "~> 1.18"
+  spec.add_development_dependency "rubocop-performance", "~> 1.19"
   spec.add_development_dependency "ruby_parser", "~> 3.20.2"
   # Ensure sexp_processor's test cases match version 3.18.0 of ruby_parser.
   spec.add_development_dependency "sexp_processor", "~> 4.16"
