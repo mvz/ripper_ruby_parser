@@ -17,9 +17,7 @@ module RipperRubyParser
       super()
 
       public_methods.each do |name|
-        if name =~ /^process_at_(.*)/
-          @processors["@#{Regexp.last_match(1)}".to_sym] = name.to_sym
-        end
+        @processors[:"@#{Regexp.last_match(1)}"] = name.to_sym if name =~ /^process_at_(.*)/
       end
 
       @filename = filename
