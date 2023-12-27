@@ -635,12 +635,6 @@ describe RipperRubyParser::Parser do
     end
 
     describe "for rightward assignment" do
-      before do
-        if RUBY_VERSION < "3.0.0"
-          skip "This Ruby version does not support rightward assignment"
-        end
-      end
-
       it "works for the simple case" do
         _("42 => foo")
           .must_be_parsed_as s(:case, s(:lit, 42), s(:in, s(:lasgn, :foo), nil), nil)

@@ -7,7 +7,6 @@ describe "Using RipperRubyParser and RubyParser" do
   make_my_diffs_pretty!
 
   Dir.glob(File.expand_path("../samples/*.rb", File.dirname(__FILE__))).each do |file|
-    next if RUBY_VERSION < "3.0.0" && file.match?(/_30.rb\Z/)
     next if RUBY_VERSION < "3.1.0" && file.match?(/_31.rb\Z/)
     next if RUBY_VERSION < "3.2.0" && file.match?(/_32.rb\Z/)
 
