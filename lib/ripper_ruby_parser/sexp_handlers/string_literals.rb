@@ -227,13 +227,13 @@ module RipperRubyParser
         end
       end
 
-      INTERPOLATING_HEREDOC = /^<<[-~]?[^-~']/.freeze
-      NON_INTERPOLATING_HEREDOC = /^<<[-~]?'/.freeze
+      INTERPOLATING_HEREDOC = /^<<[-~]?[^-~']/
+      NON_INTERPOLATING_HEREDOC = /^<<[-~]?'/
       INTERPOLATING_STRINGS = ['"', "`", /^%Q.$/, /^%.$/].freeze
       INTERPOLATING_DSYM = ':"'
       NON_INTERPOLATING_STRINGS = ["'", ":'", /^%q.$/].freeze
-      INTERPOLATING_WORD_LIST = /^%[WI].$/.freeze
-      NON_INTERPOLATING_WORD_LIST = /^%[wi].$/.freeze
+      INTERPOLATING_WORD_LIST = /^%[WI].$/
+      NON_INTERPOLATING_WORD_LIST = /^%[wi].$/
       REGEXP_LITERALS = ["/", /^%r.$/].freeze
 
       def handle_string_unescaping(content, delim)
