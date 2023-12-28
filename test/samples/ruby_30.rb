@@ -29,4 +29,8 @@ def foo(bar) = baz(bar)
 def foo(bar) = baz(bar) rescue qux
 def baz = qux
 
-def bar.baz = qux
+def zyxxy.baz = qux
+
+# TODO: The following code is parsed differently in Ruby 3.3 because 'bar' is
+# considered in lvar there:
+# def bar.baz = qux
