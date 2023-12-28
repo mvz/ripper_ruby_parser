@@ -13,7 +13,7 @@ AllCops:
   Exclude:
     - 'test/samples/*'
   NewCops: enable
-  TargetRubyVersion: 2.7
+  TargetRubyVersion: 3.0
 
 # Put development dependencies in the gemspec so rubygems.org knows about them
 Gemspec/DevelopmentDependencies:

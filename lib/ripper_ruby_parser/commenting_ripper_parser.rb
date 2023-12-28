@@ -330,7 +330,8 @@ module RipperRubyParser
     end
 
     def on_parse_error(message)
-      raise SyntaxError, message
+      super
+      raise SyntaxError, message if message.start_with?("syntax error,")
     end
 
     def on_class_name_error(message, *)

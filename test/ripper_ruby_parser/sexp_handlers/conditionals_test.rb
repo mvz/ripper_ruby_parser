@@ -640,7 +640,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with the find pattern" do
-        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
         _("case foo; in [*, :baz, qux, *]; end")
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
@@ -650,7 +649,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with the find pattern with splat variables" do
-        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
         _("case foo; in [*bar, :baz, qux, *quuz]; end")
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
@@ -661,7 +659,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with the find pattern with constant wrapper with square brackets" do
-        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
         _("case foo; in Array[*bar, :baz, qux, *quuz]; end")
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),
@@ -672,7 +669,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works with the find pattern with constant wrapper with parentheses" do
-        skip "This Ruby version does not support the find pattern" if RUBY_VERSION < "3.0.0"
         _("case foo; in Array(*bar, :baz, qux, *quuz); end")
           .must_be_parsed_as s(:case,
                                s(:call, nil, :foo),

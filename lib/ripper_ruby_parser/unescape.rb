@@ -20,7 +20,7 @@ module RipperRubyParser
         M-.                 | # meta
         \n                  | # line break
         .                     # other single character
-      )/x.freeze
+      )/x
 
     SINGLE_LETTER_ESCAPES = {
       "a" => "\a",
