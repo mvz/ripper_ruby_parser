@@ -6,22 +6,57 @@ This project adheres to [Semantic Versioning 2.0.0][1].
 
 This document is formatted based on [Keep A CHANGELOG][2].
 
-## Unreleased
+## 1.11.0 / 2024-01-05
 
-* Support single-line pattern matching ([#188])
-* Support rightward assignment ([#189])
-* Support endless methods with Ruby 3.0 syntax ([#191])
-* Support arguments without parentheses in endless method body ([#193])
-* Add support for pattern matching ([#172])
-* Add tentative support for numbered parameters ([#163])
-* Support several new Ruby 3.1 syntax features ([#196])
-* Bump `ruby_parser` compatibility to 3.19.1 ([#199])
-* Support negative rational and imaginary literals ([#197])
-* Correctly handle match operator with regexp literals in parentheses ([#200])
-* Improve operator assignment handling ([#201])
-* Handle literal Ctrl-? (DEL) character correctly ([#202])
-* Handle method names that are keywords in method definitions ([#204])
-* Improve dsym handling compatibility ([#203], [#210])
+* Support Ruby 3.0 through 3.3, dropping support for Ruby 2.6 and 2.7
+  ([#218], [#219], [#233] and [#246] by [mvz])
+* Target compatibility with `ruby_parser` version 3.20.2
+  ([#199], [#216] and [#230] by [mvz])
+* Support single-line pattern matching ([#188] by [mvz])
+* Support rightward assignment ([#189] by [mvz])
+* Support endless methods with Ruby 3.0 syntax ([#191] by [mvz])
+* Support arguments without parentheses in endless method body ([#193] by [mvz])
+* Add support for pattern matching ([#172] by [mvz])
+* Add tentative support for numbered parameters ([#163] by [mvz])
+* Support several new Ruby 3.1 syntax features ([#196] by [mvz])
+* Support negative rational and imaginary literals ([#197] by [mvz])
+* Correctly handle match operator with regexp literals in parentheses
+  ([#200] by [mvz])
+* Improve operator assignment handling ([#201] by [mvz])
+* Handle literal Ctrl-? (DEL) character correctly ([#202] by [mvz])
+* Handle method names that are keywords in method definitions ([#204] by [mvz])
+* Improve dsym handling compatibility ([#203], [#210] by [mvz])
+* Add support for Ruby 3.2's splat and kwsplat argument forwarding ([#231] by [mvz])
+* Improve handling of the case .. in construction ([#234] by [mvz])
+
+[mvz]: https://github.com/mvz
+
+[#163]: https://github.com/mvz/ripper_ruby_parser/pull/163
+[#172]: https://github.com/mvz/ripper_ruby_parser/pull/172
+[#188]: https://github.com/mvz/ripper_ruby_parser/pull/188
+[#189]: https://github.com/mvz/ripper_ruby_parser/pull/189
+[#191]: https://github.com/mvz/ripper_ruby_parser/pull/191
+[#193]: https://github.com/mvz/ripper_ruby_parser/pull/193
+[#196]: https://github.com/mvz/ripper_ruby_parser/pull/196
+[#197]: https://github.com/mvz/ripper_ruby_parser/pull/197
+[#199]: https://github.com/mvz/ripper_ruby_parser/pull/199
+[#200]: https://github.com/mvz/ripper_ruby_parser/pull/200
+[#201]: https://github.com/mvz/ripper_ruby_parser/pull/201
+[#202]: https://github.com/mvz/ripper_ruby_parser/pull/202
+[#203]: https://github.com/mvz/ripper_ruby_parser/pull/203
+[#204]: https://github.com/mvz/ripper_ruby_parser/pull/204
+[#205]: https://github.com/mvz/ripper_ruby_parser/pull/205
+[#210]: https://github.com/mvz/ripper_ruby_parser/pull/210
+[#216]: https://github.com/mvz/ripper_ruby_parser/pull/216
+[#218]: https://github.com/mvz/ripper_ruby_parser/pull/218
+[#219]: https://github.com/mvz/ripper_ruby_parser/pull/219
+[#230]: https://github.com/mvz/ripper_ruby_parser/pull/230
+[#231]: https://github.com/mvz/ripper_ruby_parser/pull/231
+[#232]: https://github.com/mvz/ripper_ruby_parser/pull/232
+[#233]: https://github.com/mvz/ripper_ruby_parser/pull/233
+[#234]: https://github.com/mvz/ripper_ruby_parser/pull/234
+[#235]: https://github.com/mvz/ripper_ruby_parser/pull/235
+[#246]: https://github.com/mvz/ripper_ruby_parser/pull/246
 
 ## 1.10.0 / 2022-03-13
 
@@ -249,19 +284,6 @@ This document is formatted based on [Keep A CHANGELOG][2].
 * Initial release
 
 <!-- Pull request links -->
-[#210]: https://github.com/mvz/ripper_ruby_parser/pull/210
-[#204]: https://github.com/mvz/ripper_ruby_parser/pull/204
-[#203]: https://github.com/mvz/ripper_ruby_parser/pull/203
-[#202]: https://github.com/mvz/ripper_ruby_parser/pull/202
-[#201]: https://github.com/mvz/ripper_ruby_parser/pull/201
-[#200]: https://github.com/mvz/ripper_ruby_parser/pull/200
-[#199]: https://github.com/mvz/ripper_ruby_parser/pull/199
-[#197]: https://github.com/mvz/ripper_ruby_parser/pull/197
-[#196]: https://github.com/mvz/ripper_ruby_parser/pull/196
-[#193]: https://github.com/mvz/ripper_ruby_parser/pull/193
-[#191]: https://github.com/mvz/ripper_ruby_parser/pull/191
-[#189]: https://github.com/mvz/ripper_ruby_parser/pull/189
-[#188]: https://github.com/mvz/ripper_ruby_parser/pull/188
 [#180]: https://github.com/mvz/ripper_ruby_parser/pull/180
 [#172]: https://github.com/mvz/ripper_ruby_parser/pull/172
 [#163]: https://github.com/mvz/ripper_ruby_parser/pull/163
