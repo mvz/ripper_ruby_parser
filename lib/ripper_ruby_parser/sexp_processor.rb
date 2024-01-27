@@ -124,6 +124,8 @@ module RipperRubyParser
       case sexp.sexp_type
       when :defs, :defn, :module, :class, :sclass
         sexp.comments = comment
+      when :iter
+        # Drop comment
       else
         @kept_comment = comment
       end

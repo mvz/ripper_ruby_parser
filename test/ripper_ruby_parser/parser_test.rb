@@ -395,31 +395,36 @@ describe RipperRubyParser::Parser do
         _(result[4].comments).must_equal "# Bar\n# Baz\n"
       end
 
-      # TODO: Prefer assigning comment to the BEGIN instead
-      it "assigns comments on BEGIN blocks to the following item" do
+      it "drops comments on BEGIN blocks" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:defn, :foo, s(:args), s(:nil)))
-        _(result[2].comments).must_equal "# Bar\n# Foo\n"
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
       end
 
-      it "assigns comments on multiple BEGIN blocks to the following item" do
+      it "drops comments on multiple BEGIN blocks" do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:iter, s(:preexe), 0),
                                s(:defn, :foo, s(:args), s(:nil)))
-        _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_be_nil
+        _(result[3].comments).must_equal "# Foo\n"
       end
 
-      it "assigns comments on BEGIN blocks to the first following item" do
+      it "drops comments on BEGIN blocks when followed by multiple items" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:class, :Bar, nil,
                                  s(:defn, :foo, s(:args), s(:nil))))
-        _(result[2].comments).must_equal "# Bar\n# Foo\n"
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
         _(result[2][3].comments).must_equal "# foo\n"
       end
     end
