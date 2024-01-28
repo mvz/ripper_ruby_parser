@@ -357,7 +357,7 @@ module RipperRubyParser
         (_, kw, loc), comment = @comment_stack.pop
       end
 
-      warn "Comment stack mismatch: expected #{kw} to equal #{name}" unless kw == name
+      raise "Comment stack mismatch: expected #{kw} to equal #{name}" unless kw == name
 
       @comment = ""
       exp.push loc
