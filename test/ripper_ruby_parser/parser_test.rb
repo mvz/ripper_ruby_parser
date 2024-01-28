@@ -392,7 +392,7 @@ describe RipperRubyParser::Parser do
                                s(:call, s(:self), :class),
                                s(:defn, :class, s(:args), s(:nil)))
         _(result.comments).must_equal "# Foo\n"
-        _(result[4].comments).must_equal "# Bar\n# Baz\n"
+        _(result[4].comments).must_equal "# Baz\n"
       end
 
       it "drops comments on BEGIN blocks" do
@@ -426,6 +426,15 @@ describe RipperRubyParser::Parser do
         _(result[1].comments).must_be_nil
         _(result[2].comments).must_equal "# Foo\n"
         _(result[2][3].comments).must_equal "# foo\n"
+      end
+
+      it "drops comments on require statements" do
+        result = parser.parse "# Bar\nrequire \"foo\"\n# Foo\ndef foo; end"
+        _(result).must_equal s(:block,
+                               s(:call, nil, :require, s(:str, "foo")),
+                               s(:defn, :foo, s(:args), s(:nil)))
+        _(result.comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
       end
     end
 
