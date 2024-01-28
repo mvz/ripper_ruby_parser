@@ -70,15 +70,17 @@ module RipperRubyParser
     end
 
     def on_kw(tok)
-      result = super
-      case tok
-      when "class", "def", "module", "BEGIN", "begin", "END"
-        unless @in_symbol
+      super.tap do |result|
+        next if @in_symbol
+
+        case tok
+        when "class", "def", "module", "BEGIN", "begin", "END"
           @comment_stack.push [result, @comment]
           @comment = ""
+        when "end"
+          @comment = "" if @comment_stack.any?
         end
       end
-      result
     end
 
     def on_module(*args)
@@ -351,13 +353,15 @@ module RipperRubyParser
     end
 
     def commentize(name, exp, target_loc = nil)
+      raise "Non-empty comment in progress: #{@comment}" unless @comment.empty?
+
       if target_loc
         (_, kw, loc), comment = @comment_stack.pop until (loc <=> target_loc) == -1
       else
         (_, kw, loc), comment = @comment_stack.pop
       end
 
-      warn "Comment stack mismatch: expected #{kw} to equal #{name}" unless kw == name
+      raise "Comment stack mismatch: expected #{kw} to equal #{name}" unless kw == name
 
       @comment = ""
       exp.push loc
