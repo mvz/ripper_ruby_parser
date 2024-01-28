@@ -328,6 +328,11 @@ module RipperRubyParser
       super
     end
 
+    def on_string_content(*args)
+      @comment = ""
+      super
+    end
+
     def on_BEGIN(*args)
       commentize("BEGIN", super)
     end

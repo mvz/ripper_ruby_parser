@@ -434,6 +434,17 @@ describe RipperRubyParser::Parser do
                                s(:call, nil, :require, s(:str, "foo")),
                                s(:defn, :foo, s(:args), s(:nil)))
         _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
+      end
+
+      it "drops comments on string literals" do
+        result = parser.parse "# Bar\n\"bar\"\n# Foo\nclass Foo; end"
+        _(result).must_equal s(:block,
+                               s(:str, "bar"),
+                               s(:class, :Foo, nil))
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
         _(result[2].comments).must_equal "# Foo\n"
       end
     end
