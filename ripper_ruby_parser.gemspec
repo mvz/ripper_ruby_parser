@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.extra_rdoc_files = ["README.md"]
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "sexp_processor", "~> 4.10"
+  spec.add_dependency "sexp_processor", "~> 4.10"
 
   spec.add_development_dependency "minitest", "~> 5.6"
   spec.add_development_dependency "minitest-focus", "~> 1.3", ">= 1.3.1"
