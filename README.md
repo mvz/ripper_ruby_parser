@@ -10,7 +10,7 @@ Parse with Ripper, produce sexps that are compatible with RubyParser.
 
 * Drop-in replacement for RubyParser
 * Should handle 1.9 and later syntax gracefully
-* Requires Ruby 3.0 or higher
+* Requires Ruby 3.1 or higher
 * Compatible with RubyParser 3.21.0
 
 ## Known incompatibilities
@@ -22,6 +22,8 @@ RipperRubyParser has a few incompatibilities with RubyParser.
 * RipperRubyParser does not always match RubyParser's line numbering
 * RipperRubyParser dedents auto-dedenting heredocs
 * RipperRubyParser does not include postfix comments
+* With Ruby 3.4, RipperRubyParser parses variables assigned by regular
+  expressions as local variables
 
 ## Install
 
