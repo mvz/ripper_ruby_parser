@@ -392,35 +392,99 @@ describe RipperRubyParser::Parser do
                                s(:call, s(:self), :class),
                                s(:defn, :class, s(:args), s(:nil)))
         _(result.comments).must_equal "# Foo\n"
-        _(result[4].comments).must_equal "# Bar\n# Baz\n"
+        _(result[4].comments).must_equal "# Baz\n"
       end
 
-      # TODO: Prefer assigning comment to the BEGIN instead
-      it "assigns comments on BEGIN blocks to the following item" do
+      it "drops comments on BEGIN blocks" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:defn, :foo, s(:args), s(:nil)))
-        _(result[2].comments).must_equal "# Bar\n# Foo\n"
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
       end
 
-      it "assigns comments on multiple BEGIN blocks to the following item" do
+      it "drops comments on multiple BEGIN blocks" do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:iter, s(:preexe), 0),
                                s(:defn, :foo, s(:args), s(:nil)))
-        _(result[3].comments).must_equal "# Bar\n# Baz\n# Foo\n"
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_be_nil
+        _(result[3].comments).must_equal "# Foo\n"
       end
 
-      it "assigns comments on BEGIN blocks to the first following item" do
+      it "drops comments on BEGIN blocks when followed by multiple items" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:class, :Bar, nil,
                                  s(:defn, :foo, s(:args), s(:nil))))
-        _(result[2].comments).must_equal "# Bar\n# Foo\n"
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
         _(result[2][3].comments).must_equal "# foo\n"
+      end
+
+      it "drops comments on require statements" do
+        result = parser.parse "# Bar\nrequire \"foo\"\n# Foo\ndef foo; end"
+        _(result).must_equal s(:block,
+                               s(:call, nil, :require, s(:str, "foo")),
+                               s(:defn, :foo, s(:args), s(:nil)))
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
+      end
+
+      it "drops comments on string literals" do
+        result = parser.parse "# Bar\n\"bar\"\n# Foo\nclass Foo; end"
+        _(result).must_equal s(:block,
+                               s(:str, "bar"),
+                               s(:class, :Foo, nil))
+        _(result.comments).must_be_nil
+        _(result[1].comments).must_be_nil
+        _(result[2].comments).must_equal "# Foo\n"
+      end
+
+      it "drops comments before and inside case statements" do
+        result = parser.parse <<-RUBY
+          # Foo
+          case foo
+          when 'bar'
+            # this is dropped
+          end
+
+          # bar
+          def bar
+            baz
+          end
+        RUBY
+        _(result).must_equal s(:block,
+                               s(:case, s(:call, nil, :foo),
+                                 s(:when, s(:array, s(:str, "bar")), nil),
+                                 nil),
+                               s(:defn, :bar, s(:args), s(:call, nil, :baz)))
+        _(result[2].comments).must_equal "# bar\n"
+      end
+
+      it "drops comments before if condition containing begin .. end" do
+        result = parser.parse <<-RUBY
+          # Foo
+          if begin foo end
+            bar
+          end
+
+          # bar
+          def bar
+            baz
+          end
+        RUBY
+        _(result).must_equal s(:block,
+                               s(:if, s(:call, nil, :foo), s(:call, nil, :bar), nil),
+                               s(:defn, :bar, s(:args), s(:call, nil, :baz)))
+        _(result[2].comments).must_equal "# bar\n"
       end
     end
 
