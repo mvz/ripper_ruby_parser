@@ -468,6 +468,24 @@ describe RipperRubyParser::Parser do
                                s(:defn, :bar, s(:args), s(:call, nil, :baz)))
         _(result[2].comments).must_equal "# bar\n"
       end
+
+      it "drops comments before if condition containing begin .. end" do
+        result = parser.parse <<-RUBY
+          # Foo
+          if begin foo end
+            bar
+          end
+
+          # bar
+          def bar
+            baz
+          end
+        RUBY
+        _(result).must_equal s(:block,
+                               s(:if, s(:call, nil, :foo), s(:call, nil, :bar), nil),
+                               s(:defn, :bar, s(:args), s(:call, nil, :baz)))
+        _(result[2].comments).must_equal "# bar\n"
+      end
     end
 
     # NOTE: differences in the handling of line numbers are not caught by

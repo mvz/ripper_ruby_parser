@@ -27,8 +27,6 @@ module RipperRubyParser
 
       @in_method_body = false
       @local_variables = []
-
-      @kept_comment = nil
     end
 
     include SexpHandlers
@@ -118,16 +116,10 @@ module RipperRubyParser
 
     def process_comment(exp)
       _, comment, inner = exp.shift 3
-      comment = @kept_comment + comment if @kept_comment
-      @kept_comment = nil
       sexp = process(inner)
       case sexp.sexp_type
       when :defs, :defn, :module, :class, :sclass
         sexp.comments = comment
-      when :iter
-        # Drop comment
-      else
-        @kept_comment = comment
       end
       sexp
     end
