@@ -447,6 +447,27 @@ describe RipperRubyParser::Parser do
         _(result[1].comments).must_be_nil
         _(result[2].comments).must_equal "# Foo\n"
       end
+
+      it "drops comments before and inside case statements" do
+        result = parser.parse <<-RUBY
+          # Foo
+          case foo
+          when 'bar'
+            # this is dropped
+          end
+
+          # bar
+          def bar
+            baz
+          end
+        RUBY
+        _(result).must_equal s(:block,
+                               s(:case, s(:call, nil, :foo),
+                                 s(:when, s(:array, s(:str, "bar")), nil),
+                                 nil),
+                               s(:defn, :bar, s(:args), s(:call, nil, :baz)))
+        _(result[2].comments).must_equal "# bar\n"
+      end
     end
 
     # NOTE: differences in the handling of line numbers are not caught by

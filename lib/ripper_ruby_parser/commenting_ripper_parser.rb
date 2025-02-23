@@ -323,6 +323,11 @@ module RipperRubyParser
       super
     end
 
+    def on_case(*args)
+      @comment = ""
+      super
+    end
+
     def on_ident(*args)
       @comment = ""
       super
