@@ -155,6 +155,7 @@ module RipperRubyParser
         "||": :op_asgn_or,
         "&&": :op_asgn_and
       }.freeze
+      private_constant :OPERATOR_ASSIGNMENT_MAP
 
       def create_regular_operator_assignment_sub_type(lvalue, value, operator)
         value = unwrap_begin(value)
@@ -197,6 +198,8 @@ module RipperRubyParser
       ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP = {
         cvar: :cvasgn
       }.freeze
+
+      private_constant :ASSIGNMENT_SUB_TYPE_MAP, :ASSIGNMENT_IN_METHOD_SUB_TYPE_MAP
 
       def create_assignment_sub_type(lvalue, value)
         lvalue_type, lvalue_value = lvalue
