@@ -311,7 +311,6 @@ class Bar
 
   # Foo
   def def
-    # Bar
-    self.def.def;
+    self.def.def
   end
 end
