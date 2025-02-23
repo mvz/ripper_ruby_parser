@@ -236,6 +236,12 @@ module RipperRubyParser
       NON_INTERPOLATING_WORD_LIST = /^%[wi].$/
       REGEXP_LITERALS = ["/", /^%r.$/].freeze
 
+      private_constant :INTERPOLATING_HEREDOC, :NON_INTERPOLATING_HEREDOC,
+                       :INTERPOLATING_STRINGS, :NON_INTERPOLATING_STRINGS,
+                       :INTERPOLATING_DSYM,
+                       :INTERPOLATING_WORD_LIST, :NON_INTERPOLATING_WORD_LIST,
+                       :REGEXP_LITERALS
+
       def handle_string_unescaping(content, delim)
         case delim
         when INTERPOLATING_HEREDOC, INTERPOLATING_DSYM, *INTERPOLATING_STRINGS

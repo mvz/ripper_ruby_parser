@@ -101,6 +101,7 @@ module RipperRubyParser
         dsplat: "**",
         blockarg: "&"
       }.freeze
+      private_constant :SPECIAL_ARG_MARKER
 
       def convert_arguments(args)
         return s(:args) if args.nil?
