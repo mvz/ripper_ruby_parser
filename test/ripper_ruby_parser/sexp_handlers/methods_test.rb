@@ -135,9 +135,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works for a bare block parameter" do
-        if RUBY_VERSION < "3.1.0"
-          skip "This Ruby version does not support bare block parameters"
-        end
         _("def foo &; end")
           .must_be_parsed_as s(:defn,
                                :foo,
@@ -310,7 +307,6 @@ describe RipperRubyParser::Parser do
       end
 
       it "works when the body calls a method without parentheses" do
-        skip "This Ruby version does not support this syntax" if RUBY_VERSION < "3.1.0"
         _("def foo = bar 42")
           .must_be_parsed_as s(:defn, :foo, s(:args), s(:call, nil, :bar, s(:lit, 42)))
       end
