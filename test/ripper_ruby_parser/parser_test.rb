@@ -7,6 +7,7 @@ describe RipperRubyParser::Parser do
   describe "#parse" do
     it "returns an s-expression" do
       result = parser.parse "foo"
+
       _(result).must_be_instance_of Sexp
     end
 
@@ -127,6 +128,7 @@ describe RipperRubyParser::Parser do
       describe "when passing a file name" do
         it "creates a string sexp with the file name" do
           result = parser.parse "__FILE__", "foo"
+
           _(result).must_equal s(:str, "foo")
         end
       end
@@ -287,6 +289,7 @@ describe RipperRubyParser::Parser do
     describe "for comments" do
       it "handles method comments" do
         result = parser.parse "# Foo\ndef foo; end"
+
         _(result).must_equal s(:defn,
                                :foo,
                                s(:args), s(:nil))
@@ -295,6 +298,7 @@ describe RipperRubyParser::Parser do
 
       it "handles comments for methods with explicit receiver" do
         result = parser.parse "# Foo\ndef foo.bar; end"
+
         _(result).must_equal s(:defs,
                                s(:call, nil, :foo),
                                :bar,
@@ -305,17 +309,20 @@ describe RipperRubyParser::Parser do
 
       it "matches comments to the correct entity" do
         result = parser.parse "# Foo\nclass Foo\n# Bar\ndef bar\nend\nend"
+
         _(result).must_equal s(:class, :Foo, nil,
                                s(:defn, :bar,
                                  s(:args), s(:nil)))
         _(result.comments).must_equal "# Foo\n"
         defn = result[3]
+
         _(defn.sexp_type).must_equal :defn
         _(defn.comments).must_equal "# Bar\n"
       end
 
       it "combines multi-line comments" do
         result = parser.parse "# Foo\n# Bar\ndef foo; end"
+
         _(result).must_equal s(:defn,
                                :foo,
                                s(:args), s(:nil))
@@ -349,6 +356,7 @@ describe RipperRubyParser::Parser do
 
       it "handles the use of symbols that are keywords" do
         result = parser.parse "# Foo\ndef bar\n:class\nend"
+
         _(result).must_equal s(:defn,
                                :bar,
                                s(:args),
@@ -358,6 +366,7 @@ describe RipperRubyParser::Parser do
 
       it "handles use of singleton class inside methods" do
         result = parser.parse "# Foo\ndef bar\nclass << self\nbaz\nend\nend"
+
         _(result).must_equal s(:defn,
                                :bar,
                                s(:args),
@@ -397,6 +406,7 @@ describe RipperRubyParser::Parser do
 
       it "drops comments on BEGIN blocks" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\ndef foo; end"
+
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:defn, :foo, s(:args), s(:nil)))
@@ -407,6 +417,7 @@ describe RipperRubyParser::Parser do
 
       it "drops comments on multiple BEGIN blocks" do
         result = parser.parse "# Bar\nBEGIN { }\n# Baz\nBEGIN { }\n# Foo\ndef foo; end"
+
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:iter, s(:preexe), 0),
@@ -418,6 +429,7 @@ describe RipperRubyParser::Parser do
 
       it "drops comments on BEGIN blocks when followed by multiple items" do
         result = parser.parse "# Bar\nBEGIN { }\n# Foo\nclass Bar\n# foo\ndef foo; end\nend"
+
         _(result).must_equal s(:block,
                                s(:iter, s(:preexe), 0),
                                s(:class, :Bar, nil,
@@ -430,6 +442,7 @@ describe RipperRubyParser::Parser do
 
       it "drops comments on require statements" do
         result = parser.parse "# Bar\nrequire \"foo\"\n# Foo\ndef foo; end"
+
         _(result).must_equal s(:block,
                                s(:call, nil, :require, s(:str, "foo")),
                                s(:defn, :foo, s(:args), s(:nil)))
@@ -440,6 +453,7 @@ describe RipperRubyParser::Parser do
 
       it "drops comments on string literals" do
         result = parser.parse "# Bar\n\"bar\"\n# Foo\nclass Foo; end"
+
         _(result).must_equal s(:block,
                                s(:str, "bar"),
                                s(:class, :Foo, nil))
@@ -493,31 +507,37 @@ describe RipperRubyParser::Parser do
     describe "assigning line numbers" do
       it "works for a plain method call" do
         result = parser.parse "foo"
+
         _(result.line).must_equal 1
       end
 
       it "works for a method call with parentheses" do
         result = parser.parse "foo()"
+
         _(result.line).must_equal 1
       end
 
       it "works for a method call with receiver" do
         result = parser.parse "foo.bar"
+
         _(result.line).must_equal 1
       end
 
       it "works for a method call with receiver and arguments" do
         result = parser.parse "foo.bar baz"
+
         _(result.line).must_equal 1
       end
 
       it "works for a method call with arguments" do
         result = parser.parse "foo bar"
+
         _(result.line).must_equal 1
       end
 
       it "works for a block with two lines" do
         result = parser.parse "foo\nbar\n"
+
         _(result.sexp_type).must_equal :block
         _(result[1].line).must_equal 1
         _(result[2].line).must_equal 2
@@ -526,21 +546,25 @@ describe RipperRubyParser::Parser do
 
       it "works for a constant reference" do
         result = parser.parse "Foo"
+
         _(result.line).must_equal 1
       end
 
       it "works for an instance variable" do
         result = parser.parse "@foo"
+
         _(result.line).must_equal 1
       end
 
       it "works for a global variable" do
         result = parser.parse "$foo"
+
         _(result.line).must_equal 1
       end
 
       it "works for a class variable" do
         result = parser.parse "@@foo"
+
         _(result.line).must_equal 1
       end
 
@@ -554,96 +578,115 @@ describe RipperRubyParser::Parser do
 
       it "works for an integer literal" do
         result = parser.parse "42"
+
         _(result.line).must_equal 1
       end
 
       it "works for a float literal" do
         result = parser.parse "3.14"
+
         _(result.line).must_equal 1
       end
 
       it "works for a range literal" do
         result = parser.parse "0..4"
+
         _(result.line).must_equal 1
       end
 
       it "works for an exclusive range literal" do
         result = parser.parse "0...4"
+
         _(result.line).must_equal 1
       end
 
       it "works for a symbol literal" do
         result = parser.parse ":foo"
+
         _(result.line).must_equal 1
       end
 
       it "works for a keyword-like symbol literal" do
         result = parser.parse ":and"
+
         _(result.line).must_equal 1
       end
 
       it "works for a string literal" do
         result = parser.parse '"foo"'
+
         _(result.line).must_equal 1
       end
 
       it "works for a backtick string literal" do
         result = parser.parse "`foo`"
+
         _(result.line).must_equal 1
       end
 
       it "works for a plain regexp literal" do
         result = parser.parse "/foo/"
+
         _(result.line).must_equal 1
       end
 
       it "works for a regular expression back reference" do
         result = parser.parse "$1"
+
         _(result.line).must_equal 1
       end
 
       it "works for self" do
         result = parser.parse "self"
+
         _(result.line).must_equal 1
       end
 
       it "works for __FILE__" do
         result = parser.parse "__FILE__"
+
         _(result.line).must_equal 1
       end
 
       it "works for nil" do
         result = parser.parse "nil"
+
         _(result.line).must_equal 1
       end
 
       it "works for a symbol literal" do
         result = parser.parse ":foo"
+
         _(result.line).must_equal 1
       end
 
       it "works for a class definition" do
         result = parser.parse "class Foo; end"
+
         _(result.line).must_equal 1
       end
 
       it "works for a module definition" do
         result = parser.parse "module Foo; end"
+
         _(result.line).must_equal 1
       end
 
       it "works for a method definition" do
         result = parser.parse "def foo; end"
+
         _(result.line).must_equal 1
       end
 
       it "works for assignment of the empty hash" do
         result = parser.parse "foo = {}"
+
         _(result.line).must_equal 1
       end
 
       it "works for multiple assignment of empty hashes" do
         result = parser.parse "foo, bar = {}, {}"
+
         _(result.line).must_equal 1
       end
 
@@ -659,6 +702,7 @@ describe RipperRubyParser::Parser do
       describe "when a line number is passed" do
         it "shifts all line numbers as appropriate" do
           result = parser.parse "foo\nbar\n", "(string)", 3
+
           _(result).must_equal s(:block,
                                  s(:call, nil, :foo),
                                  s(:call, nil, :bar))
@@ -676,6 +720,7 @@ describe RipperRubyParser::Parser do
       outer = s(:bar, s(:baz, s(:qux, inner)))
       outer.line = 42
       parser.send :trickle_down_line_numbers, outer
+
       _(inner.line).must_equal 42
     end
   end
@@ -686,6 +731,7 @@ describe RipperRubyParser::Parser do
       inner.line = 42
       outer = s(:bar, s(:baz, s(:qux, inner)))
       parser.send :trickle_up_line_numbers, outer
+
       _(outer.line).must_equal 42
     end
   end
