@@ -209,6 +209,7 @@ describe RipperRubyParser::Parser do
 
       it "sets the correct line numbers" do
         result = parser.parse "foo = {}"
+
         _(result.line).must_equal 1
       end
     end
@@ -406,6 +407,7 @@ describe RipperRubyParser::Parser do
 
       it "sets the correct line numbers" do
         result = parser.parse "foo, bar = {}, {}"
+
         _(result.line).must_equal 1
       end
     end

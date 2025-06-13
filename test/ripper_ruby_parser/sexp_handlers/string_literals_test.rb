@@ -176,6 +176,7 @@ describe RipperRubyParser::Parser do
       it "sets the encoding for literal strings to utf8 even if ascii would do" do
         parser = RipperRubyParser::Parser.new
         result = parser.parse '"foo"'
+
         _(result).must_equal s(:str, "foo")
         _(result[1].encoding.to_s).must_equal "UTF-8"
       end
@@ -1113,6 +1114,7 @@ describe RipperRubyParser::Parser do
 
       it "assigns a line number to the result" do
         result = parser.parse ":foo"
+
         _(result.line).must_equal 1
       end
     end
