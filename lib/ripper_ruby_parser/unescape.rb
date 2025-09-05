@@ -183,7 +183,7 @@ module RipperRubyParser
     def delimiter_regexp_pattern(delimiter)
       delimiter = delimiter[-1]
       delimiters = DELIMITER_PAIRS.fetch(delimiter, delimiter)
-      delimiters.each_char.map { |it| Regexp.escape it }.join(" | ")
+      delimiters.each_char.map { |char| Regexp.escape char }.join(" | ")
     end
   end
 end
