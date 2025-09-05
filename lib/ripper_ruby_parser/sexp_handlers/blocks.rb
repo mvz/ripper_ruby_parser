@@ -215,7 +215,7 @@ module RipperRubyParser
       end
 
       LVAR_MATCHER = Sexp::Matcher.new(:lvar, Sexp._)
-      NUMBERED_PARAMS = (1..9).map { |it| :"_#{it}" }.freeze
+      NUMBERED_PARAMS = (1..9).map { |num| :"_#{num}" }.freeze
       private_constant :LVAR_MATCHER, :NUMBERED_PARAMS
 
       def make_iter(call, args, stmt)
@@ -231,7 +231,7 @@ module RipperRubyParser
       end
 
       def count_numbered_lvars(stmt)
-        lvar_names = (LVAR_MATCHER / stmt).map { |it| it[1] }
+        lvar_names = (LVAR_MATCHER / stmt).map { |match| match[1] }
         (NUMBERED_PARAMS & lvar_names).length
       end
     end

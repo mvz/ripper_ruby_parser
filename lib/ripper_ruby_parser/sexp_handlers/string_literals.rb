@@ -139,11 +139,11 @@ module RipperRubyParser
       end
 
       def merge_raw_string_literals(list)
-        chunks = list.chunk { |it| it.sexp_type == :@tstring_content }
+        chunks = list.chunk { |lit| lit.sexp_type == :@tstring_content }
         chunks.flat_map do |is_simple, items|
           if is_simple && items.count > 1
             head = items.first
-            contents = items.map { |it| it[1] }.join
+            contents = items.map { |lit| lit[1] }.join
             [s(:@tstring_content, contents, head[2], head[3])]
           else
             items
