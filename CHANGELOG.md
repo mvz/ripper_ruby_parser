@@ -6,6 +6,16 @@ This project adheres to [Semantic Versioning 2.0.0][1].
 
 This document is formatted based on [Keep A CHANGELOG][2].
 
+## 1.12.0 / 2025-10-25
+
+* Target compatibility with `ruby_parser` 3.21 ([#256] by [mvz])
+* Support Ruby 3.2 through 3.4, dropping support for Ruby 3.0 and 3.1
+  ([#255] and [#260] by [mvz])
+
+[#255]: https://github.com/mvz/ripper_ruby_parser/pull/255
+[#256]: https://github.com/mvz/ripper_ruby_parser/pull/256
+[#260]: https://github.com/mvz/ripper_ruby_parser/pull/260
+
 ## 1.11.0 / 2024-01-05
 
 * Support Ruby 3.0 through 3.3, dropping support for Ruby 2.6 and 2.7
