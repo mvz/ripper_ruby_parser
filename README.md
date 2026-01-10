@@ -2,6 +2,12 @@
 
 by Matijs van Zuijlen
 
+## This project is no longer maintained
+
+RubyParser is EOL and its author recommends using Prism's RubyParser
+compatibility layer. If you're using RipperRubyParser, you should likewise
+switch to Prism's RubyParser compatibility layer.
+
 ## Description
 
 Parse with Ripper, produce sexps that are compatible with RubyParser.
